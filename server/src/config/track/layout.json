@@ -1,0 +1,19 @@
+{
+    "pieces": [
+        {
+            "id": 1,
+            "type": "L300",
+            "connections": [2]
+        },
+        {
+            "id": 2,
+            "type": "L300",
+            "connections": [1,3]
+        },
+        {
+            "id": 3,
+            "type": "L300",
+            "connections": [2]
+        }
+    ]
+}

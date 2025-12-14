@@ -1,0 +1,21 @@
+{    
+    "units": {
+        "length": "millimeters",
+        "angle": "degrees",
+        "diameter": "millimeters"
+    },
+    "pieces": {
+        "L300": {
+            "type": "straight",
+            "length": 300,
+            "angle": 0,
+            "diameter": null            
+        },
+        "A30L300": {
+            "type": "curve",
+            "length": 300,
+            "angle": 30,
+            "diameter": 1290
+        }
+    }
+}
