@@ -1,11 +1,11 @@
-import pieceDefinitionData from "./config/track/piece-definitions.json" with { type: "json" };
+import pieceDefinitionData from "../config/track/piece-definitions.json" with { type: "json" };
 
 // Define the structure of a track piece definition
 export interface TrackPieceDef {
     type: string;
-    length: number;
+    length: number | null;
     angle: number;
-    diameter: number | null;
+    radius: number | null;
 }
 
 // Cast the imported piece definitions to the appropriate type
@@ -18,6 +18,6 @@ export function getPieceDefinition(pieceDefId: string): TrackPieceDef {
     if (!pieceDef) {
         throw new Error(`Piece definition not found for ID: ${pieceDefId}`);
     }
-    
+
     return pieceDef;
 }

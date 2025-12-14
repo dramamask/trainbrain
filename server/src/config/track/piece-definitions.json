@@ -1,21 +1,24 @@
-{    
-    "units": {
-        "length": "millimeters",
-        "angle": "degrees",
-        "diameter": "millimeters"
+{
+    "meta": {
+        "field-descriptions": {
+            "type": "string describing the piece type, e.g., 'straight' or 'curve'",
+            "length": "length of the piece in millimeters, or null if not applicable. Do not specify length for angled pieces. We calculate it from the radius and angle.",
+            "angle": "angle in degrees. For straight pieces, set to 0. For curved pieces, set to the curve angle.",
+            "radius": "radius in millimeters. For straight pieces, set to null."
+        }
     },
     "pieces": {
         "L300": {
             "type": "straight",
             "length": 300,
             "angle": 0,
-            "diameter": null            
+            "radius": null
         },
         "A30L300": {
             "type": "curve",
-            "length": 300,
+            "length": null,
             "angle": 30,
-            "diameter": 1290
+            "radius": 600
         }
     }
 }

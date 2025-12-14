@@ -1,19 +1,22 @@
 {
+    "meta": {
+        "field-descriptions": {
+            "type": "string referring to the piece type defined in piece-definitions.json",
+            "direction": "for curved pieces, 'left' or 'right'. For straight pieces, set to null."
+        }
+    },
     "pieces": [
         {
-            "id": 1,
             "type": "L300",
-            "connections": [2]
+            "direction": null
         },
         {
-            "id": 2,
             "type": "L300",
-            "connections": [1,3]
+            "direction": null
         },
         {
-            "id": 3,
-            "type": "L300",
-            "connections": [2]
+            "type": "A30L300",
+            "direction": "left"
         }
     ]
 }
