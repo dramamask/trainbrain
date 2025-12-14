@@ -2,7 +2,7 @@ import express from "express";
 import * as track from "./track/layout.js";
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 // Endpoint to GET the track layout
 app.get("/track", (_req, res) => {
