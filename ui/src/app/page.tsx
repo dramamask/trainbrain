@@ -1,7 +1,8 @@
 "use client";
 
-import { TrackPiece } from "./trackpieces/trackpiece";
+import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
+import { TrackPiece } from "./trackpieces/trackpiece";
 
 import styles from "./page.module.css";
 
@@ -38,50 +39,16 @@ export default function Home()
     <svg viewBox="0 0 5000 5000">
       {
         layout.map(piece => {
-          // if (piece.type === "straight") {
-          //   return (
-          //     <line
-          //       key={piece.id}
-          //       x1={piece.start.x}
-          //       y1={piece.start.y}
-          //       x2={piece.end.x}
-          //       y2={piece.end.y}
-          //       stroke="black"
-          //       strokeWidth={8}
-          //     />
-          //   );
-          // }
-          {<Straight piece={piece} />}
-
-          if (piece.type === "curve") {
-            return (
-              <path
-                key={2}
-                d={arcPathFromTrack(piece)}
-                stroke="black"
-                fill="none"
-                strokeWidth={8}
-              />
-            );
+          switch (piece.type) {
+            case "straight":
+              return <Straight piece={piece} />;
+            case "curve":
+              return <Curve piece={piece} />;
+            default:
+              return null;
           }
-
-          return null;
         })
       }
     </svg>
   )
-}
-
-function arcPathFromTrack(t: TrackPiece): string {
-  const { start, end, radius, direction } = t;
-
-  // SVG sweepFlag:
-  // 0 = counterclockwise
-  // 1 = clockwise
-  const sweepFlag = (direction > 180) ? 1 : 0;
-
-  return `
-    M ${start.x} ${start.y}
-    A ${radius} ${radius} 0 0 ${sweepFlag} ${end.x} ${end.y}
-  `.trim();
 }

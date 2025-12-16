@@ -2,7 +2,7 @@ import { getIndicatorLength, getStrokeWidth, TrackPiece } from "./trackpiece";
 
 // Straight track piece component
 export default function Straight({piece}: {piece: TrackPiece}) {
-  // if (piece.type == "straight") {
+  if (piece.type == "straight") {
     return (
         <line
           key={piece.id}
@@ -14,7 +14,9 @@ export default function Straight({piece}: {piece: TrackPiece}) {
           strokeWidth={8}
         />
     );
-  // }
+  }
+
+  return null;
 }
 
 // <g key={piece.id}>
