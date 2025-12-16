@@ -27,7 +27,7 @@ export default function Home()
     }
   ] ;
 
-// todo:
+// TODO:
 // - Create track layout component
 // - Figure out how to draw the next line. how do we define the angle of where the next piece starts?
 // - addend line indicator for the curve piece.
@@ -50,10 +50,13 @@ export default function Home()
       >
         {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
         <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
+
           {/* Red x-axis and green y-axis for debugging purposes */}
           <line x1={0} y1={0} x2={500} y2={0} stroke="red" />
           <line x1={0} y1={0} x2={0} y2={500} stroke="green" />
+
           {
+            // Iterate over the track layout and render each piece
             layout.map(piece => {
               switch (piece.type) {
                 case "straight":
@@ -65,6 +68,7 @@ export default function Home()
               }
             })
           }
+
         </g>
       </svg>
     </div>
