@@ -1,39 +1,87 @@
 "use client";
 
+import { TrackPiece } from "./trackpieces/trackpiece";
+import Straight from "./trackpieces/straight";
+
 import styles from "./page.module.css";
 
 export default function Home()
 {
-  const r = 100; // circle radius
-  const cx = 100; // circle center
-  const cy = 100; // circle center
+  const layout: TrackPiece[] = [
+    {
+      id: 1,
+      type: "straight",
+      start: { x: 300, y: 0 },
+      end: { x: 300, y: 300 },
+      radius: null,
+      direction: 180,
+    },
+    {
+      type: "curve",
+      id: 2,
+      start: { x: 300, y: 300 },
+      end: { x: 378, y: 600 }, // todo: calculate in the backend
+      radius: 600,
+      direction: 180,
+    }
+  ] ;
 
-  const startAngle =  Math.PI + Math.PI / 2; // currently set to top of circle
-  const angle = Math.PI;
-  const endAngle = startAngle + angle;
-
-  function polarToCartesian(cx: number, cy: number, r: number, angle: number) {
-    return {
-      x: cx + r * Math.cos(angle),
-      y: cy + r * Math.sin(angle),
-    };
-  }
-
-  let start = polarToCartesian(cx, cy, r, startAngle);
-  let end = polarToCartesian(cx, cy, r, endAngle);
-
-  // Correct the start and end to be at the corner of the screen
-
-
-  const largeArcFlag = endAngle - startAngle <= Math.PI ? 0 : 1;
-
-  const d = `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+// todo:
+// - create separate components for each track piece type
+// - add start and end line indicators to each track piece.
+// - rotate the coordinates so we have intuative x and y coordinates
+// - figure out how big our viewbox is
+// - scale the layout accordingly. do this on the backend?
+//   front end could send viewbox size to backend and get scaled coordinates back
 
   return (
-    <div className={styles.container}>
-      <svg width={400} height={400} className={styles.svg}>
-        <path d={d} stroke="black" strokeWidth={2} fill="none" />
-      </svg>
-    </div>
-  );
+    <svg viewBox="0 0 5000 5000">
+      {
+        layout.map(piece => {
+          // if (piece.type === "straight") {
+          //   return (
+          //     <line
+          //       key={piece.id}
+          //       x1={piece.start.x}
+          //       y1={piece.start.y}
+          //       x2={piece.end.x}
+          //       y2={piece.end.y}
+          //       stroke="black"
+          //       strokeWidth={8}
+          //     />
+          //   );
+          // }
+          {<Straight piece={piece} />}
+
+          if (piece.type === "curve") {
+            return (
+              <path
+                key={2}
+                d={arcPathFromTrack(piece)}
+                stroke="black"
+                fill="none"
+                strokeWidth={8}
+              />
+            );
+          }
+
+          return null;
+        })
+      }
+    </svg>
+  )
+}
+
+function arcPathFromTrack(t: TrackPiece): string {
+  const { start, end, radius, direction } = t;
+
+  // SVG sweepFlag:
+  // 0 = counterclockwise
+  // 1 = clockwise
+  const sweepFlag = (direction > 180) ? 1 : 0;
+
+  return `
+    M ${start.x} ${start.y}
+    A ${radius} ${radius} 0 0 ${sweepFlag} ${end.x} ${end.y}
+  `.trim();
 }
