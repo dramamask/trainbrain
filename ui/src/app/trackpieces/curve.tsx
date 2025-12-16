@@ -3,6 +3,15 @@ import { getIndicatorLength, getStrokeWidth, TrackPiece } from "./trackpiece";
 // Curve track piece component
 export default function Curve({piece}: {piece: TrackPiece}) {
   return (
+    <g key={piece.id}>
+      <line
+          x1={piece.start.x - (getIndicatorLength() / 2)}
+          y1={piece.start.y}
+          x2={piece.start.x + (getIndicatorLength() / 2)}
+          y2={piece.start.y}
+          stroke="black"
+          strokeWidth={getStrokeWidth()}
+      />
       <path
         key={2}
         d={arcPathFromTrack(piece)}
@@ -10,20 +19,11 @@ export default function Curve({piece}: {piece: TrackPiece}) {
         fill="none"
         strokeWidth={8}
       />
+    </g>
   );
 }
 
-// <g key={piece.id}>
-
-      //   <line
-      //     x1={piece.start.x - (getIndicatorLength() / 2)}
-      //     y1={piece.start.y}
-      //     x2={piece.start.x - (getIndicatorLength() / 2)}
-      //     y2={piece.start.y}
-      //     stroke="black"
-      //     strokeWidth={getStrokeWidth()}
-      //   />
-
+// Generate an SVG arc path from a track piece definition
 function arcPathFromTrack(t: TrackPiece): string {
   const { start, end, radius, direction } = t;
 
