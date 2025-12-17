@@ -1,23 +1,30 @@
 {
     "meta": {
+        "description": "Definitions of the different pieces that are allowed in the track layout.",
         "field-descriptions": {
             "type": "string describing the piece type, e.g., 'straight' or 'curve'",
             "length": "length of the piece in millimeters, or null if not applicable. Do not specify length for angled pieces. We calculate it from the radius and angle.",
-            "angle": "angle in degrees. For straight pieces, set to 0. For curved pieces, set to the curve angle.",
-            "radius": "radius in millimeters. For straight pieces, set to null."
+            "angle": "angle in degrees, or null for straight pieces. For example a curve piece that takes 12 pieces to make up a full circle would have an angle of 30 degrees (360 / 12 = 30)",
+            "radius": "circle radius in millimeters. For straight pieces, set to null."
         }
     },
-    "pieces": {
+    "definitions": {
         "L300": {
             "type": "straight",
             "length": 300,
-            "angle": 0,
+            "angle": null,
             "radius": null
         },
-        "A30L300": {
+        "A30R600": {
             "type": "curve",
             "length": null,
             "angle": 30,
+            "radius": 600
+        },
+        "A15R600": {
+            "type": "curve",
+            "length": null,
+            "angle": 15,
             "radius": 600
         }
     }

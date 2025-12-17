@@ -40,8 +40,8 @@ export default function TrackLayout()
 // - scale the layout accordingly, using the viewbox. the backend should tell us what the world size is.
 
   // The size of the world/viewbox, in SVG coordinates
-  const worldHeight = 1080;
-  const worldWidth= 1920;
+  const worldHeight = 2000;
+  const worldWidth= 4000;
 
   // Render the track layout
   return (

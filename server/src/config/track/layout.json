@@ -1,22 +1,14 @@
 {
     "meta": {
+        "description": "Description of the track layout",
         "field-descriptions": {
             "type": "string referring to the piece type defined in piece-definitions.json",
-            "direction": "for curved pieces, 'left' or 'right'. For straight pieces, set to null."
+            "direction": "direction the track is curving to, as seen from the direction of travel. For curved pieces use 'left' or 'right'. For straight pieces use 'null'."
         }
     },
     "pieces": [
-        {
-            "type": "L300",
-            "direction": null
-        },
-        {
-            "type": "L300",
-            "direction": null
-        },
-        {
-            "type": "A30L300",
-            "direction": "left"
-        }
+        {"type": "L300", "direction": null},
+        {"type": "A30R600", "direction": "right"},
+        {"type": "L300", "direction": null}
     ]
 }
