@@ -1,14 +1,18 @@
-import { getIndicatorLength, getStrokeWidth, TrackPiece } from "./trackpiece";
+"use client";
+
+import { getIndicatorPositions, getStrokeWidth, TrackPiece } from "@/app/services/trackpiece";
 
 // Straight track piece component
 export default function Straight({piece}: {piece: TrackPiece}) {
+  const indicatorPositions = getIndicatorPositions(piece);
+
   return (
     <g key={piece.id}>
       <line
-          x1={piece.start.x - (getIndicatorLength() / 2)}
-          y1={piece.start.y}
-          x2={piece.start.x + (getIndicatorLength() / 2)}
-          y2={piece.start.y}
+          x1={indicatorPositions.start.x1}
+          y1={indicatorPositions.start.y1}
+          x2={indicatorPositions.start.x2}
+          y2={indicatorPositions.start.y2}
           stroke="black"
           strokeWidth={getStrokeWidth()}
       />
@@ -21,10 +25,10 @@ export default function Straight({piece}: {piece: TrackPiece}) {
         strokeWidth={8}
       />
       <line
-          x1={piece.end.x - (getIndicatorLength() / 2)}
-          y1={piece.end.y}
-          x2={piece.end.x + (getIndicatorLength() / 2)}
-          y2={piece.end.y}
+          x1={indicatorPositions.end.x1}
+          y1={indicatorPositions.end.y1}
+          x2={indicatorPositions.end.x2}
+          y2={indicatorPositions.end.y2}
           stroke="black"
           strokeWidth={getStrokeWidth()}
       />
