@@ -16,7 +16,7 @@ export default function Home()
           justifyContent="flex-start"
           alignItems="flex-start"
         >
-          <Grid size={1}>
+          <Grid size={2}>
             <div className={styles.logoContainer}>
               <img className={styles.logo} src="/trainbrain-logo.png" />
             </div>

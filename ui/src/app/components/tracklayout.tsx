@@ -50,7 +50,7 @@ export default function TrackLayout()
         height="100%"
         width="100%"
         viewBox={`0 0 ${worldWidth} ${worldHeight}`}
-        preserveAspectRatio="xMidYMid meet"
+        preserveAspectRatio="xMinYMax meet"
       >
         {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
         <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
