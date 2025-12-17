@@ -1,36 +1,33 @@
 "use client";
 
+import { UiLayoutPiece } from "trainbrain-shared"
 import styles from "./tracklayout.module.css";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
-import { TrackPiece } from "../services/trackpiece";
 
 export default function TrackLayout()
 {
-   const layout: TrackPiece[] = [
+   const layout: UiLayoutPiece[] = [
     {
       id: 1,
       type: "straight",
-      start: { x: 300, y: 0 },
-      end: { x: 300, y: 300 },
+      start: { x: 300, y: 0, heading: 0 },
+      end: { x: 300, y: 300, heading: 0 },
       radius: null,
-      direction: { start: 0, end: 0 },
     },
     {
       type: "curve",
       id: 2,
-      start: { x: 300, y: 300 },
-      end: { x: 378, y: 600 }, // todo: calculate in the backend
+      start: { x: 300, y: 300, heading: 0 },
+      end: { x: 378, y: 600, heading: 30 },
       radius: 600,
-      direction: { start: 0, end: 30 },
     },
     {
       id: 3,
       type: "straight",
-      start: { x: 378, y: 600 },
-      end: { x: 528, y: 861 },
+      start: { x: 378, y: 600, heading: 30 },
+      end: { x: 528, y: 861, heading: 30 },
       radius: null,
-      direction: { start: 30, end: 30 },
     },
   ];
 

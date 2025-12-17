@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "CommonJS",
+    "declaration": true,       // generate .d.ts files for consumers
+    "outDir": "dist",          // compiled JS output folder
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["src"]
+}

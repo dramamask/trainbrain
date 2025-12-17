@@ -1,9 +1,10 @@
 "use client";
 
-import { getIndicatorPositions, getStrokeWidth, TrackPiece } from "@/app/services/trackpiece";
+import { UiLayoutPiece } from "trainbrain-shared";
+import { getIndicatorPositions, getStrokeWidth } from "@/app/services/trackpiece";
 
 // Straight track piece component
-export default function Straight({piece}: {piece: TrackPiece}) {
+export default function Straight({piece}: {piece: UiLayoutPiece}) {
   const indicatorPositions = getIndicatorPositions(piece);
 
   return (

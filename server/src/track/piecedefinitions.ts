@@ -1,8 +1,10 @@
+import { TrackPieceType } from "trainbrain-shared";
+
 import pieceDefinitionData from "../config/track/piece-definitions.json" with { type: "json" };
 
 // Define the structure of a track piece definition
 export interface TrackPieceDef {
-    type: string;
+    type: TrackPieceType;
     length: number | null;
     angle: number | null;
     radius: number | null;

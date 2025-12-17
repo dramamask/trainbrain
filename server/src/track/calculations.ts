@@ -1,4 +1,5 @@
-import { Direction, LayoutPiece, UiLayoutPiece } from "./layout.js";
+import { Coordinate } from "trainbrain-shared";
+import { Direction, LayoutPiece } from "./layout.js";
 import { TrackPieceDef } from "./piecedefinitions.js";
 
 // Returns the end coordinates and angle of a track piece based on the previous piece
@@ -6,40 +7,36 @@ import { TrackPieceDef } from "./piecedefinitions.js";
 export function getEndCoordinates(
     layoutPiece: LayoutPiece,
     pieceDef: TrackPieceDef,
-    previousPiece: UiLayoutPiece | undefined
-):
-    { x: number; y: number; direction: number }
+    previousEnd: Coordinate
+): Coordinate
 {
-    // Starting coordinates and direction, bassed on the previous piece in the layout
-    const startX = previousPiece ? previousPiece.end.x : 0;
-    const startY = previousPiece ? previousPiece.end.y : 0;
-    const startDirection = previousPiece ? previousPiece.direction.end : 0;
-
     // Calculate the new coordinates based on the piece definition
-    let x = 0;
-    let y = 0;
-    let angle = 0;
+    let dX = 0;
+    let dY = 0;
+    let endHeading = 0;
 
     switch(pieceDef.type) {
         case "straight":
-            x = 0;
-            y = pieceDef.length as number;
+            const length = pieceDef.length as number;
+            endHeading = previousEnd.heading; // Which is also the start heading in this case
+            dX = roundTo2(length * Math.sin(degreesToRadians(endHeading)));
+            dY = roundTo2(length * Math.cos(degreesToRadians(endHeading)));
             break;
         case "curve":
             const radius = pieceDef.radius as number;
-            angle = assignAngleSign(pieceDef.angle as number, pieceDef.direction as Direction);
-            x = round(radius * Math.sin(degreesToRadians(angle)));
-            y = round(radius * Math.cos(degreesToRadians(angle)));
+            const pieceAngle = assignAngleSign(pieceDef.angle as number, layoutPiece.direction as Direction);
+            endHeading = previousEnd.heading + pieceAngle;
+            dX = roundTo2(radius * (1 - Math.cos(degreesToRadians(endHeading))));
+            dY = roundTo2(radius * Math.sin(degreesToRadians(endHeading)));
             break;
         default:
             throw new Error(`Unknown piece type: ${pieceDef.type}`);
     }
 
     return {
-        x: startX + x,
-        y: startY + y,
-        direction: (startDirection + angle), // TODO: take the layout direction into account
-
+        x: previousEnd.x + dX,
+        y: previousEnd.y + dY,
+        heading: endHeading,
     }
 }
 
@@ -48,13 +45,13 @@ function degreesToRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
 }
 
-// Round a number to two decimal places
-function round(value: number): number {
+// Round a number to two decimal points
+function roundTo2(value: number): number {
     return Math.round(value * 100) / 100;
 }
 
 // Return the correct angle, based on the direction that the piece is facing
-function assignAngleSign(angle: number, direction: string) {
+function assignAngleSign(angle: number, direction: Direction) {
     if (direction == Direction.LEFT) {
         angle = 0 - angle;
     }

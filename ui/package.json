@@ -15,7 +15,8 @@
     "@mui/material": "^7.3.6",
     "next": "16.0.10",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "trainbrain-shared": "file:../shared"
   },
   "devDependencies": {
     "@types/node": "^20",

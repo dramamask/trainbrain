@@ -1,0 +1,17 @@
+{
+  "name": "trainbrain-shared",
+  "version": "1.0.0",
+  "description": "Shared code used in multiple parts of the train-brain project",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "typescript": "^5.9.3"
+  }
+}
