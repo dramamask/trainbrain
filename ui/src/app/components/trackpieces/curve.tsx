@@ -42,7 +42,7 @@ function arcPathFromTrack(t: TrackPiece): string {
   // SVG sweepFlag:
   // 0 = counterclockwise
   // 1 = clockwise
-  const sweepFlag = (direction > 180) ? 1 : 0;
+  const sweepFlag = (direction.end > 180) ? 1 : 0;
 
   return `
     M ${start.x} ${start.y}
