@@ -1,6 +1,6 @@
 "use client";
 
-import { UiLayoutPiece } from "trainbrain-shared";
+import { Direction, UiLayoutPiece } from "trainbrain-shared";
 import { getIndicatorPositions, getStrokeWidth } from "../../services/trackpiece";
 
 // Curve track piece component
@@ -39,12 +39,12 @@ export default function Curve({piece}: {piece: UiLayoutPiece}) {
 // Generate an SVG arc path from a track piece definition
 function arcPathFromTrack(trackPiece: UiLayoutPiece): string
 {
-  const { start, end, radius } = trackPiece;
+  const { direction, start, end, radius } = trackPiece;
 
   // SVG sweepFlag:
   // 0 = counterclockwise
   // 1 = clockwise
-  const sweepFlag = (end.heading > 180) ? 1 : 0;
+  const sweepFlag = (direction == "left") ? 1 : 0;
 
   return `
     M ${start.x} ${start.y}

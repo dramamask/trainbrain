@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Grid } from "@mui/material";
 import TrackLayout from "@/app/components/tracklayout";
 

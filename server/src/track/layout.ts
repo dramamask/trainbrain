@@ -1,17 +1,7 @@
-import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, Direction, UiLayout, UiLayoutPiece } from "trainbrain-shared";
 import layoutData from "../config/track/layout.json" with { type: "json" };
 import { getPieceDefinition, TrackPieceDef } from "./piecedefinitions.js";
 import { getEndCoordinates } from "./calculations.js";
-
-// Define direction const. Can be used in code as Direction.LEFT and Direction.RIGHT
-// This is a value.
-export const Direction = {
-    LEFT: "left",
-    RIGHT: "right",
-} as const;
-
-// Define direction type.
-export type Direction = typeof Direction[keyof typeof Direction];
 
 // The structure of a layout piece as defined in the layout config file
 export interface LayoutPiece {
@@ -21,14 +11,6 @@ export interface LayoutPiece {
 
 // Cast the imported layout pieces to the appropriate type
 const layout = layoutData.pieces as Array<LayoutPiece>;
-
-// The structure that we return from the GET layout API call
-export interface UiLayout {
-  meta: {
-    warning: string;
-  };
-  pieces: UiLayoutPiece[];
-}
 
 // Calculate the UI Layout and return it as an array of UiLayoutPieces
 function getUiLayout(trackStart: Coordinate): UiLayoutPiece[] {
@@ -52,6 +34,7 @@ function getUiLayout(trackStart: Coordinate): UiLayoutPiece[] {
       const uiLayoutPiece: UiLayoutPiece = {
         id: index,
         type: pieceDef.type,
+        direction: layoutPiece.direction,
         start: { x: startX, y: startY, heading: startHeading },
         end: { x: endCoordinates.x, y: endCoordinates.y, heading: endCoordinates.heading},
         radius: pieceDef.radius,

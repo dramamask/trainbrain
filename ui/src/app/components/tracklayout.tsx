@@ -1,40 +1,35 @@
 "use client";
 
-import { UiLayoutPiece } from "trainbrain-shared"
-import styles from "./tracklayout.module.css";
+import { useEffect, useState } from "react";
+import { UiLayout, UiLayoutPiece } from "trainbrain-shared"
+import { getTrackLayout } from "../services/api/tracklayout"
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
 
+import styles from "./tracklayout.module.css";
+
 export default function TrackLayout()
 {
-   const layout: UiLayoutPiece[] = [
-    {
-      id: 1,
-      type: "straight",
-      start: { x: 300, y: 0, heading: 0 },
-      end: { x: 300, y: 300, heading: 0 },
-      radius: null,
-    },
-    {
-      type: "curve",
-      id: 2,
-      start: { x: 300, y: 300, heading: 0 },
-      end: { x: 378, y: 600, heading: 30 },
-      radius: 600,
-    },
-    {
-      id: 3,
-      type: "straight",
-      start: { x: 378, y: 600, heading: 30 },
-      end: { x: 528, y: 861, heading: 30 },
-      radius: null,
-    },
-  ];
+  const layoutStartPosition = {x:300, y: 0, heading: 0}; // TODO: How/where do we want to define this? Automatic somehow?
 
-// TODO:
-// - get the layout to generate the correct coordinates in the backend.
-// - call the backend to get the layout.
-// - scale the layout accordingly, using the viewbox. the backend should tell us what the world size is.
+  const [layout, setLayout] = useState<UiLayout>({} as UiLayout);
+
+  // Fetch the layout from the back-end server
+  useEffect(() => {
+    getTrackLayout(layoutStartPosition)
+      .then((layoutData: UiLayout) => {
+        setLayout(layoutData);
+        console.log("Layout received from the backend server", layoutData);
+      })
+      .catch((error: Error) => {
+        console.error("Error fetching layout from backend server", error);
+      });
+  }, []);
+
+  // Return an empty object if uiLayout is empty (i.e. before the API call has returned)
+  if (Object.keys(layout).length == 0) {
+    return null;
+  }
 
   // The size of the world/viewbox, in SVG coordinates
   const worldHeight = 2000;
@@ -55,7 +50,7 @@ export default function TrackLayout()
 
           {
             // Iterate over the track layout and render each piece
-            layout.map(piece => {
+            layout.pieces.map((piece: UiLayoutPiece) => {
               switch (piece.type) {
                 case "straight":
                   return <Straight piece={piece} key={piece.id} />;

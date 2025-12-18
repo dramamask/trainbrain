@@ -1,9 +1,18 @@
 import express from "express";
+import cors from "cors";
 import { Coordinate } from "trainbrain-shared";
 import { getLayout } from "./track/layout.js";
 
-const app = express();
 const port = 3001;
+const app = express();
+
+// Enable CORS headers. Allow our front-end UI.
+app.use(cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE" ],
+    credentials: true,
+  })
+);
 
 // Endpoint to GET the track layout
 app.get("/layout", (_req, res) => {
@@ -16,7 +25,7 @@ app.get("/layout", (_req, res) => {
   res.header("Content-Type", "application/json");
 
   try {
-    res.send(JSON.stringify({ layout: getLayout(trackStart) }));
+    res.send(JSON.stringify(getLayout(trackStart)));
   } catch (error) {
     res.status(500).send({ error: (error as Error).message });
   }

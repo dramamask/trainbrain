@@ -7,10 +7,12 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.2.1",
     "trainbrain-shared": "file:../shared"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.2",
     "ts-node-dev": "^2.0.0",
