@@ -12,7 +12,6 @@ export default function Home()
     <Box height="100dvh">
         <Grid
           container
-          height="100%"
           spacing={0} // Horizontal spacing in between grid items
           justifyContent="flex-start"
           alignItems="stretch"
