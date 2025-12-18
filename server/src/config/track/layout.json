@@ -12,8 +12,26 @@
         {"type": "A30R660", "direction": "left"},
         {"type": "A30R660", "direction": "right"},
         {"type": "A30R660", "direction": "right"},
+        {"type": "A30R660", "direction": "right"},
         {"type": "A30R660", "direction": "left"},
         {"type": "L300", "direction": null},
-        {"type": "A30R660", "direction": "right"}
+        {"type": "A30R660", "direction": "right"},
+        {"type": "A30R660", "direction": "right"},
+        {"type": "L300", "direction": null},
+        {"type": "L300", "direction": null},
+        {"type": "A30R660", "direction": "right"},
+        {"type": "A30R660", "direction": "right"},
+        {"type": "A30R660", "direction": "right"},
+        {"type": "A30R660", "direction": "right"},
+        {"type": "A30R660", "direction": "right"},
+        {"type": "L300", "direction": null},
+        {"type": "L300", "direction": null},
+        {"type": "L300", "direction": null},
+        {"type": "L300", "direction": null},
+        {"type": "A15R660", "direction": "right"},
+        {"type": "A15R660", "direction": "right"},
+        {"type": "A30R660", "direction": "right"},
+        {"type": "A15R660", "direction": "right"},
+        {"type": "A15R660", "direction": "right"}
     ]
 }
