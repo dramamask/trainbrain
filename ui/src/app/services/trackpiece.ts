@@ -1,15 +1,6 @@
 import { UiLayoutPiece } from "trainbrain-shared";
 import { degreesToRadians } from "./math";
-
-// Get the stroke width for track pieces
-export function getStrokeWidth(): number {
-  return 8;
-}
-
-// Get the length of the indicator lines at the start and end of a track piece
-export function getIndicatorLength(): number {
-    return 40;
-}
+import * as config from "@/app/config/config"
 
 // Get the positions for the indicators at the start and end of a track piece
 export function getIndicatorPositions(piece: UiLayoutPiece):
@@ -18,7 +9,7 @@ export function getIndicatorPositions(piece: UiLayoutPiece):
     end:   { x1: number; y1: number, x2: number; y2: number }
   }
 {
-  const indicatorHalfLength = getIndicatorLength() / 2;
+  const indicatorHalfLength = config.INDICATOR_LENGTH / 2;
 
   const headingRadStart = degreesToRadians(piece.start.heading);
   const headingRadEnd = degreesToRadians(piece.end.heading);

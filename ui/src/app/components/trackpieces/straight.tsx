@@ -1,7 +1,8 @@
 "use client";
 
 import { UiLayoutPiece } from "trainbrain-shared";
-import { getIndicatorPositions, getStrokeWidth } from "@/app/services/trackpiece";
+import { getIndicatorPositions } from "@/app/services/trackpiece";
+import * as config from "@/app/config/config";
 
 // Straight track piece component
 export default function Straight({piece}: {piece: UiLayoutPiece}) {
@@ -14,24 +15,24 @@ export default function Straight({piece}: {piece: UiLayoutPiece}) {
           y1={indicatorPositions.start.y1}
           x2={indicatorPositions.start.x2}
           y2={indicatorPositions.start.y2}
-          stroke="black"
-          strokeWidth={getStrokeWidth()}
+          stroke={config.TRACK_COLOR}
+          strokeWidth={config.STROKE_WIDTH}
       />
       <line
         x1={piece.start.x}
         y1={piece.start.y}
         x2={piece.end.x}
         y2={piece.end.y}
-        stroke="black"
-        strokeWidth={8}
+        stroke={config.TRACK_COLOR}
+        strokeWidth={config.STROKE_WIDTH}
       />
       <line
           x1={indicatorPositions.end.x1}
           y1={indicatorPositions.end.y1}
           x2={indicatorPositions.end.x2}
           y2={indicatorPositions.end.y2}
-          stroke="black"
-          strokeWidth={getStrokeWidth()}
+          stroke={config.TRACK_COLOR}
+          strokeWidth={config.STROKE_WIDTH}
       />
     </g>
   );

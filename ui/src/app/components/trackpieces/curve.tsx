@@ -1,7 +1,8 @@
 "use client";
 
-import { Direction, UiLayoutPiece } from "trainbrain-shared";
-import { getIndicatorPositions, getStrokeWidth } from "../../services/trackpiece";
+import { UiLayoutPiece } from "trainbrain-shared";
+import { getIndicatorPositions } from "../../services/trackpiece";
+import * as config from "@/app/config/config";
 
 // Curve track piece component
 export default function Curve({piece}: {piece: UiLayoutPiece}) {
@@ -14,23 +15,23 @@ export default function Curve({piece}: {piece: UiLayoutPiece}) {
           y1={indicatorPositions.start.y1}
           x2={indicatorPositions.start.x2}
           y2={indicatorPositions.start.y2}
-          stroke="black"
-          strokeWidth={getStrokeWidth()}
+          stroke={config.TRACK_COLOR}
+          strokeWidth={config.STROKE_WIDTH}
       />
       <path
         key={2}
         d={arcPathFromTrack(piece)}
-        stroke="black"
+        stroke={config.TRACK_COLOR}
         fill="none"
-        strokeWidth={8}
+        strokeWidth={config.STROKE_WIDTH}
       />
       <line
           x1={indicatorPositions.end.x1}
           y1={indicatorPositions.end.y1}
           x2={indicatorPositions.end.x2}
           y2={indicatorPositions.end.y2}
-          stroke="black"
-          strokeWidth={getStrokeWidth()}
+          stroke={config.TRACK_COLOR}
+          strokeWidth={config.STROKE_WIDTH}
       />
     </g>
   );

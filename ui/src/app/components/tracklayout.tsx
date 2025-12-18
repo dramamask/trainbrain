@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared"
-import { getTrackLayout } from "../services/api/tracklayout"
+import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { Alert, CircularProgress } from "@mui/material";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
+import * as config from "@/app/config/config"
 
 import styles from "./tracklayout.module.css";
 
 export default function TrackLayout()
 {
-  const layoutStartPosition = {x:300, y: 0, heading: 0}; // TODO: How/where do we want to define this? Automatic somehow?
+  const layoutStartPosition = {
+    x: config.LAYOUT_START_X,
+    y: config.LAYOUT_START_Y,
+    heading: config.LAYOUT_START_HEADING,
+  };
 
   const [layout, setLayout] = useState<UiLayout>({} as UiLayout);
   const [loading, setLoading] = useState<Boolean>(true);
@@ -52,8 +57,9 @@ export default function TrackLayout()
   }
 
   // The size of the world/viewbox, in SVG coordinates
-  const worldHeight = 2000;
-  const worldWidth= 4000;
+  // Note that his matches the pixel size of the layout-background image
+  const worldHeight = 6000;
+  const worldWidth= 6000;
 
   // Render the track layout
   return (
