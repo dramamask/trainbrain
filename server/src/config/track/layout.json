@@ -1,32 +1,53 @@
 {
-    "meta": {
-        "description": "Description of the track layout",
-        "field-descriptions": {
-            "type": "string referring to the piece type defined in piece-definitions.json",
-            "direction": "direction the track is curving to, as seen from the direction of travel. For curved pieces use 'left' or 'right'. For straight pieces use 'null'."
-        }
-    },
-    "pieces": [
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "A30R645", "direction": "left"},
-        {"type": "A30R645", "direction": "left"},
-        {"type": "A30R645", "direction": "left"},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null},
-        {"type": "L300", "direction": null}
-    ]
+  "meta": {
+    "description": "This file is a description of a model train track layout.",
+    "explanation-of-this-layout-definition": [
+        "Each track piece has a 'start side' and an 'end side.",
+        "The position of the 'start side' of the piece with id 1 is defined, as well as that piece's heading in degrees.",
+        "This position and heading define where the first piece is on the layout.",
+        "Each piece's 'connects' values indicate which other pieces it connects to.",
+        "The 'connects' information is used to figure out the coordinates of the rest of the track pieces."
+    ],
+    "field-descriptions": {
+      "piece-1": {
+        "start": "Start coordinate for the piece with ID 1"
+      },
+      "pieces": {
+        "id": "Unique identifier for a track piece",
+        "type": "string referring to the piece type defined in piece-definitions.json",
+        "direction": "direction the track is curving to, as seen from the direction of travel. For curved pieces use 'left' or 'right'. For straight pieces use 'null'.",
+        "connects": {
+          "start": "The identifier of the piece that the 'start side' of this piece is connected to.",
+          "end": "The identifier of the piece that the 'end side' of this piece is connected to."
+        },
+        "anchor": "Only one track piece can have this field. Identifies the anchor piece."
+      }
+    }
+  },
+  "piece-1": {"start" : {"x": 3916, "y": 2700, "heading": 0}},
+  "pieces": {
+    "1": {"type": "L300", "direction": null, "connects": {"start": 22, "end": 2}},
+    "2": {"type": "L300", "direction": null, "connects": {"start": 1, "end": 3}},
+    "3": {"type": "L300", "direction": null, "connects": {"start": 2, "end": 4}},
+    "4": {"type": "L300", "direction": null, "connects": {"start": 3, "end": 5}},
+    "5": {"type": "L300", "direction": null, "connects": {"start": 4, "end": 6}},
+    "6": {"type": "L300", "direction": null, "connects": {"start": 5, "end": 7}},
+    "7": {"type": "L300", "direction": null, "connects": {"start": 6, "end": 8}},
+    "8": {"type": "L300", "direction": null, "connects": {"start": 7, "end": 9}},
+    "9": {"type": "A30R645", "direction": "left", "connects": {"start": 8, "end": 10}},
+    "10": {"type": "A30R645", "direction": "left", "connects": {"start": 9, "end": 11}},
+    "11": {"type": "A30R645", "direction": "left", "connects": {"start": 10, "end": 12}},
+    "12": {"type": "L300", "direction": null, "connects": {"start": 11, "end": 13}},
+    "13": {"type": "L300", "direction": null, "connects": {"start": 12, "end": 14}},
+    "14": {"type": "L300", "direction": null, "connects": {"start": 13, "end": 15}},
+    "15": {"type": "L300", "direction": null, "connects": {"start": 14, "end": 16}},
+    "16": {"type": "L300", "direction": null, "connects": {"start": 15, "end": 17}},
+    "17": {"type": "L300", "direction": null, "connects": {"start": 16, "end": 18}},
+    "18": {"type": "L300", "direction": null, "connects": {"start": 17, "end": 19}},
+    "19": {"type": "L300", "direction": null, "connects": {"start": 18, "end": 20}},
+    "20": {"type": "L300", "direction": null, "connects": {"start": 19, "end": 21}},
+    "21": {"type": "L300", "direction": null, "connects": {"start": 20, "end": null}},
+    "22": {"type": "A30R645", "direction": "left", "connects": {"start": null, "end": 23}},
+    "23": {"type": "A30R645", "direction": "left", "connects": {"start": 22, "end": 1}}
+  }
 }

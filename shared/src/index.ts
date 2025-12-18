@@ -24,7 +24,6 @@ export interface UiLayoutPiece {
 export interface UiLayout {
   messages: {
     error: string;
-    warning: string;
   };
   pieces: UiLayoutPiece[];
 }

@@ -4,10 +4,10 @@ import { TrackPieceDef } from "./piecedefinitions.js";
 
 // Returns the end coordinates and angle of a track piece based on the previous piece
 // and the current piece definition.
-export function getEndCoordinates(
+export function getEndCoordinate(
   layoutPiece: LayoutPiece,
   pieceDef: TrackPieceDef,
-  previousEnd: Coordinate
+  startCoordinate: Coordinate
 ): Coordinate
 {
   // Calculate the new coordinates based on the piece definition
@@ -18,7 +18,7 @@ export function getEndCoordinates(
   switch(pieceDef.type) {
     case "straight":
       const length = pieceDef.length as number;
-      const heading = previousEnd.heading;
+      const heading = startCoordinate.heading;
 
       // Calculate x and y position based on the heading of the track piece
       dX = roundTo2(length * Math.sin(degreesToRadians(heading)));
@@ -39,7 +39,7 @@ export function getEndCoordinates(
       }
 
       // Rotate the track piece to fit correctly on the end of the previous piece
-      const rotated = rotatePoint(dX, dY, previousEnd.heading);
+      const rotated = rotatePoint(dX, dY, startCoordinate.heading);
 
       // Round the values to two decimal points
       dX = roundTo2(rotated.x);
@@ -51,9 +51,9 @@ export function getEndCoordinates(
 
   // Assign the x, y and heading based on the previous calculations
   return {
-    x: previousEnd.x + dX,
-    y: previousEnd.y + dY,
-    heading: previousEnd.heading + pieceAngle,
+    x: startCoordinate.x + dX,
+    y: startCoordinate.y + dY,
+    heading: startCoordinate.heading + pieceAngle,
   }
 }
 
