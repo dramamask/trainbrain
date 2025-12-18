@@ -15,6 +15,12 @@
             "angle": null,
             "radius": null
         },
+        "L150": {
+            "type": "straight",
+            "length": 150,
+            "angle": null,
+            "radius": null
+        },
         "A30R645": {
             "type": "curve",
             "length": null,
