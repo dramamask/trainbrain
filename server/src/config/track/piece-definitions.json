@@ -15,17 +15,17 @@
             "angle": null,
             "radius": null
         },
-        "A30R660": {
+        "A30R645": {
             "type": "curve",
             "length": null,
             "angle": 30,
-            "radius": 660
+            "radius": 645
         },
-        "A15R660": {
+        "A15R645": {
             "type": "curve",
             "length": null,
             "angle": 15,
-            "radius": 600
+            "radius": 645
         }
     }
 }

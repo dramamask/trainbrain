@@ -1,4 +1,8 @@
 .trackLayout {
   height: 100%;
   width: 100%;
+  background-image: url("/layout-background.jpg");
+  background-size: contain;
+  background-position: bottom left;
+  background-repeat: no-repeat;
 }
