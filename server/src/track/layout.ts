@@ -1,7 +1,7 @@
 import { Coordinate, Direction, UiLayout, UiLayoutPiece } from "trainbrain-shared";
 import layoutData from "../config/track/layout.json" with { type: "json" };
 import { getPieceDefinition, TrackPieceDef } from "./piecedefinitions.js";
-import { getEndCoordinate } from "./calculations.js";
+import { getEndCoordinate, getStartCoordinate } from "./calculations.js";
 
 // The structure of a layout piece as defined in the layout config file
 export interface LayoutPiece {
@@ -66,7 +66,7 @@ function getUiLayout(): UiLayoutPiece[] {
   while (keepGoing) {
     layoutPiece = layoutPieces[String(id)];
 
-    const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, startPos);
+    const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, startPos, null);
     uiLayout.push(uiLayoutPiece);
 
     id = layoutPiece.connects.end;
@@ -81,12 +81,27 @@ function getUiLayout(): UiLayoutPiece[] {
 
   // Init
   id = layoutPieces["1"].connects.start;
-  //let endPos: Coordinate = // TODO: It's easier to find a layout piece if they have the id as the key.
-                           //       Change the UiLayout to have key value pairs instead of an array.
+  const uiLayoutPiece = uiLayout.find(piece => piece.id == 1);
+
+  // if (!uiLayoutPiece) {
+  //   throw new Error(`Piece 1 in the layout definition has connects.start=${id}, but piece ${id} doesn't exist.`);
+  // }
+
+  let endPos: Coordinate = (uiLayoutPiece as UiLayoutPiece).end;
 
   // Walk through the next set of layout pieces
   while (keepGoing) {
-    const todo = "implement this";
+    layoutPiece = layoutPieces[String(id)];
+
+    const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, null, endPos);
+    uiLayout.push(uiLayoutPiece);
+
+    id = layoutPiece.connects.end;
+    if (id == null) {
+      keepGoing = false;
+    }
+
+    startPos = uiLayoutPiece.end;
   }
 
 
@@ -104,18 +119,36 @@ function getUiLayout(): UiLayoutPiece[] {
  *
  * @returns (UiLayoutPiece)
  */
-function getUiLayoutPiece(id: number, layoutPiece: LayoutPiece, startCoordinate: Coordinate): UiLayoutPiece {
+function getUiLayoutPiece(
+  id: number,
+  layoutPiece: LayoutPiece,
+  startCoordinate: Coordinate | null,
+  endCoordinate: Coordinate | null,
+): UiLayoutPiece
+{
   try {
       const pieceDefinition: TrackPieceDef = getPieceDefinition(layoutPiece.type);
 
-      const endCoordinate = getEndCoordinate(layoutPiece, pieceDefinition, startCoordinate);
+      if (!startCoordinate && !endCoordinate) {
+        const message = "getUiLayoutPiece(): Must provide either a startCoordinate or an endCoordinate";
+        console.error(message);
+        throw new Error(message);
+      }
+
+      if (startCoordinate) {
+        endCoordinate = getEndCoordinate(layoutPiece, pieceDefinition, startCoordinate);
+      }
+
+      if (endCoordinate) {
+        startCoordinate = getStartCoordinate(layoutPiece, pieceDefinition, endCoordinate);
+      }
 
       const uiLayoutPiece: UiLayoutPiece = {
         id: id,
         type: pieceDefinition.type,
         direction: layoutPiece.direction,
-        start: startCoordinate,
-        end: endCoordinate,
+        start: startCoordinate as Coordinate,
+        end: endCoordinate as Coordinate,
         radius: pieceDefinition.radius,
       };
 

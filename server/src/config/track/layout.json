@@ -6,7 +6,8 @@
         "The position of the 'start side' of the piece with id 1 is defined, as well as that piece's heading in degrees.",
         "This position and heading define where the first piece is on the layout.",
         "Each piece's 'connects' values indicate which other pieces it connects to.",
-        "The 'connects' information is used to figure out the coordinates of the rest of the track pieces."
+        "The 'connects' information is used to figure out the coordinates of the rest of the track pieces.",
+        "IMPORTANT: Every piece needs to be connected to at least one other piece!"
     ],
     "field-descriptions": {
       "piece-1": {
@@ -26,7 +27,7 @@
   },
   "piece-1": {"start" : {"x": 3916, "y": 2700, "heading": 0}},
   "pieces": {
-    "1": {"type": "L300", "direction": null, "connects": {"start": 23, "end": 2}},
+    "1": {"type": "L300", "direction": null, "connects": {"start": 22, "end": 2}},
     "2": {"type": "L300", "direction": null, "connects": {"start": 1, "end": 3}},
     "3": {"type": "L300", "direction": null, "connects": {"start": 2, "end": 4}},
     "4": {"type": "L300", "direction": null, "connects": {"start": 3, "end": 5}},
@@ -47,7 +48,9 @@
     "19": {"type": "L300", "direction": null, "connects": {"start": 18, "end": 20}},
     "20": {"type": "L300", "direction": null, "connects": {"start": 19, "end": 21}},
     "21": {"type": "L300", "direction": null, "connects": {"start": 20, "end": null}},
-    "22": {"type": "A30R645", "direction": "left", "connects": {"start": null, "end": 23}},
-    "23": {"type": "A30R645", "direction": "left", "connects": {"start": 22, "end": 1}}
+
+    "22": {"type": "A30R645", "direction": "left", "connects": {"start": 23, "end": 1}},
+    "23": {"type": "A30R645", "direction": "left", "connects": {"start": 24, "end": 22}},
+    "24": {"type": "A30R645", "direction": "left", "connects": {"start": null, "end": 23}}
   }
 }
