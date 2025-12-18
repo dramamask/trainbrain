@@ -77,12 +77,26 @@ function getUiLayout(): UiLayoutPiece[] {
     startPos = uiLayoutPiece.end;
   }
 
+  // TODO: combine these two loops. probably have to move the loop to its own func, with some changes.
+
+  // Init
+  id = layoutPieces["1"].connects.start;
+  //let endPos: Coordinate = // TODO: It's easier to find a layout piece if they have the id as the key.
+                           //       Change the UiLayout to have key value pairs instead of an array.
+
+  // Walk through the next set of layout pieces
+  while (keepGoing) {
+    const todo = "implement this";
+  }
+
+
+
+
   return uiLayout;
 }
 
 /**
- * Calculate the start and end coordinate of a layout piece, and return the information
- * as a UiLayoutPiece type.
+ * Calculate the end coordinate of a layout piece that has a known start coordinate.
  *
  * @param id {number} - ID of the layout piece
  * @param layoutPiece {LayoutPiece} - Layout piece info as defined in the layout json
