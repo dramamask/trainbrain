@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import TrackLayout from "@/app/components/tracklayout";
 
 import styles from "./page.module.css";
@@ -9,27 +9,25 @@ import styles from "./page.module.css";
 export default function Home()
 {
   return (
-    <div className={styles.appContainer}>
-      <div className={styles.header}>
+    <Box height="100dvh">
         <Grid
           container
+          height="100%"
           spacing={0} // Horizontal spacing in between grid items
           justifyContent="flex-start"
-          alignItems="flex-start"
+          alignItems="stretch"
         >
-          <Grid size={2}>
+          <Grid size={1}>
             <div className={styles.logoContainer}>
               <img className={styles.logo} src="/trainbrain-logo.png" />
             </div>
           </Grid>
           <Grid size="grow">
-            {/* Future menu items go here */}
+            <div className={styles.trackLayoutContainer}>
+              <TrackLayout />
+            </div>
           </Grid>
         </Grid>
-      </div>
-      <div className={styles.trackLayoutContainer}>
-        <TrackLayout />
-      </div>
-    </div>
+    </Box>
   )
 }

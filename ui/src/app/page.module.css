@@ -1,11 +1,5 @@
 .appContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.header {
-  border-bottom: 1px solid #c7c4c4;
+  height: 100dvh;
 }
 
 .logoContainer {
@@ -21,7 +15,10 @@
 }
 
 .trackLayoutContainer {
-  flex: 1; /* Take up remaining space */
-  padding: 5px;
+  height: 100vh;                /* force viewport height */
+  width: 100%;                  /* full width */
+  display: flex;                /* allow children to stretch */
+  align-items: stretch;         /* stretch child vertically */
+  justify-content: bottom left;
   overflow: hidden;
 }
