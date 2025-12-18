@@ -50,7 +50,29 @@ function getUiLayout(trackStart: Coordinate): UiLayoutPiece[] {
 
 // Return the UiLayout structure as needed by the API
 export function getLayout(trackStart: Coordinate): UiLayout {
-  const uiLayout: UiLayoutPiece[] = getUiLayout(trackStart);
+  let errorMessage = "";
+  let uiLayout: UiLayoutPiece[] = [];
+
+  try {
+    uiLayout = getUiLayout(trackStart);
+  } catch (error) {
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else {
+      console.error("Unknown error occured", error);
+    }
+  }
+
+  return {
+    messages: {
+      error: errorMessage,
+      warning: getWarningMessage(trackStart),
+    },
+    pieces: uiLayout,
+  }
+}
+
+function getWarningMessage(trackStart: Coordinate): string {
   let warning = "";
 
   if (trackStart.x == 0 && trackStart.y == 0 && trackStart.heading == 0) {
@@ -60,10 +82,5 @@ export function getLayout(trackStart: Coordinate): UiLayout {
     warning += "'?x=1000&y=1500&heading=90'";
   }
 
-  return {
-    meta: {
-      warning: warning,
-    },
-    pieces: uiLayout,
-  }
+  return warning;
 }

@@ -22,7 +22,8 @@ export interface UiLayoutPiece {
 
 // The structure that the server returns from the GET layout API call
 export interface UiLayout {
-  meta: {
+  messages: {
+    error: string;
     warning: string;
   };
   pieces: UiLayoutPiece[];

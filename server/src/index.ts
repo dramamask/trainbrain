@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { Coordinate } from "trainbrain-shared";
+import { Coordinate, UiLayout } from "trainbrain-shared";
 import { getLayout } from "./track/layout.js";
 
 const port = 3001;
@@ -25,9 +25,13 @@ app.get("/layout", (_req, res) => {
   res.header("Content-Type", "application/json");
 
   try {
-    res.send(JSON.stringify(getLayout(trackStart)));
+    const layout = getLayout(trackStart);
+    const status = getHttpStatusCode(layout);
+
+    res.status(status).send(JSON.stringify(layout));
   } catch (error) {
-    res.status(500).send({ error: (error as Error).message });
+    console.error("Unknown error at the edge", error);
+    res.status(500).send({error: "Unknown error at the edge. Check server logs."});
   }
 });
 
@@ -35,3 +39,11 @@ app.get("/layout", (_req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+function getHttpStatusCode(layout: UiLayout): number {
+  if (layout.messages.error != "") {
+    return 500;
+  }
+
+  return 200;
+}

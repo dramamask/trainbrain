@@ -18,7 +18,7 @@ export function getPieceDefinition(pieceDefId: string): TrackPieceDef {
     const pieceDef = pieceDefinitions[pieceDefId];
 
     if (!pieceDef) {
-        throw new Error(`Piece definition not found for ID: ${pieceDefId}`);
+        throw new Error(`Piece definition not found for ID ${pieceDefId}`);
     }
 
     return pieceDef;

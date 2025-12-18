@@ -20,8 +20,28 @@ export async function apiFetch<T>(endpoint: string): Promise<T> {
   const response = await fetch(uri);
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+    const body = await response.json();
+    if (hasErrorMessage(body)) {
+      throw new Error(body.messages.error);
+    }
+
+    console.error("Unexpected response body format", response);
+    throw new Error(`Unknown error: ${response.status} ${response.statusText}`);
   }
 
   return await response.json();
+}
+
+// Check if the body has an error message where we expect it to be (body.message.error)
+function hasErrorMessage(
+  body: unknown
+): body is { messages: { error: string } } {
+  return (
+    typeof body === "object" &&
+    body !== null &&
+    "messages" in body &&
+    typeof (body as any).messages === "object" &&
+    (body as any).messages !== null &&
+    "error" in (body as any).messages
+  );
 }

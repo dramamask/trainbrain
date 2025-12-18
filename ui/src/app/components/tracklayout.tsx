@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared"
 import { getTrackLayout } from "../services/api/tracklayout"
+import { Alert, CircularProgress } from "@mui/material";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
 
@@ -13,22 +14,41 @@ export default function TrackLayout()
   const layoutStartPosition = {x:300, y: 0, heading: 0}; // TODO: How/where do we want to define this? Automatic somehow?
 
   const [layout, setLayout] = useState<UiLayout>({} as UiLayout);
+  const [loading, setLoading] = useState<Boolean>(true);
+  const [error, setError] = useState<string>("");
 
   // Fetch the layout from the back-end server
   useEffect(() => {
     getTrackLayout(layoutStartPosition)
       .then((layoutData: UiLayout) => {
         setLayout(layoutData);
+        setLoading(false);
         console.log("Layout received from the backend server", layoutData);
       })
       .catch((error: Error) => {
+        setLoading(false);
         console.error("Error fetching layout from backend server", error);
+        setError(error.message);
       });
   }, []);
 
-  // Return an empty object if uiLayout is empty (i.e. before the API call has returned)
+  if (loading) {
+    return (
+      <CircularProgress />
+    )
+  }
+
+ if (error != "") {
+    return (
+      <Alert severity="error">{error}</Alert>
+    )
+ }
+
+  // Return an empty object if uiLayout is empty. Shouldn't normally happen but used as a fallback.
   if (Object.keys(layout).length == 0) {
-    return null;
+    return (
+      <Alert severity="error">Unknown error</Alert>
+    );
   }
 
   // The size of the world/viewbox, in SVG coordinates
