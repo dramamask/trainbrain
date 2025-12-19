@@ -11,16 +11,33 @@ function getApiBaseUrl(): string {
   throw new Error("API base URL not defined");
 }
 
-// Common fetch function for API calls to the back-end server
-export async function apiFetch<T>(endpoint: string): Promise<T> {
+// Function to make a GET call to an API endpoint
+export async function apiGet<T>(endpoint: string): Promise<T> {
   const uri = `${getApiBaseUrl()}${endpoint}`;
-
-  console.log('Calling ' + uri);
 
   const response = await fetch(uri);
 
+  return handleResponse(response);
+}
+
+// Funtion to make a POST call to an API enpoint
+export async function apiPost<T>(endpoint: string, data: object): Promise<T> {
+  const uri = `${getApiBaseUrl()}${endpoint}`;
+
+  const response = await fetch(uri, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json; charset=UTF-8' },
+    body: JSON.stringify(data),
+  });
+
+  return handleResponse(response);
+}
+
+// Handle a fetch response
+async function handleResponse(response: Response): Promise<T> {
   if (!response.ok) {
     const body = await response.json();
+
     if (hasErrorMessage(body)) {
       throw new Error(body.messages.error);
     }

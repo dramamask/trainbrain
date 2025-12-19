@@ -1,0 +1,14 @@
+.mainStack {
+  padding: 5px;
+}
+
+.logoContainer {
+  height: 80px;
+}
+
+.logo {
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  width: 100%;
+}

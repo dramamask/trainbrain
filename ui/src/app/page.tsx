@@ -1,13 +1,14 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { Box, Grid } from "@mui/material";
+
+import KeyboardEventHandler from "@/app/components/keyboardEventHandler";
+import SideBar from "@/app/components/sidebar";
 import TrackLayout from "@/app/components/tracklayout";
 
 import styles from "./page.module.css";
 
-export default function Home()
-{
+export default function Home() {
   return (
     <Box height="100dvh">
         <Grid
@@ -16,10 +17,9 @@ export default function Home()
           justifyContent="flex-start"
           alignItems="stretch"
         >
+          <KeyboardEventHandler />
           <Grid size={1}>
-            <div className={styles.logoContainer}>
-              <img className={styles.logo} src="/trainbrain-logo.png" />
-            </div>
+            <SideBar />
           </Grid>
           <Grid size="grow">
             <div className={styles.trackLayoutContainer}>

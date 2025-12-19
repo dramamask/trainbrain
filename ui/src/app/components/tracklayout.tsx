@@ -2,17 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared"
-import { getTrackLayout } from "@/app/services/api/tracklayout"
-import { Alert, CircularProgress } from "@mui/material";
+import { Alert, CircularProgress, Stack } from "@mui/material";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
 import StartPosition from "./startPosition";
+import { getTrackLayout } from "@/app/services/api/tracklayout"
+import { trackLayout } from "@/app/services/store";
+
 
 import styles from "./tracklayout.module.css";
 
 export default function TrackLayout()
 {
-  const [layout, setLayout] = useState<UiLayout>({} as UiLayout);
+  const [layout, setLayout] = useState<UiLayout>(trackLayout.get() as UiLayout);
   const [loading, setLoading] = useState<Boolean>(true);
   const [error, setError] = useState<string>("");
 
@@ -20,9 +22,9 @@ export default function TrackLayout()
   useEffect(() => {
     getTrackLayout()
       .then((layoutData: UiLayout) => {
+        trackLayout.set(layoutData);
         setLayout(layoutData);
         setLoading(false);
-        console.log("Layout received from the backend server", layoutData);
       })
       .catch((error: Error) => {
         setLoading(false);
@@ -33,15 +35,19 @@ export default function TrackLayout()
 
   if (loading) {
     return (
-      <CircularProgress />
+      <CircularProgress className={styles.progress} />
     )
   }
 
- if (error != "") {
+  if (error != "") {
     return (
-      <Alert severity="error">{error}</Alert>
+      <>
+        <Stack className={styles.errorContainer}>
+          <Alert severity="error">{error}</Alert>
+        </Stack>
+      </>
     )
- }
+  }
 
   // Return an empty object if uiLayout is empty. Shouldn't normally happen but used as a fallback.
   if (Object.keys(layout).length == 0) {
@@ -51,7 +57,7 @@ export default function TrackLayout()
   }
 
   // The size of the world/viewbox, in SVG coordinates
-  // Note that his matches the pixel size of the layout-background image
+  // Note that this matches the pixel size of the layout-background image
   const worldHeight = 6000;
   const worldWidth= 6000;
 

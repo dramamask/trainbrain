@@ -1,0 +1,12 @@
+.stackItem {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  width: 100%;
+}
+
+.label {
+  display: flex;
+  font-size: 0.85em;
+  justify-content: center; /* Centers horizontally */
+  margin-bottom: -6px;
+}

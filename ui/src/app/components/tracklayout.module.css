@@ -1,3 +1,11 @@
+.progress {
+  padding: 5px;
+}
+
+.errorContainer {
+  padding: 5px;
+}
+
 .trackLayout {
   height: 100%;
   background-image: url("/layout-background.jpg");
