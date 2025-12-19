@@ -108,7 +108,7 @@ export function getStartCoordinate(
       }
 
       // Rotate the track piece to fit correctly on the end of the previous piece
-      const rotated = rotatePoint(dX, dY, endCoordinate.heading);
+      const rotated = rotatePoint(dX, dY, endCoordinate.heading - pieceAngle);
 
       // Round the values to two decimal points
       dX = roundTo2(rotated.x);

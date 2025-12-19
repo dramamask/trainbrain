@@ -25,7 +25,7 @@
       }
     }
   },
-  "piece-1": {"start" : {"x": 3916, "y": 2700, "heading": 0}},
+  "piece-1": {"start" : {"x": 3916, "y": 2800, "heading": 0}},
   "pieces": {
     "1": {"type": "L300", "direction": null, "connects": {"start": 22, "end": 2}},
     "2": {"type": "L300", "direction": null, "connects": {"start": 1, "end": 3}},
@@ -34,7 +34,7 @@
     "5": {"type": "L300", "direction": null, "connects": {"start": 4, "end": 6}},
     "6": {"type": "L300", "direction": null, "connects": {"start": 5, "end": 7}},
     "7": {"type": "L300", "direction": null, "connects": {"start": 6, "end": 8}},
-    "8": {"type": "L300", "direction": null, "connects": {"start": 7, "end": 9}},
+    "8": {"type": "L150", "direction": null, "connects": {"start": 7, "end": 9}},
     "9": {"type": "A30R645", "direction": "left", "connects": {"start": 8, "end": 10}},
     "10": {"type": "A30R645", "direction": "left", "connects": {"start": 9, "end": 11}},
     "11": {"type": "A30R645", "direction": "left", "connects": {"start": 10, "end": 12}},
@@ -49,8 +49,17 @@
     "20": {"type": "L300", "direction": null, "connects": {"start": 19, "end": 21}},
     "21": {"type": "L300", "direction": null, "connects": {"start": 20, "end": null}},
 
-    "22": {"type": "A30R645", "direction": "left", "connects": {"start": 23, "end": 1}},
+    "22": {"type": "A30R645", "direction": "right", "connects": {"start": 23, "end": 1}},
     "23": {"type": "A30R645", "direction": "left", "connects": {"start": 24, "end": 22}},
-    "24": {"type": "A30R645", "direction": "left", "connects": {"start": null, "end": 23}}
+    "24": {"type": "L300", "direction": null, "connects": {"start": 25, "end": 23}},
+    "25": {"type": "L300", "direction": null, "connects": {"start": 26, "end": 24}},
+    "26": {"type": "A30R645", "direction": "right", "connects": {"start": 27, "end": 25}},
+    "27": {"type": "A30R645", "direction": "right", "connects": {"start": 28, "end": 26}},
+    "28": {"type": "A30R645", "direction": "right", "connects": {"start": 29, "end": 27}},
+    "29": {"type": "L300", "direction": null, "connects": {"start": 30, "end": 28}},
+    "30": {"type": "L300", "direction": null, "connects": {"start": 31, "end": 29}},
+    "31": {"type": "A30R645", "direction": "right", "connects": {"start": 32, "end": 30}},
+    "32": {"type": "A30R645", "direction": "right", "connects": {"start": 33, "end": 31}},
+    "33": {"type": "A30R645", "direction": "right", "connects": {"start": null, "end": 32}}
   }
 }

@@ -56,56 +56,47 @@ function getUiLayout(): UiLayoutPiece[] {
   // Define the array that we will return
   const uiLayout: UiLayoutPiece[] = [];
 
-  // Prepare the values for the first piece we will calculate
+  // Init
   let layoutPiece: LayoutPiece;
   let id = 1;
   let startPos: Coordinate = layoutData["piece-1"].start;
-  let keepGoing = true;
 
-  // Walk through the layout pieces to build the layout
-  while (keepGoing) {
-    layoutPiece = layoutPieces[String(id)];
+  // Walk through the layout pieces to build the layout (calculating end positions with known start positions)
+  while (true) {
+    layoutPiece = getLayoutPiece(id, layoutPieces);
 
     const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, startPos, null);
     uiLayout.push(uiLayoutPiece);
 
     id = layoutPiece.connects.end;
     if (id == null) {
-      keepGoing = false;
+      break;
     }
 
     startPos = uiLayoutPiece.end;
   }
-
-  // TODO: combine these two loops. probably have to move the loop to its own func, with some changes.
 
   // Init
   id = layoutPieces["1"].connects.start;
   const uiLayoutPiece = uiLayout.find(piece => piece.id == 1);
+  let endPos: Coordinate = (uiLayoutPiece as UiLayoutPiece).start;
 
-  // if (!uiLayoutPiece) {
-  //   throw new Error(`Piece 1 in the layout definition has connects.start=${id}, but piece ${id} doesn't exist.`);
-  // }
-
-  let endPos: Coordinate = (uiLayoutPiece as UiLayoutPiece).end;
-
-  // Walk through the next set of layout pieces
-  while (keepGoing) {
-    layoutPiece = layoutPieces[String(id)];
+  // Walk through the layout pieces to build the layout (calculating start positions with knows end positions)
+  while (true) {
+    layoutPiece = getLayoutPiece(id, layoutPieces);
 
     const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, null, endPos);
     uiLayout.push(uiLayoutPiece);
 
-    id = layoutPiece.connects.end;
+    id = layoutPiece.connects.start;
     if (id == null) {
-      keepGoing = false;
+      break;
     }
 
-    startPos = uiLayoutPiece.end;
+    endPos = uiLayoutPiece.start;
   }
 
-
-
+  // TODO: figure out when to run which loop. Move the loops into functions. Make logic to call the right one.
 
   return uiLayout;
 }
@@ -129,18 +120,14 @@ function getUiLayoutPiece(
   try {
       const pieceDefinition: TrackPieceDef = getPieceDefinition(layoutPiece.type);
 
-      if (!startCoordinate && !endCoordinate) {
+      if (startCoordinate) {
+        endCoordinate = getEndCoordinate(layoutPiece, pieceDefinition, startCoordinate);
+      } else if (endCoordinate) {
+        startCoordinate = getStartCoordinate(layoutPiece, pieceDefinition, endCoordinate);
+      } else {
         const message = "getUiLayoutPiece(): Must provide either a startCoordinate or an endCoordinate";
         console.error(message);
         throw new Error(message);
-      }
-
-      if (startCoordinate) {
-        endCoordinate = getEndCoordinate(layoutPiece, pieceDefinition, startCoordinate);
-      }
-
-      if (endCoordinate) {
-        startCoordinate = getStartCoordinate(layoutPiece, pieceDefinition, endCoordinate);
       }
 
       const uiLayoutPiece: UiLayoutPiece = {
@@ -157,4 +144,19 @@ function getUiLayoutPiece(
   } catch(error) {
     throw new Error("Failed to get layout: " + (error as Error).message);
   }
+}
+
+// Get a layout piece with a given ID from the list of layout pieces (which was read from the layout json file)
+function getLayoutPiece(id: number, layoutPieces: LayoutPieces): LayoutPiece {
+  const layoutPiece = layoutPieces[String(id)]
+
+  if (layoutPiece == undefined) {
+    let message = `Could not find layout piece with ID ${id}. `;
+    message += "Check to make sure that the id exists in the json layout file. ";
+    message += "Also check to make sure that all 'connects' values are correct in the layout json file.";
+    console.error(message);
+    throw new Error(message);
+  }
+
+  return layoutPiece;
 }

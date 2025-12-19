@@ -1,11 +1,9 @@
 import { Coordinate, UiLayout } from "trainbrain-shared";
 import { apiFetch } from "./api";
 
-export async function getTrackLayout(startPos: Coordinate): Promise<UiLayout>
+export async function getTrackLayout(): Promise<UiLayout>
 {
-  const data = await apiFetch<UiLayout>(
-    `/layout?x=${startPos.x}&y=${startPos.y}&heading=${startPos.heading}`
-  );
+  const data = await apiFetch<UiLayout>("/layout");
 
   return data;
 }

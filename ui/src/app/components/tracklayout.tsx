@@ -6,25 +6,19 @@ import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { Alert, CircularProgress } from "@mui/material";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
-import * as config from "@/app/config/config"
+import StartPosition from "./startPosition";
 
 import styles from "./tracklayout.module.css";
 
 export default function TrackLayout()
 {
-  const layoutStartPosition = {
-    x: config.LAYOUT_START_X,
-    y: config.LAYOUT_START_Y,
-    heading: config.LAYOUT_START_HEADING,
-  };
-
   const [layout, setLayout] = useState<UiLayout>({} as UiLayout);
   const [loading, setLoading] = useState<Boolean>(true);
   const [error, setError] = useState<string>("");
 
   // Fetch the layout from the back-end server
   useEffect(() => {
-    getTrackLayout(layoutStartPosition)
+    getTrackLayout()
       .then((layoutData: UiLayout) => {
         setLayout(layoutData);
         setLoading(false);
@@ -73,6 +67,8 @@ export default function TrackLayout()
         {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
         <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
           { renderDebugContent() }
+
+          { <StartPosition position={layout.pieces[0].start} /> }
 
           {
             // Iterate over the track layout and render each piece
