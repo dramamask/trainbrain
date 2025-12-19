@@ -2,14 +2,20 @@
   padding: 5px;
 }
 
-.errorContainer {
-  padding: 5px;
-}
-
-.trackLayout {
+.trackLayoutContainer {
   height: 100%;
   background-image: url("/layout-background.jpg");
   background-size: contain;
   background-position: bottom left;
   background-repeat: no-repeat;
+  position: relative;
+}
+
+.error {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%); /* Shifts it back by half its own width/height */
+  width: 90%;
+  z-index: 1; /* Moves it on top of the container */
 }

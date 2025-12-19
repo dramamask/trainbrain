@@ -9,7 +9,6 @@ import StartPosition from "./startPosition";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { trackLayout } from "@/app/services/store";
 
-
 import styles from "./tracklayout.module.css";
 
 export default function TrackLayout()
@@ -39,31 +38,14 @@ export default function TrackLayout()
     )
   }
 
-  if (error != "") {
-    return (
-      <>
-        <Stack className={styles.errorContainer}>
-          <Alert severity="error">{error}</Alert>
-        </Stack>
-      </>
-    )
-  }
-
-  // Return an empty object if uiLayout is empty. Shouldn't normally happen but used as a fallback.
-  if (Object.keys(layout).length == 0) {
-    return (
-      <Alert severity="error">Unknown error</Alert>
-    );
-  }
-
   // The size of the world/viewbox, in SVG coordinates
   // Note that this matches the pixel size of the layout-background image
   const worldHeight = 6000;
   const worldWidth= 6000;
 
-  // Render the track layout
+  // Render the track layout (and any error message if present)
   return (
-    <div className={styles.trackLayout}>
+    <div className={styles.trackLayoutContainer}>
       <svg
         height="100%"
         width="100%"
@@ -73,25 +55,11 @@ export default function TrackLayout()
         {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
         <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
           { renderDebugContent() }
-
-          { <StartPosition position={layout.pieces[0].start} /> }
-
-          {
-            // Iterate over the track layout and render each piece
-            layout.pieces.map((piece: UiLayoutPiece) => {
-              switch (piece.type) {
-                case "straight":
-                  return <Straight piece={piece} key={piece.id} />;
-                case "curve":
-                  return <Curve piece={piece} key={piece.id} />;
-                default:
-                  return null;
-              }
-            })
-          }
-
+          { renderStartPosition(layout) }
+          { renderLayout(layout) }
         </g>
       </svg>
+      { error && <Alert className={styles.error} severity="error">{error}</Alert> }
     </div>
   )
 }
@@ -106,4 +74,36 @@ function renderDebugContent() {
       </g>
     );
   }
+}
+
+function isLayoutAvailable(layout: UiLayout) {
+  return (Object.keys(layout).length != 0);
+}
+
+function renderStartPosition(layout: UiLayout) {
+  if (isLayoutAvailable(layout)) {
+    return (
+      <StartPosition position={layout.pieces[0].start} />
+    )
+  }
+  return null;
+}
+
+function renderLayout(layout: UiLayout) {
+  if (isLayoutAvailable(layout)) {
+    return (
+      // Iterate over the track layout and render each piece
+      layout.pieces.map((piece: UiLayoutPiece) => {
+        switch (piece.type) {
+          case "straight":
+            return <Straight piece={piece} key={piece.id} />;
+          case "curve":
+            return <Curve piece={piece} key={piece.id} />;
+          default:
+            return null;
+        }
+      })
+    )
+  }
+  return null;
 }

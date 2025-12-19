@@ -1,5 +1,6 @@
 # TODO
-- Error disabled should be on top of map, not instead of.
+- Make a delivery mechanism for errors. from the store. make dedictated error component.
+- Make a layout delivery mechanism where we get the layout from other API calls as well, not just the one on the tracklayout component. E.g. also from the keyboard handler API call to set piece1position.
 - piece 1 api call should be a PUT, not POST.
 - In edit mode, ability to move track with arrow keys (need to create server part. Need to have the Ui update when new layout arrives).
 - In edit mode, ability to move track with mouse.

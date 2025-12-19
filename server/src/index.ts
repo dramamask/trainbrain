@@ -21,11 +21,10 @@ app.get("/layout", (_req, res) => {
   try {
     const layout = getLayout();
     const status = getHttpStatusCode(layout);
-
     res.status(status).send(JSON.stringify(layout));
   } catch (error) {
     console.error("Unknown error at the edge", error);
-    res.status(500).send({error: "Unknown error at the edge. Check server logs."});
+    res.status(500).send("Unknown error at the edge. Check server logs.");
   }
 });
 
