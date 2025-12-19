@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared"
-import { Alert, CircularProgress, Stack } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import Error from "./error";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
 import StartPosition from "./startPosition";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { trackLayout } from "@/app/services/store";
+import { store as errorStore } from "@/app/services/stores/error";
 
 import styles from "./tracklayout.module.css";
 
@@ -15,7 +17,6 @@ export default function TrackLayout()
 {
   const [layout, setLayout] = useState<UiLayout>(trackLayout.get() as UiLayout);
   const [loading, setLoading] = useState<Boolean>(true);
-  const [error, setError] = useState<string>("");
 
   // Fetch the layout from the back-end server
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function TrackLayout()
       .catch((error: Error) => {
         setLoading(false);
         console.error("Error fetching layout from backend server", error);
-        setError(error.message);
+        errorStore.setError(error.message);
       });
   }, []);
 
@@ -40,6 +41,7 @@ export default function TrackLayout()
 
   // The size of the world/viewbox, in SVG coordinates
   // Note that this matches the pixel size of the layout-background image
+  // TODO: Read the size automatically from the image? Have a default if there's no image?
   const worldHeight = 6000;
   const worldWidth= 6000;
 
@@ -59,13 +61,13 @@ export default function TrackLayout()
           { renderLayout(layout) }
         </g>
       </svg>
-      { error && <Alert className={styles.error} severity="error">{error}</Alert> }
+      <Error />
     </div>
   )
 }
 
+// Red x-axis and green y-axis for debugging purposes
 function renderDebugContent() {
-  // Red x-axis and green y-axis for debugging purposes
   if (process.env.NEXT_PUBLIC_DEBUG_MODE === "true") {
     return (
       <g>
@@ -76,10 +78,12 @@ function renderDebugContent() {
   }
 }
 
+// Returns true if the track layout is available
 function isLayoutAvailable(layout: UiLayout) {
   return (Object.keys(layout).length != 0);
 }
 
+// Render the start position
 function renderStartPosition(layout: UiLayout) {
   if (isLayoutAvailable(layout)) {
     return (
@@ -89,6 +93,7 @@ function renderStartPosition(layout: UiLayout) {
   return null;
 }
 
+// Render the actual track pieces in the layout
 function renderLayout(layout: UiLayout) {
   if (isLayoutAvailable(layout)) {
     return (

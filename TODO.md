@@ -1,7 +1,8 @@
 # TODO
-- Make a delivery mechanism for errors. from the store. make dedictated error component.
+- Rewrite the other stores to work the same was as the errorStore.
 - Make a layout delivery mechanism where we get the layout from other API calls as well, not just the one on the tracklayout component. E.g. also from the keyboard handler API call to set piece1position.
 - piece 1 api call should be a PUT, not POST.
+- Store layout in database? May be easier to save the layout in a database than having to write to a json file?
 - In edit mode, ability to move track with arrow keys (need to create server part. Need to have the Ui update when new layout arrives).
 - In edit mode, ability to move track with mouse.
 - Make a setting on the screen to turn on or off the start position indicator.

@@ -3,7 +3,7 @@
 import { Box, Grid } from "@mui/material";
 
 import KeyboardEventHandler from "@/app/components/keyboardEventHandler";
-import SideBar from "@/app/components/sidebar";
+import SideBar from "@/app/components/sidebar/sidebar";
 import TrackLayout from "@/app/components/tracklayout";
 
 import styles from "./page.module.css";

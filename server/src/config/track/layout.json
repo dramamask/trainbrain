@@ -27,7 +27,7 @@
   },
   "piece-1": {"start" : {"x": 3916, "y": 2800, "heading": 0}},
   "pieces": {
-    "1": {"type": "L300", "direction": null, "connects": {"start": 22, "end": 2}},
+    "1": {"type": "L300000", "direction": null, "connects": {"start": 22, "end": 2}},
     "2": {"type": "L300", "direction": null, "connects": {"start": 1, "end": 3}},
     "3": {"type": "L300", "direction": null, "connects": {"start": 2, "end": 4}},
     "4": {"type": "L300", "direction": null, "connects": {"start": 3, "end": 5}},

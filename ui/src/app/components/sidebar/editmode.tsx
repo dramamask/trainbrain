@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Stack, Switch } from "@mui/material"
-import { editMode } from "../services/store";
+import { editMode } from "../../services/store";
 
 import styles from "./editmode.module.css";
 
