@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import * as editMode from "@/app/services/keyeventhandlers/editmode";
+import * as error from "@/app/services/keyeventhandlers/error";
 
 export default function KeyBoardEventHandler() {
   useEffect(() => {
@@ -24,6 +25,5 @@ function handleKeyDown(key: string) {
   // This follows the command pattern. Individual event handlers check
   // for themselves to see if they should handle the event or not.
   editMode.handleKeyDown(key);
-
-  // In the future we can add other key-down event handlers here
+  error.handleKeyDown(key);
 }

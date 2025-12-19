@@ -1,8 +1,8 @@
 interface State {
-  error: string;
+  editMode: boolean;
 }
 
-let state: State = { error: "" };
+let state: State = { editMode: false };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -20,19 +20,14 @@ export const store = {
     return state;
   },
 
-  errorPresent(): boolean {
-    return (state.error != "");
+  isEditMode(): boolean {
+    return state.editMode;
   },
 
-  setError(message: string): void {
+  setEditMode(value: boolean): void {
     // Immutable update
-    state = { error: message };
+    state = { editMode: value };
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
-
-  clearError(): void {
-    state = { error: "" };
-    listeners.forEach((callback) => callback());
-  }
 };

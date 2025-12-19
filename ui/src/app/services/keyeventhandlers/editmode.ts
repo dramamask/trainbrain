@@ -1,12 +1,13 @@
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared";
-import { editMode, trackLayout } from "@/app/services/store";
+import { trackLayout } from "@/app/services/store";
 import { store as errorStore } from '@/app/services/stores/error';
+import { store as editModeStore } from '@/app/services/stores/editmode';
 import { setPiece1StartPosition } from "@/app/services/api/tracklayout";
 
 // Key Event Handler for Edit Mode
 export function handleKeyDown(key: string) {
   // Only do something when Edit Mode is enabled
-  if (editMode.isEnabled()) {
+  if (editModeStore.isEditMode()) {
     const layout: UiLayout = trackLayout.get() as UiLayout;
     const piece1 = layout.pieces.find(piece => piece.id == 1) as UiLayoutPiece;
 
@@ -24,7 +25,8 @@ export function handleKeyDown(key: string) {
         piece1.start.x += 1;
         break;
       default:
-        break;
+        // Exit this function
+        return;
     }
 
     setPiece1StartPosition(piece1.start)

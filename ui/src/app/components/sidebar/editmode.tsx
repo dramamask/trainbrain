@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import React, { useSyncExternalStore } from "react";
 import { Stack, Switch } from "@mui/material"
-import { editMode } from "../../services/store";
+import { store as editModeStore } from "@/app/services/stores/editmode";
 
 import styles from "./editmode.module.css";
 
 export default function EditMode() {
-  const [checked, setChecked] = useState(editMode.isEnabled());
+  // This hook automatically subscribes and returns the latest snapshot
+    const state = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.checked;
-    setChecked(value);
-    editMode.set(value);
+    editModeStore.setEditMode(event.target.checked);
   }
 
   return (
@@ -18,7 +17,7 @@ export default function EditMode() {
         <div className={styles.label}>Edit Mode</div>
         <div className={styles.stackItem}>
           <Switch className={styles.switch}
-            checked={checked}
+            checked={state.editMode}
             onChange={handleChange}
           />
         </div>
