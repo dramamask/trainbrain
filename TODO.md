@@ -1,5 +1,5 @@
 # TODO
-- Todo: How to automatically register all my keyeventhandlers in the keyboardEventHandler.tsx component.
+- Have each event handler register themselves with another funciton, a Factory of sorts. Then use that factory function in the keyboardEventHandler.tsc component.
 - Rewrite the tracklayout stores to work the same was as the errorStore.
 - Make a layout delivery mechanism where we get the layout from other API calls as well, not just the one on the tracklayout component. E.g. also from the keyboard handler API call to set piece1position.
 - piece 1 api call should be a PUT, not POST.
