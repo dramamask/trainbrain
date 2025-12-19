@@ -49,8 +49,8 @@ export function getEndCoordinate(
       const rotated = rotatePoint(dX, dY, startCoordinate.heading);
 
       // Round the values to two decimal points
-      dX = roundTo2(rotated.x);
-      dY = roundTo2(rotated.y);
+      dX = rotated.x;
+      dY = rotated.y;
       break;
     default:
       throw new Error(`Unknown piece type: ${pieceDef.type}`);
@@ -58,8 +58,8 @@ export function getEndCoordinate(
 
   // Assign the x, y and heading based on the previous calculations
   return {
-    x: startCoordinate.x + dX,
-    y: startCoordinate.y + dY,
+    x: roundTo2(startCoordinate.x + dX),
+    y: roundTo2(startCoordinate.y + dY),
     heading: startCoordinate.heading + pieceAngle,
   }
 }
@@ -90,8 +90,8 @@ export function getStartCoordinate(
       const heading = endCoordinate.heading;
 
       // Calculate x and y position based on the heading of the track piece
-      dX = roundTo2(length * Math.sin(degreesToRadians(heading)));
-      dY = roundTo2(length * Math.cos(degreesToRadians(heading)));
+      dX = length * Math.sin(degreesToRadians(heading));
+      dY = length * Math.cos(degreesToRadians(heading));
       break;
     case "curve":
       const radius = pieceDef.radius as number;
@@ -111,8 +111,8 @@ export function getStartCoordinate(
       const rotated = rotatePoint(dX, dY, endCoordinate.heading - pieceAngle);
 
       // Round the values to two decimal points
-      dX = roundTo2(rotated.x);
-      dY = roundTo2(rotated.y);
+      dX = rotated.x;
+      dY = rotated.y;
       break;
     default:
       throw new Error(`Unknown piece type: ${pieceDef.type}`);
@@ -120,8 +120,8 @@ export function getStartCoordinate(
 
   // Assign the x, y and heading based on the previous calculations
   return {
-    x: endCoordinate.x - dX,
-    y: endCoordinate.y - dY,
+    x: roundTo2(endCoordinate.x - dX),
+    y: roundTo2(endCoordinate.y - dY),
     heading: endCoordinate.heading - pieceAngle,
   }
 }

@@ -5,8 +5,10 @@
 - Use strip-json-comments to strip comments from the JSON layout file. Then add comments to make it easier for me to read.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each.
   Probably need to make another API for that.
+- Build a layout editor. Keep it simple. Make a "add next track piece" function, default to a straight? Have an
+  easy way to change the piece. Maybe with mouse clicks or keyboard shortcuts.
+- Start working on an intersection piece (a cross).
+- Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements?
 - Create API to show the trian position. How do we want to show it on the map (SVG I presume). What info do we need
   from the back-end for that (just coordinates?).
-- Start working on an intersection piece (a cross). We need error calculations to see if it lines up.
 - Use JSON Schema to validate the json piece-defintion and (most importantly) the layout json file.
-- Build a layout editor. With snap functionality. Editing the JSON is cumborsom.
