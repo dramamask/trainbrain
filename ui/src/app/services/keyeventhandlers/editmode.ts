@@ -1,5 +1,5 @@
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared";
-import { editMode, trackLayout } from "@/app/services/store";
+import { editMode, error as errorStore, trackLayout } from "@/app/services/store";
 import { setPiece1StartPosition } from "@/app/services/api/tracklayout";
 
 // Key Event Handler for Edit Mode
@@ -26,6 +26,13 @@ export function handleKeyDown(key: string) {
         break;
     }
 
-    setPiece1StartPosition(piece1.start);
+    setPiece1StartPosition(piece1.start)
+    .then((layoutData: UiLayout) => {
+        trackLayout.set(layoutData);
+      })
+      .catch((error: Error) => {
+        errorStore.set(error.message);
+        console.error("handleKeyDown().setPiece1StartPosition()", error);
+      });
   }
 }

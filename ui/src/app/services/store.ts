@@ -1,5 +1,6 @@
 import { UiLayout } from "trainbrain-shared";
 
+// Edit Mode store
 export const editMode = {
   isEditMode: false,
 
@@ -12,14 +13,28 @@ export const editMode = {
   },
 }
 
+// Track Layout store
 export const trackLayout = {
-  layout: {},
+  layout: <UiLayout>{},
 
-  get() {
+  get(): UiLayout {
     return this.layout;
   },
 
   set(value: UiLayout) {
     this.layout = value;
+  },
+}
+
+// Error store
+export const error = {
+  error: "",
+
+  get(): string {
+    return this.error;
+  },
+
+  set(value: string) {
+    this.error = value;
   },
 }

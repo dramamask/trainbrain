@@ -1,5 +1,7 @@
 # TODO
-- In edit mode, ability to move track with arrow keys.
+- Error disabled should be on top of map, not instead of.
+- piece 1 api call should be a PUT, not POST.
+- In edit mode, ability to move track with arrow keys (need to create server part. Need to have the Ui update when new layout arrives).
 - In edit mode, ability to move track with mouse.
 - Make a setting on the screen to turn on or off the start position indicator.
 - Finish the layout calculation on the back-end to work with the pieces that "break the chain".

@@ -1,5 +1,11 @@
 import { rtrim } from "../helpers";
 
+interface jsonBodyWithMessage {
+  messages: {
+    error: string
+  };
+}
+
 // Get the base URL for the server
 function getApiBaseUrl(): string {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -30,35 +36,56 @@ export async function apiPost<T>(endpoint: string, data: object): Promise<T> {
     body: JSON.stringify(data),
   });
 
-  return handleResponse(response);
+  return handleResponse<T>(response);
 }
 
-// Handle a fetch response
-async function handleResponse(response: Response): Promise<T> {
-  if (!response.ok) {
-    const body = await response.json();
-
-    if (hasErrorMessage(body)) {
-      throw new Error(body.messages.error);
-    }
-
-    console.error("Unexpected response body format", response);
-    throw new Error(`Unknown error: ${response.status} ${response.statusText}`);
+// Handle the response form a fetch call
+async function handleResponse<T>(response: Response): Promise<T> {
+  if (response.ok) {
+    return await response.json();
   }
 
-  return await response.json();
-}
+  // Handle different error response types
+  let jsonBody: jsonBodyWithMessage = {} as jsonBodyWithMessage;
+  let textBody = "";
+  let textBodyReceived = false;
 
-// Check if the body has an error message where we expect it to be (body.message.error)
-function hasErrorMessage(
-  body: unknown
-): body is { messages: { error: string } } {
-  return (
-    typeof body === "object" &&
-    body !== null &&
-    "messages" in body &&
-    typeof (body as any).messages === "object" &&
-    (body as any).messages !== null &&
-    "error" in (body as any).messages
-  );
+  try {
+    jsonBody = await response.json();
+  } catch {
+    try {
+      textBody = await response.text();
+      textBodyReceived = true;
+    } catch {
+      console.error("Error response received. Response has no json or text body.", {
+        status: response.status,
+        statusText: response.statusText,
+      });
+      throw new Error(`Unexpected error. ${response.status} ${response.statusText}`);
+    }
+  }
+
+  if (textBodyReceived) {
+    console.error("Error response received. Response has no json body. Text body instead.", {
+      status: response.status,
+      statusText: response.statusText,
+      responseBody: textBody,
+    });
+    throw new Error(`Unexpected error. ${response.status} ${response.statusText}: ${textBody}`);
+  }
+
+  let errorMessage = "";
+
+  try {
+    errorMessage = jsonBody.messages.error;
+  } catch(error) {
+      console.error("Error response received. Response body is json but has no messages.error attribute.", {
+      status: response.status,
+      statusText: response.statusText,
+      responseBody: jsonBody,
+    });
+    throw new Error(`Unexpected error. ${response.status} ${response.statusText}`);
+  }
+
+  throw new Error(errorMessage);
 }
