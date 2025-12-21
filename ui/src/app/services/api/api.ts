@@ -1,6 +1,8 @@
 import { rtrim } from "../helpers";
 
-interface jsonBodyWithMessage {
+export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+
+interface JsonBodyWithMessage {
   messages: {
     error: string
   };
@@ -26,12 +28,12 @@ export async function apiGet<T>(endpoint: string): Promise<T> {
   return handleResponse(response);
 }
 
-// Funtion to make a POST call to an API enpoint
-export async function apiPost<T>(endpoint: string, data: object): Promise<T> {
+// Funtion to make a POST, PUT or DELETE call to an API enpoint
+export async function apiCall<T>(method: HttpMethod, endpoint: string, data: object): Promise<T> {
   const uri = `${getApiBaseUrl()}${endpoint}`;
 
   const response = await fetch(uri, {
-    method: 'POST',
+    method: method,
     headers: {'Content-Type': 'application/json; charset=UTF-8' },
     body: JSON.stringify(data),
   });
@@ -46,7 +48,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
   }
 
   // Handle different error response types
-  let jsonBody: jsonBodyWithMessage = {} as jsonBodyWithMessage;
+  let jsonBody: JsonBodyWithMessage = {} as JsonBodyWithMessage;
   let textBody = "";
   let textBodyReceived = false;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared"
 import { CircularProgress } from "@mui/material";
 import Error from "./error";
@@ -8,22 +8,23 @@ import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
 import StartPosition from "./startPosition";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
-import { trackLayout } from "@/app/services/store";
 import { store as errorStore } from "@/app/services/stores/error";
+import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 
 import styles from "./tracklayout.module.css";
 
 export default function TrackLayout()
 {
-  const [layout, setLayout] = useState<UiLayout>(trackLayout.get() as UiLayout);
+  // This hook automatically subscribes and returns the latest snapshot
+  const state = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot);
+
   const [loading, setLoading] = useState<Boolean>(true);
 
   // Fetch the layout from the back-end server
   useEffect(() => {
     getTrackLayout()
       .then((layoutData: UiLayout) => {
-        trackLayout.set(layoutData);
-        setLayout(layoutData);
+        trackLayoutStore.setTrackLayout(layoutData);
         setLoading(false);
       })
       .catch((error: Error) => {
@@ -42,8 +43,8 @@ export default function TrackLayout()
   // The size of the world/viewbox, in SVG coordinates
   // Note that this matches the pixel size of the layout-background image
   // TODO: Read the size automatically from the image? Have a default if there's no image?
-  const worldHeight = 6000;
-  const worldWidth= 6000;
+  const worldHeight = 15240; // Milimeters
+  const worldWidth= 15240; // Milimeters
 
   // Render the track layout (and any error message if present)
   return (
@@ -57,8 +58,8 @@ export default function TrackLayout()
         {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
         <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
           { renderDebugContent() }
-          { renderStartPosition(layout) }
-          { renderLayout(layout) }
+          { renderStartPosition(state.trackLayout) }
+          { renderLayout(state.trackLayout) }
         </g>
       </svg>
       <Error />

@@ -1,15 +1,15 @@
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared";
-import { trackLayout } from "@/app/services/store";
 import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
+import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { setPiece1StartPosition } from "@/app/services/api/tracklayout";
 
 // Key Event Handler for Edit Mode
+// Note that all key event handlers need to be called from keynoardEventHandler.tsx
 export function handleKeyDown(key: string) {
-  // Only do something when Edit Mode is enabled
   if (editModeStore.isEditMode()) {
-    const layout: UiLayout = trackLayout.get() as UiLayout;
-    const piece1 = layout.pieces.find(piece => piece.id == 1) as UiLayoutPiece;
+    const trackLayout: UiLayout = trackLayoutStore.getTrackLayout() as UiLayout;
+    const piece1 = trackLayout.pieces.find(piece => piece.id == 1) as UiLayoutPiece;
 
     switch (key) {
       case 'ArrowUp':
@@ -31,7 +31,7 @@ export function handleKeyDown(key: string) {
 
     setPiece1StartPosition(piece1.start)
     .then((layoutData: UiLayout) => {
-        trackLayout.set(layoutData);
+        trackLayoutStore.setTrackLayout(layoutData);
       })
       .catch((error: Error) => {
         errorStore.setError(error.message);

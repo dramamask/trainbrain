@@ -3,9 +3,9 @@
  */
 
 // Track drawing
-export const STROKE_WIDTH = 24;
-export const INDICATOR_LENGTH = 100;
+export const STROKE_WIDTH = 40;
+export const INDICATOR_LENGTH = 160;
 export const TRACK_COLOR = "blue";
 
-export const START_POS_INDICATOR_RADIUS = 50;
+export const START_POS_INDICATOR_RADIUS = 120;
 export const START_POS_INDICATOR_COLOR = "blue";

@@ -20,10 +20,11 @@ export default function KeyBoardEventHandler() {
   return null;
 };
 
-// Function that passes the key-down event along to individual event handlers
+// Function that passes the key-down event along to individual key event handlers
+// Note that this function follows the command pattern. Each individual key event
+// handler checks for themselves to see if they should handle the event or not.
+// Each key event handler in app/services/keyeventhandlers should be called here.
 function handleKeyDown(key: string) {
-  // This follows the command pattern. Individual event handlers check
-  // for themselves to see if they should handle the event or not.
   editMode.handleKeyDown(key);
   error.handleKeyDown(key);
 }

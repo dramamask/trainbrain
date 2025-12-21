@@ -1,18 +1,19 @@
 # TODO
-- Have each event handler register themselves with another funciton, a Factory of sorts. Then use that factory function in the keyboardEventHandler.tsc component.
-- Rewrite the tracklayout stores to work the same was as the errorStore.
-- Make a layout delivery mechanism where we get the layout from other API calls as well, not just the one on the tracklayout component. E.g. also from the keyboard handler API call to set piece1position.
-- piece 1 api call should be a PUT, not POST.
-- Store layout in database? May be easier to save the layout in a database than having to write to a json file?
+Mark D is free to move any of the todo items around, either up or down the order.
+
+- Store layout in database. Use lowdb, which offers an easy way to interact with json files. https://github.com/typicode/lowdb. Lowdb is ESM! I think my node project is ESM.
 - In edit mode, ability to move track with arrow keys (need to create server part. Need to have the Ui update when new layout arrives).
 - In edit mode, ability to move track with mouse.
 - Make a setting on the screen to turn on or off the start position indicator.
 - Ask AI to make my background look better. Maybe use Photoshop AI to change each peace by piece with specific prompts?
+- Make the world size configurable. Decribe in the readme that the world size is the size of the visible area in millimeters.
+- Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
+  Make it configurable as pixels per millimeter or something.
 - Finish the layout calculation on the back-end to work with the pieces that "break the chain".
-- Read the world size from the background image size. If no image then default to 5000 by 5000.
 - Use strip-json-comments to strip comments from the JSON layout file. Then add comments to make it easier for me to read.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each.
   Probably need to make another API for that.
+- Make the background image configurable.
 - Build a layout editor. Keep it simple. Make a "add next track piece" function, default to a straight? Have an
   easy way to change the piece. Maybe with mouse clicks or keyboard shortcuts.
 - Start working on an intersection piece (a cross).
@@ -21,4 +22,5 @@
   from the back-end for that (just coordinates?).
 - Use JSON Schema to validate the json piece-defintion and (most importantly) the layout json file.
 - Add option to manually enter the world size.
-- Figure out which project can ake commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well.
+- Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
+

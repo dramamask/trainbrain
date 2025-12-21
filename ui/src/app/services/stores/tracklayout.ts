@@ -1,8 +1,10 @@
+import { UiLayout } from "trainbrain-shared";
+
 interface State {
-  error: string;
+  trackLayout: UiLayout;
 }
 
-let state: State = { error: "" };
+let state: State = { trackLayout: <UiLayout>{} };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -20,24 +22,14 @@ export const store = {
     return state;
   },
 
-  errorPresent(): boolean {
-    return (state.error != "");
-  },
-
-  getError(): string {
-    return state.error;
-  },
-
-  setError(message: string): void {
+  setTrackLayout(value: UiLayout): void {
     // Immutable update
-    state = { error: message };
+    state = { trackLayout: value };
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
 
-  clearError(): void {
-    state = { error: "" };
-    // Notify React/listeners
-    listeners.forEach((callback) => callback());
+  getTrackLayout(): UiLayout {
+    return state.trackLayout;
   }
 };
