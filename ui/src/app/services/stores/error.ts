@@ -20,6 +20,11 @@ export const store = {
     return state;
   },
 
+  // Needed for next.js to be able to do server side rendering
+  getServerSnapshot(): State {
+    return state;
+  },
+
   errorPresent(): boolean {
     return (state.error != "");
   },

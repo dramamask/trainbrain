@@ -16,7 +16,7 @@ import styles from "./tracklayout.module.css";
 export default function TrackLayout()
 {
   // This hook automatically subscribes and returns the latest snapshot
-  const state = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot);
+  const state = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
 
   const [loading, setLoading] = useState<Boolean>(true);
 

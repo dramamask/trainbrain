@@ -6,7 +6,7 @@ import styles from "./editmode.module.css";
 
 export default function EditMode() {
   // This hook automatically subscribes and returns the latest snapshot
-    const state = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot);
+    const state = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     editModeStore.setEditMode(event.target.checked);

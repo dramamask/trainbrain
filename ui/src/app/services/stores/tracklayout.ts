@@ -22,6 +22,11 @@ export const store = {
     return state;
   },
 
+  // Needed for next.js to be able to do server side rendering
+  getServerSnapshot(): State {
+    return state;
+  },
+
   setTrackLayout(value: UiLayout): void {
     // Immutable update
     state = { trackLayout: value };

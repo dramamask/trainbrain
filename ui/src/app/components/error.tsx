@@ -5,7 +5,7 @@ import styles from "./error.module.css";
 
 export default function Error() {
   // This hook automatically subscribes and returns the latest snapshot
-  const state = useSyncExternalStore(errorStore.subscribe, errorStore.getSnapshot);
+  const state = useSyncExternalStore(errorStore.subscribe, errorStore.getSnapshot, errorStore.getServerSnapshot);
 
   const handleClick = () => {
     errorStore.clearError();

@@ -1,7 +1,7 @@
 import { Coordinate, Direction, UiLayout, UiLayoutPiece } from "trainbrain-shared";
-import { JSONFilePreset } from 'lowdb/node'
-import { getDefaultData } from "./db.js";
-import layoutData from "../db/tracklayout.json" with { type: "json" };
+import { Low } from "lowdb";
+import { JSONFilePreset } from "lowdb/node";
+import { getDefaultData, getDbPath } from "../services/db.js";
 import { getPieceDefinition, TrackPieceDef } from "./piecedefinitions.js";
 import { getEndCoordinate, getStartCoordinate } from "./calculations.js";
 
@@ -15,7 +15,13 @@ export interface LayoutPiece {
   }
 }
 
-type LayoutPieces = Record<string, LayoutPiece>;
+export type LayoutPieces = Record<string, LayoutPiece>;
+
+// The structure of the layout json file
+export interface TrackLayout {
+  "piece-1": { start: Coordinate },
+  pieces: LayoutPieces,
+}
 
 // Return the UiLayout structure as needed by the API
 export async function getLayout(): Promise<UiLayout> {
@@ -53,8 +59,16 @@ export async function getLayout(): Promise<UiLayout> {
 // Calculate the UI Layout and return it as an array of UiLayoutPieces
 async function getUiLayout(): Promise<UiLayoutPiece[]> {
   // Import the layout from the (json) db
-   const layoutPieces: LayoutPieces = layoutData.pieces as unknown as LayoutPieces;
-  // const db = await JSONFilePreset<UiLayout>("../db/layout.json", getDefaultData());
+  let db: Low<TrackLayout>;
+
+  try {
+    db = await JSONFilePreset<TrackLayout>(getDbPath("tracklayout.json"), getDefaultData());
+    await db.read();
+  } catch (error) {
+    const message = "Error reading from tracklayout DB";
+    console.error(message, error);
+    throw new Error(message);
+  }
 
   // Define the array that we will return
   const uiLayout: UiLayoutPiece[] = [];
@@ -62,11 +76,11 @@ async function getUiLayout(): Promise<UiLayoutPiece[]> {
   // Init
   let layoutPiece: LayoutPiece;
   let id = 1;
-  let startPos: Coordinate = layoutData["piece-1"].start;
+  let startPos: Coordinate = db.data["piece-1"].start;
 
   // Walk through the layout pieces to build the layout (calculating end positions with known start positions)
   while (true) {
-    layoutPiece = getLayoutPiece(id, layoutPieces);
+    layoutPiece = getLayoutPiece(id, db.data.pieces);
 
     const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, startPos, null);
     uiLayout.push(uiLayoutPiece);
@@ -80,13 +94,13 @@ async function getUiLayout(): Promise<UiLayoutPiece[]> {
   }
 
   // Init
-  id = layoutPieces["1"].connects.start;
+  id = db.data.pieces["1"].connects.start;
   const uiLayoutPiece = uiLayout.find(piece => piece.id == 1);
   let endPos: Coordinate = (uiLayoutPiece as UiLayoutPiece).start;
 
   // Walk through the layout pieces to build the layout (calculating start positions with knows end positions)
   while (true) {
-    layoutPiece = getLayoutPiece(id, layoutPieces);
+    layoutPiece = getLayoutPiece(id, db.data.pieces);
 
     const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, null, endPos);
     uiLayout.push(uiLayoutPiece);
