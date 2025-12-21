@@ -1,8 +1,7 @@
-import { TrackPieceType } from "trainbrain-shared";
+import { TrackPieceType } from 'trainbrain-shared';
+import { pieceDefintionsDb } from "../services/db.js";
 
-import pieceDefinitionData from "../config/track/piece-definitions.json" with { type: "json" };
-
-// Define the structure of a track piece definition
+// The structure of a track piece definition
 export interface TrackPieceDef {
     type: TrackPieceType;
     length: number | null;
@@ -10,12 +9,16 @@ export interface TrackPieceDef {
     radius: number | null;
 }
 
-// Cast the imported piece definitions to the appropriate type
-const pieceDefinitions = pieceDefinitionData.definitions as Record<string, TrackPieceDef>;
+export type TrackPieceDefList = Record<string, TrackPieceDef>;
+
+// The structure of the piece-defintions json db
+export interface PieceDefinitions {
+    definitions: TrackPieceDefList;
+}
 
 // Function to get a piece definition by its ID
 export function getPieceDefinition(pieceDefId: string): TrackPieceDef {
-    const pieceDef = pieceDefinitions[pieceDefId];
+    const pieceDef = pieceDefintionsDb.data.definitions[pieceDefId];
 
     if (!pieceDef) {
         throw new Error(`Piece definition not found for ID ${pieceDefId}`);

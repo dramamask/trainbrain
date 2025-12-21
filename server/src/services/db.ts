@@ -1,21 +1,38 @@
 /**
- * This file contains some lowdb related functions
+ * This file contains lowdb related functions
  */
 
 import path from 'node:path';
-import { TrackLayout } from "../track/layout.js";
+import { Low } from 'lowdb';
+import { JSONFilePreset } from 'lowdb/node';
+import { TrackLayout } from "../track/getlayout.js";
+import { PieceDefinitions } from '../track/piecedefinitions.js';
 
-// Get default/empty data structure for the tracklayout.json file/db
-export function getDefaultData(): TrackLayout {
-  const emptyLayout: TrackLayout = {
-    "piece-1": { start: {x: 0, y: 0, heading: 0} },
-    pieces: {},
-  };
+// Default/empty data structure for the track layout json db
+const emptyLayout: TrackLayout = {
+  startPosition: {x: 0, y: 0, heading: 0},
+  pieces: {},
+};
 
-  return emptyLayout;
+// Default/empty data structure for the piece defintions json db
+const emptyPieceDefinitions: PieceDefinitions = {
+  definitions: {},
+}
+
+// Initialize the databases once
+export let trackLayoutDb: Low<TrackLayout>;
+export let pieceDefintionsDb: Low<PieceDefinitions>;
+
+try {
+  trackLayoutDb = await JSONFilePreset(getDbPath("track-layout.json"), emptyLayout);
+  pieceDefintionsDb = await JSONFilePreset(getDbPath("piece-definitions.json"), emptyPieceDefinitions);
+} catch (error) {
+  const message = "Error initializing DBs";
+  console.error(message, error);
+  throw new Error(message);
 }
 
 // Return the db path for a given db json file name
-export function getDbPath(fileName: string): string {
+function getDbPath(fileName: string): string {
   return path.resolve("db",  fileName);
 }

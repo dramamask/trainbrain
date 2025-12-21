@@ -1,7 +1,5 @@
 import { Coordinate, Direction, UiLayout, UiLayoutPiece } from "trainbrain-shared";
-import { Low } from "lowdb";
-import { JSONFilePreset } from "lowdb/node";
-import { getDefaultData, getDbPath } from "../services/db.js";
+import { trackLayoutDb } from "../services/db.js";
 import { getPieceDefinition, TrackPieceDef } from "./piecedefinitions.js";
 import { getEndCoordinate, getStartCoordinate } from "./calculations.js";
 
@@ -19,17 +17,17 @@ export type LayoutPieces = Record<string, LayoutPiece>;
 
 // The structure of the layout json file
 export interface TrackLayout {
-  "piece-1": { start: Coordinate },
+  startPosition: Coordinate,
   pieces: LayoutPieces,
 }
 
 // Return the UiLayout structure as needed by the API
-export async function getLayout(): Promise<UiLayout> {
+export function getLayout(): UiLayout {
   let errorMessage = "";
   let uiLayout: UiLayoutPiece[] = [];
 
   try {
-    uiLayout = await getUiLayout();
+    uiLayout = getUiLayout();
   } catch (error) {
     if (error instanceof Error) {
       errorMessage = error.message;
@@ -49,7 +47,7 @@ export async function getLayout(): Promise<UiLayout> {
 /**
  * Strategy for walking through the layout:
  * Start with the piece with ID 1. Get its start position and heading from the
- * piece-1-position property. Calculate the coordinates of piece 1. Next, move
+ * startPosition property. Calculate the coordinates of piece 1. Next, move
  * on to the piece defined in connects.end. Calculate it's coordinates. Do this
  * for each piece until you come to a piece that has connects.end value null.
  *
@@ -57,30 +55,18 @@ export async function getLayout(): Promise<UiLayout> {
  */
 
 // Calculate the UI Layout and return it as an array of UiLayoutPieces
-async function getUiLayout(): Promise<UiLayoutPiece[]> {
-  // Import the layout from the (json) db
-  let db: Low<TrackLayout>;
-
-  try {
-    db = await JSONFilePreset<TrackLayout>(getDbPath("tracklayout.json"), getDefaultData());
-    await db.read();
-  } catch (error) {
-    const message = "Error reading from tracklayout DB";
-    console.error(message, error);
-    throw new Error(message);
-  }
-
+function getUiLayout(): UiLayoutPiece[] {
   // Define the array that we will return
   const uiLayout: UiLayoutPiece[] = [];
 
   // Init
   let layoutPiece: LayoutPiece;
   let id = 1;
-  let startPos: Coordinate = db.data["piece-1"].start;
+  let startPos: Coordinate = trackLayoutDb.data.startPosition;
 
   // Walk through the layout pieces to build the layout (calculating end positions with known start positions)
   while (true) {
-    layoutPiece = getLayoutPiece(id, db.data.pieces);
+    layoutPiece = getLayoutPiece(id, trackLayoutDb.data.pieces);
 
     const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, startPos, null);
     uiLayout.push(uiLayoutPiece);
@@ -94,13 +80,13 @@ async function getUiLayout(): Promise<UiLayoutPiece[]> {
   }
 
   // Init
-  id = db.data.pieces["1"].connects.start;
+  id = trackLayoutDb.data.pieces["1"].connects.start;
   const uiLayoutPiece = uiLayout.find(piece => piece.id == 1);
   let endPos: Coordinate = (uiLayoutPiece as UiLayoutPiece).start;
 
   // Walk through the layout pieces to build the layout (calculating start positions with knows end positions)
   while (true) {
-    layoutPiece = getLayoutPiece(id, db.data.pieces);
+    layoutPiece = getLayoutPiece(id, trackLayoutDb.data.pieces);
 
     const uiLayoutPiece = getUiLayoutPiece(id, layoutPiece, null, endPos);
     uiLayout.push(uiLayoutPiece);

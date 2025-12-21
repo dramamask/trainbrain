@@ -25,6 +25,5 @@ export interface UiLayout {
   messages: {
     error: string;
   };
-  "piece-1": { start: Coordinate };
   pieces: UiLayoutPiece[];
 }

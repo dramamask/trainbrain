@@ -53,26 +53,25 @@ async function handleResponse<T>(response: Response): Promise<T> {
   let textBodyReceived = false;
 
   try {
-    jsonBody = await response.json();
-  } catch {
-    try {
-      textBody = await response.text();
-      textBodyReceived = true;
-    } catch {
-      console.error("Error response received. Response has no json or text body.", {
-        status: response.status,
-        statusText: response.statusText,
-      });
-      throw new Error(`Unexpected error. ${response.status} ${response.statusText}`);
-    }
+    textBody = await response.text();
+  } catch (error) {
+    logError("Error while reading API respone body.", error, null, response);
+    throw new Error(`Unexpected error. ${response.status} ${response.statusText}`);
+  }
+
+  try {
+    jsonBody = JSON.parse(textBody);
+  } catch (error) {
+    textBodyReceived = true;
   }
 
   if (textBodyReceived) {
-    console.error("Error response received. Response has no json body. Text body instead.", {
-      status: response.status,
-      statusText: response.statusText,
-      responseBody: textBody,
-    });
+    logError(
+      "Error response received. Response has no json body, text body instead.",
+      null,
+      textBody,
+      response,
+    );
     throw new Error(`Unexpected error. ${response.status} ${response.statusText}: ${textBody}`);
   }
 
@@ -81,13 +80,25 @@ async function handleResponse<T>(response: Response): Promise<T> {
   try {
     errorMessage = jsonBody.messages.error;
   } catch(error) {
-      console.error("Error response received. Response body is json but has no messages.error attribute.", {
-      status: response.status,
-      statusText: response.statusText,
-      responseBody: jsonBody,
-    });
+    logError(
+      "Error response received. Response body is json but has no messages.error attribute.",
+      error,
+      jsonBody,
+      response,
+    );
     throw new Error(`Unexpected error. ${response.status} ${response.statusText}`);
   }
 
   throw new Error(errorMessage);
+}
+
+// Log an error with a lot of extra information attached to it
+function logError(message: string, error: any, responseBody: any, response: Response) {
+  console.error(message, {
+    status: response.status,
+    statusText: response.statusText,
+    error: (error instanceof Error ? error.message : error),
+    responebody: responseBody,
+    response: response,
+  });
 }

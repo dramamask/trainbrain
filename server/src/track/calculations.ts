@@ -1,5 +1,5 @@
 import { Coordinate } from "trainbrain-shared";
-import { LayoutPiece } from "./layout.js";
+import { LayoutPiece } from "./getlayout.js";
 import { TrackPieceDef } from "./piecedefinitions.js";
 
 /**

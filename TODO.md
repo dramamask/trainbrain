@@ -1,9 +1,6 @@
 # TODO
 Mark D is free to move any of the todo items around, either up or down the order.
 
-- Also convert current code to interface with piece-definitions.json to lowdb.
-- Is there a way to cache the background image in the UI so it always loads fast? Sometime it's just slow to load.
-- I don't like the tracklayout.json element called "piece-1". We need a better name for that. Maybe just go with "startposition"?
 - In edit mode, ability to move track with arrow keys (need to create server part. Need to have the Ui update when new layout arrives).
 - In edit mode, ability to move track with mouse.
 - Make a setting on the screen to turn on or off the start position indicator.
@@ -22,6 +19,7 @@ Mark D is free to move any of the todo items around, either up or down the order
 - Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements?
 - Create API to show the trian position. How do we want to show it on the map (SVG I presume). What info do we need
   from the back-end for that (just coordinates?).
+- Is there a way to cache the background image in the UI so it always loads fast? Sometime it's just slow to load.
 - Use JSON Schema to validate the json piece-defintion and (most importantly) the layout json file.
 - Add option to manually enter the world size.
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
