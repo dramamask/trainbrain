@@ -7,7 +7,6 @@ export async function setStartPosition(x: number, y: number, heading: number): P
   const startPosition: Coordinate = {x, y, heading}
   trackLayoutDb.data.startPosition = startPosition;
   await trackLayoutDb.write();
-  await trackLayoutDb.read();
 
   return getLayout();
 }

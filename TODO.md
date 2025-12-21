@@ -1,7 +1,6 @@
 # TODO
 Mark D is free to move any of the todo items around, either up or down the order.
 
-- In edit mode, ability to move track with arrow keys (need to create server part. Need to have the Ui update when new layout arrives).
 - In edit mode, ability to move track with mouse.
 - Make a setting on the screen to turn on or off the start position indicator.
 - Ask AI to make my background look better. Maybe use Photoshop AI to change each peace by piece with specific prompts?
