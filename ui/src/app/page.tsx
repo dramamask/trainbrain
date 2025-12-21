@@ -1,5 +1,3 @@
-"use client";
-
 import { Box, Grid } from "@mui/material";
 
 import KeyboardEventHandler from "@/app/components/keyboardEventHandler";

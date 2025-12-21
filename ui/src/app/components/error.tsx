@@ -1,3 +1,5 @@
+"use client";
+
 import { useSyncExternalStore } from 'react';
 import { store as errorStore } from '@/app/services/stores/error';
 

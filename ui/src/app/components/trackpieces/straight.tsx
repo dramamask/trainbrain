@@ -1,5 +1,7 @@
+"use client";
+
 import { useSyncExternalStore } from "react";
-import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
+import { UiLayoutPiece } from "trainbrain-shared";
 import { getIndicatorPositions } from "@/app/services/trackpiece";
 import * as config from "@/app/config/config";
 import { store as editModeStore } from "@/app/services/stores/editmode";

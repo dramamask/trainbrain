@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useSyncExternalStore } from "react";
 import { Stack, Switch } from "@mui/material"
 import { store as editModeStore } from "@/app/services/stores/editmode";
