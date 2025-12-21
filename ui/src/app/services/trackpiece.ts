@@ -2,12 +2,16 @@ import { UiLayoutPiece } from "trainbrain-shared";
 import { degreesToRadians } from "./math";
 import * as config from "@/app/config/config"
 
+export interface LineCoordinate {
+  x1: number;
+  y1: number,
+  x2: number;
+  y2: number;
+}
+
 // Get the positions for the indicators at the start and end of a track piece
 export function getIndicatorPositions(piece: UiLayoutPiece):
-  {
-    start: { x1: number; y1: number, x2: number; y2: number };
-    end:   { x1: number; y1: number, x2: number; y2: number }
-  }
+  { start: LineCoordinate, end: LineCoordinate }
 {
   const indicatorHalfLength = config.INDICATOR_LENGTH / 2;
 

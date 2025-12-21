@@ -1,3 +1,5 @@
+"use client";
+
 import { useSyncExternalStore } from "react";
 import { Coordinate } from "trainbrain-shared";
 import * as config from "@/app/config/config";

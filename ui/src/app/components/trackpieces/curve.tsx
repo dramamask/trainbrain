@@ -1,6 +1,8 @@
+"use client";
+
 import { useSyncExternalStore } from "react";
 import { UiLayoutPiece } from "trainbrain-shared";
-import { getIndicatorPositions } from "../../services/trackpiece";
+import { getIndicatorPositions, LineCoordinate } from "../../services/trackpiece";
 import * as config from "@/app/config/config";
 import { store as editModeStore } from "@/app/services/stores/editmode";
 
@@ -8,7 +10,11 @@ import { store as editModeStore } from "@/app/services/stores/editmode";
 export default function Curve({piece}: {piece: UiLayoutPiece}) {
   const state = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
   const drawIndicators = state.editMode;
-  const indicatorPositions = getIndicatorPositions(piece);
+
+  let indicatorPositions = {} as { start: LineCoordinate, end: LineCoordinate };
+  if (drawIndicators) {
+    indicatorPositions = getIndicatorPositions(piece);
+  }
 
   return (
     <g key={piece.id}>

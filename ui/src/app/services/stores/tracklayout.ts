@@ -1,3 +1,5 @@
+"use client";
+
 import { UiLayout } from "trainbrain-shared";
 
 interface State {

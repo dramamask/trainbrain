@@ -1,3 +1,5 @@
+"use client"
+
 import { store as errorStore } from '@/app/services/stores/error';
 
 // Key Event Handler that acts when an error is present.

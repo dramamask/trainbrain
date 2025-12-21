@@ -1,3 +1,5 @@
+"use client";
+
 interface State {
   error: string;
 }

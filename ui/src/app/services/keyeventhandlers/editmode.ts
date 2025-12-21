@@ -1,3 +1,5 @@
+"use client"
+
 import { UiLayout, UiLayoutPiece } from "trainbrain-shared";
 import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
