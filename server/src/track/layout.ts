@@ -1,5 +1,7 @@
 import { Coordinate, Direction, UiLayout, UiLayoutPiece } from "trainbrain-shared";
-import layoutData from "../config/track/layout.json" with { type: "json" };
+import { JSONFilePreset } from 'lowdb/node'
+import { getDefaultData } from "./db.js";
+import layoutData from "../db/tracklayout.json" with { type: "json" };
 import { getPieceDefinition, TrackPieceDef } from "./piecedefinitions.js";
 import { getEndCoordinate, getStartCoordinate } from "./calculations.js";
 
@@ -16,12 +18,12 @@ export interface LayoutPiece {
 type LayoutPieces = Record<string, LayoutPiece>;
 
 // Return the UiLayout structure as needed by the API
-export function getLayout(): UiLayout {
+export async function getLayout(): Promise<UiLayout> {
   let errorMessage = "";
   let uiLayout: UiLayoutPiece[] = [];
 
   try {
-    uiLayout = getUiLayout();
+    uiLayout = await getUiLayout();
   } catch (error) {
     if (error instanceof Error) {
       errorMessage = error.message;
@@ -49,9 +51,10 @@ export function getLayout(): UiLayout {
  */
 
 // Calculate the UI Layout and return it as an array of UiLayoutPieces
-function getUiLayout(): UiLayoutPiece[] {
-  // Import the layout json file
-  const layoutPieces: LayoutPieces = layoutData.pieces as unknown as LayoutPieces;
+async function getUiLayout(): Promise<UiLayoutPiece[]> {
+  // Import the layout from the (json) db
+   const layoutPieces: LayoutPieces = layoutData.pieces as unknown as LayoutPieces;
+  // const db = await JSONFilePreset<UiLayout>("../db/layout.json", getDefaultData());
 
   // Define the array that we will return
   const uiLayout: UiLayoutPiece[] = [];
@@ -160,3 +163,5 @@ function getLayoutPiece(id: number, layoutPieces: LayoutPieces): LayoutPiece {
 
   return layoutPiece;
 }
+
+

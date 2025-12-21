@@ -9,6 +9,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.2.1",
+    "lowdb": "^7.0.1",
     "trainbrain-shared": "file:../shared"
   },
   "devDependencies": {

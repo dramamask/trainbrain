@@ -15,11 +15,11 @@ app.use(cors({
 );
 
 // Endpoint to GET the track layout
-app.get("/layout", (_req, res) => {
+app.get("/layout", async (_req, res) => {
   res.header("Content-Type", "application/json");
 
   try {
-    const layout = getLayout();
+    const layout = await getLayout();
     const status = getHttpStatusCode(layout);
     res.status(status).send(JSON.stringify(layout));
   } catch (error) {

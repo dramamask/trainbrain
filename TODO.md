@@ -2,6 +2,7 @@
 Mark D is free to move any of the todo items around, either up or down the order.
 
 - Store layout in database. Use lowdb, which offers an easy way to interact with json files. https://github.com/typicode/lowdb. Lowdb is ESM! I think my node project is ESM.
+- Also convert current code to interface with piece-definitions.json to lowdb.
 - In edit mode, ability to move track with arrow keys (need to create server part. Need to have the Ui update when new layout arrives).
 - In edit mode, ability to move track with mouse.
 - Make a setting on the screen to turn on or off the start position indicator.
