@@ -1,6 +1,8 @@
 # TODO
 Mark D is free to move any of the todo items around, either up or down the order.
 
+- Draw "indicators" for track pieces if they do not connect to another track piece. We'll have to include
+that info in the UiLayout information though.
 - In edit mode, ability to move track with mouse.
 - Make a setting on the screen to turn on or off the start position indicator.
 - Ask AI to make my background look better. Maybe use Photoshop AI to change each peace by piece with specific prompts?
