@@ -21,7 +21,9 @@ export abstract class LayoutPiece {
     this.next = next;
   }
 
-  public abstract initStartCoordinate(position: Coordinate ): void;
+  public abstract initCoordinates(): void;
+
+  public abstract setStartCoordinate(position: Coordinate ): void;
 
   // TODO: public abstract getUiLayoutPiece(): UiLayoutPiece;
 
@@ -49,5 +51,15 @@ export abstract class LayoutPiece {
     const newY = x * sin + y * cos;
 
     return { x: newX, y: newY }
+  }
+
+  // Returns true if the Coordinate object is populated, i.e. has x and y keys
+  protected isPopulated(obj: any): boolean {
+    // 1. Ensure obj is a valid non-null object
+  if (!obj || typeof obj !== 'object') return false;
+
+  // 2. Strict check: Both keys must be present and not null/undefined
+  // Using '!= null' checks for both null AND undefined at once
+  return (obj.x != null && obj.y != null);
   }
 }

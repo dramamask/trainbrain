@@ -25,9 +25,9 @@ export class Layout
     });
 
     // Calculate the coordinates for each piece
-    this.pieces["1"].initStartCoordinate(this.startPostion);
+    this.pieces["1"].setStartCoordinate(this.startPostion);
     Object.values(this.pieces).forEach(piece => {
-      // TODO
+      piece.initCoordinates();
     });
   }
 
