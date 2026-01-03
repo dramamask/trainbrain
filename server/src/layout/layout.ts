@@ -50,7 +50,7 @@ export class Layout {
     return Object.fromEntries(
       Object.entries(piece.connections).map(([key, value]) => [
         key,
-        value ? this.pieces[value] : null
+        (value === null) ? null : this.pieces[value]
       ])
     ) as LayoutPieceMap;
   }

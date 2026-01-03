@@ -22,9 +22,9 @@ export class Curve extends LayoutPiece {
 
   constructor(id: number, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
-    this.direction == (data.attributes as LayoutPieceAttributes).direction;
-    this.angle == (pieceDef.attributes as PieceDefAttributes).angle;
-    this.radius == (pieceDef.attributes as PieceDefAttributes).radius;
+    this.direction = (data.attributes as LayoutPieceAttributes).direction;
+    this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
+    this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
   }
 
   public initConnections(connections: LayoutPieceMap): void {

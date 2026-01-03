@@ -56,7 +56,6 @@ export default function TrackLayout()
         {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
         <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
           { renderDebugContent() }
-          { renderStartPosition(state.trackLayout) }
           { renderLayout(state.trackLayout) }
         </g>
       </svg>
@@ -82,16 +81,6 @@ function isLayoutAvailable(layout: UiLayout) {
   return (Object.keys(layout).length != 0);
 }
 
-// Render the start position
-function renderStartPosition(layout: UiLayout) {
-  if (isLayoutAvailable(layout)) {
-    return (
-      <StartPosition position={layout.pieces[0].start} />
-    )
-  }
-  return null;
-}
-
 // Render the actual track pieces in the layout
 function renderLayout(layout: UiLayout) {
   if (isLayoutAvailable(layout)) {
@@ -99,6 +88,8 @@ function renderLayout(layout: UiLayout) {
       // Iterate over the track layout and render each piece
       layout.pieces.map((piece: UiLayoutPiece) => {
         switch (piece.category) {
+          case "position":
+            return <StartPosition position={piece.start} key={piece.id} />
           case "straight":
             return <Straight piece={piece} key={piece.id} />;
           case "curve":

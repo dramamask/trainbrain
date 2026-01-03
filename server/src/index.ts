@@ -23,24 +23,8 @@ app.use(cors({
 // Endpoint to GET the track layout
 app.get("/layout", (req, res) => {
   try {
-    const layout = getLayout();
-    const status = getHttpStatusCode(layout);
-
-    res.header("Content-Type", "application/json");
-    res.status(status).send(JSON.stringify(layout));
-  } catch (error) {
-    console.error("Unknown error at the edge", error);
-    res.status(500).send("Unknown error at the edge. Check server logs.");
-  }
-});
-
-// Endpoint to GET the track layout
-app.get("/layout2", (req, res) => {
-  try {
-    // const uiLayout = layout.getUiLayout();
-    // const status = getHttpStatusCode(uiLayout);
     const uiLayout = layout.getUiLayout();
-    const status = 200;
+    const status = getHttpStatusCode(uiLayout);
 
     res.header("Content-Type", "application/json");
     res.status(status).send(JSON.stringify(uiLayout));
@@ -50,33 +34,33 @@ app.get("/layout2", (req, res) => {
   }
 });
 
-// Endpoint to PUT the track layout start position
-app.put("/layout/start-position",
-  // Validation middleware chain
-  body('x').notEmpty().isNumeric().withMessage("JSON paramter 'x' is required and should be a number"),
-  body('y').notEmpty().isNumeric().withMessage("JSON paramter 'y' is required and should be a number"),
-  body('heading').notEmpty().isNumeric().withMessage("JSON paramter 'heading' is required and should be a number"),
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+// // Endpoint to PUT the track layout start position
+// app.put("/layout/start-position",
+//   // Validation middleware chain
+//   body('x').notEmpty().isNumeric().withMessage("JSON paramter 'x' is required and should be a number"),
+//   body('y').notEmpty().isNumeric().withMessage("JSON paramter 'y' is required and should be a number"),
+//   body('heading').notEmpty().isNumeric().withMessage("JSON paramter 'heading' is required and should be a number"),
+//   async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
 
-    const x = Number(req.body.x);
-    const y = Number(req.body.y);
-    const heading = Number(req.body.heading);
+//     const x = Number(req.body.x);
+//     const y = Number(req.body.y);
+//     const heading = Number(req.body.heading);
 
-    try {
-      const layout = await setStartPosition(x, y, heading);
-      const status = getHttpStatusCode(layout);
+//     try {
+//       const layout = await setStartPosition(x, y, heading);
+//       const status = getHttpStatusCode(layout);
 
-      res.header("Content-Type", "application/json");
-      res.status(status).send(JSON.stringify(layout));
-    } catch (error) {
-      console.error("Unknown error at the edge", error);
-      res.status(500).send("Unknown error at the edge. Check server logs.");
-    }
-});
+//       res.header("Content-Type", "application/json");
+//       res.status(status).send(JSON.stringify(layout));
+//     } catch (error) {
+//       console.error("Unknown error at the edge", error);
+//       res.status(500).send("Unknown error at the edge. Check server logs.");
+//     }
+// });
 
 // Start the server
 app.listen(port, () => {

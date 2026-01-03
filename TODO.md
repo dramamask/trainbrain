@@ -1,7 +1,8 @@
 # TODO
-- Create classes in server back-end
-- Add type/category sepcific attributes to piece-definitions.json and track-layout.json
-- Use strip-json-comments to strip comments from the JSON layout file. Then add comments to make it easier for me to read.
+
+- Fix server refactor
+- Add error handling for server and proper error messaging
+- Moving the start position API needs to be redone.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each.
   Probably need to make another API for that.
 - Make the background image configurable.
