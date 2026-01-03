@@ -62,10 +62,14 @@ export class Curve extends LayoutPiece {
     return {
       id: this.id,
       category: this.constructor.name.toLowerCase() as TrackPieceCategory,
-      direction: this.direction,
-      start: this.coordinates.start as Coordinate,
-      end: this.coordinates.end as Coordinate,
-      radius: this.radius,
+      attributes: {
+        coordinates: {
+          start: this.coordinates.start as Coordinate,
+          end: this.coordinates.end as Coordinate,
+        },
+        direction: this.direction,
+        radius: this.radius,
+      },
       deadEnd: this.getDeadEnd(),
     }
   }

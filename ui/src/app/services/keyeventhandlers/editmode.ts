@@ -1,9 +1,10 @@
 "use client"
 
-import { UiLayout, UiLayoutPiece } from "trainbrain-shared";
+import { UiAttributesPosition, UiLayout, UiLayoutPiece } from "trainbrain-shared";
 import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
+import { store as insertPieceStore } from "@/app/services/stores/insertpiece";
 import { setStartPosition } from "@/app/services/api/tracklayout";
 import { MOVE_INCREMENT } from "@/app/config/config";
 
@@ -12,27 +13,30 @@ import { MOVE_INCREMENT } from "@/app/config/config";
 export function handleKeyDown(key: string) {
   if (editModeStore.isEditMode()) {
     const trackLayout: UiLayout = trackLayoutStore.getTrackLayout() as UiLayout;
-    const piece1 = trackLayout.pieces.find(piece => piece.id == 1) as UiLayoutPiece;
+    const piece = trackLayout.pieces.find(piece => piece.id == 0) as UiLayoutPiece;
+    const attributes = piece.attributes as UiAttributesPosition;
 
     switch (key) {
       case 'ArrowUp':
-        piece1.start.y += MOVE_INCREMENT;
+        attributes.position.y += MOVE_INCREMENT;
         break;
       case 'ArrowDown':
-        piece1.start.y -= MOVE_INCREMENT;
+        attributes.position.y -= MOVE_INCREMENT;
         break;
       case 'ArrowLeft':
-        piece1.start.x -= MOVE_INCREMENT;
+        attributes.position.x -= MOVE_INCREMENT;
         break;
       case 'ArrowRight':
-        piece1.start.x += MOVE_INCREMENT;
+        attributes.position.x += MOVE_INCREMENT;
         break;
+      case 'Insert':
+        insertPieceStore.toggleInsertPiece();
       default:
         // Exit this function
         return;
     }
 
-    setStartPosition(piece1.start)
+    setStartPosition(attributes.position)
     .then((layoutData: UiLayout) => {
         trackLayoutStore.setTrackLayout(layoutData);
       })

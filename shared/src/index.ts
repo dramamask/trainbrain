@@ -13,14 +13,34 @@ export type TrackPieceCategory = "position" | "straight" | "curve";
 // List of different possible values for the dead-end indicator for a UI layout piece
 export type DeadEnd = "start" | "end" | null;
 
+// Attributes for a Position type piece
+export interface UiAttributesPosition {
+  position: Coordinate;
+}
+
+// Attributes for a Straight type piece
+export interface UiAttributesStraight {
+  coordinates: {
+    start: Coordinate;
+    end: Coordinate;
+  };
+}
+
+// Attributes for Curve type piece
+export interface UiAttributesCurve {
+  coordinates: {
+    start: Coordinate;
+    end: Coordinate;
+  };
+  direction: Direction | null;
+  radius: number | null;
+}
+
 // Definition of the data for a layout piece, optimized for drawing in the UI
 export interface UiLayoutPiece {
   id: number;
   category: TrackPieceCategory;
-  direction: Direction | null;
-  start: Coordinate;
-  end: Coordinate;
-  radius: number | null;
+  attributes: UiAttributesPosition | UiAttributesStraight | UiAttributesCurve;
   deadEnd: DeadEnd;
 };
 

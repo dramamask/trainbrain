@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { UiLayoutPiece } from "trainbrain-shared";
+import { UiAttributesCurve, UiLayoutPiece } from "trainbrain-shared";
 import { getIndicatorPositions, LineCoordinate } from "../../services/trackpiece";
 import * as config from "@/app/config/config";
 import { store as editModeStore } from "@/app/services/stores/editmode";
@@ -20,9 +20,11 @@ export default function Curve({piece}: {piece: UiLayoutPiece}) {
     deadEndEnd = true;
   }
 
+  const attributes = piece.attributes as UiAttributesCurve;
+
   let indicatorPositions = {} as { start: LineCoordinate, end: LineCoordinate };
   if (drawIndicators || deadEndStart || deadEndEnd) {
-    indicatorPositions = getIndicatorPositions(piece);
+    indicatorPositions = getIndicatorPositions(attributes.coordinates.start, attributes.coordinates.end);
   }
 
   return (
@@ -37,7 +39,7 @@ export default function Curve({piece}: {piece: UiLayoutPiece}) {
       /> }
       <path
         key={2}
-        d={arcPathFromTrack(piece)}
+        d={arcPathFromTrack(attributes)}
         stroke={config.TRACK_COLOR}
         fill="none"
         strokeWidth={config.STROKE_WIDTH}
@@ -55,9 +57,9 @@ export default function Curve({piece}: {piece: UiLayoutPiece}) {
 }
 
 // Generate an SVG arc path from a track piece definition
-function arcPathFromTrack(trackPiece: UiLayoutPiece): string
+function arcPathFromTrack(trackPiece: UiAttributesCurve): string
 {
-  const { direction, start, end, radius } = trackPiece;
+  const { coordinates, direction, radius } = trackPiece;
 
   // SVG sweepFlag:
   // 0 = counterclockwise
@@ -65,7 +67,7 @@ function arcPathFromTrack(trackPiece: UiLayoutPiece): string
   const sweepFlag = (direction == "left") ? 1 : 0;
 
   return `
-    M ${start.x} ${start.y}
-    A ${radius} ${radius} 0 0 ${sweepFlag} ${end.x} ${end.y}
+    M ${coordinates.start.x} ${coordinates.start.y}
+    A ${radius} ${radius} 0 0 ${sweepFlag} ${coordinates.end.x} ${coordinates.end.y}
   `.trim();
 }

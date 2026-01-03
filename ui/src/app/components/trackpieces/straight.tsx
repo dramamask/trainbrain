@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { UiLayoutPiece } from "trainbrain-shared";
+import { UiAttributesStraight, UiLayoutPiece } from "trainbrain-shared";
 import { getIndicatorPositions, LineCoordinate } from "@/app/services/trackpiece";
 import * as config from "@/app/config/config";
 import { store as editModeStore } from "@/app/services/stores/editmode";
@@ -20,9 +20,11 @@ export default function Straight({piece}: {piece: UiLayoutPiece}) {
     deadEndEnd = true;
   }
 
+  const attributes = piece.attributes as UiAttributesStraight;
+
   let indicatorPositions = {} as { start: LineCoordinate, end: LineCoordinate };
   if (drawIndicators || deadEndStart || deadEndEnd) {
-    indicatorPositions = getIndicatorPositions(piece);
+    indicatorPositions = getIndicatorPositions(attributes.coordinates.start, attributes.coordinates.end);
   }
 
   return (
@@ -36,10 +38,10 @@ export default function Straight({piece}: {piece: UiLayoutPiece}) {
           strokeWidth={config.STROKE_WIDTH}
       /> }
       <line
-        x1={piece.start.x}
-        y1={piece.start.y}
-        x2={piece.end.x}
-        y2={piece.end.y}
+        x1={attributes.coordinates.start.x}
+        y1={attributes.coordinates.start.y}
+        x2={attributes.coordinates.end.x}
+        y2={attributes.coordinates.end.y}
         stroke={config.TRACK_COLOR}
         strokeWidth={config.STROKE_WIDTH}
       />

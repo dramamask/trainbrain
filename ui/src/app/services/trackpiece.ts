@@ -1,4 +1,4 @@
-import { UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
 import { degreesToRadians } from "./math";
 import * as config from "@/app/config/config"
 
@@ -10,13 +10,13 @@ export interface LineCoordinate {
 }
 
 // Get the positions for the indicators at the start and end of a track piece
-export function getIndicatorPositions(piece: UiLayoutPiece):
+export function getIndicatorPositions(start: Coordinate, end: Coordinate):
   { start: LineCoordinate, end: LineCoordinate }
 {
   const indicatorHalfLength = config.INDICATOR_LENGTH / 2;
 
-  const headingRadStart = degreesToRadians(piece.start.heading);
-  const headingRadEnd = degreesToRadians(piece.end.heading);
+  const headingRadStart = degreesToRadians(start.heading);
+  const headingRadEnd = degreesToRadians(end.heading);
 
   const dxStart = indicatorHalfLength * Math.cos(headingRadStart);
   const dyStart = indicatorHalfLength * Math.sin(headingRadStart);
@@ -25,16 +25,16 @@ export function getIndicatorPositions(piece: UiLayoutPiece):
 
   return {
     start: {
-      x1: piece.start.x - dxStart,
-      y1: piece.start.y + dyStart,
-      x2: piece.start.x + dxStart,
-      y2: piece.start.y - dyStart,
+      x1: start.x - dxStart,
+      y1: start.y + dyStart,
+      x2: start.x + dxStart,
+      y2: start.y - dyStart,
     },
     end: {
-      x1: piece.end.x + dxEnd,
-      y1: piece.end.y - dyEnd,
-      x2: piece.end.x - dxEnd,
-      y2: piece.end.y + dyEnd,
+      x1: end.x + dxEnd,
+      y1: end.y - dyEnd,
+      x2: end.x - dxEnd,
+      y2: end.y + dyEnd,
     },
   };
 }

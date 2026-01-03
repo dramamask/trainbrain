@@ -1,7 +1,7 @@
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
-import { Coordinate, TrackPieceCategory, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, TrackPieceCategory, UiAttributesPosition, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
 
@@ -42,10 +42,7 @@ export class Position extends LayoutPiece {
     return {
       id: this.id,
       category: this.constructor.name.toLowerCase() as TrackPieceCategory,
-      direction: null,
-      start: this.position as Coordinate,
-      end: this.position as Coordinate,
-      radius: null,
+      attributes: { position: this.position as Coordinate},
       deadEnd: null,
     }
   }
@@ -68,7 +65,7 @@ export class Position extends LayoutPiece {
       type: this.type,
       attributes: {
         x: (this.position as Coordinate).x,
-        y: (this.position as Coordinate).x,
+        y: (this.position as Coordinate).y,
         heading: (this.position as Coordinate).heading,
       },
       connections: {

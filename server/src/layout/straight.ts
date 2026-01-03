@@ -1,7 +1,7 @@
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
-import { Coordinate, DeadEnd, TrackPieceCategory, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, DeadEnd, TrackPieceCategory, UiAttributesStraight, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
 
@@ -53,10 +53,12 @@ export class Straight extends LayoutPiece {
     return {
       id: this.id,
       category: this.constructor.name.toLowerCase() as TrackPieceCategory,
-      direction: null,
-      start: this.coordinates.start as Coordinate,
-      end: this.coordinates.end as Coordinate,
-      radius: null,
+      attributes: {
+        coordinates: {
+          start: this.coordinates.start as Coordinate,
+          end: this.coordinates.end as Coordinate,
+        }
+      },
       deadEnd: this.getDeadEnd(),
     }
   }

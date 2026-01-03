@@ -6,8 +6,8 @@
     {
       "type": "startPostion",
       "attributes": {
-        "x": 9955,
-        "y": 9955,
+        "x": 1660,
+        "y": 7632,
         "heading": 0
       },
       "connections": {
@@ -16,7 +16,7 @@
       }
     },
     {
-      "type": "L300",
+      "type": "LGB-300",
       "attributes": {},
       "connections": {
         "start": 0,
@@ -24,7 +24,7 @@
       }
     },
     {
-      "type": "A30R600",
+      "type": "LGB-R1-30°",
       "attributes": {
         "direction": "left"
       },
@@ -34,7 +34,7 @@
       }
     },
     {
-      "type": "A22R1200",
+      "type": "LGB-R3-22.5°",
       "attributes": {
         "direction": "right"
       },
@@ -44,7 +44,7 @@
       }
     },
     {
-      "type": "L300",
+      "type": "LGB-600",
       "direction": null,
       "connections": {
         "start": null,

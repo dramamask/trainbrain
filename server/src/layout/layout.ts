@@ -31,7 +31,12 @@ export class Layout {
 
   // Static function to create a new LayoutPiece of the correct type.
   public createLayoutPiece(id: number, piece: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
-    const category = pieceDefintionsDb.data.definitions[piece.type].category;
+    let category = "";
+    try {
+      category = pieceDefintionsDb.data.definitions[piece.type].category;
+    } catch (error) {
+      throw new Error(`Unknown piece type found in layout json DB: ${piece.type}`);
+    }
 
     switch(category) {
       case "position":
