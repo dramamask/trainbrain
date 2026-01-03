@@ -1,5 +1,6 @@
 # TODO
 
+- Build attributes into uilayout json
 - Build a layout editor. Keep it simple. Make a "add next track piece" function, default to a straight? Have an
   easy way to change the piece. Maybe with mouse clicks or keyboard shortcuts.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each.

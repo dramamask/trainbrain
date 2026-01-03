@@ -3,6 +3,7 @@ import { TrackPieceCategory } from 'trainbrain-shared';
 // The structure of a track piece definition
 export interface TrackPieceDef {
     category: TrackPieceCategory;
+    description: string;
     attributes: object;
 }
 

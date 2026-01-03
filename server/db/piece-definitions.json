@@ -5,31 +5,58 @@
   "definitions": {
     "startPostion": {
       "category": "position",
+      "description": "Start position of the track layout",
       "attributes": {}
     },
-    "L600": {
+    "LGB-300": {
       "category": "straight",
-      "attributes": {"length": 600}
-    },
-    "L300": {
-      "category": "straight",
+      "description": "LGB 10000, Piko 35208 or equivalent 300mm straight track section",
       "attributes": {"length": 300}
     },
-    "L150": {
+    "LGB-600": {
       "category": "straight",
+      "description": "LGB 10600, Piko 35208, or equivalent 600mm straight track section",
+      "attributes": {"length": 600}
+    },
+    "LGB-150": {
+      "category": "straight",
+      "description": "LGB 10150 or equivalent 150mm straight track section",
       "attributes": {"length": 150}
     },
-    "A30R600": {
+    "LGB-R1-30°": {
       "category": "curve",
+      "description": "LGB 11000 (R1), Piko 35211, or equivalent 600mm radius 30° curved track section",
       "attributes": {"angle": 30, "radius": 600}
     },
-    "A15R600": {
+    "LGB-R1-15°": {
       "category": "curve",
+      "description": "LGB 11020 (R1) or equivalent 600mm radius 15° curved track section",
       "attributes": {"angle": 15, "radius": 600}
     },
-    "A22R1200": {
+    "LGB-R3-22.5°": {
       "category": "curve",
+      "description": "LGB 16000 (R3) or equivalent 1200mm radius 22.5° curved track section",
       "attributes": {"angle": 22.5, "radius": 1198}
+    },
+    "LGB-R1-SL": {
+      "category": "switch",
+      "description": "LGB 12050, Piko 35220, or equivalent 600mm radius left switch",
+      "attributes": {"variant": "left", "angle": 30, "radius": 600}
+    },
+    "LGB-R1-SR": {
+      "category": "switch",
+      "description": "LGB 12000, LGB 12150, Piko 35221, or equivalent 600mm radius right switch",
+      "attributes": {"variant": "right", "angle": 30, "radius": 600}
+    },
+    "LGB-R3-SL": {
+      "category": "switch",
+      "description": "LGB 16050, Piko 35222 (close enough), or equivalent 1200mm radius left switch",
+      "attributes": {"variant": "left", "angle": 22.5, "radius": 1198}
+    },
+    "LGB-R3SR": {
+      "category": "switch",
+      "description": "LGB 16150, Piko 35223 (close enough), or equivalent 1200mm radius right switch",
+      "attributes": {"variant": "right", "angle": 22.5, "radius": 1198}
     }
   }
 }
