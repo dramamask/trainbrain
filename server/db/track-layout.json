@@ -94,7 +94,7 @@
       }
     },
     "9": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "left",
       "connects": {
         "start": 8,
@@ -102,7 +102,7 @@
       }
     },
     "10": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "left",
       "connects": {
         "start": 9,
@@ -110,7 +110,7 @@
       }
     },
     "11": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "left",
       "connects": {
         "start": 10,
@@ -238,7 +238,7 @@
       }
     },
     "27": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 28,
@@ -246,7 +246,7 @@
       }
     },
     "28": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 29,
@@ -254,7 +254,7 @@
       }
     },
     "29": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 30,
@@ -270,7 +270,7 @@
       }
     },
     "31": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 32,
@@ -278,7 +278,7 @@
       }
     },
     "32": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 33,
@@ -286,7 +286,7 @@
       }
     },
     "33": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 34,
@@ -310,7 +310,7 @@
       }
     },
     "36": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 37,
@@ -318,7 +318,7 @@
       }
     },
     "37": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 38,
@@ -326,7 +326,7 @@
       }
     },
     "38": {
-      "type": "A30R645",
+      "type": "A30R600",
       "direction": "right",
       "connects": {
         "start": 39,

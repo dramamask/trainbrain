@@ -41,8 +41,6 @@ export default function TrackLayout()
   }
 
   // The size of the world/viewbox, in SVG coordinates
-  // Note that this matches the pixel size of the layout-background image
-  // TODO: Read the size automatically from the image? Have a default if there's no image?
   const worldHeight = 15240; // Milimeters
   const worldWidth= 15240; // Milimeters
 
@@ -100,7 +98,7 @@ function renderLayout(layout: UiLayout) {
     return (
       // Iterate over the track layout and render each piece
       layout.pieces.map((piece: UiLayoutPiece) => {
-        switch (piece.type) {
+        switch (piece.category) {
           case "straight":
             return <Straight piece={piece} key={piece.id} />;
           case "curve":

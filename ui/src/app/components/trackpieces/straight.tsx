@@ -11,14 +11,23 @@ export default function Straight({piece}: {piece: UiLayoutPiece}) {
   const state = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
   const drawIndicators = state.editMode;
 
+  let deadEndStart = false;
+  let deadEndEnd = false;
+  if (piece.deadEnd == "start") {
+    deadEndStart = true;
+  }
+  if (piece.deadEnd == "end") {
+    deadEndEnd = true;
+  }
+
   let indicatorPositions = {} as { start: LineCoordinate, end: LineCoordinate };
-  if (drawIndicators) {
+  if (drawIndicators || deadEndStart || deadEndEnd) {
     indicatorPositions = getIndicatorPositions(piece);
   }
 
   return (
     <g key={piece.id}>
-      { drawIndicators && <line
+      { (drawIndicators || deadEndStart) && <line
           x1={indicatorPositions.start.x1}
           y1={indicatorPositions.start.y1}
           x2={indicatorPositions.start.x2}
@@ -34,7 +43,7 @@ export default function Straight({piece}: {piece: UiLayoutPiece}) {
         stroke={config.TRACK_COLOR}
         strokeWidth={config.STROKE_WIDTH}
       />
-      { drawIndicators && <line
+      { (drawIndicators || deadEndEnd) && <line
           x1={indicatorPositions.end.x1}
           y1={indicatorPositions.end.y1}
           x2={indicatorPositions.end.x2}

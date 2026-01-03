@@ -5,8 +5,8 @@
 import path from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFilePreset } from 'lowdb/node';
-import { TrackLayout } from "../track/getlayout.js";
-import { PieceDefinitions } from '../track/piecedefinitions.js';
+import { TrackLayout } from '../types/layout.js';
+import { PieceDefinitions } from '../types/pieces.js';
 
 // Default/empty data structure for the track layout json db
 const emptyLayout: TrackLayout = {

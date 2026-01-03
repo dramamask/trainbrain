@@ -1,6 +1,6 @@
 import { Coordinate } from "trainbrain-shared";
-import { LayoutPiece } from "./getlayout.js";
-import { TrackPieceDef } from "./piecedefinitions.js";
+import { LayoutPiece } from "../types/layout.js";
+import { TrackPieceDef } from "../types/pieces.js";
 
 /**
  * Returns the end coordinate and heading of a track piece based on
@@ -22,7 +22,7 @@ export function getEndCoordinate(
   let dY = 0;
   let pieceAngle = 0;
 
-  switch(pieceDef.type) {
+  switch(pieceDef.category) {
     case "straight":
       const length = pieceDef.length as number;
       const heading = startCoordinate.heading;
@@ -53,7 +53,7 @@ export function getEndCoordinate(
       dY = rotated.y;
       break;
     default:
-      throw new Error(`Unknown piece type: ${pieceDef.type}`);
+      throw new Error(`Unknown piece category: ${pieceDef.category}`);
   }
 
   // Assign the x, y and heading based on the previous calculations
@@ -84,7 +84,7 @@ export function getStartCoordinate(
   let dY = 0;
   let pieceAngle = 0;
 
-  switch(pieceDef.type) {
+  switch(pieceDef.category) {
     case "straight":
       const length = pieceDef.length as number;
       const heading = endCoordinate.heading;
@@ -115,7 +115,7 @@ export function getStartCoordinate(
       dY = rotated.y;
       break;
     default:
-      throw new Error(`Unknown piece type: ${pieceDef.type}`);
+      throw new Error(`Unknown piece category: ${pieceDef.category}`);
   }
 
   // Assign the x, y and heading based on the previous calculations

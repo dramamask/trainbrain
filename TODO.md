@@ -1,15 +1,6 @@
 # TODO
-Mark D is free to move any of the todo items around, either up or down the order.
-
-- Draw "indicators" for track pieces if they do not connect to another track piece. We'll have to include
-that info in the UiLayout information though.
-- In edit mode, ability to move track with mouse.
-- Make a setting on the screen to turn on or off the start position indicator.
-- Ask AI to make my background look better. Maybe use Photoshop AI to change each peace by piece with specific prompts?
-- Make the world size configurable. Decribe in the readme that the world size is the size of the visible area in millimeters.
-- Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
-  Make it configurable as pixels per millimeter or something.
-- Finish the layout calculation on the back-end to work with the pieces that "break the chain".
+- Create classes in server back-end
+- Add type/category sepcific attributes to piece-definitions.json and track-layout.json
 - Use strip-json-comments to strip comments from the JSON layout file. Then add comments to make it easier for me to read.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each.
   Probably need to make another API for that.
@@ -24,4 +15,7 @@ that info in the UiLayout information though.
 - Use JSON Schema to validate the json piece-defintion and (most importantly) the layout json file.
 - Add option to manually enter the world size.
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
+- Make the world size configurable. Decribe in the readme that the world size is the size of the visible area in millimeters.
+- Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
+  Make it configurable as pixels per millimeter or something.
 

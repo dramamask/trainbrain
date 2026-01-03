@@ -1,25 +1,9 @@
-import { Coordinate, Direction, UiLayout, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, DeadEnd, Direction, UiLayout, UiLayoutPiece } from "trainbrain-shared";
 import { trackLayoutDb } from "../services/db.js";
-import { getPieceDefinition, TrackPieceDef } from "./piecedefinitions.js";
+import { LayoutPiece, LayoutPieces } from "../types/layout.js";
+import { TrackPieceDef } from "../types/pieces.js";
+import { getPieceDefinition } from "./piecedefinitions.js";
 import { getEndCoordinate, getStartCoordinate } from "./calculations.js";
-
-// The structure of a layout piece as defined in the layout config file
-export interface LayoutPiece {
-  type: string;
-  direction: Direction | null;
-  connects: {
-    start: number,
-    end: number
-  }
-}
-
-export type LayoutPieces = Record<string, LayoutPiece>;
-
-// The structure of the layout json file
-export interface TrackLayout {
-  startPosition: Coordinate,
-  pieces: LayoutPieces,
-}
 
 // Return the UiLayout structure as needed by the API
 export function getLayout(): UiLayout {
@@ -135,11 +119,12 @@ function getUiLayoutPiece(
 
       const uiLayoutPiece: UiLayoutPiece = {
         id: id,
-        type: pieceDefinition.type,
+        category: pieceDefinition.category,
         direction: layoutPiece.direction,
         start: startCoordinate as Coordinate,
         end: endCoordinate as Coordinate,
         radius: pieceDefinition.radius,
+        deadEnd: getDeadEnd(layoutPiece),
       };
 
       return uiLayoutPiece;
@@ -164,4 +149,15 @@ function getLayoutPiece(id: number, layoutPieces: LayoutPieces): LayoutPiece {
   return layoutPiece;
 }
 
+// Get the dead-end indicator for the UiLayoutPiece
+function getDeadEnd(layoutPiece: LayoutPiece): DeadEnd {
+  if (layoutPiece.connects.start == null) {
+    return "start";
+  }
 
+  if (layoutPiece.connects.end == null) {
+    return "end";
+  }
+
+  return null;
+}
