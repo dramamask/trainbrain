@@ -3,9 +3,7 @@ import { TrackPieceCategory } from 'trainbrain-shared';
 // The structure of a track piece definition
 export interface TrackPieceDef {
     category: TrackPieceCategory;
-    length: number | null;
-    angle: number | null;
-    radius: number | null;
+    attributes: object;
 }
 
 // A list of TrackPieceDef records

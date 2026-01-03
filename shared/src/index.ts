@@ -8,12 +8,12 @@ export interface Coordinate {
 export type Direction = "left" | "right";
 
 // List of the different types of track pieces that we have
-export type TrackPieceCategory = "straight" | "curve";
+export type TrackPieceCategory = "position" | "straight" | "curve";
 
 // List of different possible values for the dead-end indicator for a UI layout piece
 export type DeadEnd = "start" | "end" | null;
 
-// Definition of a layout piece optimized for drawing in the UI
+// Definition of the data for a layout piece, optimized for drawing in the UI
 export interface UiLayoutPiece {
   id: number;
   category: TrackPieceCategory;

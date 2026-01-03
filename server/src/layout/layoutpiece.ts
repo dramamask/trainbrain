@@ -1,31 +1,26 @@
 import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
-import { LayoutPiece as LayoutPieceData } from "../types/layout.js";
-import { TrackPieceDef } from "../types/pieces.js";
+import { LayoutPieceData } from "../shared_types/layout.js";
+import { TrackPieceDef } from "../shared_types/pieces.js";
+import { LayoutPieceMap } from "./layout.js";
 
 export abstract class LayoutPiece {
-  id: string = "";
+  id: number;
   type: string = "";
   attributes: object = {};
-  previous: LayoutPiece | null = null;
-  next: LayoutPiece | null = null;
-  start: Coordinate = <Coordinate>{};
-  end: Coordinate = <Coordinate>{};
 
-  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
+  constructor(id: number, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
     this.type = data.type;
   }
 
-  public initConnections(previous: LayoutPiece | null, next: LayoutPiece | null) {
-    this.previous = previous;
-    this.next = next;
-  }
+  // Initialize the connections that this layout piece has with other layout pieces
+  public abstract initConnections(connections: LayoutPieceMap): void;
 
-  public abstract initCoordinates(): void;
+  // Initialize the physical coordinates of this layout piece
+  public abstract initCoordinates(start: Coordinate | null, end: Coordinate | null): void;
 
-  public abstract setStartCoordinate(position: Coordinate ): void;
-
-  // TODO: public abstract getUiLayoutPiece(): UiLayoutPiece;
+  // Return our layout information in the UiLayoutPiece format
+  public abstract getUiLayoutPiece(): UiLayoutPiece;
 
   // Convert from degrees to radians
   protected degreesToRadians(degrees: number): number {
@@ -51,15 +46,5 @@ export abstract class LayoutPiece {
     const newY = x * sin + y * cos;
 
     return { x: newX, y: newY }
-  }
-
-  // Returns true if the Coordinate object is populated, i.e. has x and y keys
-  protected isPopulated(obj: any): boolean {
-    // 1. Ensure obj is a valid non-null object
-  if (!obj || typeof obj !== 'object') return false;
-
-  // 2. Strict check: Both keys must be present and not null/undefined
-  // Using '!= null' checks for both null AND undefined at once
-  return (obj.x != null && obj.y != null);
   }
 }

@@ -1,7 +1,7 @@
 import { Coordinate, DeadEnd, Direction, UiLayout, UiLayoutPiece } from "trainbrain-shared";
 import { trackLayoutDb } from "../services/db.js";
-import { LayoutPiece, LayoutPieces } from "../types/layout.js";
-import { TrackPieceDef } from "../types/pieces.js";
+import { LayoutPieceData, LayoutPieces } from "../shared_types/layout.js";
+import { TrackPieceDef } from "../shared_types/pieces.js";
 import { getPieceDefinition } from "./piecedefinitions.js";
 import { getEndCoordinate, getStartCoordinate } from "./calculations.js";
 
@@ -44,7 +44,7 @@ function getUiLayout(): UiLayoutPiece[] {
   const uiLayout: UiLayoutPiece[] = [];
 
   // Init
-  let layoutPiece: LayoutPiece;
+  let layoutPiece: LayoutPieceData;
   let id = 1;
   let startPos: Coordinate = trackLayoutDb.data.startPosition;
 
@@ -92,14 +92,14 @@ function getUiLayout(): UiLayoutPiece[] {
  * Calculate the end coordinate of a layout piece that has a known start coordinate.
  *
  * @param id {number} - ID of the layout piece
- * @param layoutPiece {LayoutPiece} - Layout piece info as defined in the layout json
+ * @param layoutPiece {LayoutPieceData} - Layout piece info as defined in the layout json
  * @param start {Coordinate} - Start coordinate of this piece
  *
  * @returns (UiLayoutPiece)
  */
 function getUiLayoutPiece(
   id: number,
-  layoutPiece: LayoutPiece,
+  layoutPiece: LayoutPieceData,
   startCoordinate: Coordinate | null,
   endCoordinate: Coordinate | null,
 ): UiLayoutPiece
@@ -135,7 +135,7 @@ function getUiLayoutPiece(
 }
 
 // Get a layout piece with a given ID from the list of layout pieces (which was read from the layout json file)
-function getLayoutPiece(id: number, layoutPieces: LayoutPieces): LayoutPiece {
+function getLayoutPiece(id: number, layoutPieces: LayoutPieces): LayoutPieceData {
   const layoutPiece = layoutPieces[String(id)]
 
   if (layoutPiece == undefined) {
@@ -147,17 +147,4 @@ function getLayoutPiece(id: number, layoutPieces: LayoutPieces): LayoutPiece {
   }
 
   return layoutPiece;
-}
-
-// Get the dead-end indicator for the UiLayoutPiece
-function getDeadEnd(layoutPiece: LayoutPiece): DeadEnd {
-  if (layoutPiece.connects.start == null) {
-    return "start";
-  }
-
-  if (layoutPiece.connects.end == null) {
-    return "end";
-  }
-
-  return null;
 }

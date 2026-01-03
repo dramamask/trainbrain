@@ -1,5 +1,5 @@
 import { pieceDefintionsDb } from "../services/db.js";
-import { TrackPieceDef } from "../types/pieces.js";
+import { TrackPieceDef } from "../shared_types/pieces.js";
 
 // Function to get a piece definition by its ID
 export function getPieceDefinition(pieceDefId: string): TrackPieceDef {

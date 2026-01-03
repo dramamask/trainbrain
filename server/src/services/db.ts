@@ -5,13 +5,23 @@
 import path from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFilePreset } from 'lowdb/node';
-import { TrackLayout } from '../types/layout.js';
-import { PieceDefinitions } from '../types/pieces.js';
+import { TrackLayout } from '../shared_types/layout.js';
+import { PieceDefinitions } from '../shared_types/pieces.js';
 
 // Default/empty data structure for the track layout json db
 const emptyLayout: TrackLayout = {
-  startPosition: {x: 0, y: 0, heading: 0},
-  pieces: {},
+  pieces: [{
+    type: "startPostion",
+    attributes: {
+      x: 0,
+      y: 0,
+      heading: 0
+    },
+    connections: {
+      start: null,
+      end: null
+    }
+  }]
 };
 
 // Default/empty data structure for the piece defintions json db

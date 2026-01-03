@@ -1,37 +1,35 @@
 {
-    "meta": {
-        "description": "Definitions of the different pieces that are allowed in the track layout.",
-        "field-descriptions": {
-            "category": "string describing the piece type, e.g., 'straight' or 'curve'",
-            "length": "length of the piece in millimeters, or null if not applicable. Do not specify length for angled pieces. We calculate it from the radius and angle.",
-            "angle": "angle in degrees, or null for straight pieces. For example a curve piece that takes 12 pieces to make up a full circle would have an angle of 30 degrees (360 / 12 = 30)",
-            "radius": "circle radius in millimeters. For straight pieces, set to null."
-        }
+  "meta": {
+    "description": "Definitions of the different pieces that are allowed in the track layout."
+  },
+  "definitions": {
+    "startPostion": {
+      "category": "position",
+      "attributes": {}
     },
-    "definitions": {
-        "L300": {
-            "category": "straight",
-            "length": 300,
-            "angle": null,
-            "radius": null
-        },
-        "L150": {
-            "category": "straight",
-            "length": 150,
-            "angle": null,
-            "radius": null
-        },
-        "A30R600": {
-            "category": "curve",
-            "length": null,
-            "angle": 30,
-            "radius": 600
-        },
-        "A15R600": {
-            "category": "curve",
-            "length": null,
-            "angle": 15,
-            "radius": 600
-        }
+    "L600": {
+      "category": "straight",
+      "attributes": {"length": 600}
+    },
+    "L300": {
+      "category": "straight",
+      "attributes": {"length": 300}
+    },
+    "L150": {
+      "category": "straight",
+      "attributes": {"length": 150}
+    },
+    "A30R600": {
+      "category": "curve",
+      "attributes": {"angle": 30, "radius": 600}
+    },
+    "A15R600": {
+      "category": "curve",
+      "attributes": {"angle": 15, "radius": 600}
+    },
+    "A22R1200": {
+      "category": "curve",
+      "attributes": {"angle": 22.5, "radius": 1198}
     }
+  }
 }

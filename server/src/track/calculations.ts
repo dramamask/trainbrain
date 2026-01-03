@@ -1,19 +1,19 @@
 import { Coordinate } from "trainbrain-shared";
-import { LayoutPiece } from "../types/layout.js";
-import { TrackPieceDef } from "../types/pieces.js";
+import { LayoutPieceData } from "../shared_types/layout.js";
+import { TrackPieceDef } from "../shared_types/pieces.js";
 
 /**
  * Returns the end coordinate and heading of a track piece based on
  * a known start coordinate and the current piece's definition.
  *
- * @param layoutPiece {LayoutPiece} - The information about the track piece from the layout json file
+ * @param layoutPiece {LayoutPieceData} - The information about the track piece from the layout json file
  * @param pieceDef {TrackPieceDef} - The definition of the track piece (contains info like length, angle, etc)
  * @param startCoordinate {Coordinate} - The x pos, y pos, and heading of the start position of the track piece.
  *
  * @returns {Coordinate} - The x pos, y pos, and heading of the end position of this track piece.
  */
 export function getEndCoordinate(
-  layoutPiece: LayoutPiece,
+  layoutPiece: LayoutPieceData,
   pieceDef: TrackPieceDef,
   startCoordinate: Coordinate
 ): Coordinate
@@ -68,14 +68,14 @@ export function getEndCoordinate(
  * Returns the start coordinate and heading of a track piece based on
  * a known end coordinate and the current piece's definition.
  *
- * @param layoutPiece {LayoutPiece} - The information about the track piece from the layout json file
+ * @param layoutPiece {LayoutPieceData} - The information about the track piece from the layout json file
  * @param pieceDef {TrackPieceDef} - The definition of the track piece (contains info like length, angle, etc)
  * @param endCoordinate {Coordinate} - The x pos, y pos, and heading of the end position of the track piece.
  *
  * @returns {Coordinate} - The x pos, y pos, and heading of the start position of this track piece.
  */
 export function getStartCoordinate(
-  layoutPiece: LayoutPiece,
+  layoutPiece: LayoutPieceData,
   pieceDef: TrackPieceDef,
   endCoordinate: Coordinate
 ): Coordinate
