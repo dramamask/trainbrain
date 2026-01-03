@@ -1,6 +1,5 @@
 # TODO
 
-- Fix server refactor
 - Add error handling for server and proper error messaging
 - Moving the start position API needs to be redone.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each.
