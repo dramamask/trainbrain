@@ -46,11 +46,11 @@ export default function TrackLayout()
 
   // TODO: convert this to where we select a piece and then get the position from the future piece selection store
   // const piecePosition = (state.trackLayout.pieces[2].attributes as UiAttributesCurve).coordinates.end;
-  const piecePosition = {x: 0, y: 15000, heading: 0};
+  const piecePosition = {x: 1000, y: 14000, heading: 0};
 
   // Position of the view box as a fraction of the world box
   // 0,0 coordinate is bottom left!
-  let xFraction = piecePosition.x / worldWidth;
+  let xFraction = (piecePosition.x - (worldWidth / 4)) / worldWidth;
   xFraction < 0 ? xFraction = 0 : xFraction;
   let yFraction = (piecePosition.y + (worldHeight / 4)) / worldHeight;
   yFraction < 0 ? yFraction = 0 : yFraction;
@@ -58,11 +58,6 @@ export default function TrackLayout()
 
   const imageXPos = xFraction * 100;
   const imageYPos = 100 - (yFraction * 100);
-
-  console.log(xFraction);
-  console.log(yFraction);
-
-  const zoom = 2; // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
 
   // Calculate SVG viewBox coordinates for zoom
   let viewBoxY = (worldHeight - piecePosition.y) - (worldHeight / 4);
@@ -72,6 +67,9 @@ export default function TrackLayout()
   let viewBoxX = piecePosition.x - (worldWidth / 4);
   (viewBoxX < 0) ? 0 : viewBoxX;
   viewBoxX > (0.75 * worldWidth) ? (0.75 * worldWidth) : viewBoxX;
+
+  // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
+  const zoom = 2;
 
   // The part of the world that we are rending in the SVG element
   //let viewBox = `0 0 ${worldWidth} ${worldHeight}`;
