@@ -1,19 +1,14 @@
 # TODO
 
-- Add error handling for server and proper error messaging
-- Moving the start position API needs to be redone.
-- Make a place in the UI where it shows all the different pieces that we need and how many of each.
-  Probably need to make another API for that.
-- Make the background image configurable.
 - Build a layout editor. Keep it simple. Make a "add next track piece" function, default to a straight? Have an
   easy way to change the piece. Maybe with mouse clicks or keyboard shortcuts.
-- Start working on an intersection piece (a cross).
+- Make a place in the UI where it shows all the different pieces that we need and how many of each.
+  Probably need to make another API for that.
 - Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements?
+- Start working on an intersection piece (a cross).
 - Create API to show the trian position. How do we want to show it on the map (SVG I presume). What info do we need
   from the back-end for that (just coordinates?).
 - Is there a way to cache the background image in the UI so it always loads fast? Sometime it's just slow to load.
-- Use JSON Schema to validate the json piece-defintion and (most importantly) the layout json file.
-- Add option to manually enter the world size.
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
 - Make the world size configurable. Decribe in the readme that the world size is the size of the visible area in millimeters.
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.

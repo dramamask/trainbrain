@@ -3,6 +3,7 @@ import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
 import { Coordinate, TrackPieceCategory, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
+import { trackLayoutDb } from '../services/db.js';
 
 // A virtual track piece that simply defines a position on our map/world.
 // One one of the uses of this class is to define the start position of the layout.
@@ -47,5 +48,36 @@ export class Position extends LayoutPiece {
       radius: null,
       deadEnd: null,
     }
+  }
+
+  // Update the position
+  public async setPosition(position: Coordinate): Promise<void> {
+    // Update the position
+    this.position = position;
+
+    // All track pieces now need to update their position relative to me
+    this.initCoordinates(null, null);
+
+    // Save the position to the json DB
+    this.save();
+  }
+
+  public async save(): Promise<void> {
+    // Asssemble the LayoutPieceData
+    trackLayoutDb.data.pieces[0] = {
+      type: this.type,
+      attributes: {
+        x: (this.position as Coordinate).x,
+        y: (this.position as Coordinate).x,
+        heading: (this.position as Coordinate).heading,
+      },
+      connections: {
+        start: this.connections.start ? (this.connections.start as LayoutPiece).getId() : null,
+        end: this.connections.end? (this.connections.end as LayoutPiece).getId() : null,
+      },
+    };
+
+    // Store the data to the DB
+    await trackLayoutDb.write();
   }
 }

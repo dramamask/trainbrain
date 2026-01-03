@@ -1,7 +1,7 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
 import cors from "cors";
-import { UiLayout } from "trainbrain-shared";
+import { Coordinate, UiLayout } from "trainbrain-shared";
 import { getLayout } from "./track/getlayout.js";
 import { setStartPosition } from "./track/setlayout.js";
 import { layout } from "./services/init.js";
@@ -34,33 +34,36 @@ app.get("/layout", (req, res) => {
   }
 });
 
-// // Endpoint to PUT the track layout start position
-// app.put("/layout/start-position",
-//   // Validation middleware chain
-//   body('x').notEmpty().isNumeric().withMessage("JSON paramter 'x' is required and should be a number"),
-//   body('y').notEmpty().isNumeric().withMessage("JSON paramter 'y' is required and should be a number"),
-//   body('heading').notEmpty().isNumeric().withMessage("JSON paramter 'heading' is required and should be a number"),
-//   async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
+// Endpoint to PUT the track layout start position
+app.put("/layout/start-position",
+  // Validation middleware chain
+  body('x').notEmpty().isNumeric().withMessage("JSON paramter 'x' is required and should be a number"),
+  body('y').notEmpty().isNumeric().withMessage("JSON paramter 'y' is required and should be a number"),
+  body('heading').notEmpty().isNumeric().withMessage("JSON paramter 'heading' is required and should be a number"),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-//     const x = Number(req.body.x);
-//     const y = Number(req.body.y);
-//     const heading = Number(req.body.heading);
+    const newStartPos: Coordinate = {
+      x: Number(req.body.x),
+      y: Number(req.body.y),
+      heading: Number(req.body.heading)
+    };
 
-//     try {
-//       const layout = await setStartPosition(x, y, heading);
-//       const status = getHttpStatusCode(layout);
+    try {
+      await layout.updateStartPosition(newStartPos);
+      const uiLayout = layout.getUiLayout();
+      const status = getHttpStatusCode(uiLayout);
 
-//       res.header("Content-Type", "application/json");
-//       res.status(status).send(JSON.stringify(layout));
-//     } catch (error) {
-//       console.error("Unknown error at the edge", error);
-//       res.status(500).send("Unknown error at the edge. Check server logs.");
-//     }
-// });
+      res.header("Content-Type", "application/json");
+      res.status(status).send(JSON.stringify(uiLayout));
+    } catch (error) {
+      console.error("Unknown error at the edge", error);
+      res.status(500).send("Unknown error at the edge. Check server logs.");
+    }
+});
 
 // Start the server
 app.listen(port, () => {

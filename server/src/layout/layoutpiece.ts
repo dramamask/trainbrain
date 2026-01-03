@@ -4,9 +4,9 @@ import { TrackPieceDef } from "../shared_types/pieces.js";
 import { LayoutPieceMap } from "./layout.js";
 
 export abstract class LayoutPiece {
-  id: number;
-  type: string = "";
-  attributes: object = {};
+  protected id: number;
+  protected type: string = "";
+  protected attributes: object = {};
 
   constructor(id: number, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
@@ -21,6 +21,14 @@ export abstract class LayoutPiece {
 
   // Return our layout information in the UiLayoutPiece format
   public abstract getUiLayoutPiece(): UiLayoutPiece;
+
+  // Return the ID of this layout piece
+  public getId(): number {
+    return this.id;
+  }
+
+  // Save the data for this layout piece to the track-layout json DB
+  public abstract save(): Promise<void>;
 
   // Convert from degrees to radians
   protected degreesToRadians(degrees: number): number {

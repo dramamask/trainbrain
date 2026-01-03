@@ -3,6 +3,7 @@ import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
 import { Coordinate, DeadEnd, TrackPieceCategory, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
+import { trackLayoutDb } from '../services/db.js';
 
 interface PieceDefAttributes {
   length: number;
@@ -58,6 +59,20 @@ export class Straight extends LayoutPiece {
       radius: null,
       deadEnd: this.getDeadEnd(),
     }
+  }
+
+  public async save(): Promise<void> {
+    trackLayoutDb.data.pieces[0] = {
+      type: this.type,
+      attributes: {},
+      connections: {
+        start: this.connections.start ? (this.connections.start as LayoutPiece).getId() : null,
+        end: this.connections.end? (this.connections.end as LayoutPiece).getId() : null,
+      },
+    };
+
+    // Store the data to the DB
+    await trackLayoutDb.write();
   }
 
   /**

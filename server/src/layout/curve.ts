@@ -3,6 +3,7 @@ import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
 import { Coordinate, DeadEnd, Direction, TrackPieceCategory, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
+import { trackLayoutDb } from '../services/db.js';
 
 interface PieceDefAttributes {
   angle: number;
@@ -58,16 +59,32 @@ export class Curve extends LayoutPiece {
   }
 
   public getUiLayoutPiece(): UiLayoutPiece {
-      return {
-        id: this.id,
-        category: this.constructor.name.toLowerCase() as TrackPieceCategory,
-        direction: this.direction,
-        start: this.coordinates.start as Coordinate,
-        end: this.coordinates.end as Coordinate,
-        radius: this.radius,
-        deadEnd: this.getDeadEnd(),
-      }
+    return {
+      id: this.id,
+      category: this.constructor.name.toLowerCase() as TrackPieceCategory,
+      direction: this.direction,
+      start: this.coordinates.start as Coordinate,
+      end: this.coordinates.end as Coordinate,
+      radius: this.radius,
+      deadEnd: this.getDeadEnd(),
     }
+  }
+
+  public async save(): Promise<void> {
+    trackLayoutDb.data.pieces[0] = {
+      type: this.type,
+      attributes: {
+        direction: this.direction,
+      },
+      connections: {
+        start: this.connections.start ? (this.connections.start as LayoutPiece).getId() : null,
+        end: this.connections.end? (this.connections.end as LayoutPiece).getId() : null,
+      },
+    };
+
+    // Store the data to the DB
+    await trackLayoutDb.write();
+  }
 
   /**
    * Sets the end coordinate and heading of a track piece based on

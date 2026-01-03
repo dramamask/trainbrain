@@ -42,7 +42,7 @@ export default function TrackLayout()
 
   // The size of the world/viewbox, in SVG coordinates
   const worldHeight = 15240; // Milimeters
-  const worldWidth= 15240; // Milimeters
+  const worldWidth= 13335; // Milimeters
 
   // Render the track layout (and any error message if present)
   return (

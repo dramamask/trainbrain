@@ -64,4 +64,10 @@ export class Layout {
       pieces: Object.values(this.pieces).map(piece => piece.getUiLayoutPiece()),
     }
   }
+
+  // Update the track layout's start position
+  public async updateStartPosition(position: Coordinate): Promise<void> {
+    // This is a little dirty but it will do
+    await (this.pieces[0] as Position).setPosition(position);
+  }
 }
