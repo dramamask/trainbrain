@@ -6,7 +6,7 @@ import { CircularProgress } from "@mui/material";
 import Error from "./error";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
-import StartPosition from "./trackpieces/startPosition";
+import StartPosition from "./trackpieces/startposition";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
