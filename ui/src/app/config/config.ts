@@ -11,4 +11,4 @@ export const START_POS_INDICATOR_RADIUS = 120;
 export const START_POS_INDICATOR_COLOR = "#FFD700";
 
 // Increment to move the track by if moving with keyboard shortcut
-export const MOVE_INCREMENT = 100; // Millimeters
+export const MOVE_INCREMENT = 15; // Millimeters

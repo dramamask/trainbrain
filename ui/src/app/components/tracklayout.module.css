@@ -3,7 +3,6 @@
 }
 
 .trackLayoutContainer {
-  border: 5px solid blue;
   height: 100%;
   background-image: url("/layout-background.jpg");
   background-repeat: no-repeat;

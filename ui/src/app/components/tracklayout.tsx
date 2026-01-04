@@ -51,7 +51,7 @@ export default function TrackLayout()
   const viewportFocalPoint = (state.trackLayout.pieces[0].attributes as UiAttributesPosition).position;
 
   // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
-  const zoom = 2;
+  const zoom = 1;
 
   // Get the css style object for the background image
   const divStyle = getBackgroundImageStyle(viewportFocalPoint.x, viewportFocalPoint.y, worldWidth, worldHeight, zoom);
