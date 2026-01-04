@@ -1,4 +1,4 @@
-import { LayoutPiece } from "./layoutpiece.js";
+import { Connections, LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
 import { Coordinate, DeadEnd, TrackPieceCategory, UiAttributesStraight, UiLayoutPiece } from "trainbrain-shared";
@@ -11,7 +11,7 @@ interface PieceDefAttributes {
 
 export class Straight extends LayoutPiece {
   length: number = 0;
-  connections: {start: LayoutPiece | null; end: LayoutPiece | null;} = {start: null, end: null};
+  connections: Connections = {start: null, end: null};
   coordinates: {start: Coordinate | null; end: Coordinate | null;} = {start: null, end: null};
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {

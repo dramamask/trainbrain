@@ -1,5 +1,5 @@
 // Structure of the data in connections object
-export interface Connections {
+export interface ConnectionsData {
     start: string | null;
     end: string | null;
     [key: string]: string | null; // This means that other properties are allowed
@@ -9,7 +9,7 @@ export interface Connections {
 export interface LayoutPieceData {
   type: string;
   attributes: object;
-  connections: Connections;
+  connections: ConnectionsData;
 }
 
 // The structure of the layout json file

@@ -1,13 +1,21 @@
 import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
-import { Connections, LayoutPieceData } from "../shared_types/layout.js";
+import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
-import { Layout, LayoutPieceMap } from "./layout.js";
+import { LayoutPieceMap } from "./layout.js";
 import { ConnectionName } from "../shared_types/layout.js";
+
+// Definition of connections in the LayoutPiece classes
+export interface Connections {
+  start: LayoutPiece | null;
+  end: LayoutPiece | null;
+  [key: string]: LayoutPiece | null; // This means that other properties are allowed
+}
 
 export abstract class LayoutPiece {
   protected id: string;
   protected type: string = "";
   protected attributes: object = {};
+  protected connections: Connections = {start: null, end: null};
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
@@ -23,25 +31,45 @@ export abstract class LayoutPiece {
   // Return our layout information in the UiLayoutPiece format
   public abstract getUiLayoutPieceData(): UiLayoutPiece;
 
-  // Return the ID of this layout piece
-  public getId(): string {
-    return this.id;
-  }
-
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
   public abstract getLayoutPieceData(): LayoutPieceData;
 
   // Save the data for this layout piece to the track-layout json DB
   public abstract save(writeToFile?: boolean): Promise<void>; // writeToFile is optional
 
+  // Return the ID of this layout piece
+  public getId(): string {
+    return this.id;
+  }
+
   // Returns the LayoutPiece object that is connected to our connectionName connection
-  public abstract getConnection(connectionName: ConnectionName): LayoutPiece;
+  public getConnection(connectionName: ConnectionName): LayoutPiece | null {
+    return this.connections[connectionName];
+  }
 
   // Return the name of our connection to a specific layoutPiece
-  public abstract getConnectionName(layoutPiece: LayoutPiece): ConnectionName;
+  public getConnectionName(layoutPiece: LayoutPiece): ConnectionName {
+    let foundName = "";
+    Object.entries(this.connections).forEach(([connectionName, connection]) => {
+      if (connection == null) {
+        return; // Go to next iteration
+      }
+      if (connection.getId() == layoutPiece.getId()) {
+        foundName = connectionName;
+      }
+    });
+
+    if (foundName == "") {
+      throw new Error(`Did not find connection to specified layout piece (layout piece id: ${layoutPiece.getId()})`);
+    }
+
+    return (foundName as ConnectionName);
+  }
 
   // Update a specific connection for this layoutPiece
-  public abstract updateConnection(connectionName: ConnectionName, connection: LayoutPiece): void;
+  public updateConnection(connectionName: ConnectionName, connection: LayoutPiece): void {
+    this.connections[connectionName] = connection;
+  }
 
   // Convert from degrees to radians
   protected degreesToRadians(degrees: number): number {

@@ -1,4 +1,4 @@
-import { LayoutPiece } from "./layoutpiece.js";
+import { Connections, LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
 import { Coordinate, TrackPieceCategory, UiAttributesPosition, UiLayoutPiece } from "trainbrain-shared";
@@ -9,7 +9,7 @@ import { trackLayoutDb } from '../services/db.js';
 // One one of the uses of this class is to define the start position of the layout.
 export class Position extends LayoutPiece {
   position: Coordinate | null = null;
-  connections: {start: LayoutPiece | null; end: LayoutPiece | null;} = {start: null, end: null};
+  connections: Connections = {start: null, end: null};
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);

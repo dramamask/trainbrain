@@ -1,4 +1,4 @@
-import { LayoutPiece } from "./layoutpiece.js";
+import { Connections, LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
 import { Coordinate, DeadEnd, Direction, TrackPieceCategory, UiLayoutPiece } from "trainbrain-shared";
@@ -18,7 +18,7 @@ export class Curve extends LayoutPiece {
   direction: Direction = <Direction>("");
   angle: number = 0;
   radius: number = 0;
-  connections: {start: LayoutPiece | null; end: LayoutPiece | null;} = {start: null, end: null};
+  connections: Connections = {start: null, end: null};
   coordinates: {start: Coordinate | null; end: Coordinate | null;} = {start: null, end: null};
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {

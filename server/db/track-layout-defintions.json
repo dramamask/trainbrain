@@ -1,15 +1,18 @@
 {
    "meta": {
-    "description": "Definitions that are specific to track piece categories."
+    "description": "Definitions of layout piece properies that are mandatory for specific track piece categories"
   },
   "categories": {
     "straight": {
+      "attributes": [],
       "connections": ["start", "end"]
     },
     "curve": {
+      "attributes": ["direction"],
       "connections": ["start", "end"]
     },
     "switch": {
+      "attributes": ["orientation"],
       "connections": ["start", "end", "diverge"]
     }
   }

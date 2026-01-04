@@ -1,19 +1,19 @@
 import { body } from 'express-validator';
-import { trackLayoutDb } from '../services/db.js';
+import { layout } from '../services/init.js';
 import { pieceDefintionsDb } from '../services/db.js';
 
 export const addLayoutPieceSchema = [
-  body('beforeOrAfter')
-    .notEmpty().isString().isIn(["before", "after"])
-    .withMessage("JSON parameter 'beforeOrAfter' is required and should either have the value 'before' or 'after'"),
+  body('connectionName')
+    .notEmpty().isString().isIn(["start", "end", "diverge"])
+    .withMessage("JSON parameter 'connectionName' is required and should either have one of the following values: 'start', 'end', 'diverge'"),
 
-  body('beforeOrAfterId')
-    .notEmpty().isNumeric().toInt().isInt({ min: 0 })
-    .withMessage("JSON parameter 'beforeOrAfterId' is required and should be a numeric value greater than or equal to 0")
+  body('connectToPiece')
+    .notEmpty().isString().toInt().isInt({ min: 0 })
+    .withMessage("JSON parameter 'connectToPiece' is required and should be a string representation of a numeric value greater than or equal to 0")
     .custom((id: number) => {
-      const highestIdAllowed = trackLayoutDb.data.pieces.length - 1;
+      const highestIdAllowed = layout.getHighestPieceId();
       if (id > highestIdAllowed) {
-        throw Error("The value of JSON parameter `beforeOrAfterId` does not match an ID in the layout DB")
+        throw Error("The value of JSON parameter `connectToPiece` does not match an ID in the layout DB")
       }
       return true;
     }),
@@ -32,4 +32,5 @@ export const addLayoutPieceSchema = [
     .exists()
     .withMessage("JSON parameter 'layoutAttributes' is required (but may  be empty)"),
     // TODO: add validation to check if attributes are necessary for this particular pieceDefId
+    //       use track-layout-definitions.json
 ];

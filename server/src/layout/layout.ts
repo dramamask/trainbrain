@@ -4,11 +4,9 @@ import { pieceDefintionsDb, trackLayoutDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
 import { Position } from "./position.js";
-import { Connections, LayoutPieceData } from "../shared_types/layout.js";
+import { ConnectionName, ConnectionsData, LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
 import { AddLayoutPieceData } from "../shared_types/layout.js";
-import { TrackLayout } from "../shared_types/layout.js";
-import { layout } from "../services/init.js";
 
 // A key/value pair map of LayoutPiece objects (or null)
 export type LayoutPieceMap = Record<string, LayoutPiece | null>;
@@ -63,11 +61,14 @@ export class Layout {
     // Get the pieces that we need to connect to, and the connection names involved
     const piece1 = this.pieces.get(data.connectToPiece);
     if (!piece1) {
-      throw new Error("Could not find piece to connect to");
+      throw new Error(`Could not find layout piece to connect to (piece id: ${data.connectToPiece})`);
     }
     const piece1ConnectionName = data.connectionName;
     const piece2 = piece1.getConnection(piece1ConnectionName);
-    const piece2ConnectionName = piece2.getConnectionName(piece1);
+    let piece2ConnectionName = "";
+    if (piece2) {
+      piece2ConnectionName = piece2.getConnectionName(piece1);
+    }
 
     // Get the track piece definition data
     const pieceDefData: TrackPieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
@@ -77,12 +78,18 @@ export class Layout {
 
     // Assemble connections
     // TODO: How will this work for switch and cross pieces??????????
-    let connectionsData: Connections = {start: null, end: null};
+    let connectionsData: ConnectionsData = {start: null, end: null};
     if (data.connectionName == "end") {
-      connectionsData = {start: piece1.getId(), end: piece2.getId()}
+      connectionsData = {
+        start: piece1.getId(),
+        end: (piece2 ? piece2.getId() : null)
+      }
     }
     if (data.connectionName == "start") {
-      connectionsData = {start: piece2.getId(), end: piece1.getId()}
+      connectionsData = {
+        start: (piece2 ? piece2.getId() : null),
+        end: piece1.getId()
+      }
     }
 
     // Assemble the layout piece data
@@ -93,17 +100,22 @@ export class Layout {
     }
 
     // Create the new piece
-    const newPiece = this.createLayoutPiece(this.getNewLayoutPieceId(), layoutPieceData, pieceDefData);
+    const id = (this.getHighestPieceId() + 1).toString();
+    const newPiece = this.createLayoutPiece(id, layoutPieceData, pieceDefData);
     newPiece.initConnections;
 
     // Update connections for the neighboring pieces
     piece1.updateConnection(piece1ConnectionName, newPiece);
-    piece2.updateConnection(piece2ConnectionName, newPiece);
+    if (piece2) {
+      piece2.updateConnection(piece2ConnectionName as ConnectionName, newPiece);
+    }
 
     // Save the three pieces
     newPiece.save();
     piece1.save();
-    piece2.save();
+    if (piece2) {
+      piece2.save();
+    }
     trackLayoutDb.write();
 
     // Recalculate all the coordinates
@@ -120,6 +132,20 @@ export class Layout {
 
     trackLayoutDb.data.pieces = layoutData;
     await trackLayoutDb.write();
+  }
+
+  // Find the layout piece with the highest numerical ID. Return the ID as a number.
+  public getHighestPieceId(): number {
+    let highestId: number = 0;
+
+    this.pieces.forEach(piece => {
+      const numericalIdValue = Number(piece.getId());
+      if (numericalIdValue > highestId) {
+        highestId = numericalIdValue;
+      }
+    });
+
+    return highestId;
   }
 
   // Create a new LayoutPiece of the correct type.
@@ -160,19 +186,5 @@ export class Layout {
       throw new Error("LayoutPiece '0' is in DB but not in Layout object");
     }
     piece.initCoordinates(null, null);
-  }
-
-  // Find the layout piece with the highest numerical ID. Add one. Return.
-  private getNewLayoutPieceId(): string {
-    let highestId = 0;
-
-    this.pieces.forEach(piece => {
-      const numericalIdValue = Number(piece.getId());
-      if (numericalIdValue > highestId) {
-        highestId = numericalIdValue;
-      }
-    });
-
-    return (highestId + 1).toString();
   }
 }
