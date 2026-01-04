@@ -51,11 +51,14 @@ export default function TrackLayout()
   const zoom = 2;
 
   // Calculate the background image position
-  // 0,0 coordinate is bottom left!
   let xFraction = (piecePosition.x / worldWidth) - 0.25;
   xFraction = xFraction * 2;
   if (xFraction < 0.25) {xFraction = 0};
   if (xFraction > 0.75) {xFraction = 1};
+
+  console.log("xFraction: " + xFraction);
+
+  //console.log("xFractionAlt: " + xFractionAlt);
 
   let yFraction = (piecePosition.y / worldHeight) - 0.25;
   yFraction = yFraction * 2;
@@ -65,43 +68,22 @@ export default function TrackLayout()
   const imageXPos = xFraction * 100;
   const imageYPos = 100 - (yFraction * 100);
 
-  console.log("imageXPos", imageXPos);
-  console.log("imageYPos", imageYPos);
+  const divStyle = {
+    backgroundPosition: `${imageXPos}% ${imageYPos}%`,
+    backgroundSize: `${zoom * 100}% ${zoom * 100}%`
+  }
 
   // Calculate SVG viewBox coordinates for zoom
-  let viewBoxX = piecePosition.x - (worldWidth / 4);
+  let viewBoxX = piecePosition.x - (worldWidth * 0.25);
   if (viewBoxX < 0) {viewBoxX = 0};
   if (viewBoxX > (0.5 * worldWidth)) {viewBoxX = 0.5 * worldWidth};
 
-  let viewBoxY = (worldHeight - piecePosition.y) - (worldHeight / 4);
+  let viewBoxY = (worldHeight - piecePosition.y) - (worldHeight * 0.25);
   if (viewBoxY < 0) {viewBoxY = 0};
   if (viewBoxY > (0.5 * worldHeight)) { viewBoxY = 0.5 * worldHeight};
 
-  console.log("viewBoxX", viewBoxX);
-  console.log("viewBoxY", viewBoxY);
-
   // The part of the world that we are rending in the SVG element
-  //let viewBox = `0 0 ${worldWidth} ${worldHeight}`;
   let viewBox = `${viewBoxX} ${viewBoxY} ${worldWidth / zoom} ${worldHeight / zoom}`;
-
-  // bottom left corner and 200% zoom:
-  //   viewBox = `0 ${worldHeight / 2} ${worldWidth / 2} ${worldHeight / 2}`;
-  //   style={{ backgroundPosition: "left bottom", backgroundSize: "200% 200%" }}
-  //   or style={{ backgroundPosition: "0% 100%", backgroundSize: "200% 200%" }}
-  //
-  // top left corner and 200% zoom:
-  //   viewBox = `0 0 ${worldWidth / 2} ${worldHeight / 2}`;
-  //   style={{ backgroundPosition: "left top", backgroundSize: "200% 200%" }}
-  //   or style={{ backgroundPosition: "0% 0%", backgroundSize: "200% 200%" }}
-  //
-  // middle left and 200% zoom:
-  //   viewBox = `0 0 ${worldWidth / 4} ${worldHeight / 2}`;
-  //   style={{ backgroundPosition: "0% 50%", backgroundSize: "200% 200%" }}
-  const imageZoom = zoom * 100
-  const divStyle = {
-    backgroundPosition: `${imageXPos}% ${imageYPos}%`,
-    backgroundSize: `${imageZoom}% ${imageZoom}%`
-  }
 
   // Render the track layout (and any error message if present)
   // Note that the coordinates represent mm in real life
