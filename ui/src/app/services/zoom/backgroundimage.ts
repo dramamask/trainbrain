@@ -28,7 +28,7 @@
  * @param {number} focalPointY - The y position of the focal point of the view window
  * @param {number} worldWidth - The width of the world box
  * @param {number} worldHeight - The height of the world box
- * @param {number} zoomFactor - The zoom factor
+ * @param {number} zoomFactor - The zoom factor. A zoomfactor of 2 is 200% zoom, etc.
  */
 export function getBackgroundImageStyle(
   focalPointX: number,
@@ -60,17 +60,17 @@ export function getBackgroundImageStyle(
  *
  * @param {number} focalPointPos - The x or y position of the focal point of the view window
  * @param {number} worldSize - The width or height of the world box
- * @param {number} zoomFactor - The zoom factor
+ * @param {number} zoomFactor - The zoom factor. A zoomfactor of 2 is 200% zoom, etc.
  */
 function getBackgroundPosAsFraction(focalPointPos: number, worldSize: number, zoomFactor: number): number {
   // Position of the focal point, as a fraction
-  let piecePosFraction = (focalPointPos / worldSize);
+  const piecePosFraction = (focalPointPos / worldSize);
 
   // Width of the view window, as a fraction
-  let windowWidthFraction = (1 / zoomFactor);
+  const windowSizeFraction = (1 / zoomFactor);
 
   // Position of the view window, as a fraction
-  let windowPosFraction = piecePosFraction - (windowWidthFraction / 2);
+  const windowPosFraction = piecePosFraction - (windowSizeFraction / 2);
 
   // BackgroundPosition value, as a fraction
   // Note that this calcuation goes back to the 25% example at the top of the page

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { UiAttributesCurve, UiLayout, UiLayoutPiece } from "trainbrain-shared"
+import { UiAttributesPosition, UiLayout, UiLayoutPiece } from "trainbrain-shared"
 import { CircularProgress } from "@mui/material";
 import Error from "./error";
 import Curve from "./trackpieces/curve";
@@ -10,9 +10,11 @@ import StartPosition from "./trackpieces/startPosition";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
+import { getBackgroundImageStyle } from "../services/zoom/backgroundimage";
+import { getSvgViewBox } from "../services/zoom/svg";
 
 import styles from "./tracklayout.module.css";
-import { getBackgroundImageStyle } from "../services/zoom/backgroundimage";
+
 
 export default function TrackLayout()
 {
@@ -45,29 +47,17 @@ export default function TrackLayout()
   const worldHeight = 15240; // Milimeters
   const worldWidth = 13335; // Milimeters
 
-  // TODO: convert this to where we select a piece and then get the position from the future piece selection store
-  const piecePosition = (state.trackLayout.pieces[2].attributes as UiAttributesCurve).coordinates.end;
+  // TODO: change this to align with scroll bars or a mouse click or the focused track piece or something
+  const viewportFocalPoint = (state.trackLayout.pieces[0].attributes as UiAttributesPosition).position;
 
   // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
   const zoom = 2;
 
   // Get the css style object for the background image
-  const divStyle = getBackgroundImageStyle(piecePosition.x, piecePosition.y, worldWidth, worldHeight, zoom);
+  const divStyle = getBackgroundImageStyle(viewportFocalPoint.x, viewportFocalPoint.y, worldWidth, worldHeight, zoom);
 
-  // TODO: improve the backgroundpos function to take zoom into account
-  // TODO: move the viewbox calcs to their own function
-
-  // Calculate SVG viewBox coordinates for zoom
-  let viewBoxX = piecePosition.x - (worldWidth * 0.25);
-  if (viewBoxX < 0) {viewBoxX = 0};
-  if (viewBoxX > (0.5 * worldWidth)) {viewBoxX = 0.5 * worldWidth};
-
-  let viewBoxY = (worldHeight - piecePosition.y) - (worldHeight * 0.25);
-  if (viewBoxY < 0) {viewBoxY = 0};
-  if (viewBoxY > (0.5 * worldHeight)) { viewBoxY = 0.5 * worldHeight};
-
-  // The part of the world that we are rending in the SVG element
-  let viewBox = `${viewBoxX} ${viewBoxY} ${worldWidth / zoom} ${worldHeight / zoom}`;
+  // Get the viewBox values for the SVG component
+  const viewBox = getSvgViewBox(viewportFocalPoint.x, viewportFocalPoint.y, worldWidth, worldHeight, zoom);
 
   // Render the track layout (and any error message if present)
   // Note that the coordinates represent mm in real life
