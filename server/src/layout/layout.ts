@@ -6,6 +6,7 @@ import { Curve } from "./curve.js";
 import { Position } from "./position.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
+import { AddLayoutPieceData } from "../shared_types/layout.js";
 
 // A key/value pair map of LayoutPiece objects (or null)
 export type LayoutPieceMap = Record<string, LayoutPiece | null>;
@@ -29,8 +30,24 @@ export class Layout {
     this.pieces[0].initCoordinates(null, null);
   }
 
-  // Static function to create a new LayoutPiece of the correct type.
-  public createLayoutPiece(id: number, piece: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
+  // Return the layout in UiLayout format
+  public getUiLayout(): UiLayout {
+    return {
+      messages: {
+        error: "",
+      },
+      pieces: Object.values(this.pieces).map(piece => piece.getUiLayoutPiece()),
+    }
+  }
+
+  // Update the track layout's start position
+  public async updateStartPosition(position: Coordinate): Promise<void> {
+    // This is a little dirty but it will do
+    await (this.pieces[0] as Position).setPosition(position);
+  }
+
+  // Create a new LayoutPiece of the correct type.
+  private createLayoutPiece(id: number, piece: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
     let category = "";
     try {
       category = pieceDefintionsDb.data.definitions[piece.type].category;
@@ -50,7 +67,7 @@ export class Layout {
     }
   }
 
-  // Return the list of connections for a specific layout piece
+  // Return the list of connections for a specific layout piece (as LayoutPiece class objects)
   private getConnections(piece: LayoutPieceData): LayoutPieceMap {
     return Object.fromEntries(
       Object.entries(piece.connections).map(([key, value]) => [
@@ -58,21 +75,5 @@ export class Layout {
         (value === null) ? null : this.pieces[value]
       ])
     ) as LayoutPieceMap;
-  }
-
-  // Return the layout in UiLayout format
-  public getUiLayout(): UiLayout {
-    return {
-      messages: {
-        error: "",
-      },
-      pieces: Object.values(this.pieces).map(piece => piece.getUiLayoutPiece()),
-    }
-  }
-
-  // Update the track layout's start position
-  public async updateStartPosition(position: Coordinate): Promise<void> {
-    // This is a little dirty but it will do
-    await (this.pieces[0] as Position).setPosition(position);
   }
 }

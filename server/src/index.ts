@@ -1,9 +1,9 @@
-import express, { Application, Request, Response } from 'express';
+import express from 'express';
 import cors from "cors";
 import apiRoutes from "./routes/index.js";
 
 const PORT = 3001;
-const app: Application = express();
+const app = express();
 
 // Automatically parse request data to json if the content type header says it's json
 app.use(express.json());

@@ -1,6 +1,6 @@
-/**
- * This file contains lowdb related functions
- */
+// -------------------------------------------
+// This file contains lowdb related functions
+// -------------------------------------------
 
 import path from 'node:path';
 import { Low } from 'lowdb';

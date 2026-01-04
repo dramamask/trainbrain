@@ -3,7 +3,7 @@
     "description": "Definitions of the different pieces that are allowed in the track layout."
   },
   "definitions": {
-    "startPostion": {
+    "startPosition": {
       "category": "position",
       "description": "Start position of the track layout",
       "attributes": {}

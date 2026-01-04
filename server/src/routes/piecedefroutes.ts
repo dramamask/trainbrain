@@ -1,8 +1,9 @@
-const express = require('express');
-const router = express.Router();
-//const pieceDefController = require('../controllers/piecedefcontroller.js');
+import { Router } from "express";
+import * as pieceDefController from "../controllers/piecedefcontroller.js";
+
+const router: Router = Router();
 
 // Map URL sub-paths to controller methods
-// router.get('/', pieceDefController.getPieceDefinitions);
+ router.get('/', pieceDefController.getPieceDefinitions);
 
-module.exports = router;
+export default router;

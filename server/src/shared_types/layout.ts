@@ -13,3 +13,11 @@ export interface LayoutPieceData {
 export interface TrackLayout {
   pieces: LayoutPieceData[],
 }
+
+// Data structure used to add a layout piece to an existing layout
+export interface AddLayoutPieceData {
+  beforeOrAfter: "before" | "after";
+  beforeOrAfterId: number;
+  pieceDefId: string;
+  layoutAttributes: object; // TODO: Is it worth it to list the layoutPieceAttributes here from each individual layout piece class?
+}
