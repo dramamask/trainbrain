@@ -42,34 +42,43 @@ export default function TrackLayout()
 
   // The size of the world box
   const worldHeight = 15240; // Milimeters
-  const worldWidth= 13335; // Milimeters
+  const worldWidth = 13335; // Milimeters
 
   // TODO: convert this to where we select a piece and then get the position from the future piece selection store
-  // const piecePosition = (state.trackLayout.pieces[2].attributes as UiAttributesCurve).coordinates.end;
-  const piecePosition = {x: 1000, y: 14000, heading: 0};
+  const piecePosition = (state.trackLayout.pieces[2].attributes as UiAttributesCurve).coordinates.end;
 
-  // Position of the view box as a fraction of the world box
+  // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
+  const zoom = 2;
+
+  // Calculate the background image position
   // 0,0 coordinate is bottom left!
-  let xFraction = (piecePosition.x - (worldWidth / 4)) / worldWidth;
-  xFraction < 0 ? xFraction = 0 : xFraction;
-  let yFraction = (piecePosition.y + (worldHeight / 4)) / worldHeight;
-  yFraction < 0 ? yFraction = 0 : yFraction;
-  yFraction > 1 ? yFraction = 1 : yFraction;
+  let xFraction = (piecePosition.x / worldWidth) - 0.25;
+  xFraction = xFraction * 2;
+  if (xFraction < 0.25) {xFraction = 0};
+  if (xFraction > 0.75) {xFraction = 1};
+
+  let yFraction = (piecePosition.y / worldHeight) - 0.25;
+  yFraction = yFraction * 2;
+  if (yFraction < 0.25) {yFraction = 0};
+  if (yFraction > 0.75) {yFraction = 1};
 
   const imageXPos = xFraction * 100;
   const imageYPos = 100 - (yFraction * 100);
 
+  console.log("imageXPos", imageXPos);
+  console.log("imageYPos", imageYPos);
+
   // Calculate SVG viewBox coordinates for zoom
-  let viewBoxY = (worldHeight - piecePosition.y) - (worldHeight / 4);
-  (viewBoxY < 0) ? 0 : viewBoxY;
-  viewBoxY > (0.75 * worldHeight) ? (0.75 * worldHeight) : viewBoxY;
-
   let viewBoxX = piecePosition.x - (worldWidth / 4);
-  (viewBoxX < 0) ? 0 : viewBoxX;
-  viewBoxX > (0.75 * worldWidth) ? (0.75 * worldWidth) : viewBoxX;
+  if (viewBoxX < 0) {viewBoxX = 0};
+  if (viewBoxX > (0.5 * worldWidth)) {viewBoxX = 0.5 * worldWidth};
 
-  // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
-  const zoom = 2;
+  let viewBoxY = (worldHeight - piecePosition.y) - (worldHeight / 4);
+  if (viewBoxY < 0) {viewBoxY = 0};
+  if (viewBoxY > (0.5 * worldHeight)) { viewBoxY = 0.5 * worldHeight};
+
+  console.log("viewBoxX", viewBoxX);
+  console.log("viewBoxY", viewBoxY);
 
   // The part of the world that we are rending in the SVG element
   //let viewBox = `0 0 ${worldWidth} ${worldHeight}`;
