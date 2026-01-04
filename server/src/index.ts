@@ -2,8 +2,6 @@ import express from "express";
 import { body, validationResult } from "express-validator";
 import cors from "cors";
 import { Coordinate, UiLayout } from "trainbrain-shared";
-import { getLayout } from "./track/getlayout.js";
-import { setStartPosition } from "./track/setlayout.js";
 import { layout } from "./services/init.js";
 
 const port = 3001;
