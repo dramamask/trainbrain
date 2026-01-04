@@ -11,7 +11,7 @@ export class Position extends LayoutPiece {
   position: Coordinate | null = null;
   connections: {start: LayoutPiece | null; end: LayoutPiece | null;} = {start: null, end: null};
 
-  constructor(id: number, data: LayoutPieceData, pieceDef: TrackPieceDef) {
+  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
     this.position = data.attributes as Coordinate;
   }
@@ -38,7 +38,7 @@ export class Position extends LayoutPiece {
     }
   }
 
-  public getUiLayoutPiece(): UiLayoutPiece {
+  public getUiLayoutPieceData(): UiLayoutPiece {
     return {
       id: this.id,
       category: this.constructor.name.toLowerCase() as TrackPieceCategory,
@@ -59,9 +59,8 @@ export class Position extends LayoutPiece {
     this.save();
   }
 
-  public async save(): Promise<void> {
-    // Asssemble the LayoutPieceData
-    trackLayoutDb.data.pieces[0] = {
+  public getLayoutPieceData(): LayoutPieceData {
+     return {
       type: this.type,
       attributes: {
         x: (this.position as Coordinate).x,
@@ -73,8 +72,11 @@ export class Position extends LayoutPiece {
         end: this.connections.end? (this.connections.end as LayoutPiece).getId() : null,
       },
     };
+  }
 
-    // Store the data to the DB
+  public async save(): Promise<void> {
+    trackLayoutDb.data.pieces[this.id] = this.getLayoutPieceData();
+
     await trackLayoutDb.write();
   }
 }

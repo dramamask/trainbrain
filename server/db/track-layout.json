@@ -2,8 +2,8 @@
   "meta": {
     "description": "This file is a description of a model train track layout."
   },
-  "pieces": [
-    {
+  "pieces": {
+    "0": {
       "type": "startPosition",
       "attributes": {
         "x": 9947,
@@ -11,45 +11,45 @@
         "heading": 0
       },
       "connections": {
-        "start": 3,
-        "end": 1
+        "start": "3",
+        "end": "1"
       }
     },
-    {
+    "1": {
       "type": "LGB-300",
       "attributes": {},
       "connections": {
-        "start": 0,
-        "end": 2
+        "start": "0",
+        "end": "2"
       }
     },
-    {
+    "2": {
       "type": "LGB-R1-30°",
       "attributes": {
         "direction": "left"
       },
       "connections": {
-        "start": 1,
+        "start": "1",
         "end": null
       }
     },
-    {
+    "3": {
       "type": "LGB-R3-22.5°",
       "attributes": {
         "direction": "right"
       },
       "connections": {
-        "start": 4,
-        "end": 0
+        "start": "4",
+        "end": "0"
       }
     },
-    {
+    "4": {
       "type": "LGB-600",
-      "direction": null,
+      "attributes": {},
       "connections": {
         "start": null,
-        "end": 3
+        "end": "3"
       }
     }
-  ]
+  }
 }

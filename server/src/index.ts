@@ -19,6 +19,11 @@ app.use(cors({
 // Load routes
 app.use("/", apiRoutes);
 
+// Test route for debugging purposes
+app.get("/test", (req, res) => {
+  res.send("nothing here");
+})
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

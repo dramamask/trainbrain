@@ -21,7 +21,7 @@ export class Curve extends LayoutPiece {
   connections: {start: LayoutPiece | null; end: LayoutPiece | null;} = {start: null, end: null};
   coordinates: {start: Coordinate | null; end: Coordinate | null;} = {start: null, end: null};
 
-  constructor(id: number, data: LayoutPieceData, pieceDef: TrackPieceDef) {
+  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
     this.direction = (data.attributes as LayoutPieceAttributes).direction;
     this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
@@ -58,7 +58,7 @@ export class Curve extends LayoutPiece {
     }
   }
 
-  public getUiLayoutPiece(): UiLayoutPiece {
+  public getUiLayoutPieceData(): UiLayoutPiece {
     return {
       id: this.id,
       category: this.constructor.name.toLowerCase() as TrackPieceCategory,
@@ -74,8 +74,8 @@ export class Curve extends LayoutPiece {
     }
   }
 
-  public async save(): Promise<void> {
-    trackLayoutDb.data.pieces[0] = {
+  public getLayoutPieceData(): LayoutPieceData {
+    return {
       type: this.type,
       attributes: {
         direction: this.direction,
@@ -85,6 +85,10 @@ export class Curve extends LayoutPiece {
         end: this.connections.end? (this.connections.end as LayoutPiece).getId() : null,
       },
     };
+  }
+
+  public async save(): Promise<void> {
+    trackLayoutDb.data.pieces[0] = this.getLayoutPieceData();
 
     // Store the data to the DB
     await trackLayoutDb.write();

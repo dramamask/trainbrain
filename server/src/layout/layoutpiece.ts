@@ -4,11 +4,11 @@ import { TrackPieceDef } from "../shared_types/pieces.js";
 import { LayoutPieceMap } from "./layout.js";
 
 export abstract class LayoutPiece {
-  protected id: number;
+  protected id: string;
   protected type: string = "";
   protected attributes: object = {};
 
-  constructor(id: number, data: LayoutPieceData, pieceDef: TrackPieceDef) {
+  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
     this.type = data.type;
   }
@@ -20,12 +20,15 @@ export abstract class LayoutPiece {
   public abstract initCoordinates(start: Coordinate | null, end: Coordinate | null): void;
 
   // Return our layout information in the UiLayoutPiece format
-  public abstract getUiLayoutPiece(): UiLayoutPiece;
+  public abstract getUiLayoutPieceData(): UiLayoutPiece;
 
   // Return the ID of this layout piece
-  public getId(): number {
+  public getId(): string {
     return this.id;
   }
+
+  // Get the data for this layout piece, as it would be stored in the track-layout json DB
+  public abstract getLayoutPieceData(): LayoutPieceData;
 
   // Save the data for this layout piece to the track-layout json DB
   public abstract save(): Promise<void>;

@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { matchedData } from 'express-validator';
 import { constants } from "http2";
 import { layout } from "../services/init.js";
-import * as layoutService from "../services/layout.js";
 import { Coordinate, UiLayout } from 'trainbrain-shared';
 import { AddLayoutPieceData } from '../shared_types/layout.js';
 
@@ -27,7 +26,7 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
   const data = matchedData<AddLayoutPieceData>(req);
 
   try {
-    await layoutService.addLayoutPiece(data);
+    await layout.addLayoutPiece(data);
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);

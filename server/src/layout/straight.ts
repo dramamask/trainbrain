@@ -14,7 +14,7 @@ export class Straight extends LayoutPiece {
   connections: {start: LayoutPiece | null; end: LayoutPiece | null;} = {start: null, end: null};
   coordinates: {start: Coordinate | null; end: Coordinate | null;} = {start: null, end: null};
 
-  constructor(id: number, data: LayoutPieceData, pieceDef: TrackPieceDef) {
+  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
     this.length = (pieceDef.attributes as PieceDefAttributes).length;
   }
@@ -49,7 +49,7 @@ export class Straight extends LayoutPiece {
     }
   }
 
-  public getUiLayoutPiece(): UiLayoutPiece {
+  public getUiLayoutPieceData(): UiLayoutPiece {
     return {
       id: this.id,
       category: this.constructor.name.toLowerCase() as TrackPieceCategory,
@@ -63,17 +63,20 @@ export class Straight extends LayoutPiece {
     }
   }
 
-  public async save(): Promise<void> {
-    trackLayoutDb.data.pieces[0] = {
+  public getLayoutPieceData(): LayoutPieceData {
+    return {
       type: this.type,
       attributes: {},
       connections: {
         start: this.connections.start ? (this.connections.start as LayoutPiece).getId() : null,
         end: this.connections.end? (this.connections.end as LayoutPiece).getId() : null,
       },
-    };
+    }
+  }
 
-    // Store the data to the DB
+  public async save(): Promise<void> {
+    trackLayoutDb.data.pieces[this.id] = this.getLayoutPieceData();
+
     await trackLayoutDb.write();
   }
 

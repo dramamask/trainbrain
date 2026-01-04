@@ -38,7 +38,7 @@ export interface UiAttributesCurve {
 
 // Definition of the data for a layout piece, optimized for drawing in the UI
 export interface UiLayoutPiece {
-  id: number;
+  id: string;
   category: TrackPieceCategory;
   attributes: UiAttributesPosition | UiAttributesStraight | UiAttributesCurve;
   deadEnd: DeadEnd;
