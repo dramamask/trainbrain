@@ -1,12 +1,15 @@
-// The structure of a layout piece as defined in the layout config file
-export interface LayoutPieceData {
-  type: string;
-  attributes: object;
-  connections: {
+// Structure of the data in connections object
+export interface Connections {
     start: string | null;
     end: string | null;
     [key: string]: string | null; // This means that other properties are allowed
-  }
+}
+
+// Structure of the data for a layout piece in the track layout json DB
+export interface LayoutPieceData {
+  type: string;
+  attributes: object;
+  connections: Connections;
 }
 
 // The structure of the layout json file
@@ -14,10 +17,13 @@ export interface TrackLayout {
   pieces: Record<string, LayoutPieceData>,
 }
 
+// All possible connection names
+export type ConnectionName = "start" | "end" | "diverge";
+
 // Data structure used to add a layout piece to an existing layout
 export interface AddLayoutPieceData {
-  beforeOrAfter: "before" | "after";
-  beforeOrAfterId: string;
+  connectToPiece: string;
+  connectionName: ConnectionName;
   pieceDefId: string;
   layoutAttributes: object; // TODO: Is it worth it to list the layoutPieceAttributes here from each individual layout piece class?
 }

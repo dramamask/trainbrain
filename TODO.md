@@ -6,7 +6,7 @@
   Probably need to make another API for that.
 - Add the world size to the layout json file.
 - Add protection so you can't move the layout outside of the world size.
-- Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements?
+- Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements? We may have to change the connections model.
 - Start working on an intersection piece (a cross).
 - Create API to show the trian position. How do we want to show it on the map (SVG I presume). What info do we need
   from the back-end for that (just coordinates?).

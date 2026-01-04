@@ -74,10 +74,12 @@ export class Straight extends LayoutPiece {
     }
   }
 
-  public async save(): Promise<void> {
+  public async save(writeToFile: boolean = true): Promise<void> {
     trackLayoutDb.data.pieces[this.id] = this.getLayoutPieceData();
 
-    await trackLayoutDb.write();
+    if (writeToFile) {
+      await trackLayoutDb.write();
+    }
   }
 
   /**

@@ -87,11 +87,12 @@ export class Curve extends LayoutPiece {
     };
   }
 
-  public async save(): Promise<void> {
-    trackLayoutDb.data.pieces[0] = this.getLayoutPieceData();
+  public async save(writeToFile: boolean = true): Promise<void> {
+    trackLayoutDb.data.pieces[this.id] = this.getLayoutPieceData();
 
-    // Store the data to the DB
-    await trackLayoutDb.write();
+    if (writeToFile) {
+      await trackLayoutDb.write();
+    }
   }
 
   /**

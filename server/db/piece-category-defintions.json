@@ -1,0 +1,16 @@
+{
+   "meta": {
+    "description": "Definitions that are specific to track piece categories."
+  },
+  "categories": {
+    "straight": {
+      "connections": ["start", "end"]
+    },
+    "curve": {
+      "connections": ["start", "end"]
+    },
+    "switch": {
+      "connections": ["start", "end", "diverge"]
+    }
+  }
+}

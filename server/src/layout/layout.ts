@@ -4,10 +4,11 @@ import { pieceDefintionsDb, trackLayoutDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
 import { Position } from "./position.js";
-import { LayoutPieceData } from "../shared_types/layout.js";
+import { Connections, LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
 import { AddLayoutPieceData } from "../shared_types/layout.js";
 import { TrackLayout } from "../shared_types/layout.js";
+import { layout } from "../services/init.js";
 
 // A key/value pair map of LayoutPiece objects (or null)
 export type LayoutPieceMap = Record<string, LayoutPiece | null>;
@@ -34,12 +35,7 @@ export class Layout {
       piece.initConnections(this.getConnections(pieceData));
     });
 
-    // Kick off the call chain that calculates the coordinates for each piece
-    const piece = this.pieces.get("0");
-    if (!piece) {
-      throw new Error("LayoutPiece '0' is in DB but not in Layout object");
-    }
-    piece.initCoordinates(null, null);
+    this.calculateAllCoordinates();
   }
 
   // Return the layout in UiLayout format
@@ -64,18 +60,54 @@ export class Layout {
 
   // Add a piece to the layout
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
+    // Get the pieces that we need to connect to, and the connection names involved
+    const piece1 = this.pieces.get(data.connectToPiece);
+    if (!piece1) {
+      throw new Error("Could not find piece to connect to");
+    }
+    const piece1ConnectionName = data.connectionName;
+    const piece2 = piece1.getConnection(piece1ConnectionName);
+    const piece2ConnectionName = piece2.getConnectionName(piece1);
 
+    // Get the track piece definition data
+    const pieceDefData: TrackPieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
+    if (!pieceDefData) {
+      throw new Error("Could not find the track piece definition data");
+    }
+
+    // Assemble connections
+    // TODO: How will this work for switch and cross pieces??????????
+    let connectionsData: Connections = {start: null, end: null};
+    if (data.connectionName == "end") {
+      connectionsData = {start: piece1.getId(), end: piece2.getId()}
+    }
+    if (data.connectionName == "start") {
+      connectionsData = {start: piece2.getId(), end: piece1.getId()}
+    }
 
     // Assemble the layout piece data
     const layoutPieceData: LayoutPieceData = {
       type: data.pieceDefId,
       attributes: data.layoutAttributes,
-      connections: {},
+      connections: connectionsData,
     }
 
+    // Create the new piece
+    const newPiece = this.createLayoutPiece(this.getNewLayoutPieceId(), layoutPieceData, pieceDefData);
+    newPiece.initConnections;
+
     // Update connections for the neighboring pieces
+    piece1.updateConnection(piece1ConnectionName, newPiece);
+    piece2.updateConnection(piece2ConnectionName, newPiece);
 
     // Save the three pieces
+    newPiece.save();
+    piece1.save();
+    piece2.save();
+    trackLayoutDb.write();
+
+    // Recalculate all the coordinates
+    this.calculateAllCoordinates();
   }
 
   // Save the entire track layout
@@ -91,23 +123,23 @@ export class Layout {
   }
 
   // Create a new LayoutPiece of the correct type.
-  private createLayoutPiece(id: string, piece: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
+  private createLayoutPiece(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
     let category = "";
     try {
-      category = pieceDefintionsDb.data.definitions[piece.type].category;
+      category = pieceDefintionsDb.data.definitions[pieceData.type].category;
     } catch (error) {
-      throw new Error(`Unknown piece type found in layout json DB: ${piece.type}`);
+      throw new Error(`Unknown piece type found in layout json DB: ${pieceData.type}`);
     }
 
     switch(category) {
       case "position":
-        return new Position(id, piece, pieceDef);
+        return new Position(id, pieceData, pieceDef);
       case "straight":
-        return new Straight(id, piece, pieceDef);
+        return new Straight(id, pieceData, pieceDef);
       case "curve":
-        return new Curve(id, piece, pieceDef);
+        return new Curve(id, pieceData, pieceDef);
       default:
-        throw new Error(`Undefined track category type in track-layout db: ${piece.type}`)
+        throw new Error(`Undefined track category type in track-layout db: ${pieceData.type}`)
     }
   }
 
@@ -119,5 +151,28 @@ export class Layout {
         (value === null) ? null : this.pieces.get(value.toString()) // Reference to a LayoutPiece
       ])
     ) as LayoutPieceMap;
+  }
+
+  // Kick off the call chain that calculates the coordinates for each piece
+  private calculateAllCoordinates(): void {
+    const piece = this.pieces.get("0");
+    if (!piece) {
+      throw new Error("LayoutPiece '0' is in DB but not in Layout object");
+    }
+    piece.initCoordinates(null, null);
+  }
+
+  // Find the layout piece with the highest numerical ID. Add one. Return.
+  private getNewLayoutPieceId(): string {
+    let highestId = 0;
+
+    this.pieces.forEach(piece => {
+      const numericalIdValue = Number(piece.getId());
+      if (numericalIdValue > highestId) {
+        highestId = numericalIdValue;
+      }
+    });
+
+    return (highestId + 1).toString();
   }
 }

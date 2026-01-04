@@ -1,7 +1,8 @@
 import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
-import { LayoutPieceData } from "../shared_types/layout.js";
+import { Connections, LayoutPieceData } from "../shared_types/layout.js";
 import { TrackPieceDef } from "../shared_types/pieces.js";
-import { LayoutPieceMap } from "./layout.js";
+import { Layout, LayoutPieceMap } from "./layout.js";
+import { ConnectionName } from "../shared_types/layout.js";
 
 export abstract class LayoutPiece {
   protected id: string;
@@ -31,7 +32,16 @@ export abstract class LayoutPiece {
   public abstract getLayoutPieceData(): LayoutPieceData;
 
   // Save the data for this layout piece to the track-layout json DB
-  public abstract save(): Promise<void>;
+  public abstract save(writeToFile?: boolean): Promise<void>; // writeToFile is optional
+
+  // Returns the LayoutPiece object that is connected to our connectionName connection
+  public abstract getConnection(connectionName: ConnectionName): LayoutPiece;
+
+  // Return the name of our connection to a specific layoutPiece
+  public abstract getConnectionName(layoutPiece: LayoutPiece): ConnectionName;
+
+  // Update a specific connection for this layoutPiece
+  public abstract updateConnection(connectionName: ConnectionName, connection: LayoutPiece): void;
 
   // Convert from degrees to radians
   protected degreesToRadians(degrees: number): number {
