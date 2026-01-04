@@ -12,7 +12,7 @@ import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 
 import styles from "./tracklayout.module.css";
-import { getBackgroundPosX, getBackgroundPosY } from "../services/backgroundimage";
+import { getBackgroundImageStyle } from "../services/zoom/backgroundimage";
 
 export default function TrackLayout()
 {
@@ -51,13 +51,8 @@ export default function TrackLayout()
   // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
   const zoom = 2;
 
-  // --- Calculate the background image position ---
-  const backgroundPosX = getBackgroundPosX(piecePosition.x, worldWidth, zoom);
-  const backGroundPosY = getBackgroundPosY(piecePosition.y, worldHeight, zoom);
-  const divStyle = {
-    backgroundPosition: `${backgroundPosX}% ${backGroundPosY}%`,
-    backgroundSize: `${zoom * 100}% ${zoom * 100}%`
-  }
+  // Get the css style object for the background image
+  const divStyle = getBackgroundImageStyle(piecePosition.x, piecePosition.y, worldWidth, worldHeight, zoom);
 
   // TODO: improve the backgroundpos function to take zoom into account
   // TODO: move the viewbox calcs to their own function
