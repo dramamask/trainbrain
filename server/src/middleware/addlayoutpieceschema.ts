@@ -12,12 +12,19 @@ export const addLayoutPieceSchema = [
   body('connectToPiece')
     .notEmpty().isString()
     .withMessage("JSON parameter 'connectToPiece' should be a string")
-    .toInt().isInt({ min: 0 })
-    .withMessage("JSON parameter 'connectToPiece' should be a string representation of a numeric value greater than or equal to 0")
-    .custom((id: number) => {
+    .custom((id: string) => {
+      if(isNaN(Number(id))) {
+        throw new Error("JSON parameter 'connectToPiece' should be a string representation of a numeric value");
+      }
+      if(Number(id) < 0) {
+        throw new Error("JSON parameter 'connecToPiece' should be a string representation of a numeric value greater than or equal to zero")
+      }
+      return true;
+    })
+    .custom((id: string) => {
       const highestIdAllowed = layout.getHighestPieceId();
-      if (id > highestIdAllowed) {
-        throw Error("The value of JSON parameter `connectToPiece` does not match an ID in the layout DB")
+      if (Number(id) > highestIdAllowed) {
+        throw new Error("The value of JSON parameter `connectToPiece` does not match an ID in the layout DB")
       }
       return true;
     }),
