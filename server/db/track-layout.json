@@ -20,7 +20,7 @@
       "attributes": {},
       "connections": {
         "start": "0",
-        "end": "2"
+        "end": "9"
       }
     },
     "2": {
@@ -29,7 +29,7 @@
         "direction": "left"
       },
       "connections": {
-        "start": "1",
+        "start": "5",
         "end": null
       }
     },
@@ -49,6 +49,46 @@
       "connections": {
         "start": null,
         "end": "3"
+      }
+    },
+    "5": {
+      "type": "LGB-600",
+      "attributes": {},
+      "connections": {
+        "start": "6",
+        "end": "2"
+      }
+    },
+    "6": {
+      "type": "LGB-600",
+      "attributes": {},
+      "connections": {
+        "start": "7",
+        "end": "5"
+      }
+    },
+    "7": {
+      "type": "LGB-600",
+      "attributes": {},
+      "connections": {
+        "start": "8",
+        "end": "6"
+      }
+    },
+    "8": {
+      "type": "LGB-600",
+      "attributes": {},
+      "connections": {
+        "start": "9",
+        "end": "7"
+      }
+    },
+    "9": {
+      "type": "LGB-600",
+      "attributes": {},
+      "connections": {
+        "start": "1",
+        "end": "8"
       }
     }
   }

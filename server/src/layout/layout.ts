@@ -79,16 +79,25 @@ export class Layout {
     // Assemble connections
     // TODO: How will this work for switch and cross pieces??????????
     let connectionsData: ConnectionsData = {start: null, end: null};
+    let connections: LayoutPieceMap = {};
     if (data.connectionName == "end") {
       connectionsData = {
         start: piece1.getId(),
-        end: (piece2 ? piece2.getId() : null)
+        end: (piece2 ? piece2.getId() : null),
+      }
+      connections = {
+        start: piece1,
+        end: piece2,
       }
     }
     if (data.connectionName == "start") {
       connectionsData = {
         start: (piece2 ? piece2.getId() : null),
-        end: piece1.getId()
+        end: piece1.getId(),
+      }
+      connections = {
+        start: piece2,
+        end: piece1,
       }
     }
 
@@ -100,9 +109,10 @@ export class Layout {
     }
 
     // Create the new piece
-    const id = (this.getHighestPieceId() + 1).toString();
-    const newPiece = this.createLayoutPiece(id, layoutPieceData, pieceDefData);
-    newPiece.initConnections;
+    const newId = (this.getHighestPieceId() + 1).toString();
+    const newPiece = this.createLayoutPiece(newId, layoutPieceData, pieceDefData);
+    this.pieces.set(newPiece.getId(), newPiece);
+    newPiece.initConnections(connections);
 
     // Update connections for the neighboring pieces
     piece1.updateConnection(piece1ConnectionName, newPiece);
