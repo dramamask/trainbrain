@@ -1,7 +1,10 @@
 # TODO
 
-- Build a layout editor. Keep it simple. Make a "add next track piece" function, default to a straight? Have an
-  easy way to change the piece. Maybe with mouse clicks or keyboard shortcuts.
+- Zoom and pan UI functionality with "fake scrollbars".
+- Add way to select a piece.
+- Build a layout editor UI.
+- Create API to delete a piece.
+- Create UI to delete a piece.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each.
   Probably need to make another API for that.
 - Add the world size to the layout json file.
