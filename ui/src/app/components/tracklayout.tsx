@@ -10,16 +10,19 @@ import StartPosition from "./trackpieces/startposition";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
-import { getBackgroundImageStyle } from "../services/zoom/backgroundimage";
-import { getSvgViewBox } from "../services/zoom/svg";
+import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
+import { getSvgViewBox } from "../services/zoom/scrollbar/svg";
+import Scrollbar from "./scrollbar";
 
 import styles from "./tracklayout.module.css";
-
 
 export default function TrackLayout()
 {
   // This hook automatically subscribes and returns the latest snapshot
   const state = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
+
+  const [verticalScrollPercentage, setVerticalScrollPercentag] = useState(0);
+  const [horizontalScrollPercentage, setHorizontalScrollPercentage] = useState(75);
 
   const [loading, setLoading] = useState<Boolean>(true);
 
@@ -43,25 +46,31 @@ export default function TrackLayout()
     )
   }
 
+  const handleVerticalScroll = (factor: number) => {
+    setVerticalScrollPercentag(100 * factor);
+  }
+
+  const handleHorizontalScroll = (factor: number) => {
+    setHorizontalScrollPercentage(100 * factor);
+  }
+
   // The size of the world box
   const worldHeight = 15240; // Milimeters
   const worldWidth = 13335; // Milimeters
-
-  // TODO: change this to align with scroll bars or a mouse click or the focused track piece or something
-  const viewportFocalPoint = (state.trackLayout.pieces[0].attributes as UiAttributesPosition).position;
 
   // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
   const zoom = 1;
 
   // Get the css style object for the background image
-  const divStyle = getBackgroundImageStyle(viewportFocalPoint.x, viewportFocalPoint.y, worldWidth, worldHeight, zoom);
+  const divStyle = getBackgroundImageStyle(horizontalScrollPercentage, verticalScrollPercentage, zoom);
 
   // Get the viewBox values for the SVG component
-  const viewBox = getSvgViewBox(viewportFocalPoint.x, viewportFocalPoint.y, worldWidth, worldHeight, zoom);
+  const viewBox = getSvgViewBox(horizontalScrollPercentage, verticalScrollPercentage, worldWidth, worldHeight, zoom);
 
   // Render the track layout (and any error message if present)
   // Note that the coordinates represent mm in real life
   return (
+    <>
     <div
       className={styles.trackLayoutContainer}
       style={divStyle}
@@ -80,6 +89,8 @@ export default function TrackLayout()
       </svg>
       <Error />
     </div>
+    <Scrollbar onScrollPercentage={handleVerticalScroll} orientation="vertical"></Scrollbar>
+    </>
   )
 }
 
