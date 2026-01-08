@@ -1,5 +1,6 @@
 import { Stack } from "@mui/material"
 import EditMode from "./editmode";
+import ZoomControl from "./zoomcontrol";
 
 import styles from "./sidebar.module.css";
 
@@ -9,6 +10,7 @@ export default function SideBar() {
       <div className={styles.logoContainer}>
         <img className={styles.logo} src="/trainbrain-logo.png" />
       </div>
+      <ZoomControl />
       <EditMode />
     </Stack>
   )

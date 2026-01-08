@@ -10,6 +10,7 @@ import StartPosition from "./trackpieces/startposition";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
+import { store as zoomFactorStore } from "@/app/services/stores/zoomfactor";
 import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
 import { getSvgViewBox } from "../services/zoom/scrollbar/svg";
 import Scrollbar from "./scrollbar";
@@ -19,7 +20,8 @@ import styles from "./tracklayout.module.css";
 export default function TrackLayout()
 {
   // This hook automatically subscribes and returns the latest snapshot
-  const state = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
+  const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
+  const zoomFactorState = useSyncExternalStore(zoomFactorStore.subscribe, zoomFactorStore.getSnapshot, zoomFactorStore.getServerSnapshot);
 
   const [verticalScrollPercentage, setVerticalScrollPercentag] = useState(0);
   const [horizontalScrollPercentage, setHorizontalScrollPercentage] = useState(75);
@@ -59,7 +61,7 @@ export default function TrackLayout()
   const worldWidth = 13335; // Milimeters
 
   // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
-  const zoom = 2;
+  const zoom = zoomFactorState.zoomFactor;
 
   // Get the css style object for the background image
   const divStyle = getBackgroundImageStyle(horizontalScrollPercentage, verticalScrollPercentage, zoom);
@@ -84,7 +86,7 @@ export default function TrackLayout()
           >
             {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
             <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
-              { renderLayout(state.trackLayout) }
+              { renderLayout(trackLayoutState.trackLayout) }
               { renderDebugContent(worldWidth, worldHeight) }
             </g>
           </svg>

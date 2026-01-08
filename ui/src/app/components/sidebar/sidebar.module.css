@@ -12,3 +12,11 @@
   object-position: center;
   width: 100%;
 }
+
+.label {
+  color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  font-size: 0.8em;
+  justify-content: left;
+  margin-bottom: -6px;
+}
