@@ -2,23 +2,17 @@
   padding: 5px;
 }
 
-.mainContainer {
-  height: 100%;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.horScrollContainer {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
 .trackLayoutContainer {
-  height: 100%;
+  height: calc(100% - 14px);
   background-image: url("/layout-background.jpg");
   background-repeat: no-repeat;
   position: relative;
+}
+
+.bottomLeftCorner {
+  background-color: #f0f0f0;
+  width: 14px;
+  height: 14px;
 }
 
 .error {

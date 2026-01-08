@@ -1,6 +1,7 @@
 # TODO
 
-- Zoom and pan UI functionality with "fake scrollbars".
+- Move scrollbar css to a css module file.
+- Add a Zoom button with zoom settings somewhere.
 - Add way to select a piece.
 - Build a layout editor UI.
 - Create API to delete a piece.

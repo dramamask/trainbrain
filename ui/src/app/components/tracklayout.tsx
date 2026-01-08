@@ -70,8 +70,8 @@ export default function TrackLayout()
   // Render the track layout (and any error message if present)
   // Note that the coordinates represent mm in real life
   return (
-    <Stack className={styles.mainContainer} spacing={0}>
-      <Stack direction="row" className={styles.mainContainer} spacing={0}>
+    <Stack direction="row">
+      <Stack>
         <div
           className={styles.trackLayoutContainer}
           style={divStyle}
@@ -90,11 +90,14 @@ export default function TrackLayout()
           </svg>
           <Error />
         </div>
-        <Scrollbar onScrollPercentage={handleVerticalScroll} orientation="vertical"></Scrollbar>
-      </Stack>
-      <div className={styles.horScrollContainer}>
         <Scrollbar onScrollPercentage={handleHorizontalScroll} orientation="horizontal"></Scrollbar>
-      </div>
+      </Stack>
+      <Stack>
+        <Scrollbar onScrollPercentage={handleVerticalScroll} orientation="vertical"></Scrollbar>
+        <div className={styles.bottomLeftCorner}>
+          &nbsp;
+        </div>
+      </Stack>
     </Stack>
   )
 }
