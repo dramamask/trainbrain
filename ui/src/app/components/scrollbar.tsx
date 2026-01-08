@@ -65,10 +65,9 @@ const StandaloneScrollbar: React.FC<ScrollbarProps> = ({
   const defaultTrackStyle: CSSProperties = {
     position: 'relative',
     backgroundColor: '#f0f0f0',
-    borderRadius: '4px',
     cursor: 'pointer',
-    width: isVertical ? '12px' : '100%',
-    height: isVertical ? '100%' : '12px',
+    width: isVertical ? '14px' : '100%',
+    height: isVertical ? '100%' : '14px',
     ...trackStyle,
   };
 

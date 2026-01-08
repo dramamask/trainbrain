@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { UiAttributesPosition, UiLayout, UiLayoutPiece } from "trainbrain-shared"
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Stack } from "@mui/material";
 import Error from "./error";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
@@ -59,7 +59,7 @@ export default function TrackLayout()
   const worldWidth = 13335; // Milimeters
 
   // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
-  const zoom = 1;
+  const zoom = 2;
 
   // Get the css style object for the background image
   const divStyle = getBackgroundImageStyle(horizontalScrollPercentage, verticalScrollPercentage, zoom);
@@ -70,27 +70,32 @@ export default function TrackLayout()
   // Render the track layout (and any error message if present)
   // Note that the coordinates represent mm in real life
   return (
-    <>
-    <div
-      className={styles.trackLayoutContainer}
-      style={divStyle}
-    >
-      <svg
-        height="100%"
-        width="100%"
-        viewBox={viewBox}
-        preserveAspectRatio="xMinYMax slice"
-      >
-        {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
-        <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
-          { renderLayout(state.trackLayout) }
-          { renderDebugContent(worldWidth, worldHeight) }
-        </g>
-      </svg>
-      <Error />
-    </div>
-    <Scrollbar onScrollPercentage={handleVerticalScroll} orientation="vertical"></Scrollbar>
-    </>
+    <Stack className={styles.mainContainer} spacing={0}>
+      <Stack direction="row" className={styles.mainContainer} spacing={0}>
+        <div
+          className={styles.trackLayoutContainer}
+          style={divStyle}
+        >
+          <svg
+            height="100%"
+            width="100%"
+            viewBox={viewBox}
+            preserveAspectRatio="xMinYMax slice"
+          >
+            {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
+            <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
+              { renderLayout(state.trackLayout) }
+              { renderDebugContent(worldWidth, worldHeight) }
+            </g>
+          </svg>
+          <Error />
+        </div>
+        <Scrollbar onScrollPercentage={handleVerticalScroll} orientation="vertical"></Scrollbar>
+      </Stack>
+      <div className={styles.horScrollContainer}>
+        <Scrollbar onScrollPercentage={handleHorizontalScroll} orientation="horizontal"></Scrollbar>
+      </div>
+    </Stack>
   )
 }
 
