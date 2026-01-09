@@ -1,6 +1,8 @@
 # TODO
 
 - Add way to select a piece.
+- commonize code in curve and straight ui react elements.
+- how to draw the connectors on top of the track? separate react elements?
 - Build a layout editor UI.
 - Draw start position differently depending on the fact if it has pieces connected to it or not.
 - Create API to delete a piece.
