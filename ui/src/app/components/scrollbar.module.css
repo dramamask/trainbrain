@@ -1,0 +1,9 @@
+.track {
+  position: relative;
+}
+
+.thumb {
+  position: absolute;
+  border-radius: 4px;
+  pointer-events: none;
+}

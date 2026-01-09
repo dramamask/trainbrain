@@ -11,6 +11,7 @@ import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomFactorStore } from "@/app/services/stores/zoomfactor";
+import { store as selectionStore } from "@/app/services/stores/selection";
 import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
 import { getSvgViewBox } from "../services/zoom/scrollbar/svg";
 import Scrollbar from "./scrollbar";
@@ -24,7 +25,7 @@ export default function TrackLayout()
   const zoomFactorState = useSyncExternalStore(zoomFactorStore.subscribe, zoomFactorStore.getSnapshot, zoomFactorStore.getServerSnapshot);
 
   const [verticalScrollPercentage, setVerticalScrollPercentag] = useState(0);
-  const [horizontalScrollPercentage, setHorizontalScrollPercentage] = useState(75);
+  const [horizontalScrollPercentage, setHorizontalScrollPercentage] = useState(0);
 
   const [loading, setLoading] = useState<Boolean>(true);
 
@@ -56,6 +57,16 @@ export default function TrackLayout()
     setHorizontalScrollPercentage(100 * factor);
   }
 
+  const handleSvgClick = (event: React.MouseEvent<SVGSVGElement>) => {
+    const target = event.target as SVGElement;
+
+    const [id, connector] = target.id.split("-");
+    console.log("ID clicked: ", id);
+    console.log("Connector clicked: ", connector);
+
+    selectionStore.setSelected(true, id, connector);
+  }
+
   // The size of the world box
   const worldHeight = 15240; // Milimeters
   const worldWidth = 13335; // Milimeters
@@ -83,6 +94,7 @@ export default function TrackLayout()
             width="100%"
             viewBox={viewBox}
             preserveAspectRatio="xMinYMax slice"
+            onClick={handleSvgClick}
           >
             {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
             <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
@@ -92,10 +104,10 @@ export default function TrackLayout()
           </svg>
           <Error />
         </div>
-        <Scrollbar onScrollPercentage={handleHorizontalScroll} orientation="horizontal"></Scrollbar>
+        <Scrollbar onScrollPercentage={handleHorizontalScroll} orientation="horizontal" disabled={zoom == 1}></Scrollbar>
       </Stack>
       <Stack>
-        <Scrollbar onScrollPercentage={handleVerticalScroll} orientation="vertical"></Scrollbar>
+        <Scrollbar onScrollPercentage={handleVerticalScroll} orientation="vertical"disabled={zoom == 1}></Scrollbar>
         <div className={styles.bottomLeftCorner}>
           &nbsp;
         </div>
@@ -129,11 +141,11 @@ function renderLayout(layout: UiLayout) {
       layout.pieces.map((piece: UiLayoutPiece) => {
         switch (piece.category) {
           case "position":
-            return <StartPosition piece={piece} key={piece.id} />
+            return <StartPosition id={piece.id} piece={piece} key={piece.id} />
           case "straight":
-            return <Straight piece={piece} key={piece.id} />;
+            return <Straight id={piece.id} piece={piece} key={piece.id} />;
           case "curve":
-            return <Curve piece={piece} key={piece.id} />;
+            return <Curve id={piece.id} piece={piece} key={piece.id} />;
           default:
             return null;
         }

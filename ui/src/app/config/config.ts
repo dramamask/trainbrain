@@ -4,8 +4,11 @@
 
 // Track drawing
 export const STROKE_WIDTH = 40;
-export const INDICATOR_LENGTH = 160;
+export const DEADEND_INDICATOR_LENGTH = 160;
 export const TRACK_COLOR = "#FFD700";
+
+export const CONNECTOR_INDICATOR_RADIUS = 60;
+export const CONNECTOR_INDICATOR_COLOR = "#FFD700";
 
 export const START_POS_INDICATOR_RADIUS = 120;
 export const START_POS_INDICATOR_COLOR = "#FFD700";

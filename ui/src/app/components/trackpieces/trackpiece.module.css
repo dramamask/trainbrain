@@ -1,0 +1,7 @@
+.connector {
+  cursor: pointer;
+}
+
+.connector:hover {
+  fill: white;
+}

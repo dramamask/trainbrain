@@ -10,10 +10,10 @@ export interface LineCoordinate {
 }
 
 // Get the positions for the indicators at the start and end of a track piece
-export function getIndicatorPositions(start: Coordinate, end: Coordinate):
+export function getDeadEndIndicatorPositions(start: Coordinate, end: Coordinate):
   { start: LineCoordinate, end: LineCoordinate }
 {
-  const indicatorHalfLength = config.INDICATOR_LENGTH / 2;
+  const indicatorHalfLength = config.DEADEND_INDICATOR_LENGTH / 2;
 
   const headingRadStart = degreesToRadians(start.heading);
   const headingRadEnd = degreesToRadians(end.heading);

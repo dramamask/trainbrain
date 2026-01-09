@@ -1,9 +1,8 @@
 # TODO
 
-- Move scrollbar css to a css module file.
-- Add a Zoom button with zoom settings somewhere.
 - Add way to select a piece.
 - Build a layout editor UI.
+- Draw start position differently depending on the fact if it has pieces connected to it or not.
 - Create API to delete a piece.
 - Create UI to delete a piece.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each.
