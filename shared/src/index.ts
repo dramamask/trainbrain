@@ -51,3 +51,13 @@ export interface UiLayout {
   };
   pieces: UiLayoutPiece[];
 }
+
+// The structure of a track piece definition
+export interface TrackPieceDef {
+    category: TrackPieceCategory;
+    description: string;
+    attributes: object;
+}
+
+// A list of TrackPieceDef records
+export type TrackPieceDefList = Record<string, TrackPieceDef>;

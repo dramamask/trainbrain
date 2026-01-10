@@ -3,6 +3,7 @@ import { Box, Grid } from "@mui/material";
 import KeyboardEventHandler from "@/app/components/keyboardEventHandler";
 import SideBar from "@/app/components/sidebar/sidebar";
 import TrackLayout from "@/app/components/tracklayout";
+import ControlsSection from "@/app/components/controlssection/controlssection";
 
 import styles from "./page.module.css";
 
@@ -25,7 +26,7 @@ export default function Home() {
             </div>
           </Grid>
           <Grid size="grow">
-            Controls go here
+            <ControlsSection />
           </Grid>
         </Grid>
     </Box>

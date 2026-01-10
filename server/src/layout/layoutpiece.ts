@@ -1,6 +1,5 @@
-import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceData } from "../shared_types/layout.js";
-import { TrackPieceDef } from "../shared_types/pieces.js";
 import { LayoutPieceMap } from "./layout.js";
 import { ConnectionName } from "../shared_types/layout.js";
 

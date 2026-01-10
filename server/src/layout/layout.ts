@@ -1,11 +1,10 @@
-import { Coordinate, UiLayout } from "trainbrain-shared";
+import { Coordinate, TrackPieceDef, UiLayout } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { pieceDefintionsDb, trackLayoutDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
 import { Position } from "./position.js";
 import { ConnectionName, ConnectionsData, LayoutPieceData } from "../shared_types/layout.js";
-import { TrackPieceDef } from "../shared_types/pieces.js";
 import { AddLayoutPieceData } from "../shared_types/layout.js";
 
 // A key/value pair map of LayoutPiece objects (or null)

@@ -8,7 +8,7 @@ export const getPieceDefinitions = (req: Request, res: Response, next: NextFunct
     const pieceDef = pieceDefintionsDb.data.definitions;
 
     // Remove the definition  for startPosition.
-    // It's a bit hokie to do it this way but it is what it is.
+    // It's a bit hokey to do it this way but it is what it is.
     delete pieceDef.startPosition;
 
     res.header("Content-Type", "application/json");

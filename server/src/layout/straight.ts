@@ -1,7 +1,6 @@
+import { Coordinate, DeadEnd, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { Connections, LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
-import { TrackPieceDef } from "../shared_types/pieces.js";
-import { Coordinate, DeadEnd, TrackPieceCategory, UiAttributesStraight, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
 

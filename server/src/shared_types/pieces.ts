@@ -1,14 +1,4 @@
-import { TrackPieceCategory } from 'trainbrain-shared';
-
-// The structure of a track piece definition
-export interface TrackPieceDef {
-    category: TrackPieceCategory;
-    description: string;
-    attributes: object;
-}
-
-// A list of TrackPieceDef records
-export type TrackPieceDefList = Record<string, TrackPieceDef>;
+import { TrackPieceDefList } from 'trainbrain-shared';
 
 // The structure of the piece-defintions json db
 export interface PieceDefinitions {
