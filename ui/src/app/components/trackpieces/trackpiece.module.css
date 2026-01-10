@@ -1,11 +1,4 @@
-.connector {
-  cursor: pointer;
-}
-
-.connector:hover {
-  fill: white;
-}
-
 .trackPiece {
-  cursor: pointer
+  cursor: pointer;
+  pointer-events: all;
 }

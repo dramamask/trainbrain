@@ -2,18 +2,12 @@ import { Coordinate } from "trainbrain-shared";
 import * as config from "@/app/config/config";
 
 interface connectorProps {
-  show: boolean;
   coordinateOne: Coordinate;
   coordinateTwo: Coordinate;
 }
 
-// Render the dead-end indicator. Which is an indicator to show that a track piece is not
-// connected to another piece. Dead-end indicators are shows in normal mode (not edit mode).
-export default function deaded({show, coordinateOne, coordinateTwo}: connectorProps) {
-  if (!show) {
-    return false;
-  }
-
+// Render a simple line
+export default function line({coordinateOne, coordinateTwo}: connectorProps) {
   return (
     <line
         x1={coordinateOne.x}

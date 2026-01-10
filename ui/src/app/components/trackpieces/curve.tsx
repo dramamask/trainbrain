@@ -5,54 +5,48 @@ import { UiAttributesCurve, UiLayoutPiece } from "trainbrain-shared";
 import { getDeadEndIndicatorPositions, LineCoordinate } from "@/app/services/trackpiece";
 import * as config from "@/app/config/config";
 import { store as editModeStore } from "@/app/services/stores/editmode";
-import Connector from "./connector";
+import Connector from "./components/connector";
+import DeadEnd from "./components/deadend";
 
 import styles from "./trackpiece.module.css";
 
 // Curve track piece component
 export default function Curve({id, piece}: {id:string, piece: UiLayoutPiece}) {
-  const state = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
-  const drawConnectors = state.editMode;
+  const editModeState = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
+  const drawConnectors = false;
 
-  let deadEndStart = false;
-  let deadEndEnd = false;
-  let indicatorPositions = {} as { start: LineCoordinate, end: LineCoordinate };
   const attributes = piece.attributes as UiAttributesCurve;
+  const indicatorPositions = getDeadEndIndicatorPositions(attributes.coordinates.start, attributes.coordinates.end);
+  const deadEndStart = (!editModeState.editMode && piece.deadEnd == "start");
+  const deadEndEnd = (!editModeState.editMode && piece.deadEnd == "end");
 
   const isStartSelected = false;
   const isEndSelected = false;
 
-  if (!drawConnectors) {
-    if (piece.deadEnd == "start") {
-      deadEndStart = true;
-    }
-
-    if (piece.deadEnd == "end") {
-      deadEndEnd = true;
-    }
-
-    if (deadEndStart || deadEndEnd) {
-      indicatorPositions = getDeadEndIndicatorPositions(attributes.coordinates.start, attributes.coordinates.end);
-    }
-  }
-
   return (
     <g key={piece.id}>
-      { drawConnectors &&
-        <Connector
-          type="start"
-          coordinate={attributes.coordinates.start}
-          isSelected={isStartSelected}
-        />
-      }
-      { deadEndStart && <line
-          x1={indicatorPositions.start.x1}
-          y1={indicatorPositions.start.y1}
-          x2={indicatorPositions.start.x2}
-          y2={indicatorPositions.start.y2}
-          stroke={config.TRACK_COLOR}
-          strokeWidth={config.STROKE_WIDTH}
-      /> }
+      <Connector
+        draw={drawConnectors}
+        type="start"
+        coordinate={attributes.coordinates.start}
+        isSelected={isStartSelected}
+      />
+      <Connector
+        draw={drawConnectors}
+        type="end"
+        coordinate={attributes.coordinates.end}
+        isSelected={isEndSelected}
+      />
+      <DeadEnd
+        draw={deadEndStart}
+        coordinateOne={indicatorPositions.start.one}
+        coordinateTwo={indicatorPositions.start.two}
+      />
+      <DeadEnd
+        draw={deadEndEnd}
+        coordinateOne={indicatorPositions.end.one}
+        coordinateTwo={indicatorPositions.end.two}
+      />
       <path
         key={2}
         d={arcPathFromTrack(attributes)}
@@ -68,13 +62,6 @@ export default function Curve({id, piece}: {id:string, piece: UiLayoutPiece}) {
           stroke={config.TRACK_COLOR}
           strokeWidth={config.STROKE_WIDTH}
       /> }
-      { drawConnectors &&
-        <Connector
-          type="end"
-          coordinate={attributes.coordinates.end}
-          isSelected={isEndSelected}
-        />
-      }
     </g>
   );
 }

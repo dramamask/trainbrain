@@ -15,6 +15,7 @@ import { store as selectionStore } from "@/app/services/stores/selection";
 import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
 import { getSvgViewBox } from "../services/zoom/scrollbar/svg";
 import Scrollbar from "./scrollbar";
+import { getTrackPieceContainerClassName } from "./trackpieces/classNames";
 
 import styles from "./tracklayout.module.css";
 
@@ -61,16 +62,15 @@ export default function TrackLayout()
     const target = event.target as SVGElement;
     console.log('tageName: ', target.tagName);
 
-    const group = (event.target as Element).closest(".trackPiece") as SVGElement;
+    const group = (event.target as Element).closest("." + getTrackPieceContainerClassName()) as SVGElement;
     console.log("group id:", group.id);
-    console.log("group tagName: ", group.tagName);
-    console.log("group class: ", group.classList);
+    selectionStore.setSelectedTrackPiece(group.id);
 
-    const [id, connector] = target.id.split("-");
-    console.log("ID clicked: ", id);
-    console.log("Connector clicked: ", connector);
+    // const [id, connector] = target.id.split("-");
+    // console.log("ID clicked: ", id);
+    // console.log("Connector clicked: ", connector);
 
-    selectionStore.setSelected(true, id, connector);
+    //selectionStore.setSelected(true, id, connector);
   }
 
   // The size of the world box

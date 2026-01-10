@@ -1,10 +1,10 @@
 import { Coordinate } from "trainbrain-shared";
 import * as config from "@/app/config/config";
 
-import styles from "./trackpiece.module.css";
+import styles from "./connector.module.css";
 
 interface connectorProps {
-  show: boolean;
+  draw: boolean; //Whether or not to draw the component
   type: string;
   coordinate: Coordinate;
   isSelected: boolean;
@@ -12,8 +12,8 @@ interface connectorProps {
 
 // Render the connector indicator. The connector represents the point on the track that
 // is able to connect to another track piece.
-export default function connector({show, type, coordinate, isSelected}: connectorProps) {
-  if (!show) {
+export default function connector({draw, type, coordinate, isSelected}: connectorProps) {
+  if (!draw) {
     return false;
   }
 

@@ -1,12 +1,11 @@
 "use client";
 
 interface State {
-  isSelected: boolean;
   selectedTrackPiece: string;
   selectedConnector: string;
 }
 
-let state: State = { isSelected: false, selectedTrackPiece: "", selectedConnector: "" };
+let state: State = { selectedTrackPiece: "", selectedConnector: "" };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -29,22 +28,51 @@ export const store = {
     return state;
   },
 
-  isSelected(): boolean {
-    return state.isSelected;
+  getSelectedTrackPiece(): string {
+    return state.selectedTrackPiece;
   },
 
-  getSelected(): State {
-    return state;
+  getSelectedConnector(): string {
+    return state.selectedConnector;
   },
 
-  setSelected(selected: boolean, pieceId: string, connectorId: string): void {
+  setSelectedTrackPiece(pieceId: string): void {
+    const newState = { selectedTrackPiece: pieceId, selectedConnector: state.selectedConnector };
     // Immutable update
-    state = { isSelected: selected, selectedTrackPiece: pieceId, selectedConnector: connectorId };
+    state = newState;
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
 
-  resetSelected(vlue: boolean): void {
-    state = { isSelected: false, selectedTrackPiece: "", selectedConnector: "" };
-  }
+  setSelectedConnector(connectorId: string): void {
+    const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedConnector: connectorId };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  },
+
+  deselectTrackPiece(): void {
+    const newState = { selectedTrackPiece: "", selectedConnector: state.selectedConnector };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  },
+
+  deselectConnector(): void {
+    const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedConnector: "" };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  },
+
+  deselectAll(): void {
+    const newState = { selectedTrackPiece: "", selectedConnector: "" };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  },
 };

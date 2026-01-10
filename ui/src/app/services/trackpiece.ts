@@ -7,9 +7,13 @@ export interface LineCoordinate {
   two: Coordinate,
 }
 
+export interface LineCoordinates {
+  start: LineCoordinate;
+  end: LineCoordinate,
+}
+
 // Get the positions for the indicators at the start and end of a track piece
-export function getDeadEndIndicatorPositions(start: Coordinate, end: Coordinate):
-  { start: LineCoordinate, end: LineCoordinate }
+export function getDeadEndIndicatorPositions(start: Coordinate, end: Coordinate): LineCoordinates
 {
   const indicatorHalfLength = config.DEADEND_INDICATOR_LENGTH / 2;
 
