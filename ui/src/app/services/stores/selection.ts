@@ -1,5 +1,8 @@
 "use client";
 
+import { getNextConnector } from "@/app/services/connectors";
+import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
+
 interface State {
   selectedTrackPiece: string;
   selectedConnector: string;
@@ -46,6 +49,30 @@ export const store = {
 
   setSelectedConnector(connectorId: string): void {
     const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedConnector: connectorId };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  },
+
+  toggleSelectedConnector(): void {
+    // Return if we don't have a selected piece
+    if (state.selectedTrackPiece == "") {
+      return;
+    }
+
+    // Log an error and return if we can't find data for the selected piece
+    const selectedPieceData = trackLayoutStore.getTrackPieceData(state.selectedTrackPiece);
+    if (!selectedPieceData || !(('category') in selectedPieceData)) {
+      console.error(`Selected piece data could not be found for piece ${state.selectedTrackPiece}`);
+      return;
+    }
+
+    // Create a new state with the next connector "in the list" for the selected piece
+    const newState = {
+      selectedTrackPiece: state.selectedTrackPiece,
+      selectedConnector: getNextConnector(selectedPieceData.category, state.selectedConnector)
+    };
     // Immutable update
     state = newState;
     // Notify React/listeners

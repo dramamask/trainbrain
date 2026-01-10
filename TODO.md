@@ -4,8 +4,7 @@
 - Draw start position differently depending on the fact if it has pieces connected to it or not.
 - Create API to delete a piece.
 - Create UI to delete a piece.
-- Make a place in the UI where it shows all the different pieces that we need and how many of each.
-  Probably need to make another API for that.
+- Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Add the world size to the layout json file.
 - Add protection so you can't move the layout outside of the world size.
 - Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements? We may have to change the connections model.

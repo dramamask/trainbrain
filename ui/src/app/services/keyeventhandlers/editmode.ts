@@ -10,13 +10,13 @@ import { MOVE_INCREMENT } from "@/app/config/config";
 
 // Key Event Handler for Edit Mode
 // Note that all key event handlers need to be called from keynoardEventHandler.tsx
-export function handleKeyDown(key: string) {
+export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {
     const trackLayout: UiLayout = trackLayoutStore.getTrackLayout() as UiLayout;
     const startPositionPiece = trackLayout.pieces.find(piece => piece.category == "position") as UiLayoutPiece;
     const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
 
-    switch (key) {
+    switch (event.key) {
       case 'ArrowUp':
         startPositionAttributes.position.y += MOVE_INCREMENT;
         break;
@@ -32,6 +32,9 @@ export function handleKeyDown(key: string) {
       case 'Escape':
         selectionStore.deselectAll();
         break;
+      case 'Tab':
+        selectionStore.toggleSelectedConnector();
+        event.preventDefault();
       default:
         // Exit this function
         return;

@@ -8,7 +8,7 @@ import * as error from "@/app/services/keyeventhandlers/error";
 export default function KeyBoardEventHandler() {
   useEffect(() => {
     const handleGlobalKeyDown = (event: KeyboardEvent) => {
-      handleKeyDown(event.key)
+      handleKeyDown(event)
     };
 
     window.addEventListener('keydown', handleGlobalKeyDown);
@@ -26,7 +26,7 @@ export default function KeyBoardEventHandler() {
 // Note that this function follows the command pattern. Each individual key event
 // handler checks for themselves to see if they should handle the event or not.
 // Each key event handler in app/services/keyeventhandlers should be called here.
-function handleKeyDown(key: string) {
-  editMode.handleKeyDown(key);
-  error.handleKeyDown(key);
+function handleKeyDown(event: KeyboardEvent) {
+  editMode.handleKeyDown(event);
+  error.handleKeyDown(event);
 }
