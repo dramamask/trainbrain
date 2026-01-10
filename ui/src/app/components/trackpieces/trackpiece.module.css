@@ -1,4 +1,4 @@
-.trackPiece {
+.trackPieceContainer {
   cursor: pointer;
   pointer-events: all;
 }

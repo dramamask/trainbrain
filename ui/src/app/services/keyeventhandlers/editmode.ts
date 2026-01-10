@@ -4,7 +4,7 @@ import { UiAttributesPosition, UiLayout, UiLayoutPiece } from "trainbrain-shared
 import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
-import { store as insertPieceStore } from "@/app/services/stores/insertpiece";
+import { store as selectionStore } from "@/app/services/stores/selection";
 import { setStartPosition } from "@/app/services/api/tracklayout";
 import { MOVE_INCREMENT } from "@/app/config/config";
 
@@ -13,30 +13,31 @@ import { MOVE_INCREMENT } from "@/app/config/config";
 export function handleKeyDown(key: string) {
   if (editModeStore.isEditMode()) {
     const trackLayout: UiLayout = trackLayoutStore.getTrackLayout() as UiLayout;
-    const piece = trackLayout.pieces.find(piece => piece.id == 0) as UiLayoutPiece;
-    const attributes = piece.attributes as UiAttributesPosition;
+    const startPositionPiece = trackLayout.pieces.find(piece => piece.category == "position") as UiLayoutPiece;
+    const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
 
     switch (key) {
       case 'ArrowUp':
-        attributes.position.y += MOVE_INCREMENT;
+        startPositionAttributes.position.y += MOVE_INCREMENT;
         break;
       case 'ArrowDown':
-        attributes.position.y -= MOVE_INCREMENT;
+        startPositionAttributes.position.y -= MOVE_INCREMENT;
         break;
       case 'ArrowLeft':
-        attributes.position.x -= MOVE_INCREMENT;
+        startPositionAttributes.position.x -= MOVE_INCREMENT;
         break;
       case 'ArrowRight':
-        attributes.position.x += MOVE_INCREMENT;
+        startPositionAttributes.position.x += MOVE_INCREMENT;
         break;
-      case 'Insert':
-        insertPieceStore.toggleInsertPiece();
+      case 'Escape':
+        selectionStore.deselectAll();
+        break;
       default:
         // Exit this function
         return;
     }
 
-    setStartPosition(attributes.position)
+    setStartPosition(startPositionAttributes.position)
     .then((layoutData: UiLayout) => {
         trackLayoutStore.setTrackLayout(layoutData);
       })

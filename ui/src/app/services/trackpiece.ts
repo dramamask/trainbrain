@@ -1,6 +1,11 @@
+/**
+ * Functions used in multiple track pieces
+ */
+
 import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
 import { degreesToRadians } from "./math";
 import * as config from "@/app/config/config"
+import { store as selectionStore } from "@/app/services/stores/selection";
 
 export interface LineCoordinate {
   one: Coordinate;
@@ -35,4 +40,56 @@ export function getDeadEndIndicatorPositions(start: Coordinate, end: Coordinate)
       two: {x: end.x - dxEnd, y: end.y + dyEnd, heading: 0},
     },
   };
+}
+
+// Get the top left coordinate of all the indicator position coordinates
+export function getTopLeftCoordinate(indicatorPositions: LineCoordinates): Coordinate {
+  const x = Math.min(
+    indicatorPositions.start.one.x,
+    indicatorPositions.start.two.x,
+    indicatorPositions.end.one.x,
+    indicatorPositions.end.two.x,
+  );
+
+  const y = Math.min(
+    indicatorPositions.start.one.y,
+    indicatorPositions.start.two.y,
+    indicatorPositions.end.one.y,
+    indicatorPositions.end.two.y,
+  )
+
+  return {x: x, y: y, heading: 0}
+}
+
+// Get the bottom right coordinate of all the indicator position coordinates
+export function getBottomRightCoordinate(indicatorPositions: LineCoordinates): Coordinate {
+  const x = Math.max(
+    indicatorPositions.start.one.x,
+    indicatorPositions.start.two.x,
+    indicatorPositions.end.one.x,
+    indicatorPositions.end.two.x,
+  );
+
+  const y = Math.max(
+    indicatorPositions.start.one.y,
+    indicatorPositions.start.two.y,
+    indicatorPositions.end.one.y,
+    indicatorPositions.end.two.y,
+  )
+
+  return {x: x, y: y, heading: 0}
+}
+
+// Check if this track piece is selected
+export function thisTrackPieceIsSelected(pieceId: string): boolean {
+  return (selectionStore.getSelectedTrackPiece() == pieceId);
+}
+
+// Return the name of the selected connector (if our track piece is selected)
+export function ourSelectedConnector(pieceId: string): string {
+  if (selectionStore.getSelectedTrackPiece() != pieceId) {
+    return "";
+  }
+
+  return selectionStore.getSelectedConnector();
 }
