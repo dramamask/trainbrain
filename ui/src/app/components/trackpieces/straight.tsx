@@ -47,7 +47,11 @@ export default function Straight({id, piece}: {id:string, piece: UiLayoutPiece})
   }
 
   return (
-    <g key={piece.id}>
+    <g
+      className="trackPiece"
+      id={piece.id}
+      key={piece.id}
+    >
       { drawConnectors && <circle
         id={id + "-start"}
         className={styles.connector}

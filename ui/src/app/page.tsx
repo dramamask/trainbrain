@@ -16,13 +16,16 @@ export default function Home() {
           alignItems="stretch"
         >
           <KeyboardEventHandler />
-          <Grid size={1}>
+          <Grid sx={{ width: '100px'}}>
             <SideBar />
           </Grid>
-          <Grid size="grow">
+          <Grid sx={{width: '483px'}}>
             <div className={styles.trackLayoutContainer}>
               <TrackLayout />
             </div>
+          </Grid>
+          <Grid size="grow">
+            Controls go here
           </Grid>
         </Grid>
     </Box>
