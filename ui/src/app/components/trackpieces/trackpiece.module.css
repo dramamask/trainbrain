@@ -5,3 +5,7 @@
 .connector:hover {
   fill: white;
 }
+
+.trackPiece {
+  cursor: pointer
+}

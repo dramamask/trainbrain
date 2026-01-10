@@ -57,7 +57,7 @@ export default function TrackLayout()
     setHorizontalScrollPercentage(100 * factor);
   }
 
-  const handleSvgClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSvgClick = (event: React.MouseEvent<SVGSVGElement>) => {
     const target = event.target as SVGElement;
     console.log('tageName: ', target.tagName);
 

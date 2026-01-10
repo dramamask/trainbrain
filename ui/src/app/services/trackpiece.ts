@@ -3,10 +3,8 @@ import { degreesToRadians } from "./math";
 import * as config from "@/app/config/config"
 
 export interface LineCoordinate {
-  x1: number;
-  y1: number,
-  x2: number;
-  y2: number;
+  one: Coordinate;
+  two: Coordinate,
 }
 
 // Get the positions for the indicators at the start and end of a track piece
@@ -25,18 +23,12 @@ export function getDeadEndIndicatorPositions(start: Coordinate, end: Coordinate)
 
   return {
     start: {
-      x1: start.x - dxStart,
-      y1: start.y + dyStart,
-      x2: start.x + dxStart,
-      y2: start.y - dyStart,
+      one: {x: start.x - dxStart, y: start.y + dyStart, heading: 0},
+      two: {x: start.x + dxStart, y: start.y - dyStart, heading: 0},
     },
     end: {
-      x1: end.x + dxEnd,
-      y1: end.y - dyEnd,
-      x2: end.x - dxEnd,
-      y2: end.y + dyEnd,
+      one: {x: end.x + dxEnd, y: end.y - dyEnd, heading: 0},
+      two: {x: end.x - dxEnd, y: end.y + dyEnd, heading: 0},
     },
   };
 }
-
-

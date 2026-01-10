@@ -6,6 +6,8 @@ import { getDeadEndIndicatorPositions, LineCoordinate } from "@/app/services/tra
 import * as config from "@/app/config/config";
 import { store as editModeStore } from "@/app/services/stores/editmode";
 import { store as selectionStore } from "@/app/services/stores/selection";
+import Connector from "./connector";
+import DeadEnd from "./deadend";
 
 import styles from "./trackpiece.module.css";
 
@@ -24,6 +26,8 @@ export default function Straight({id, piece}: {id:string, piece: UiLayoutPiece})
       return false;
     }
   );
+
+  const isEndSelected = false;
 
   console.log(piece.id + ": start is selected: " + (isStartSelected ? "yes" : "no"));
 
@@ -46,30 +50,36 @@ export default function Straight({id, piece}: {id:string, piece: UiLayoutPiece})
     }
   }
 
+  console.log(indicatorPositions);
+
   return (
     <g
-      className="trackPiece"
+      className={styles.trackPiece + ", trackPiece"}
       id={piece.id}
       key={piece.id}
     >
-      { drawConnectors && <circle
-        id={id + "-start"}
-        className={styles.connector}
-        cx={attributes.coordinates.start.x}
-        cy={attributes.coordinates.start.y}
-        r={config.CONNECTOR_INDICATOR_RADIUS}
-        fill={isStartSelected ? "red" : config.CONNECTOR_INDICATOR_COLOR}
-        stroke={config.CONNECTOR_INDICATOR_COLOR}
-        strokeWidth={1}
-      /> }
-      { deadEndStart && <line
-          x1={indicatorPositions.start.x1}
-          y1={indicatorPositions.start.y1}
-          x2={indicatorPositions.start.x2}
-          y2={indicatorPositions.start.y2}
-          stroke={config.TRACK_COLOR}
-          strokeWidth={config.STROKE_WIDTH}
-      /> }
+      <Connector
+        show={drawConnectors}
+        type="start"
+        coordinate={attributes.coordinates.start}
+        isSelected={isStartSelected}
+      />
+      <Connector
+        show={drawConnectors}
+        type="end"
+        coordinate={attributes.coordinates.end}
+        isSelected={isEndSelected}
+      />
+      {/*<DeadEnd
+        show={deadEndStart}
+        coordinateOne={indicatorPositions.start.one}
+        coordinateTwo={indicatorPositions.start.two}
+      />
+       <DeadEnd
+        show={deadEndEnd}
+        coordinateOne={indicatorPositions.end.one}
+        coordinateTwo={indicatorPositions.end.two}
+      /> */}
       <line
         x1={attributes.coordinates.start.x}
         y1={attributes.coordinates.start.y}
@@ -78,24 +88,6 @@ export default function Straight({id, piece}: {id:string, piece: UiLayoutPiece})
         stroke={config.TRACK_COLOR}
         strokeWidth={config.STROKE_WIDTH}
       />
-      { deadEndEnd && <line
-          x1={indicatorPositions.end.x1}
-          y1={indicatorPositions.end.y1}
-          x2={indicatorPositions.end.x2}
-          y2={indicatorPositions.end.y2}
-          stroke={config.TRACK_COLOR}
-          strokeWidth={config.STROKE_WIDTH}
-      /> }
-      { drawConnectors && <circle
-        id={id + "-end"}
-        className={styles.connector}
-        cx={attributes.coordinates.end.x}
-        cy={attributes.coordinates.end.y}
-        r={config.CONNECTOR_INDICATOR_RADIUS}
-        fill={config.CONNECTOR_INDICATOR_COLOR}
-        stroke={config.CONNECTOR_INDICATOR_COLOR}
-        strokeWidth={1}
-      /> }
     </g>
   );
 }

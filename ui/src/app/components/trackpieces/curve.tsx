@@ -5,6 +5,7 @@ import { UiAttributesCurve, UiLayoutPiece } from "trainbrain-shared";
 import { getDeadEndIndicatorPositions, LineCoordinate } from "@/app/services/trackpiece";
 import * as config from "@/app/config/config";
 import { store as editModeStore } from "@/app/services/stores/editmode";
+import Connector from "./connector";
 
 import styles from "./trackpiece.module.css";
 
@@ -17,6 +18,9 @@ export default function Curve({id, piece}: {id:string, piece: UiLayoutPiece}) {
   let deadEndEnd = false;
   let indicatorPositions = {} as { start: LineCoordinate, end: LineCoordinate };
   const attributes = piece.attributes as UiAttributesCurve;
+
+  const isStartSelected = false;
+  const isEndSelected = false;
 
   if (!drawConnectors) {
     if (piece.deadEnd == "start") {
@@ -34,16 +38,13 @@ export default function Curve({id, piece}: {id:string, piece: UiLayoutPiece}) {
 
   return (
     <g key={piece.id}>
-      { drawConnectors && <circle
-        id={id + "-start"}
-        className={styles.connector}
-        cx={attributes.coordinates.start.x}
-        cy={attributes.coordinates.start.y}
-        r={config.CONNECTOR_INDICATOR_RADIUS}
-        fill={config.CONNECTOR_INDICATOR_COLOR}
-        stroke={config.CONNECTOR_INDICATOR_COLOR}
-        strokeWidth={1}
-      /> }
+      { drawConnectors &&
+        <Connector
+          type="start"
+          coordinate={attributes.coordinates.start}
+          isSelected={isStartSelected}
+        />
+      }
       { deadEndStart && <line
           x1={indicatorPositions.start.x1}
           y1={indicatorPositions.start.y1}
@@ -67,16 +68,13 @@ export default function Curve({id, piece}: {id:string, piece: UiLayoutPiece}) {
           stroke={config.TRACK_COLOR}
           strokeWidth={config.STROKE_WIDTH}
       /> }
-      { drawConnectors && <circle
-        id={id + "-end"}
-        className={styles.connector}
-        cx={attributes.coordinates.end.x}
-        cy={attributes.coordinates.end.y}
-        r={config.CONNECTOR_INDICATOR_RADIUS}
-        fill={config.CONNECTOR_INDICATOR_COLOR}
-        stroke={config.CONNECTOR_INDICATOR_COLOR}
-        strokeWidth={1}
-      /> }
+      { drawConnectors &&
+        <Connector
+          type="end"
+          coordinate={attributes.coordinates.end}
+          isSelected={isEndSelected}
+        />
+      }
     </g>
   );
 }
