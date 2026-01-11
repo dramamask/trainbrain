@@ -6,15 +6,7 @@
   width: fit-content;
 }
 
-.stack {
-  width: 330px;
-}
-
 .heading {
   padding-bottom: 10px;
   text-transform: uppercase;
-}
-
-.text {
-  padding-top: 1px;
 }
