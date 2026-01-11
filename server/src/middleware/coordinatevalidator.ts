@@ -1,5 +1,6 @@
 import { body } from 'express-validator';
 
+// Validation schema for routes that take a coordiante as a JSON body parameter
 export const coordinateSchema = [
   body('x').notEmpty().isNumeric().withMessage("JSON paramter 'x' is required and should be a number"),
   body('y').notEmpty().isNumeric().withMessage("JSON paramter 'y' is required and should be a number"),

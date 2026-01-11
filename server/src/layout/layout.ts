@@ -126,13 +126,15 @@ export class Layout {
     if (piece2) {
       piece2.save();
     }
+
+    // Write the in-memory json DB to file
     trackLayoutDb.write();
 
     // Recalculate all the coordinates
     this.calculateAllCoordinates();
   }
 
-    // Delete a piece from the layout
+  // Delete a piece from the layout
   public async deleteLayoutPiece(pieceId: string): Promise<void> {
     // Get info on the piece we are going to delete (ourPiece)
     const ourPiece = this.pieces.get(pieceId);
@@ -172,9 +174,32 @@ export class Layout {
       endPiece.save();
     }
 
-    // Delete our piece
+    // Delete our piece from the in-memory json DB
     delete trackLayoutDb.data.pieces[ourPiece.getId()];
+
+    // Delete our piece from this class's list of pieces
     this.pieces.delete(ourPiece.getId());
+
+    // Write the in-memory json DB to file
+    trackLayoutDb.write();
+
+    // Recalculate all the coordinates
+    this.calculateAllCoordinates();
+  }
+
+  // Rotate a piece in the layout
+  // Note that rotation logic is piece specific
+  public async rotateLayoutPiece(pieceId: string): Promise<void> {
+    const ourPiece = this.pieces.get(pieceId);
+    if (ourPiece == undefined) {
+      console.error("Cannot find the piece we need to delete. This shouldn't happen because we have input validation at the edge");
+      return;
+    }
+
+    // Ask the piece to rotate itself
+    ourPiece.rotate();
+
+    // Write the in-memory json DB to file
     trackLayoutDb.write();
 
     // Recalculate all the coordinates

@@ -1,7 +1,8 @@
 import { param } from 'express-validator';
 import { layout } from '../services/init.js';
 
-export const deleteLayoutPieceSchema = [
+// Validation for routes that have an index in the URL
+export const indexLayoutPieceSchema = [
   param('index').exists({checkFalsy: true})
   .withMessage('Index is required')
   .isString()

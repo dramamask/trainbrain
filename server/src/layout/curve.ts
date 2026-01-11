@@ -92,6 +92,20 @@ export class Curve extends LayoutPiece {
     }
   }
 
+  // We rotate the curve by swapping the start and end. Seen from the vantage point
+  // of the layout's start position, this will result in rotating the bend of the
+  // curve the other way.
+  public rotate(): void {
+    const piece1 = this.connections.start;
+    const piece2 = this.connections.end;
+
+    this.connections.start = piece2;
+    this.connections.end = piece1;
+
+    // Write the new connections to the json DB
+    this.save();
+  }
+
   /**
    * Sets the end coordinate and heading of a track piece based on
    * a known start coordinate and the current piece's definition.

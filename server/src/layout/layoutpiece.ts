@@ -41,6 +41,9 @@ export abstract class LayoutPiece {
   // Save the data for this layout piece to the track-layout json DB
   public abstract save(writeToFile?: boolean): Promise<void>; // writeToFile is optional
 
+  // Rotate the piece in it's current track piece location. Rotation logic is layout piece specific.
+  public abstract rotate(): void;
+
   // Return the ID of this layout piece
   public getId(): string {
     return this.id;

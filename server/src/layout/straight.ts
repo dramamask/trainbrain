@@ -88,6 +88,9 @@ export class Straight extends LayoutPiece {
     }
   }
 
+  // Don't do anything. Rotating a straight piece has no effect.
+  public rotate(): void {};
+
   /**
    * Calculates the coordinate and heading of one side of the track
    * piece based on the known coordinate of the other side of the piece.

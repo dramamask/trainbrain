@@ -90,4 +90,17 @@ export class Position extends LayoutPiece {
       await trackLayoutDb.write();
     }
   }
+
+  // Rotate the heading 5 degrees clockwise.
+  public rotate(): void {
+    if (this.coordinate == null) {
+      throw new Error("Position coordinate should not be null");
+    }
+
+    this.coordinate.heading += 5;
+
+    if (this.coordinate.heading >= 360) {
+      this.coordinate.heading -= 360;
+    }
+  }
 }
