@@ -5,7 +5,8 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { store as zoomFactorStore } from "@/app/services/stores/zoomfactor";
 
-import sidebarStyles from "./sidebar.module.css";
+import sideBarStyles from "./sidebar.module.css";
+import styles from "./zoomcontrol.module.css";
 
 export default function zoomControl() {
   // This hook automatically subscribes and returns the latest snapshot
@@ -17,7 +18,7 @@ export default function zoomControl() {
 
   return (
     <FormControl variant="standard">
-      <div className={sidebarStyles.label}>Zoom</div>
+      <div className={sideBarStyles.label}>Zoom</div>
       <Select
         value={zoomFactorStore.getZoomFactor()}
         onChange={handleChange}

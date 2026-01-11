@@ -6,6 +6,7 @@
 - Create API to delete a piece.
 - Create UI to delete a piece.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
+- Style the zoom control values. The font should be smaller.
 - Add the world size to the layout json file.
 - Add protection so you can't move the layout outside of the world size.
 - Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements? We may have to change the connections model.
@@ -17,3 +18,4 @@
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
   Make it configurable as pixels per millimeter or something.
 - Expand zoom functionality to take up the entire window. Add pan controls. Add zoom controls.
+

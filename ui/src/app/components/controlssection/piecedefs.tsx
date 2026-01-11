@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CircularProgress, Stack } from "@mui/material";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { Card, CardContent, CircularProgress, Stack } from "@mui/material";
 import { TrackPieceDef, TrackPieceDefList } from "trainbrain-shared";
 import { getPieceDef } from "@/app/services/api/piecedef";
 import { store as pieceDefStore } from "@/app/services/stores/piecedefs";
 import { store as errorStore } from "@/app/services/stores/error";
+import { store as editModeStore } from "@/app/services/stores/editmode";
+import PieceDefCard from "./piecedefcard";
 
 import styles from "./piecedefs.module.css";
 
 export default function ControlsSection() {
+  const editModeState = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
+  const inEditMode = editModeState.editMode;
+
   const [loading, setLoading] = useState<Boolean>(true);
 
   // Fetch the layout from the back-end server
@@ -26,6 +31,11 @@ export default function ControlsSection() {
       });
   }, []);
 
+  // Only show the piece definitions list in edit mode
+  if (!inEditMode) {
+    return false;
+  }
+
   if (loading) {
     return (
       <CircularProgress className={styles.progress} />
@@ -33,31 +43,26 @@ export default function ControlsSection() {
   }
 
   return (
-    <Stack className={styles.stackContainer}>
-      <div>
-        { renderPieceDefList(pieceDefStore.getPieceDefList()) }
-      </div>
-    </Stack>
+    <Card className={styles.card}>
+      <CardContent className={styles.cardContent}>
+        <Stack className={styles.stack} spacing={1}>
+          { renderPieceDefList(pieceDefStore.getPieceDefList()) }
+        </Stack>
+      </CardContent>
+    </Card>
   )
 }
 
 // Render the list of piece definitions
-function renderPieceDefList(pieceDefs: any) {
+function renderPieceDefList(pieceDefs: TrackPieceDefList) {
   return (
     Object.entries(pieceDefs).map(([key, value]) => getPieceDefComponent(key, value))
   )
 }
 
 // Return the component that renders the particular piece definition
-function getPieceDefComponent(key: string, value: TrackPieceDef) {
+function getPieceDefComponent(name: string, definition: TrackPieceDef) {
   return (
-    <Stack className={styles.pieceContainer}>
-      <div className={styles.name}>
-        {key}
-      </div>
-      <div className={styles.description}>
-        {value.description}
-        </div>
-    </Stack>
+    <PieceDefCard key={name} name={name} definition={definition} />
   )
 }
