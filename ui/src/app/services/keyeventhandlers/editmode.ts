@@ -7,6 +7,7 @@ import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { setStartPosition } from "@/app/services/api/tracklayout";
 import { MOVE_INCREMENT } from "@/app/config/config";
+import { KEY } from "./keydefinitions";
 
 // Key Event Handler for Edit Mode
 // Note that all key event handlers need to be called from keynoardEventHandler.tsx
@@ -17,22 +18,22 @@ export function handleKeyDown(event: KeyboardEvent) {
     const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
 
     switch (event.key) {
-      case 'ArrowUp':
+      case KEY.editMode.layout.moveUp:
         startPositionAttributes.position.y += MOVE_INCREMENT;
         break;
-      case 'ArrowDown':
+      case KEY.editMode.layout.moveDown:
         startPositionAttributes.position.y -= MOVE_INCREMENT;
         break;
-      case 'ArrowLeft':
+      case KEY.editMode.layout.moveLeft:
         startPositionAttributes.position.x -= MOVE_INCREMENT;
         break;
-      case 'ArrowRight':
+      case KEY.editMode.layout.moveRight:
         startPositionAttributes.position.x += MOVE_INCREMENT;
         break;
-      case 'Escape':
+      case KEY.editMode.layout.piece.deselect:
         selectionStore.deselectAll();
         break;
-      case 'Tab':
+      case KEY.editMode.layout.piece.connector.toggle:
         selectionStore.toggleSelectedConnector();
         event.preventDefault();
       default:

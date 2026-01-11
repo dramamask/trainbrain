@@ -18,6 +18,7 @@ export default function PieceDefCard({name, definition}: props) {
     const selectedLayoutPiece = selectionStore.getSelectedTrackPiece();
     if (selectedLayoutPiece == "") {
       errorStore.setError(getNoLayoutPieceSelectedMessage());
+      return;
     }
     insertTrackPieceInLayout(name);
   };

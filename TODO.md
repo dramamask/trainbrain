@@ -1,7 +1,9 @@
 # TODO
 
-- Move the selected piee to the last piece that was inserted
-- Add ability to set direction for curve pieces.
+- Add UI piece with shortcut keys
+- Add keyboard shortcuts for zoom + and -
+- Move the selected piece to the last piece that was inserted
+- Add ability to set direction for curve pieces (R for rotate?).
 - Create API to delete a piece.
 - Create UI to delete a piece.
 - Draw start position differently depending on the fact if it has pieces connected to it or not.
@@ -18,4 +20,6 @@
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
   Make it configurable as pixels per millimeter or something.
 - Make the scroll bars more like oem, with arrows at the top and bottom
+- Zoom on layout map when mouse scroll is used.
 - Expand zoom functionality to take up the entire window. Add pan controls. Add zoom controls.
+- Add layout map to a MUI Card
