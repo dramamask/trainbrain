@@ -1,6 +1,6 @@
 # TODO
 
-- Draw start position differently depending on the fact if it has pieces connected to it or not. Startposition should not be an actual piece with connections! connections should only be with real pieces.
+- Draw start position differently depending on the fact if it has pieces connected to it or not. Startposition should not be an actual piece with connections! connections should only be with real pieces. Start position could have a single connection "start". Start position piece could only be visible when no other piece is on the board.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Do not allow start position move when a piece is selected. Info message.
 - Add the world size to the layout json file.
