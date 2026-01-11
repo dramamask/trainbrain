@@ -131,6 +131,55 @@ export class Layout {
     this.calculateAllCoordinates();
   }
 
+    // Delete a piece from the layout
+  public async deleteLayoutPiece(pieceId: string): Promise<void> {
+    // Get info on the piece we are going to delete (ourPiece)
+    const ourPiece = this.pieces.get(pieceId);
+    if (ourPiece == undefined) {
+      console.error("Cannot find the piece we need to delete. This shouldn't happen because we have input validation at the edge");
+      return;
+    }
+    const ourConnections = ourPiece.getConnections();
+
+    // Get the layout pieces on our "start" and "end" sides
+    const startPiece = ourConnections["start"];
+    const endPiece = ourConnections["end"];
+
+    // Tell any other pieces we are connection to that they will now be connected to a dead-end instead of us
+    Object.entries(ourConnections).forEach(([connectionName, layoutPiece]) => {
+      if (connectionName != "start" && connectionName != "end") {
+        if (layoutPiece != null) {
+          const theirConnectionNameToUs = layoutPiece.getConnectionName(ourPiece);
+          layoutPiece.updateConnection(theirConnectionNameToUs, null);
+        }
+      }
+    });
+
+    // Connect the piece on our "start" side with the piece on our "end" side
+    if (startPiece) {
+      const connectionNameToUs = startPiece.getConnectionName(ourPiece);
+      console.log("start piece's connectionName to use: ", connectionNameToUs);
+      startPiece.updateConnection(connectionNameToUs, endPiece);
+      startPiece.save();
+    }
+
+    // Connect the piece on our "end" side with the piece on our "start" side
+    if (endPiece) {
+      const connectionNameToUs = endPiece.getConnectionName(ourPiece);
+      console.log("end piece's connectionName to use: ", connectionNameToUs);
+      endPiece.updateConnection(connectionNameToUs, startPiece);
+      endPiece.save();
+    }
+
+    // Delete our piece
+    delete trackLayoutDb.data.pieces[ourPiece.getId()];
+    this.pieces.delete(ourPiece.getId());
+    trackLayoutDb.write();
+
+    // Recalculate all the coordinates
+    this.calculateAllCoordinates();
+  }
+
   // Save the entire track layout
   public async save(): Promise<void> {
     let layoutData: Record<string, LayoutPieceData> = {};

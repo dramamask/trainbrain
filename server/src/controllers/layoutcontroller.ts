@@ -40,6 +40,26 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
   }
 }
 
+// Endpoint to add a piece to the track layout
+export const deleteLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData(req);
+
+  try {
+    await layout.deleteLayoutPiece(data.index);
+
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
+
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+  } catch (error) {
+    console.error("Unknown error at the edge", error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+      .send("Unknown error at the edge. Check server logs.");
+  }
+}
+
 // Endpoint to update the track layout start position
 export const updateStartPosition = async (req: Request, res: Response, next: NextFunction) => {
   // matchedData only includes fields defined in the validator middleware for this route

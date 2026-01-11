@@ -41,6 +41,11 @@ export abstract class LayoutPiece {
     return this.id;
   }
 
+  // Return the object that defines the connections that we have to other layout pieces
+  public getConnections(): Connections {
+    return this.connections;
+  }
+
   // Returns the LayoutPiece object that is connected to our connectionName connection
   public getConnection(connectionName: ConnectionName): LayoutPiece | null {
     return this.connections[connectionName];
@@ -66,7 +71,7 @@ export abstract class LayoutPiece {
   }
 
   // Update a specific connection for this layoutPiece
-  public updateConnection(connectionName: ConnectionName, connection: LayoutPiece): void {
+  public updateConnection(connectionName: ConnectionName, connection: LayoutPiece | null): void {
     this.connections[connectionName] = connection;
   }
 

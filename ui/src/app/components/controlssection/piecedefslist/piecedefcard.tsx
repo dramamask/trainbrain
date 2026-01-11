@@ -5,6 +5,7 @@ import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as pieceDefStore } from "@/app/services/stores/piecedefs";
 import { insertTrackPiece } from "@/app/services/api/tracklayout";
+import { getLastInsertedTrackPieceId } from "@/app/services/tracklayout";
 
 interface props {
   name: string;
@@ -67,7 +68,12 @@ function insertTrackPieceInLayout(
 
   insertTrackPiece(insertedPieceInfo)
     .then((layoutData: UiLayout) => {
+        // Store the new track layout that was returned by the API endpoint (includes the newly inserted piece)
         trackLayoutStore.setTrackLayout(layoutData);
+
+        // Select the newly inserted piece
+        const lastInsertedId = getLastInsertedTrackPieceId()
+        selectionStore.setSelectedTrackPiece(lastInsertedId)
       })
       .catch((error: Error) => {
         errorStore.setError(error.message);
