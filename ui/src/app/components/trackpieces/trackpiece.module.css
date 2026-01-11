@@ -1,4 +1,3 @@
-.trackPieceContainer {
-  cursor: pointer;
-  pointer-events: all;
+.group {
+  pointer-events: all; /* This shows the mouse pointer everywhere inside the group */
 }

@@ -37,11 +37,12 @@ export default function Curve({piece}: {piece: UiLayoutPiece}) {
 
   return (
     <g
-      className={styles.trackPieceContainer + " " + getTrackPieceContainerClassName()}
+      className={styles.group + " " + getTrackPieceContainerClassName()}
       id={piece.id}
       key={piece.id}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={ inEditMode ? { cursor: 'pointer' } : {}}
     >
       <Rectangle
         visible={false}

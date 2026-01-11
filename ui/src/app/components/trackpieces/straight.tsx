@@ -44,11 +44,12 @@ export default function Straight({hideWhenSelected, piece}: props) {
   return (
     // For the group, one className is for styling, the other to help us select the track piece with the mouse
     <g
-      className={styles.trackPieceContainer + " " + getTrackPieceContainerClassName()}
+      className={styles.group + " " + getTrackPieceContainerClassName()}
       id={piece.id}
       key={piece.id}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={ inEditMode ? { cursor: 'pointer' } : {}}
     >
       <Rectangle
         visible={false}

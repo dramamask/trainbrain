@@ -1,6 +1,5 @@
 # TODO
 
-- Do not show pointer cursor on track pieces unless in edit mode
 - Build a layout editor UI.
 - Draw start position differently depending on the fact if it has pieces connected to it or not.
 - Create API to delete a piece.
@@ -17,5 +16,5 @@
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
   Make it configurable as pixels per millimeter or something.
+- Make the scroll bars more like oem, with arrows at the top and bottom
 - Expand zoom functionality to take up the entire window. Add pan controls. Add zoom controls.
-
