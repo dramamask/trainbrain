@@ -1,5 +1,7 @@
 "use client";
 
+export const MAX_ZOOM_FACTOR: number = 10;
+
 interface State {
   zoomFactor: number;
 }
@@ -37,4 +39,38 @@ export const store = {
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
+
+  zoomIn(): void {
+  const newState = {zoomFactor: getNextZoomFactorUp(state.zoomFactor)}
+  // Immutable update
+  state = newState;
+  // Notify React/listeners
+  listeners.forEach((callback) => callback());
+  },
+
+  zoomOut(): void {
+  const newState = {zoomFactor: getNextZoomFactorDown(state.zoomFactor)}
+  // Immutable update
+  state = newState;
+  // Notify React/listeners
+  listeners.forEach((callback) => callback());
+  },
 };
+
+// Get the next zoom factor value, one up from the current zoom factor
+function getNextZoomFactorUp(currentZoomFactor: number): number {
+  let newZoomFactor = currentZoomFactor + 1;
+  if (newZoomFactor > MAX_ZOOM_FACTOR) {
+    newZoomFactor = MAX_ZOOM_FACTOR;
+  }
+  return newZoomFactor;
+}
+
+// Get the next zoom factor value, one down from the current zoom factor
+function getNextZoomFactorDown(currentZoomFactor: number): number {
+  let newZoomFactor = currentZoomFactor - 1;
+  if (newZoomFactor < 1) {
+    newZoomFactor = 1;
+  }
+  return newZoomFactor;
+}

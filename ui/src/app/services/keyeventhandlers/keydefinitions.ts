@@ -4,8 +4,8 @@
  * This object is also used to render the keyboard shortcut UI item.
  */
 export const KEY = {
-  ZoomInTrackLayout: 'NumpadAdd',
-  ZoomOutTrackLayout: 'NumpadSubtract',
+  ZoomInTrackLayout: '+',
+  ZoomOutTrackLayout: '-',
   MoveTrackLayoutUpInEditMode: 'ArrowUp',
   MoveTrackLayoutDownInEditMode: 'ArrowDown',
   MoveTrackLayoutLeftInEditMode: 'ArrowLeft',

@@ -36,12 +36,9 @@ function getKeyName(keyName: any): string {
 }
 
 // Make key names more human readable
-function humanReadableKeyName(keyName): string {
-  switch(keyName) {
-    case 'NumpadAdd':
-      return "+";
-    case 'NumpadSubtract':
-      return "-";
+function humanReadableKeyName(keyName: string): string {
+  if (keyName.length == 1) {
+    return keyName;
   }
 
   return capitalCase(keyName);

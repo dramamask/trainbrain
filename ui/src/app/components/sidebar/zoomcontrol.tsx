@@ -1,18 +1,20 @@
 "use client";
 
-import React, { useSyncExternalStore } from "react";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { useSyncExternalStore } from "react";
+import { JSX } from "@emotion/react/jsx-runtime";
+import { FormControl, MenuItem, Select } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { store as zoomFactorStore } from "@/app/services/stores/zoomfactor";
+import { store as zoomFactorStore, MAX_ZOOM_FACTOR } from "@/app/services/stores/zoomfactor";
 
 import sideBarStyles from "./sidebar.module.css";
-import styles from "./zoomcontrol.module.css";
+
+const fontSize = "0.8em";
 
 export default function zoomControl() {
   // This hook automatically subscribes and returns the latest snapshot
-  useSyncExternalStore(zoomFactorStore.subscribe, zoomFactorStore.getSnapshot, zoomFactorStore.getServerSnapshot);
+  const zoomState = useSyncExternalStore(zoomFactorStore.subscribe, zoomFactorStore.getSnapshot, zoomFactorStore.getServerSnapshot);
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleChange = (event: SelectChangeEvent<number>) => {
     zoomFactorStore.setZoomFactor(Number(event.target.value));
   };
 
@@ -20,15 +22,31 @@ export default function zoomControl() {
     <FormControl variant="standard">
       <div className={sideBarStyles.label}>Zoom</div>
       <Select
-        value={zoomFactorStore.getZoomFactor()}
+        value={zoomState.zoomFactor}
         onChange={handleChange}
+        sx={{ fontSize: fontSize, lineHeight: '2'}}
       >
-        <MenuItem value={1}>100%</MenuItem>
-        <MenuItem value={2}>200%</MenuItem>
-        <MenuItem value={3}>300%</MenuItem>
-        <MenuItem value={4}>400%</MenuItem>
-        <MenuItem value={5}>500%</MenuItem>
+        {renderItems()}
       </Select>
     </FormControl>
   )
+}
+
+// Render the list of items in the zoom select control
+function renderItems(): JSX.Element[] {
+  const listItems: JSX.Element[] = [];
+
+  for (let i: number = 1; i <= MAX_ZOOM_FACTOR; i++) {
+    listItems.push(
+      <MenuItem key={i} value={i} sx={{ fontSize: fontSize}}>
+        {getZoomPercentage(i)}
+      </MenuItem>)
+  }
+
+  return listItems;
+}
+
+// Convert the zoom factor number to zoom percentage string
+function getZoomPercentage(zoomFactor: number): string {
+  return ((zoomFactor * 100).toString() + "%");
 }

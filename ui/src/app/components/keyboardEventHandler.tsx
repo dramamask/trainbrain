@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import * as editMode from "@/app/services/keyeventhandlers/editmode";
 import * as error from "@/app/services/keyeventhandlers/error";
+import * as zoom from "@/app/services/keyeventhandlers/zoom";
 
 export default function KeyBoardEventHandler() {
   useEffect(() => {
@@ -29,4 +30,5 @@ export default function KeyBoardEventHandler() {
 function handleKeyDown(event: KeyboardEvent) {
   editMode.handleKeyDown(event);
   error.handleKeyDown(event);
+  zoom.handleKeyDown(event);
 }

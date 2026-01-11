@@ -1,6 +1,5 @@
 # TODO
 
-- Add keyboard shortcuts for zoom + and -
 - Move the selected piece to the last piece that was inserted
 - Add ability to set direction for curve pieces (R for rotate?).
 - Create API to delete a piece.
@@ -8,7 +7,6 @@
 - Do not allow piece move when a piece is selected. Info message.
 - Draw start position differently depending on the fact if it has pieces connected to it or not.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
-- Style the zoom control values. The font should be smaller.
 - Add the world size to the layout json file.
 - Add protection so you can't move the layout outside of the world size.
 - Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements? We may have to change the connections model.
@@ -22,4 +20,5 @@
 - Make the scroll bars more like oem, with arrows at the top and bottom
 - Zoom on layout map when mouse scroll is used.
 - Expand zoom functionality to take up the entire window. Add pan controls. Add zoom controls.
-- Add layout map to a MUI Card
+- Add layout map inside a MUI Card
+
