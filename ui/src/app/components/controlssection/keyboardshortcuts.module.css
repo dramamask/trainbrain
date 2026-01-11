@@ -1,11 +1,11 @@
 .card {
-
+  width: fit-content;
 }
 
 .cardContent {
-
+  width: fit-content;
 }
 
 .stack {
-
+  width: 200px;
 }

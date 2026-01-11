@@ -6,6 +6,7 @@
 - Add ability to set direction for curve pieces (R for rotate?).
 - Create API to delete a piece.
 - Create UI to delete a piece.
+- Do not allow piece move when a piece is selected. Info message.
 - Draw start position differently depending on the fact if it has pieces connected to it or not.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Style the zoom control values. The font should be smaller.

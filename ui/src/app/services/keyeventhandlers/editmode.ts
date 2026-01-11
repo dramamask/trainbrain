@@ -18,22 +18,22 @@ export function handleKeyDown(event: KeyboardEvent) {
     const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
 
     switch (event.key) {
-      case KEY.editMode.layout.moveUp:
+      case KEY['editMode.layout.moveUp']:
         startPositionAttributes.position.y += MOVE_INCREMENT;
         break;
-      case KEY.editMode.layout.moveDown:
+      case KEY['editMode.layout.moveDown']:
         startPositionAttributes.position.y -= MOVE_INCREMENT;
         break;
-      case KEY.editMode.layout.moveLeft:
+      case KEY['editMode.layout.moveLeft']:
         startPositionAttributes.position.x -= MOVE_INCREMENT;
         break;
-      case KEY.editMode.layout.moveRight:
+      case KEY['editMode.layout.moveRight']:
         startPositionAttributes.position.x += MOVE_INCREMENT;
         break;
-      case KEY.editMode.layout.piece.deselect:
+      case KEY['editMode.layout.piece.deselect']:
         selectionStore.deselectAll();
         break;
-      case KEY.editMode.layout.piece.connector.toggle:
+      case KEY['editMode.layout.piece.connector.toggle']:
         selectionStore.toggleSelectedConnector();
         event.preventDefault();
       default:
