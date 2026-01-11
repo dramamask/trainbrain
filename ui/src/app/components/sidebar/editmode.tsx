@@ -3,6 +3,7 @@
 import React, { useSyncExternalStore } from "react";
 import { Stack, Switch } from "@mui/material"
 import { store as editModeStore } from "@/app/services/stores/editmode";
+import { store as selectionModeStore } from "@/app/services/stores/selection";
 
 import styles from "./editmode.module.css";
 import sidebarStyles from "./sidebar.module.css";
@@ -13,6 +14,11 @@ export default function EditMode() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     editModeStore.setEditMode(event.target.checked);
+
+    // Deselect the selected piece when leaving edit mode
+    if (!event.target.checked) {
+      selectionModeStore.deselectAll();
+    }
   }
 
   return (
