@@ -7,7 +7,6 @@ import { store as errorStore } from '@/app/services/stores/error';
 export function handleKeyDown(event: KeyboardEvent) {
   if (errorStore.errorPresent()) {
     if (event.key == 'Enter' || event.key == 'Escape') {
-      console.log("Error store key handler");
       errorStore.clearError();
     }
   }

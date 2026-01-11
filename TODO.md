@@ -1,9 +1,10 @@
 # TODO
 
-- Build a layout editor UI.
-- Draw start position differently depending on the fact if it has pieces connected to it or not.
+- Move the selected piee to the last piece that was inserted
+- Add ability to set direction for curve pieces.
 - Create API to delete a piece.
 - Create UI to delete a piece.
+- Draw start position differently depending on the fact if it has pieces connected to it or not.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Style the zoom control values. The font should be smaller.
 - Add the world size to the layout json file.

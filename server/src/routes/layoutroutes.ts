@@ -8,7 +8,7 @@ const router: Router = Router();
 
 // Map URL sub-paths to controller methods
 router.get('/', layoutController.getLayout);
-router.post('/', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
+router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
 router.put('/start-position', coordinateSchema, validate, layoutController.updateStartPosition);
 
 export default router;

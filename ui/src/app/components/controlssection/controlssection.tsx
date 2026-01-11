@@ -1,4 +1,4 @@
-import PieceDefs from "./piecedefs";
+import PieceDefs from "./piecedefslist/piecedefs";
 
 import styles from "./controlssection.module.css";
 

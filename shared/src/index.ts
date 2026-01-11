@@ -10,8 +10,11 @@ export type Direction = "left" | "right";
 // List of the different types of track pieces that we have
 export type TrackPieceCategory = "position" | "straight" | "curve" | "switch";
 
+// All possible connection names
+export type ConnectionName = "start" | "end" | "diverge";
+
 // List of different possible values for the dead-end indicator for a UI layout piece
-export type DeadEnd = "start" | "end" | null;
+export type DeadEnd = ConnectionName & null;
 
 // Attributes for a Position type piece
 export interface UiAttributesPosition {
