@@ -9,7 +9,7 @@ import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <Box height="100dvh">
+    <Box className={styles.mainBox} height="100dvh">
         <Grid
           container
           spacing={0} // Horizontal spacing in between grid items

@@ -1,6 +1,7 @@
 # TODO
 
-- Do not show pointr cursor on track pieces unless in edit mode
+- Scroll bar should be inside the card, not on it.
+- Do not show pointer cursor on track pieces unless in edit mode
 - Build a layout editor UI.
 - Draw start position differently depending on the fact if it has pieces connected to it or not.
 - Create API to delete a piece.

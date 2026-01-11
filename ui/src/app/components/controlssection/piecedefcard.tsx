@@ -10,7 +10,7 @@ import styles from "./piecedefcard.module.css"
 
 export default function PieceDefCard({name, definition}: props) {
   return (
-    <Card>
+    <Card sx={{ flexShrink: 0}}>
       <CardContent className={styles.cardContent}>
         <Stack className={styles.pieceContainer} key={name}>
           <div className={styles.name}>

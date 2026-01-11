@@ -1,5 +1,5 @@
-.appContainer {
-  height: 100dvh;
+.mainBox {
+  background: linear-gradient(to bottom, aliceblue, lightblue);
 }
 
 .logoContainer {
