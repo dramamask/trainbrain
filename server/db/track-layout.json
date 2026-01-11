@@ -23,16 +23,6 @@
         "end": "10"
       }
     },
-    "2": {
-      "type": "LGB-R1-30°",
-      "attributes": {
-        "direction": "left"
-      },
-      "connections": {
-        "start": "5",
-        "end": "17"
-      }
-    },
     "3": {
       "type": "LGB-R3-22.5°",
       "attributes": {
@@ -51,28 +41,12 @@
         "end": "3"
       }
     },
-    "5": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "6",
-        "end": "2"
-      }
-    },
-    "6": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "7",
-        "end": "5"
-      }
-    },
     "7": {
       "type": "LGB-600",
       "attributes": {},
       "connections": {
-        "start": "13",
-        "end": "6"
+        "start": "14",
+        "end": null
       }
     },
     "8": {
@@ -115,20 +89,12 @@
         "end": "4"
       }
     },
-    "13": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "14",
-        "end": "7"
-      }
-    },
     "14": {
       "type": "LGB-600",
       "attributes": {},
       "connections": {
         "start": "15",
-        "end": "13"
+        "end": "7"
       }
     },
     "15": {
@@ -145,48 +111,6 @@
       "connections": {
         "start": "8",
         "end": "15"
-      }
-    },
-    "17": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "2",
-        "end": "18"
-      }
-    },
-    "18": {
-      "type": "LGB-R1-30°",
-      "attributes": {
-        "direction": "left"
-      },
-      "connections": {
-        "start": "17",
-        "end": "24"
-      }
-    },
-    "22": {
-      "type": "LGB-300",
-      "attributes": {},
-      "connections": {
-        "start": "23",
-        "end": null
-      }
-    },
-    "23": {
-      "type": "LGB-150",
-      "attributes": {},
-      "connections": {
-        "start": "24",
-        "end": "22"
-      }
-    },
-    "24": {
-      "type": "LGB-150",
-      "attributes": {},
-      "connections": {
-        "start": "18",
-        "end": "23"
       }
     }
   }

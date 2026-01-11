@@ -5,7 +5,7 @@ import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { setStartPosition } from "@/app/services/api/tracklayout";
+import { deleteTrackPiece, setStartPosition } from "@/app/services/api/tracklayout";
 import { MOVE_INCREMENT } from "@/app/config/config";
 import { KEY } from "./keydefinitions";
 
@@ -18,36 +18,61 @@ export function handleKeyDown(event: KeyboardEvent) {
     const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
 
     switch (event.key) {
-      case KEY.MoveTrackLayoutUpInEditMode:
+      case KEY.DeleteLayoutPieceInEditMode:
+        deleteLayoutPiece(selectionStore.getSelectedTrackPiece());
+        selectionStore.deselectAll();
+        break;
+      case KEY.MoveLayoutUpInEditMode:
         startPositionAttributes.position.y += MOVE_INCREMENT;
+        storeStartPosition(startPositionAttributes);
         break;
-      case KEY.MoveTrackLayoutDownInEditMode:
+      case KEY.MoveLayoutDownInEditMode:
         startPositionAttributes.position.y -= MOVE_INCREMENT;
+        storeStartPosition(startPositionAttributes);
         break;
-      case KEY.MoveTrackLayoutLeftInEditMode:
+      case KEY.MoveLayoutLeftInEditMode:
         startPositionAttributes.position.x -= MOVE_INCREMENT;
+        storeStartPosition(startPositionAttributes);
         break;
-      case KEY.MoveTrackLayoutRightInEditMode:
+      case KEY.MoveLayoutRightInEditMode:
         startPositionAttributes.position.x += MOVE_INCREMENT;
+        storeStartPosition(startPositionAttributes);
         break;
       case KEY.DeselectLayoutPieceInEditMode:
         selectionStore.deselectAll();
         break;
       case KEY.ToggleConnectorInEditMode:
         selectionStore.toggleSelectedConnector();
-        event.preventDefault();
+        event.preventDefault(); // We don't want the tab key
       default:
         // Exit this function
         return;
     }
 
-    setStartPosition(startPositionAttributes.position)
-    .then((layoutData: UiLayout) => {
-        trackLayoutStore.setTrackLayout(layoutData);
-      })
-      .catch((error: Error) => {
-        errorStore.setError(error.message);
-        console.error("handleKeyDown().setStartPosition()", error);
-      });
+
   }
+}
+
+// Call the server API to store the new start position
+function storeStartPosition(startPositionAttributes: UiAttributesPosition) {
+  setStartPosition(startPositionAttributes.position)
+    .then((layoutData: UiLayout) => {
+      trackLayoutStore.setTrackLayout(layoutData);
+    })
+    .catch((error: Error) => {
+      errorStore.setError(error.message);
+      console.error("handleKeyDown().setStartPosition() error:", error);
+    });
+}
+
+// Call the server API to delete a layout piece
+function deleteLayoutPiece(idOfpieceToDelete: string) {
+  deleteTrackPiece(idOfpieceToDelete)
+    .then((layoutData: UiLayout) => {
+      trackLayoutStore.setTrackLayout(layoutData);
+    })
+    .catch((error: Error) => {
+      errorStore.setError(error.message);
+      console.error("handleKeyDown().deleteLayoutPiece() error:", error);
+    });
 }

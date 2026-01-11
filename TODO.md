@@ -1,6 +1,6 @@
 # TODO
 
-- Create UI to delete a piece.
+- Do not store curve direcion in layout. All curves are left direction. Direciton change is done through piece rotation.
 - Add ability to set direction for curve pieces (R for rotate?).
 - Do not allow piece move when a piece is selected. Info message.
 - Draw start position differently depending on the fact if it has pieces connected to it or not. Startposition should not be an actual piece with connections! connections should only be with real pieces.
