@@ -12,6 +12,8 @@ import {
 import * as config from "@/app/config/config";
 import { store as editModeStore } from "@/app/services/stores/editmode";
 import { store as selectionStore } from "@/app/services/stores/selection";
+import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
+import { store as errorStore } from "@/app/services/stores/error";
 import { getTrackPieceContainerClassName } from "@/app/services/classnames";
 import Connector from "./components/connector";
 import DeadEnd from "./components/deadend";
@@ -22,6 +24,14 @@ import styles from "./trackpiece.module.css";
 
 // Curve track piece component
 export default function Curve({piece}: {piece: UiLayoutPiece}) {
+  const pieceId = piece.id;
+  const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
+  let pieceFromState = trackLayoutState.trackLayout.pieces.find(piece => (piece.id == pieceId));
+  if (pieceFromState == undefined) {
+    errorStore.setError("Error! Could not refresh selected layout piece. Continuing with stale layout piece.");
+    pieceFromState = piece;
+  }
+
   const isTrackPieceSelected = useSyncExternalStore(selectionStore.subscribe, () => thisTrackPieceIsSelected(piece.id));
   const selectedConnector = useSyncExternalStore(selectionStore.subscribe, () => ourSelectedConnector(piece.id));
 
@@ -30,10 +40,10 @@ export default function Curve({piece}: {piece: UiLayoutPiece}) {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const attributes = piece.attributes as UiAttributesCurve;
+  const attributes = pieceFromState.attributes as UiAttributesCurve;
   const indicatorPositions = getDeadEndIndicatorPositions(attributes.coordinates.start, attributes.coordinates.end);
-  const startIsDeadEnd = (piece.deadEnd == "start");
-  const endIsdeadEnd = (piece.deadEnd == "end");
+  const startIsDeadEnd = (pieceFromState.deadEnd == "start");
+  const endIsdeadEnd = (pieceFromState.deadEnd == "end");
 
   return (
     <g

@@ -21,9 +21,16 @@ export async function insertTrackPiece(insertedPieceInfo: InsertedPieceInfo): Pr
 }
 
 // Delete a track piece from the layout
-export async function deleteTrackPiece(piecetoDeleteId: string): Promise<UiLayout> {
-  const url = "/layout/piece/" + piecetoDeleteId;
+export async function deleteTrackPiece(pieceId: string): Promise<UiLayout> {
+  const url = "/layout/piece/" + pieceId;
   const data = await apiCall<UiLayout>("DELETE", url, {});
+  return data;
+}
+
+// Delete a track piece from the layout
+export async function rotateTrackPiece(pieceId: string): Promise<UiLayout> {
+  const url = "/layout/piece/rotate/" + pieceId;
+  const data = await apiCall<UiLayout>("PUT", url, {});
   return data;
 }
 

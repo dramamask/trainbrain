@@ -5,7 +5,7 @@ import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { deleteTrackPiece, setStartPosition } from "@/app/services/api/tracklayout";
+import { deleteTrackPiece, rotateTrackPiece, setStartPosition } from "@/app/services/api/tracklayout";
 import { MOVE_INCREMENT } from "@/app/config/config";
 import { KEY } from "./keydefinitions";
 
@@ -16,6 +16,10 @@ export function handleKeyDown(event: KeyboardEvent) {
     const trackLayout: UiLayout = trackLayoutStore.getTrackLayout() as UiLayout;
     const startPositionPiece = trackLayout.pieces.find(piece => piece.category == "position") as UiLayoutPiece;
     const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
+
+    if (KEY.RotateLayoutPieceInEditMode.includes(event.key)) {
+        rotateLayoutPiece(selectionStore.getSelectedTrackPiece());
+    }
 
     switch (event.key) {
       case KEY.DeleteLayoutPieceInEditMode:
@@ -48,8 +52,6 @@ export function handleKeyDown(event: KeyboardEvent) {
         // Exit this function
         return;
     }
-
-
   }
 }
 
@@ -66,13 +68,25 @@ function storeStartPosition(startPositionAttributes: UiAttributesPosition) {
 }
 
 // Call the server API to delete a layout piece
-function deleteLayoutPiece(idOfpieceToDelete: string) {
-  deleteTrackPiece(idOfpieceToDelete)
+function deleteLayoutPiece(pieceId: string) {
+  deleteTrackPiece(pieceId)
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);
     })
     .catch((error: Error) => {
       errorStore.setError(error.message);
       console.error("handleKeyDown().deleteLayoutPiece() error:", error);
+    });
+}
+
+// Call the server API to rotate a layout piece
+function rotateLayoutPiece(pieceId: string) {
+  rotateTrackPiece(pieceId)
+    .then((layoutData: UiLayout) => {
+      trackLayoutStore.setTrackLayout(layoutData);
+    })
+    .catch((error: Error) => {
+      errorStore.setError(error.message);
+      console.error("handleKeyDown().rotateLayoutPiece() error:", error);
     });
 }
