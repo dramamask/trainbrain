@@ -24,26 +24,33 @@ export class Straight extends LayoutPiece {
     })
   }
 
-  public initCoordinates(start: Coordinate| null, end: Coordinate | null): void {
-    // If we are given a start coordinate we will calculate our end coordinate
-    // and we will call the layout piece that that is connected to our end side.
-    if (start != null && end == null) {
-      this.coordinates.start = start;
-      this.coordinates.end = this.calculateEndCoordinate();
+  public initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void {
+    // Lookup on which side we are connected to connectedPiece
+    const connectionName = this.getConnectionName(connectedPiece);
+    if (!["start", "end"].includes(connectionName)) {
+      throw new Error(`connectionName should be 'start' or 'end', but is '${connectionName}'`);
+    }
+
+    // Assign the coordinate for our connector
+    (this.coordinates as Record<string, Coordinate>)[connectionName] = connectorCoordinate;
+
+    // If we were given the start coordinate, calculate the end coordinate
+    // and call the layout piece that is connected to our end connector
+    if (connectionName == "start") {
+      this.coordinates.end = this.calculateCoordinate(this.coordinates.start as Coordinate);
 
       if (this.connections.end) {
-        this.connections.end.initCoordinates(this.coordinates.end, null);
+        this.connections.end.initCoordinates(this, this.coordinates.end);
       }
     }
 
-    // If we are given an end coordinate we will calculate our start coordinate
-    // and we will call the layout piece that that is connected to our start side.
-    if (start == null && end != null) {
-      this.coordinates.end = end;
-      this.coordinates.start = this.calculateStartCoordinate();
+    // If we were given the end coordinate, calculate the start coordinate
+    // and call the layout piece that is connected to our start connector
+    if (connectionName == "end") {
+      this.coordinates.start = this.calculateCoordinate(this.coordinates.end as Coordinate);
 
       if (this.connections.start) {
-        this.connections.start.initCoordinates(null, this.coordinates.start);
+        this.connections.start.initCoordinates(this, this.coordinates.start);
       }
     }
   }
@@ -82,38 +89,18 @@ export class Straight extends LayoutPiece {
   }
 
   /**
-   * Sets the end coordinate and heading of the track piece based on
-   * a known start coordinate and the current piece's definition.
+   * Calculates the coordinate and heading of one side of the track
+   * piece based on the known coordinate of the other side of the piece.
    */
-  private calculateEndCoordinate(): Coordinate {
-    const start = this.coordinates.start as Coordinate;
-
+  private calculateCoordinate(otherCoordinate: Coordinate): Coordinate {
     // Calculate x and y position based on the heading of the track piece
-    const dX = this.length * Math.sin(this.degreesToRadians(start.heading));
-    const dY = this.length * Math.cos(this.degreesToRadians(start.heading));
+    const dX = this.length * Math.sin(this.degreesToRadians(otherCoordinate.heading));
+    const dY = this.length * Math.cos(this.degreesToRadians(otherCoordinate.heading));
 
     return {
-      x: this.roundTo2(start.x + dX),
-      y: this.roundTo2(start.y + dY),
-      heading: start.heading,
-    }
-  }
-
-  /**
-   * Sets the start coordinate and heading of a track piece based on
-   * a known end coordinate and the current piece's definition.
-   */
-  private calculateStartCoordinate(): Coordinate {
-    const end = this.coordinates.end as Coordinate;
-
-    // Calculate x and y position based on the heading of the track piece
-    const dX = this.length * Math.sin(this.degreesToRadians(end.heading));
-    const dY = this.length * Math.cos(this.degreesToRadians(end.heading));
-
-    return {
-      x: this.roundTo2(end.x - dX),
-      y: this.roundTo2(end.y - dY),
-      heading: end.heading,
+      x: this.roundTo2(otherCoordinate.x + dX),
+      y: this.roundTo2(otherCoordinate.y + dY),
+      heading: otherCoordinate.heading,
     }
   }
 

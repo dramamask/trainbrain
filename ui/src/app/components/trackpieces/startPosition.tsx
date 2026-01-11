@@ -18,14 +18,14 @@ export default function startPosition({piece}: {piece: UiLayoutPiece}) {
   return (
     <g key="0">
       <rect
-        x={attributes.position.x - config.START_POS_RADIUS}
-        y={attributes.position.y - config.START_POS_RADIUS}
+        x={attributes.coordinate.x - config.START_POS_RADIUS}
+        y={attributes.coordinate.y - config.START_POS_RADIUS}
         width={2 * config.START_POS_RADIUS}
         height={2 * config.START_POS_RADIUS}
         fill={config.START_POS_COLOR}
         stroke={config.START_POS_COLOR}
         strokeWidth={1}
-        transform={`rotate(45, ${attributes.position.x}, ${attributes.position.y})`}
+        transform={`rotate(45, ${attributes.coordinate.x}, ${attributes.coordinate.y})`}
       />
     </g>
   )

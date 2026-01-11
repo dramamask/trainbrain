@@ -23,19 +23,19 @@ export function handleKeyDown(event: KeyboardEvent) {
         selectionStore.deselectAll();
         break;
       case KEY.MoveLayoutUpInEditMode:
-        startPositionAttributes.position.y += MOVE_INCREMENT;
+        startPositionAttributes.coordinate.y += MOVE_INCREMENT;
         storeStartPosition(startPositionAttributes);
         break;
       case KEY.MoveLayoutDownInEditMode:
-        startPositionAttributes.position.y -= MOVE_INCREMENT;
+        startPositionAttributes.coordinate.y -= MOVE_INCREMENT;
         storeStartPosition(startPositionAttributes);
         break;
       case KEY.MoveLayoutLeftInEditMode:
-        startPositionAttributes.position.x -= MOVE_INCREMENT;
+        startPositionAttributes.coordinate.x -= MOVE_INCREMENT;
         storeStartPosition(startPositionAttributes);
         break;
       case KEY.MoveLayoutRightInEditMode:
-        startPositionAttributes.position.x += MOVE_INCREMENT;
+        startPositionAttributes.coordinate.x += MOVE_INCREMENT;
         storeStartPosition(startPositionAttributes);
         break;
       case KEY.DeselectLayoutPieceInEditMode:
@@ -55,7 +55,7 @@ export function handleKeyDown(event: KeyboardEvent) {
 
 // Call the server API to store the new start position
 function storeStartPosition(startPositionAttributes: UiAttributesPosition) {
-  setStartPosition(startPositionAttributes.position)
+  setStartPosition(startPositionAttributes.coordinate)
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);
     })

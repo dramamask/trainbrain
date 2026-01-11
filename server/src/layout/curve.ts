@@ -1,6 +1,6 @@
 import { Connections, LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
-import { Coordinate, DeadEnd, Direction, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, DeadEnd, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
 
@@ -9,12 +9,7 @@ interface PieceDefAttributes {
   radius: number;
 }
 
-interface LayoutPieceAttributes {
-  direction: Direction;
-}
-
 export class Curve extends LayoutPiece {
-  direction: Direction = <Direction>("");
   angle: number = 0;
   radius: number = 0;
   connections: Connections = {start: null, end: null};
@@ -22,7 +17,6 @@ export class Curve extends LayoutPiece {
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
-    this.direction = (data.attributes as LayoutPieceAttributes).direction;
     this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
     this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
   }
@@ -33,26 +27,33 @@ export class Curve extends LayoutPiece {
     })
   }
 
-  public initCoordinates(start: Coordinate| null, end: Coordinate | null): void {
-    // If we are given a start coordinate we will calculate our end coordinate
-    // and we will call the layout piece that that is connected to our end side.
-    if (start != null && end == null) {
-      this.coordinates.start = start;
+  public initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void {
+    // Lookup on which side we are connected to connectedPiece
+    const connectionName = this.getConnectionName(connectedPiece);
+    if (!["start", "end"].includes(connectionName)) {
+      throw new Error(`connectionName should be 'start' or 'end', but is '${connectionName}'`);
+    }
+
+    // Assign the coordinate for our connector
+    (this.coordinates as Record<string, Coordinate>)[connectionName] = connectorCoordinate;
+
+    // If we were given the start coordinate, calculate the end coordinate
+    // and call the layout piece that is connected to our end connector
+    if (connectionName == "start") {
       this.coordinates.end = this.calculateEndCoordinate();
 
       if (this.connections.end) {
-        this.connections.end.initCoordinates(this.coordinates.end, null);
+        this.connections.end.initCoordinates(this, this.coordinates.end);
       }
     }
 
-    // If we are given an end coordinate we will calculate our start coordinate
-    // and we will call the layout piece that that is connected to our start side.
-    if (start == null && end != null) {
-      this.coordinates.end = end;
+    // If we were given the end coordinate, calculate the start coordinate
+    // and call the layout piece that is connected to our start connector
+    if (connectionName == "end") {
       this.coordinates.start = this.calculateStartCoordinate();
 
       if (this.connections.start) {
-        this.connections.start.initCoordinates(null, this.coordinates.start);
+        this.connections.start.initCoordinates(this, this.coordinates.start);
       }
     }
   }
@@ -66,7 +67,6 @@ export class Curve extends LayoutPiece {
           start: this.coordinates.start as Coordinate,
           end: this.coordinates.end as Coordinate,
         },
-        direction: this.direction,
         radius: this.radius,
       },
       deadEnd: this.getDeadEnd(),
@@ -76,9 +76,7 @@ export class Curve extends LayoutPiece {
   public getLayoutPieceData(): LayoutPieceData {
     return {
       type: this.type,
-      attributes: {
-        direction: this.direction,
-      },
+      attributes: {},
       connections: {
         start: this.connections.start ? (this.connections.start as LayoutPiece).getId() : null,
         end: this.connections.end? (this.connections.end as LayoutPiece).getId() : null,
@@ -97,6 +95,7 @@ export class Curve extends LayoutPiece {
   /**
    * Sets the end coordinate and heading of a track piece based on
    * a known start coordinate and the current piece's definition.
+   * Note that a curve always faces right!
    */
   private calculateEndCoordinate(): Coordinate {
     const start = this.coordinates.start as Coordinate;
@@ -104,13 +103,6 @@ export class Curve extends LayoutPiece {
     // Calculate x and y position based on the angle of the track piece
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
-
-    // Invert the angle and the x-coordinate if the piece is facing left instead of right
-    let pieceAngle = this.angle;
-    if (this.direction == "left") {
-      dX = (0 - dX);
-      pieceAngle = (0 - pieceAngle);
-    }
 
     // Rotate the track piece to fit correctly on the end of the previous piece
     const rotated = this.rotatePoint(dX, dY, start.heading);
@@ -121,7 +113,7 @@ export class Curve extends LayoutPiece {
     return {
       x: this.roundTo2(start.x + dX),
       y: this.roundTo2(start.y + dY),
-      heading: start.heading + pieceAngle,
+      heading: start.heading + this.angle,
     }
   }
 
@@ -136,23 +128,22 @@ export class Curve extends LayoutPiece {
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
 
-    // Invert the angle and the x-coordinate if the piece is facing left instead of right
+    // Invert the angle and the x-coordinate because the piece is now facing left
+    // (start and end are reversed)
     let pieceAngle = this.angle;
-    if (this.direction == "left") {
-      dX = (0 - dX);
-      pieceAngle = (0 - pieceAngle);
-    }
+    dX = (0 - dX);
+    pieceAngle = (0 - pieceAngle);
 
     // Rotate the track piece to fit correctly on the end of the previous piece
-    const rotated = this.rotatePoint(dX, dY, end.heading - pieceAngle);
+    const rotated = this.rotatePoint(dX, dY, end.heading);
     dX = rotated.x;
     dY = rotated.y;
 
     // Assign the x, y and heading based on the previous calculations
     return {
-      x: this.roundTo2(end.x - dX),
-      y: this.roundTo2(end.y - dY),
-      heading: end.heading - pieceAngle,
+      x: this.roundTo2(end.x + dX),
+      y: this.roundTo2(end.y + dY),
+      heading: end.heading + pieceAngle,
     }
   }
 

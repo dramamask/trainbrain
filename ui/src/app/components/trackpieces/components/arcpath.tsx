@@ -36,12 +36,12 @@ function getStrokeWidth(isHovered: boolean): number {
 // Generate an SVG arc path from a track piece definition
 function arcPathFromTrack(trackPiece: UiAttributesCurve): string
 {
-  const { coordinates, direction, radius } = trackPiece;
+  const { coordinates, radius } = trackPiece;
 
   // SVG sweepFlag:
   // 0 = counterclockwise
   // 1 = clockwise
-  const sweepFlag = (direction == "left") ? 1 : 0;
+  const sweepFlag = 0;
 
   return `
     M ${coordinates.start.x} ${coordinates.start.y}

@@ -8,109 +8,19 @@
       "attributes": {
         "x": 9947,
         "y": 7007,
-        "heading": 0
+        "heading": 180
       },
       "connections": {
-        "start": "3",
-        "end": "1"
-      }
-    },
-    "1": {
-      "type": "LGB-300",
-      "attributes": {},
-      "connections": {
-        "start": "0",
-        "end": "10"
-      }
-    },
-    "3": {
-      "type": "LGB-R3-22.5°",
-      "attributes": {
-        "direction": "right"
-      },
-      "connections": {
-        "start": "4",
-        "end": "0"
-      }
-    },
-    "4": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "12",
-        "end": "3"
-      }
-    },
-    "7": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "14",
+        "start": "1",
         "end": null
       }
     },
-    "8": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "9",
-        "end": "16"
-      }
-    },
-    "9": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "10",
-        "end": "8"
-      }
-    },
-    "10": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "1",
-        "end": "9"
-      }
-    },
-    "11": {
-      "type": "LGB-300",
+    "1": {
+      "type": "LGB-R3-22.5°",
       "attributes": {},
       "connections": {
         "start": null,
-        "end": "12"
-      }
-    },
-    "12": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "11",
-        "end": "4"
-      }
-    },
-    "14": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "15",
-        "end": "7"
-      }
-    },
-    "15": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "16",
-        "end": "14"
-      }
-    },
-    "16": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "8",
-        "end": "15"
+        "end": "0"
       }
     }
   }

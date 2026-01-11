@@ -83,19 +83,9 @@ function insertTrackPieceInLayout(
 
 // Assemble layout attributes for the piece that is about to be inserted
 function getLayoutAttributes(pieceDefName: string): object {
-  let attributes = {};
 
-  const data = pieceDefStore.getPieceDefData(pieceDefName);
-  if (data == undefined) {
-    errorStore.setError("Unexpected error. No data found for pieceDefName.")
-    return {};
-  }
-
-  if (data.category == "curve") {
-    attributes = {direction: "left"};
-  }
-
-  return attributes;
+  // We currently don't have a layout piece that uses attributes
+  return {};
 }
 
 function getNoLayoutPieceSelectedMessage(): string {

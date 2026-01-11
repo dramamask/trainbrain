@@ -10,18 +10,20 @@ import { PieceDefinitions } from '../shared_types/pieces.js';
 
 // Default/empty data structure for the track layout json db
 const emptyLayout: TrackLayout = {
-  pieces: [{
-    type: "startPostion",
-    attributes: {
-      x: 0,
-      y: 0,
-      heading: 0
-    },
-    connections: {
-      start: null,
-      end: null
-    }
-  }]
+  pieces: {
+    "0": {
+      type: "startPostion",
+      attributes: {
+        x: 0,
+        y: 0,
+        heading: 0
+      },
+      connections: {
+        start: null,
+        end: null
+      }
+   }
+  }
 };
 
 // Default/empty data structure for the piece defintions json db

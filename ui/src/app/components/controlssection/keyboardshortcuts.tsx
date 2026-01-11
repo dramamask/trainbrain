@@ -15,7 +15,7 @@ export default function KeyboardShortcuts() {
               Object.entries(KEY).flatMap(([key, value]) => {
                 return (
                     <Grid container key={key}>
-                      <Grid className={csStyles.text} size={3.5}><b>{getKeyName(value) + ":"}</b></Grid>
+                      <Grid className={csStyles.text} size={3.5}><b>{getKeyName(value)}</b></Grid>
                       <Grid className={csStyles.text + " " + styles.text} size="grow">{capitalCase(key)}</Grid>
                     </Grid>
                 )

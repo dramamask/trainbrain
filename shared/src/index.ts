@@ -4,9 +4,6 @@ export interface Coordinate {
   heading: number;
 }
 
-// Define direction type
-export type Direction = "left" | "right";
-
 // List of the different types of track pieces that we have
 export type TrackPieceCategory = "position" | "straight" | "curve" | "switch";
 
@@ -35,7 +32,6 @@ export interface UiAttributesCurve {
     start: Coordinate;
     end: Coordinate;
   };
-  direction: Direction | null;
   radius: number | null;
 }
 

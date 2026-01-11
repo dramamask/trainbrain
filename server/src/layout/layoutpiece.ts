@@ -24,8 +24,13 @@ export abstract class LayoutPiece {
   // Initialize the connections that this layout piece has with other layout pieces
   public abstract initConnections(connections: LayoutPieceMap): void;
 
-  // Initialize the physical coordinates of this layout piece
-  public abstract initCoordinates(start: Coordinate | null, end: Coordinate | null): void;
+  /**
+   * Initialize the physical coordinates of this layout piece.
+   *
+   * @param connectedPiece - the piece that is connected to us (we can lookup which of our connectors is connected to them )   *
+   * @param connectorCoordinate - the position of the connector with which we are connected to them
+   */
+  public abstract initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void;
 
   // Return our layout information in the UiLayoutPiece format
   public abstract getUiLayoutPieceData(): UiLayoutPiece;

@@ -23,7 +23,7 @@ export async function insertTrackPiece(insertedPieceInfo: InsertedPieceInfo): Pr
 // Delete a track piece from the layout
 export async function deleteTrackPiece(piecetoDeleteId: string): Promise<UiLayout> {
   const url = "/layout/piece/" + piecetoDeleteId;
-  const data = await apiCall<UiLayout>("DELETE", url);
+  const data = await apiCall<UiLayout>("DELETE", url, {});
   return data;
 }
 

@@ -7,12 +7,12 @@ import { trackLayoutDb } from '../services/db.js';
 // A virtual track piece that simply defines a position on our map/world.
 // One one of the uses of this class is to define the start position of the layout.
 export class Position extends LayoutPiece {
-  position: Coordinate | null = null;
+  coordinate: Coordinate | null = null;
   connections: Connections = {start: null, end: null};
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
-    this.position = data.attributes as Coordinate;
+    this.coordinate = data.attributes as Coordinate;
   }
 
   public initConnections(connections: LayoutPieceMap): void {
@@ -21,19 +21,29 @@ export class Position extends LayoutPiece {
     })
   }
 
-  public initCoordinates(start: Coordinate| null, end: Coordinate | null): void {
-    // We can ignore the start and end coordinates because we already know our position
+  public initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void {
+    console.error("This should never  be called. The function kickOffInitCoordinates() should be called instead");
+  }
 
-    // If we have another layout piece connected to the end of our piece,
-    // let them know that their start coordinate (which is our position coordinate)
-    if (this.connections.end) {
-      this.connections.end.initCoordinates(this.position, null);
+  // Kick of the call chain that initialializes the coordinates of every piece in the layout
+  public kickOffInitCoordinates(): void {
+    if (this.coordinate === null) {
+      throw new Error("Start position's coordinate should be known!");
     }
 
-    // If we have another layout piece connected to the start of our piece,
-    // let them know that their end coordinate (which is our position coordinate)
+    // If we have another layout piece connected to the start side of our piece, let
+    // them know the position and heading of the side of their piece that is connected to us.
     if (this.connections.start) {
-      this.connections.start.initCoordinates(null, this.position);
+      this.connections.start.initCoordinates(this, this.coordinate);
+    }
+
+    // If we have another layout piece connected to the end side of our piece, let
+    // them know the position and heading of the side of their piece that is connected to us.
+    if (this.connections.end) {
+      //The end connector is pointing 180 degrees opposite of the start connector
+      const endConnectorCoordinate = this.coordinate;
+      endConnectorCoordinate.heading -= 180;
+      this.connections.end.initCoordinates(this, endConnectorCoordinate);
     }
   }
 
@@ -41,18 +51,18 @@ export class Position extends LayoutPiece {
     return {
       id: this.id,
       category: this.constructor.name.toLowerCase() as TrackPieceCategory,
-      attributes: { position: this.position as Coordinate},
+      attributes: { coordinate: this.coordinate as Coordinate},
       deadEnd: null,
     }
   }
 
   // Update the position
-  public async setPosition(position: Coordinate): Promise<void> {
+  public async setPosition(coordinate: Coordinate): Promise<void> {
     // Update the position
-    this.position = position;
+    this.coordinate = coordinate;
 
     // All track pieces now need to update their position relative to me
-    this.initCoordinates(null, null);
+    this.kickOffInitCoordinates();
 
     // Save the position to the json DB
     this.save();
@@ -62,9 +72,9 @@ export class Position extends LayoutPiece {
      return {
       type: this.type,
       attributes: {
-        x: (this.position as Coordinate).x,
-        y: (this.position as Coordinate).y,
-        heading: (this.position as Coordinate).heading,
+        x: (this.coordinate as Coordinate).x,
+        y: (this.coordinate as Coordinate).y,
+        heading: (this.coordinate as Coordinate).heading,
       },
       connections: {
         start: this.connections.start ? (this.connections.start as LayoutPiece).getId() : null,

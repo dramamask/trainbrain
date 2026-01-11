@@ -32,6 +32,7 @@ export class Layout {
       piece.initConnections(this.getConnections(pieceData));
     });
 
+    // Calculate the coordinates for each piece in the layout
     this.calculateAllCoordinates();
   }
 
@@ -241,8 +242,11 @@ export class Layout {
   private calculateAllCoordinates(): void {
     const piece = this.pieces.get("0");
     if (!piece) {
-      throw new Error("LayoutPiece '0' is in DB but not in Layout object");
+      throw new Error("Unexpected error. Cannot find layout piece 0.");
     }
-    piece.initCoordinates(null, null);
+    if (!(piece instanceof Position)) {
+      throw new Error("Piece 0 should be a Position piece.");
+    }
+    piece.kickOffInitCoordinates();
   }
 }
