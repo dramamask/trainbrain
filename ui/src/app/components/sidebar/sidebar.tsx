@@ -9,7 +9,7 @@ export default function SideBar() {
   return (
     <Stack className={styles.mainStack} spacing={4}>
       <div className={styles.logoContainer}>
-        <img className={styles.logo} src="/trainbrain-logo.png" />
+        <img className={styles.logo} src="/trainbrain-logo-transparent.png" />
       </div>
       <ZoomControl />
       <EditMode />
