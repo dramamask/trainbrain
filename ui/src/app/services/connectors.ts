@@ -13,9 +13,9 @@ const CONNECTORS = {
 export function getNextConnector(pieceType: TrackPieceCategory, currentConnector: string) {
     const currentIndex = CONNECTORS.pieceType[pieceType].indexOf(currentConnector);
 
-    // Return an empty string if the currentConnector value is not in the array
+    // Return the first element from the array if no connector is currently selected
     if (currentIndex == -1) {
-      return "";
+      return CONNECTORS.pieceType[pieceType][0];
     }
 
     // Return the first element from the array if currentIndex is the last element of the array

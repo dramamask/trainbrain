@@ -21,7 +21,14 @@ export default function PieceDefCard({name, definition}: props) {
       errorStore.setError(getNoLayoutPieceSelectedMessage());
       return;
     }
-    insertTrackPieceInLayout(name);
+
+    const selectedConnector = selectionStore.getSelectedConnector();
+    if (selectedConnector == "") {
+      errorStore.setError(getNoConnectorSelectedMessage());
+      return;
+    }
+
+    insertTrackPieceInLayout(name, selectedLayoutPiece, selectedConnector as ConnectionName);
   };
 
   return (
@@ -48,15 +55,12 @@ export default function PieceDefCard({name, definition}: props) {
 
 // Call the API endpoint to insert the track piece into the layout.
 // The endpoint returns the new UI Layout definition. We store that in the trackLayoutStore.
-function insertTrackPieceInLayout(pieceDefName:string): void {
-  const connectorName = selectionStore.getSelectedConnector();
-  if (connectorName == "") {
-    errorStore.setError("Unexpected error: no connection selected.");
-  }
-
+function insertTrackPieceInLayout(
+  pieceDefName:string, selectedLayoutPiece: string, selectedConnector: ConnectionName
+): void {
   const insertedPieceInfo = {
-    connectionName: connectorName as ConnectionName,
-    connectToPiece: selectionStore.getSelectedTrackPiece(),
+    connectionName: selectedConnector,
+    connectToPiece: selectedLayoutPiece,
     pieceDefId: pieceDefName,
     layoutAttributes: getLayoutAttributes(pieceDefName),
   }
@@ -89,9 +93,17 @@ function getLayoutAttributes(pieceDefName: string): object {
 }
 
 function getNoLayoutPieceSelectedMessage(): string {
-  let msg = "First select a track piece in the layout. ";
+  let msg = "First select a track piece in the layout. Then select one of the layout piece connectors. ";
+  msg += "Next, click on an item in the list to insert that particular piece into the layout. "
+  msg += "The new piece will be inserted to the selected connector (which is outlined in red).";
+
+  return msg;
+}
+
+function getNoConnectorSelectedMessage(): string {
+  let msg = "Select one of the layout piece connectors. ";
   msg += "Then click on an item in the list to insert that particular piece into the layout. "
-  msg += "The new piece will be inserted on the end of the selected layout piece that is outlined in red.";
+  msg += "The new piece will be inserted to the selected connector (which is outlined in red).";
 
   return msg;
 }

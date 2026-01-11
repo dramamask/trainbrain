@@ -74,7 +74,7 @@ export default function TrackLayout()
     // Select the track piece if the target is part of a track piece container
     if (group) {
       selectionStore.setSelectedTrackPiece(group.id);
-      selectionStore.setSelectedConnector("start");
+      selectionStore.setSelectedConnector("");
       return;
     }
 

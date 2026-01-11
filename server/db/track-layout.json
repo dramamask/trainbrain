@@ -188,7 +188,31 @@
       "attributes": {},
       "connections": {
         "start": "18",
+        "end": "24"
+      }
+    },
+    "22": {
+      "type": "LGB-300",
+      "attributes": {},
+      "connections": {
+        "start": "23",
         "end": null
+      }
+    },
+    "23": {
+      "type": "LGB-150",
+      "attributes": {},
+      "connections": {
+        "start": "24",
+        "end": "22"
+      }
+    },
+    "24": {
+      "type": "LGB-150",
+      "attributes": {},
+      "connections": {
+        "start": "21",
+        "end": "23"
       }
     }
   }
