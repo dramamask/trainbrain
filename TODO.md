@@ -1,6 +1,5 @@
 # TODO
 
-- Add UI piece with shortcut keys
 - Add keyboard shortcuts for zoom + and -
 - Move the selected piece to the last piece that was inserted
 - Add ability to set direction for curve pieces (R for rotate?).

@@ -7,7 +7,7 @@ import { KEY } from "./keydefinitions";
 // Note that all key event handlers need to be called from keynoardEventHandler.tsx
 export function handleKeyDown(event: KeyboardEvent) {
   if (errorStore.errorPresent()) {
-    if (KEY['errorMessage.close'].includes(event.key)) {
+    if (KEY.CloseErrorMessage.includes(event.key)) {
       errorStore.clearError();
     }
   }

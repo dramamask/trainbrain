@@ -12,6 +12,7 @@ interface props {
 }
 
 import styles from "./piecedefcard.module.css"
+import controlsSectionStyles from "../controlssection.module.css";
 
 export default function PieceDefCard({name, definition}: props) {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -30,13 +31,13 @@ export default function PieceDefCard({name, definition}: props) {
     >
       <CardContent className={styles.cardContent}>
         <Stack className={styles.pieceContainer} key={name}>
-          <div className={styles.name}>
+          <div className={controlsSectionStyles.title + " " + styles.title}>
             {name}
           </div>
-          <div className={styles.category}>
+          <div className={controlsSectionStyles.category + " " + styles.category}>
             {definition.category}
           </div>
-          <div className={styles.description}>
+          <div className={controlsSectionStyles.text + " " + styles.text}>
             {definition.description}.
             </div>
         </Stack>

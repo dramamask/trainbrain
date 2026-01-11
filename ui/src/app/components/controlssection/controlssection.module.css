@@ -2,3 +2,19 @@
   height: 100vh;
   padding: 10px;
 }
+
+.title {
+  font-size: 0.75em;
+  font-weight: bold;
+}
+
+.category {
+  color: #888888;
+  font-size: 0.65em;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.text {
+  font-size: 0.65em;
+}
