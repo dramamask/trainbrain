@@ -11,40 +11,16 @@
         "heading": 0
       },
       "connections": {
-        "start": "2",
+        "start": "1",
         "end": null
       }
     },
     "1": {
-      "type": "LGB-R3-22.5°",
-      "attributes": {},
-      "connections": {
-        "start": "4",
-        "end": "3"
-      }
-    },
-    "2": {
       "type": "LGB-600",
       "attributes": {},
       "connections": {
-        "start": "4",
-        "end": "0"
-      }
-    },
-    "3": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": null,
-        "end": "1"
-      }
-    },
-    "4": {
-      "type": "LGB-600",
-      "attributes": {},
-      "connections": {
-        "start": "1",
-        "end": "2"
+        "start": "0",
+        "end": null
       }
     }
   }

@@ -25,6 +25,8 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
   // matchedData only includes fields defined in the validator middleware for this route
   const data = matchedData<AddLayoutPieceData>(req);
 
+  console.log("Add piece:", data);
+
   try {
     await layout.addLayoutPiece(data);
 

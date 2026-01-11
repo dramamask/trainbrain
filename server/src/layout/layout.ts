@@ -161,7 +161,6 @@ export class Layout {
     // Connect the piece on our "start" side with the piece on our "end" side
     if (startPiece) {
       const connectionNameToUs = startPiece.getConnectionName(ourPiece);
-      console.log("start piece's connectionName to use: ", connectionNameToUs);
       startPiece.updateConnection(connectionNameToUs, endPiece);
       startPiece.save();
     }
@@ -169,7 +168,6 @@ export class Layout {
     // Connect the piece on our "end" side with the piece on our "start" side
     if (endPiece) {
       const connectionNameToUs = endPiece.getConnectionName(ourPiece);
-      console.log("end piece's connectionName to use: ", connectionNameToUs);
       endPiece.updateConnection(connectionNameToUs, startPiece);
       endPiece.save();
     }
