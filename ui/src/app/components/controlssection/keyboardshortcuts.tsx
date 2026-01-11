@@ -43,7 +43,7 @@ function renderDescriptions(keyObjectList: object): JSX.Element[] {
 
   Object.entries(keyObjectList).flatMap(([key, value]) => {
     listItems.push(
-      <div className={csStyles.text}>{capitalCase(key)}</div>
+      <div key={key} className={csStyles.text}>{capitalCase(key)}</div>
     )
   });
 
