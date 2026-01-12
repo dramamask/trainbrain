@@ -4,46 +4,54 @@ import { LayoutPieceData } from "../shared_types/layout.js";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
 
+interface FirstPiece {
+  piece: LayoutPiece | null; // ID of the piece that starts at the start position
+  connectorName: string; // Connector of the piece that touches the start position
+}
+
+interface PieceDefAttributes {
+  coordinate: Coordinate;
+  firstPiece: FirstPiece;
+}
+
 // A virtual track piece that simply defines a position on our map/world.
 // One one of the uses of this class is to define the start position of the layout.
-export class Position extends LayoutPiece {
+export class StartPosition extends LayoutPiece {
   coordinate: Coordinate | null = null;
-  connections: Connections = {start: null, end: null};
+  connections: Connections = {};
+  firstPiece: FirstPiece = {piece: null, connectorName: ""};
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
-    this.coordinate = data.attributes as Coordinate;
+    this.coordinate = (data.attributes as PieceDefAttributes).coordinate;
+    this.firstPiece = (data.attributes as PieceDefAttributes).firstPiece;
   }
 
   public initConnections(connections: LayoutPieceMap): void {
-    Object.entries(connections).forEach(([key, value]) => {
-      this.connections[key as ("start" | "end")] = value;
-    })
+    this.firstPiece.piece = connections.firstPiece;
   }
 
   public initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void {
-    console.error("This should never  be called. The function kickOffInitCoordinates() should be called instead");
+    throw new Error("This should never be called. The function kickOffInitCoordinates() should be called instead");
+  }
+
+  public kickOffInitCoordinates(connectorName: string, connectorCoordinate: Coordinate): void {
+    throw new Error("This should never be called. The function kickOffCoordinateCalculations() should be called instead");
   }
 
   // Kick of the call chain that initialializes the coordinates of every piece in the layout
-  public kickOffInitCoordinates(): void {
+  public kickOffCoordinateCalculations(): void {
     if (this.coordinate === null) {
       throw new Error("Start position's coordinate should be known!");
     }
 
-    // If we have another layout piece connected to the start side of our piece, let
-    // them know the position and heading of the side of their piece that is connected to us.
-    if (this.connections.start) {
-      this.connections.start.initCoordinates(this, this.coordinate);
-    }
+    // If a layout piece is present, tell them to kickOffInitCoordinates
+    if (this.firstPiece.piece != null) {
+      if (this.firstPiece.connectorName == "") {
+        throw new Error("First piece connectorName cannot be empty for a known first piece");
+      }
 
-    // If we have another layout piece connected to the end side of our piece, let
-    // them know the position and heading of the side of their piece that is connected to us.
-    if (this.connections.end) {
-      //The end connector is pointing 180 degrees opposite of the start connector
-      const endConnectorCoordinate = this.coordinate;
-      endConnectorCoordinate.heading -= 180;
-      this.connections.end.initCoordinates(this, endConnectorCoordinate);
+      this.firstPiece.piece.kickOffInitCoordinates(this.firstPiece.connectorName, this.coordinate);
     }
   }
 
@@ -72,14 +80,17 @@ export class Position extends LayoutPiece {
      return {
       type: this.type,
       attributes: {
-        x: (this.coordinate as Coordinate).x,
-        y: (this.coordinate as Coordinate).y,
-        heading: (this.coordinate as Coordinate).heading,
+        coordinate: {
+          x: (this.coordinate as Coordinate).x,
+          y: (this.coordinate as Coordinate).y,
+          heading: (this.coordinate as Coordinate).heading,
+        },
+        firstPiece: {
+          id: this.firstPiece.id,
+          connectorName: this.firstPiece.connectorName,
+        }
       },
-      connections: {
-        start: this.connections.start ? (this.connections.start as LayoutPiece).getId() : null,
-        end: this.connections.end? (this.connections.end as LayoutPiece).getId() : null,
-      },
+      connections: {},
     };
   }
 

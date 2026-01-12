@@ -12,17 +12,20 @@ import { PieceDefinitions } from '../shared_types/pieces.js';
 const emptyLayout: TrackLayout = {
   pieces: {
     "0": {
-      type: "startPostion",
+      type: "startPosition",
       attributes: {
-        x: 0,
-        y: 0,
-        heading: 0
+        coordinate: {
+          x: 0,
+          y: 0,
+          heading: 0,
+        },
+        firstPiece: {
+          id: "",
+          connectorName: "",
+        },
       },
-      connections: {
-        start: null,
-        end: null
-      }
-   }
+      connections: {},
+    },
   }
 };
 

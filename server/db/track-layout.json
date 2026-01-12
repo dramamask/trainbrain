@@ -6,20 +6,31 @@
     "0": {
       "type": "startPosition",
       "attributes": {
-        "x": 9947,
-        "y": 7007,
-        "heading": 0
+        "coordinate": {
+          "x": 9947,
+          "y": 7007,
+          "heading": 0
+        },
+        "firstPiece": {
+          "id": "1",
+          "connectorName": "start"
+        }
       },
-      "connections": {
-        "start": "1",
-        "end": null
-      }
+      "connections": {}
     },
     "1": {
       "type": "LGB-600",
       "attributes": {},
       "connections": {
-        "start": "0",
+        "start": null,
+        "end": "2"
+      }
+    },
+    "2": {
+      "type": "LGB-600",
+      "attributes": {},
+      "connections": {
+        "start": "1",
         "end": null
       }
     }

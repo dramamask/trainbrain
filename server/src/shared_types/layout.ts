@@ -1,8 +1,7 @@
 // Structure of the data in connections object
 export interface ConnectionsData {
-    start: string | null;
-    end: string | null;
-    [key: string]: string | null; // This means that other properties are allowed
+    [key: string]: string | null; // This means this is a variable length list with key of type string (but
+                                  // really ConnectionName) and value being a string that signifies a piece ID.
 }
 
 // Structure of the data for a layout piece in the track layout json DB

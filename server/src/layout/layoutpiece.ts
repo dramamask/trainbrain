@@ -5,9 +5,8 @@ import { ConnectionName } from "../shared_types/layout.js";
 
 // Definition of connections in the LayoutPiece classes
 export interface Connections {
-  start: LayoutPiece | null;
-  end: LayoutPiece | null;
-  [key: string]: LayoutPiece | null; // This means that other properties are allowed
+  [key: string]: LayoutPiece | null; // This means this is a variable length list with key of type
+                                     // string (but really ConnectionName) and value being a LayoutPiece.
 }
 
 export abstract class LayoutPiece {
@@ -23,6 +22,10 @@ export abstract class LayoutPiece {
 
   // Initialize the connections that this layout piece has with other layout pieces
   public abstract initConnections(connections: LayoutPieceMap): void;
+
+  // Called on the first piece in the layout (the piece that is located at the start position)
+  // This piece needs to call initCoordinates() on all pieces it is connected to.
+  public abstract kickOffInitCoordinates(connectionName: string, connectorCoordinate: Coordinate): void;
 
   /**
    * Initialize the physical coordinates of this layout piece.
@@ -54,20 +57,20 @@ export abstract class LayoutPiece {
     return this.connections;
   }
 
-  // Returns the LayoutPiece object that is connected to our connectionName connection
-  public getConnection(connectionName: ConnectionName): LayoutPiece | null {
-    return this.connections[connectionName];
+  // Returns the LayoutPiece object that is connected to our connector named connectornName
+  public getConnector(connectorName: ConnectionName): LayoutPiece | null {
+    return this.connections[connectorName];
   }
 
-  // Return the name of our connection to a specific layoutPiece
-  public getConnectionName(layoutPiece: LayoutPiece): ConnectionName {
+  // Return the name of our connector that connects us to a specific layoutPiece
+  public getConnectorName(layoutPiece: LayoutPiece): ConnectionName {
     let foundName = "";
-    Object.entries(this.connections).forEach(([connectionName, connection]) => {
+    Object.entries(this.connections).forEach(([connectorName, connection]) => {
       if (connection == null) {
         return; // Go to next iteration
       }
       if (connection.getId() == layoutPiece.getId()) {
-        foundName = connectionName;
+        foundName = connectorName;
       }
     });
 

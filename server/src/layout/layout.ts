@@ -3,7 +3,7 @@ import { LayoutPiece } from "./layoutpiece.js";
 import { pieceDefintionsDb, trackLayoutDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
-import { Position } from "./position.js";
+import { StartPosition } from "./startposition.js";
 import { ConnectionName, ConnectionsData, LayoutPieceData } from "../shared_types/layout.js";
 import { AddLayoutPieceData } from "../shared_types/layout.js";
 
@@ -53,7 +53,7 @@ export class Layout {
     if (!piece) {
       throw new Error("LayoutPiece '0' is in Db but not in Layout object");
     }
-    await (piece as Position).setPosition(position);
+    await (piece as StartPosition).setPosition(position);
   }
 
   // Add a piece to the layout
@@ -64,10 +64,10 @@ export class Layout {
       throw new Error(`Could not find layout piece to connect to (piece id: ${data.connectToPiece})`);
     }
     const piece1ConnectionName = data.connectionName;
-    const piece2 = piece1.getConnection(piece1ConnectionName);
+    const piece2 = piece1.getConnector(piece1ConnectionName);
     let piece2ConnectionName = "";
     if (piece2) {
-      piece2ConnectionName = piece2.getConnectionName(piece1);
+      piece2ConnectionName = piece2.getConnectorName(piece1);
     }
 
     // Get the track piece definition data
@@ -148,11 +148,33 @@ export class Layout {
     const startPiece = ourConnections["start"];
     const endPiece = ourConnections["end"];
 
+    // Check if StartPosition firstPiece needs to be updated
+    let firstPieceNeedsUpdating = false;
+    const startPositionPiece = this.getStartPositionPiece()
+    const firstPiece = startPositionPiece.getFirstPiece();
+    if (firstPiece.piece.getId() == ourPiece.getId()) {
+      firstPieceNeedsUpdating = true;
+    }
+
+    Object.entries(ourConnections).forEach(([connectionName, layoutPiece]) => {
+      if (firstPieceNeedsUpdating) {
+        if (layoutPiece != null) {
+          const theirConnectionNameToUs = layoutPiece.getConnectorName(ourPiece);
+          startPositionPiece.setFirstPiece(layoutPiece, theirConnectionNameToUs);
+          firstPieceNeedsUpdating = false;
+        }
+      }
+    });
+
+    if (firstPieceNeedsUpdating) {
+      startPositionPiece.setFirstPiece(null, "");
+    }
+
     // Tell any other pieces we are connection to that they will now be connected to a dead-end instead of us
     Object.entries(ourConnections).forEach(([connectionName, layoutPiece]) => {
       if (connectionName != "start" && connectionName != "end") {
         if (layoutPiece != null) {
-          const theirConnectionNameToUs = layoutPiece.getConnectionName(ourPiece);
+          const theirConnectionNameToUs = layoutPiece.getConnectorName(ourPiece);
           layoutPiece.updateConnection(theirConnectionNameToUs, null);
         }
       }
@@ -160,14 +182,14 @@ export class Layout {
 
     // Connect the piece on our "start" side with the piece on our "end" side
     if (startPiece) {
-      const connectionNameToUs = startPiece.getConnectionName(ourPiece);
+      const connectionNameToUs = startPiece.getConnectorName(ourPiece);
       startPiece.updateConnection(connectionNameToUs, endPiece);
       startPiece.save();
     }
 
     // Connect the piece on our "end" side with the piece on our "start" side
     if (endPiece) {
-      const connectionNameToUs = endPiece.getConnectionName(ourPiece);
+      const connectionNameToUs = endPiece.getConnectorName(ourPiece);
       endPiece.updateConnection(connectionNameToUs, startPiece);
       endPiece.save();
     }
@@ -241,7 +263,7 @@ export class Layout {
 
     switch(category) {
       case "position":
-        return new Position(id, pieceData, pieceDef);
+        return new StartPosition(id, pieceData, pieceDef);
       case "straight":
         return new Straight(id, pieceData, pieceDef);
       case "curve":
@@ -253,6 +275,18 @@ export class Layout {
 
   // Return the list of connections for a specific layout piece (as LayoutPiece class objects)
   private getConnections(piece: LayoutPieceData): LayoutPieceMap {
+    if (piece.connections == undefined) {
+      throw new Error("Connections not defined! Is this being called before initialization is done?");
+    }
+
+    /* Start dirty code section */
+    // TODO: Come up with a cleaner way to initialize the firstPiece property for the StartPosition object
+    if (piece.type == "startPosition") {
+      // @ts-expect-error
+      return {"firstPiece": this.pieces.get(piece.attributes.firstPiece.id)};
+    }
+    /* End dirty code section */
+
     return Object.fromEntries(
       Object.entries(piece.connections).map(([key, value]) => [
         key, // Name of the connection
@@ -261,15 +295,23 @@ export class Layout {
     ) as LayoutPieceMap;
   }
 
-  // Kick off the call chain that calculates the coordinates for each piece
-  private calculateAllCoordinates(): void {
+  // Return the StartPosition piece
+  private getStartPositionPiece(): StartPosition {
     const piece = this.pieces.get("0");
+
     if (!piece) {
       throw new Error("Unexpected error. Cannot find layout piece 0.");
     }
-    if (!(piece instanceof Position)) {
-      throw new Error("Piece 0 should be a Position piece.");
+
+    if (!(piece instanceof StartPosition)) {
+      throw new Error("Piece 0 should be a StartPosition piece.");
     }
-    piece.kickOffInitCoordinates();
+
+    return piece;
+  }
+
+  // Kick off the call chain that calculates the coordinates for each piece
+  private calculateAllCoordinates(): void {
+    this.getStartPositionPiece().kickOffCoordinateCalculations();
   }
 }

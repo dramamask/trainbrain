@@ -24,19 +24,50 @@ export class Straight extends LayoutPiece {
     })
   }
 
-  public initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void {
-    // Lookup on which side we are connected to connectedPiece
-    const connectionName = this.getConnectionName(connectedPiece);
-    if (!["start", "end"].includes(connectionName)) {
-      throw new Error(`connectionName should be 'start' or 'end', but is '${connectionName}'`);
+  // Note that this function is only called on the first piece in the layout. The piece that is
+  // located at the start position.
+  public kickOffInitCoordinates(connectorName: string, connectorCoordinate: Coordinate): void {
+    if (!["start", "end"].includes(connectorName)) {
+      throw new Error(`connectionName should be 'start' or 'end', but is '${connectorName}'`);
     }
 
     // Assign the coordinate for our connector
-    (this.coordinates as Record<string, Coordinate>)[connectionName] = connectorCoordinate;
+    (this.coordinates as Record<string, Coordinate>)[connectorName] = connectorCoordinate;
+
+    // If we were given the start coordinate, calculate the end coordinate
+    if (connectorName == "start") {
+      this.coordinates.end = this.calculateCoordinate(this.coordinates.start as Coordinate);
+    }
+
+    // If we were given the end coordinate, calculate the start coordinate
+    if (connectorName == "end") {
+      this.coordinates.start = this.calculateCoordinate(this.coordinates.end as Coordinate);
+    }
+
+    // Call the piece connected to our start connector and tell it to initialize it's coordinates
+    if (this.connections.start) {
+      this.connections.start.initCoordinates(this, this.coordinates.start as Coordinate);
+    }
+
+    // Call the piece connected to our start connector and tell it to initialize it's coordinates
+    if (this.connections.end) {
+      this.connections.end.initCoordinates(this, this.coordinates.end as Coordinate);
+    }
+  }
+
+  public initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void {
+    // Lookup on which side we are connected to connectedPiece
+    const connectorName = this.getConnectorName(connectedPiece);
+    if (!["start", "end"].includes(connectorName)) {
+      throw new Error(`connectionName should be 'start' or 'end', but is '${connectorName}'`);
+    }
+
+    // Assign the coordinate for our connector
+    (this.coordinates as Record<string, Coordinate>)[connectorName] = connectorCoordinate;
 
     // If we were given the start coordinate, calculate the end coordinate
     // and call the layout piece that is connected to our end connector
-    if (connectionName == "start") {
+    if (connectorName == "start") {
       this.coordinates.end = this.calculateCoordinate(this.coordinates.start as Coordinate);
 
       if (this.connections.end) {
@@ -46,7 +77,7 @@ export class Straight extends LayoutPiece {
 
     // If we were given the end coordinate, calculate the start coordinate
     // and call the layout piece that is connected to our start connector
-    if (connectionName == "end") {
+    if (connectorName == "end") {
       this.coordinates.start = this.calculateCoordinate(this.coordinates.end as Coordinate);
 
       if (this.connections.start) {
