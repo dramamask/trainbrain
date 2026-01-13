@@ -22,16 +22,16 @@
       "type": "LGB-300",
       "attributes": {},
       "connections": {
-        "start": "2",
-        "end": null
+        "start": null,
+        "end": "3"
       }
     },
     "2": {
       "type": "LGB-R1-30°",
       "attributes": {},
       "connections": {
-        "start": null,
-        "end": "1"
+        "start": "1",
+        "end": null
       }
     }
   }
