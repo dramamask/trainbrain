@@ -19,11 +19,19 @@
       "connections": {}
     },
     "1": {
-      "type": "LGB-600",
+      "type": "LGB-300",
+      "attributes": {},
+      "connections": {
+        "start": "2",
+        "end": null
+      }
+    },
+    "2": {
+      "type": "LGB-R1-30°",
       "attributes": {},
       "connections": {
         "start": null,
-        "end": null
+        "end": "1"
       }
     }
   }

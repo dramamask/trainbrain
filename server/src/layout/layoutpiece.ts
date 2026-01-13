@@ -2,6 +2,7 @@ import { Coordinate, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceData } from "../shared_types/layout.js";
 import { LayoutPieceMap } from "./layout.js";
 import { ConnectionName } from "../shared_types/layout.js";
+import { StartPosition } from "./startposition.js";
 
 // Definition of connections in the LayoutPiece classes
 export interface Connections {
@@ -45,7 +46,7 @@ export abstract class LayoutPiece {
   public abstract save(writeToFile?: boolean): Promise<void>; // writeToFile is optional
 
   // Rotate the piece in it's current track piece location. Rotation logic is layout piece specific.
-  public abstract rotate(): void;
+  public abstract rotate(startPosition: StartPosition): void;
 
   // Return the ID of this layout piece
   public getId(): string {
@@ -79,6 +80,21 @@ export abstract class LayoutPiece {
     }
 
     return (foundName as ConnectionName);
+  }
+
+  // Returns true if we are connected to layoutPiece
+  public areWeConnected(layoutPiece: LayoutPiece): boolean {
+    let foundName = "";
+    Object.entries(this.connections).forEach(([connectorName, connection]) => {
+      if (connection == null) {
+        return; // Go to next iteration
+      }
+      if (connection.getId() == layoutPiece.getId()) {
+        foundName = connectorName;
+      }
+    });
+
+    return (foundName != "");
   }
 
   // Update a specific connection for this layoutPiece

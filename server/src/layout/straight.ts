@@ -3,6 +3,7 @@ import { Connections, LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../shared_types/layout.js";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
+import { StartPosition } from "./startposition.js";
 
 interface PieceDefAttributes {
   length: number;
@@ -120,7 +121,7 @@ export class Straight extends LayoutPiece {
   }
 
   // Don't do anything. Rotating a straight piece has no effect.
-  public rotate(): void {};
+  public rotate(startPosition: StartPosition): void {};
 
   /**
    * Calculates the coordinate and heading of one side of the track

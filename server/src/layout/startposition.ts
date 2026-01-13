@@ -103,7 +103,7 @@ export class StartPosition extends LayoutPiece {
   }
 
   // Rotate the heading 5 degrees clockwise.
-  public rotate(): void {
+  public rotate(startPosition: StartPosition): void {
     if (this.coordinate == null) {
       throw new Error("Position coordinate should not be null");
     }
@@ -118,7 +118,7 @@ export class StartPosition extends LayoutPiece {
     this.save();
   }
 
-  public getFirstPiece() {
+  public getFirstPiece(): FirstPiece {
     return this.firstPiece;
   }
 

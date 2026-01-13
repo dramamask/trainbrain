@@ -3,6 +3,7 @@ import { LayoutPieceData } from "../shared_types/layout.js";
 import { Coordinate, DeadEnd, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
+import { StartPosition } from "./startposition.js";
 
 interface PieceDefAttributes {
   angle: number;
@@ -126,12 +127,21 @@ export class Curve extends LayoutPiece {
   // We rotate the curve by swapping the start and end. Seen from the vantage point
   // of the layout's start position, this will result in rotating the bend of the
   // curve the other way.
-  public rotate(): void {
+  public rotate(startPosition: StartPosition): void {
     const piece1 = this.connections.start;
     const piece2 = this.connections.end;
 
     this.connections.start = piece2;
     this.connections.end = piece1;
+
+    // Update the start positition if needed
+    if (startPosition.areWeConnected(this)) {
+      if (startPosition.getFirstPiece().connectorName == "start") {
+        startPosition.setFirstPiece(this, "end");
+      } else {
+        startPosition.setFirstPiece(this, "start");
+      }
+    }
 
     // Write the new connections to the json DB
     this.save();

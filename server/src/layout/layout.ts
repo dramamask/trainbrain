@@ -219,7 +219,7 @@ export class Layout {
     }
 
     // Ask the piece to rotate itself
-    ourPiece.rotate();
+    ourPiece.rotate(this.getStartPositionPiece());
 
     // Write the in-memory json DB to file
     trackLayoutDb.write();
