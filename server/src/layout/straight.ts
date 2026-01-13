@@ -1,6 +1,6 @@
 import { Coordinate, DeadEnd, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { Connections, LayoutPiece } from "./layoutpiece.js";
-import { LayoutPieceData } from "../shared_types/layout.js";
+import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
 import { StartPosition } from "./startposition.js";
@@ -17,12 +17,6 @@ export class Straight extends LayoutPiece {
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
     this.length = (pieceDef.attributes as PieceDefAttributes).length;
-  }
-
-  public initConnections(connections: LayoutPieceMap): void {
-    Object.entries(connections).forEach(([key, value]) => {
-      this.connections[key as ("start" | "end")] = value;
-    })
   }
 
   // Note that this function is only called on the first piece in the layout. The piece that is

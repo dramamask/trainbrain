@@ -1,11 +1,11 @@
 import { Coordinate, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
-import { LayoutPieceData } from "../shared_types/layout.js";
-import { LayoutPieceMap } from "./layout.js";
-import { ConnectionName } from "../shared_types/layout.js";
+import { LayoutPieceData } from "../data_types/layoutPieces.js";
+import { NodeConnections } from "./types.js";
+import { ConnectionName } from "../data_types/layoutPieces.js";
 import { StartPosition } from "./startposition.js";
 
 // Definition of connections in the LayoutPiece classes
-export interface Connections {
+export interface Nodes {
   [key: string]: LayoutPiece | null; // This means this is a variable length list with key of type
                                      // string (but really ConnectionName) and value being a LayoutPiece.
 }
@@ -14,15 +14,17 @@ export abstract class LayoutPiece {
   protected id: string;
   protected type: string = "";
   protected attributes: object = {};
-  protected connections: Connections = {start: null, end: null};
+  protected nodeConnections: NodeConnections = {};
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
     this.type = data.type;
   }
 
-  // Initialize the connections that this layout piece has with other layout pieces
-  public abstract initConnections(connections: LayoutPieceMap): void;
+  // Assign the object that holds information of which side of the piece is connected to which node
+  public setNodeConnections(nodeConnections: NodeConnections): void {
+    this.nodeConnections = nodeConnections;
+  }
 
   // Called on the first piece in the layout (the piece that is located at the start position)
   // This piece needs to call initCoordinates() on all pieces it is connected to.

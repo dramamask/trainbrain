@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "description": "This file lists the track pieces that make up the train track layout. Nodes are in separate file."
+  },
+  "pieces": {
+  }
+}

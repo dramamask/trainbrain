@@ -3,7 +3,7 @@ import { matchedData } from 'express-validator';
 import { constants } from "http2";
 import { layout } from "../services/init.js";
 import { Coordinate, UiLayout } from 'trainbrain-shared';
-import { AddLayoutPieceData } from '../shared_types/layout.js';
+import { AddLayoutPieceData } from '../data_types/layoutPieces.js';
 
 // Endpoint to get the track layout
 export const getLayout = (req: Request, res: Response, next: NextFunction): void => {

@@ -1,8 +1,6 @@
 # TODO
 
-- Continue with code to update StartPosition firstPiece when a piece is deleted or rotated.
-- If the first piece is a curve it cannot be rotated, because it has no connections. Should the start position just be an inline piece again??????
-- Draw start position only there is no piece in the layout yet. The server could decide to include it or not so the ui can remain dumb.
+- Change over to separate node objects. Nodes have coordinates.
 - Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.
 - Do I need a proper exit for the server? It keeps exiting with code 2.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).

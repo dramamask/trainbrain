@@ -3,11 +3,6 @@
     "description": "Definitions of the different pieces that are allowed in the track layout."
   },
   "definitions": {
-    "startPosition": {
-      "category": "startposition",
-      "description": "Start position of the track layout",
-      "attributes": {}
-    },
     "LGB-300": {
       "category": "straight",
       "description": "LGB 10000, Piko 35208 or equivalent 300mm straight track section",

@@ -1,6 +1,6 @@
 import { Coordinate, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { Connections, LayoutPiece } from "./layoutpiece.js";
-import { LayoutPieceData } from "../shared_types/layout.js";
+import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
 
@@ -25,10 +25,6 @@ export class StartPosition extends LayoutPiece {
     super(id, data, pieceDef);
     this.coordinate = (data.attributes as PieceDefAttributes).coordinate;
     this.firstPiece.connectorName = (data.attributes as PieceDefAttributes).firstPiece.connectorName;
-  }
-
-  public initConnections(connections: LayoutPieceMap): void {
-    this.firstPiece.piece = connections.firstPiece;
   }
 
   public initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void {

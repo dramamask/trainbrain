@@ -1,5 +1,5 @@
 import { Connections, LayoutPiece } from "./layoutpiece.js";
-import { LayoutPieceData } from "../shared_types/layout.js";
+import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { Coordinate, DeadEnd, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceMap } from "./layout.js";
 import { trackLayoutDb } from '../services/db.js';
@@ -20,12 +20,6 @@ export class Curve extends LayoutPiece {
     super(id, data, pieceDef);
     this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
     this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
-  }
-
-  public initConnections(connections: LayoutPieceMap): void {
-    Object.entries(connections).forEach(([key, value]) => {
-      this.connections[key as ("start" | "end")] = value;
-    })
   }
 
   // Note that this function is only called on the first piece in the layout. The piece that is

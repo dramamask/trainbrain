@@ -1,35 +1,49 @@
 import { Coordinate, TrackPieceDef, UiLayout } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
-import { pieceDefintionsDb, trackLayoutDb } from "../services/db.js";
+import { LayoutNode } from "./layoutnode.js";
+import { pieceDefintionsDb, layoutPiecesDb, layoutNodesDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
 import { StartPosition } from "./startposition.js";
-import { ConnectionName, ConnectionsData, LayoutPieceData } from "../shared_types/layout.js";
-import { AddLayoutPieceData } from "../shared_types/layout.js";
-
-// A key/value pair map of LayoutPiece objects (or null)
-export type LayoutPieceMap = Record<string, LayoutPiece | null>;
+import { ConnectionName, ConnectionsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import { AddLayoutPieceData } from "../data_types/layoutPieces.js";
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
   pieces = new Map<string, LayoutPiece>();
+  nodes = new Map<string, LayoutNode>();
 
   public init() {
     // Create each layout piece
-    Object.entries(trackLayoutDb.data.pieces).forEach(([key, pieceData]) => {
-      this.pieces.set(
-        key.toString(),
-        this.createLayoutPiece(key, pieceData, pieceDefintionsDb.data.definitions[pieceData.type])
-      );
+    Object.entries(layoutPiecesDb.data.pieces).forEach(([key, pieceData]) => {
+      const pieceDef = pieceDefintionsDb.data.definitions[pieceData.pieceDefId]
+      if (pieceDef == undefined) {
+        throw new Error(`Unknown piece defintion ID found in layout json DB: ${pieceData.pieceDefId}`);
+      }
+      this.pieces.set(key, this.createLayoutPiece(key, pieceData, pieceDef));
     });
 
-    // Connect the layout pieces together
-    Object.entries(trackLayoutDb.data.pieces).forEach(([key, pieceData]) => {
-      const piece = this.pieces.get(key.toString());
+    // Create each layout node
+    Object.entries(layoutNodesDb.data.nodes).forEach(([key, nodeData]) => {
+      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate));
+    });
+
+    // Assign the nodes to the layout pieces
+    Object.entries(layoutPiecesDb.data.pieces).forEach(([key, pieceData]) => {
+      const piece = this.pieces.get(key);
       if (!piece) {
-        throw new Error("LayoutPiece is in DB but not in Layout object");
+        throw new Error("LayoutPiece not found when assigning nodes");
       }
-      piece.initConnections(this.getConnections(pieceData));
+      piece.setNodeConnections(this.getNodeConnections(pieceData));
+    });
+
+    // Assign the layout pieces to the nodes
+    Object.entries(layoutNodesDb.data.pieces).forEach(([key, nodeData]) => {
+      const node = this.nodes.get(key);
+      if (!node) {
+        throw new Error("Node not found when assigning layout pieces");
+      }
+      node.setPieces(this.getPieces(nodeData));
     });
 
     // Calculate the coordinates for each piece in the layout
@@ -42,18 +56,17 @@ export class Layout {
       messages: {
         error: "",
       },
-      pieces: [...this.pieces.values()].map(piece => piece.getUiLayoutPieceData()),
+      nodes: [...this.nodes.values()].map(node => node.getUiLayoutPieceData()),
     }
   }
 
-  // Update the track layout's start position
-  public async updateStartPosition(position: Coordinate): Promise<void> {
-    // This is a little dirty but it will do
-    const piece = this.pieces.get("0");
-    if (!piece) {
-      throw new Error("LayoutPiece '0' is in Db but not in Layout object");
+  // Update a node's coordinate
+  public async updateCoordinate(nodeId: string, coordinate: Coordinate): Promise<void> {
+    const node = this.nodes.get(nodeId);
+    if (!node) {
+      throw new Error("Cannot find node to update its coordinate");
     }
-    await (piece as StartPosition).setPosition(position);
+    await node.setCoordinate(coordinate);
   }
 
   // Add a piece to the layout
@@ -230,14 +243,19 @@ export class Layout {
 
   // Save the entire track layout
   public async save(): Promise<void> {
-    let layoutData: Record<string, LayoutPieceData> = {};
+    let layoutPiecesData: Record<string, LayoutPieceData> = {};
+    let layoutNodesData: Record<string, LayoutNode> = {};
 
     this.pieces.forEach(piece => {
-      layoutData[piece.getId().toString()] = piece.getLayoutPieceData()
+      layoutPiecesData[piece.getId()] = piece.getLayoutPieceData()
     });
 
-    trackLayoutDb.data.pieces = layoutData;
-    await trackLayoutDb.write();
+    this.nodes.forEach(node => {
+      layoutNodesData[node.getId()] = node.getLayoutNodeData()
+    });
+
+    layoutPiecesDb.data.pieces = layoutPiecesData;
+    await layoutPiecesDb.write();
   }
 
   // Find the layout piece with the highest numerical ID. Return the ID as a number.
@@ -256,29 +274,20 @@ export class Layout {
 
   // Create a new LayoutPiece of the correct type.
   private createLayoutPiece(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
-    let category = "";
-    try {
-      category = pieceDefintionsDb.data.definitions[pieceData.type].category;
-    } catch (error) {
-      throw new Error(`Unknown piece type found in layout json DB: ${pieceData.type}`);
-    }
-
-    switch(category) {
-      case "startposition":
-        return new StartPosition(id, pieceData, pieceDef);
+    switch(pieceDef.category) {
       case "straight":
         return new Straight(id, pieceData, pieceDef);
       case "curve":
         return new Curve(id, pieceData, pieceDef);
       default:
-        throw new Error(`Undefined track category type in track-layout db: ${pieceData.type}`)
+        throw new Error(`Undefined piece category in track-layout db: ${category}`)
     }
   }
 
-  // Return the list of connections for a specific layout piece (as LayoutPiece class objects)
-  private getConnections(piece: LayoutPieceData): LayoutPieceMap {
-    if (piece.connections == undefined) {
-      throw new Error("Connections not defined! Is this being called before initialization is done?");
+  // Return the list of node connections for a specific layout piece (as LayoutPiece class objects)
+  private getNodeConnections(piece: LayoutPieceData): LayoutPieceMap {
+    if (Object.keys(piece.nodeConnections).length === 0) {
+      throw new Error("Node Connections not defined! Is this being called before initialization is done?");
     }
 
     /* Start dirty code section */
