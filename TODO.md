@@ -1,6 +1,6 @@
 # TODO
 
-- Conitnue with code to update StartPosition firstPiece when a piece is deleted or rotated.
+- Continue with code to update StartPosition firstPiece when a piece is deleted or rotated.
 - Draw start position only there is no piece in the layout yet. The server could decide to include it or not so the ui can remain dumb.
 - Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.
 - Do I need a proper exit for the server? It keeps exiting with code 2.
@@ -19,8 +19,9 @@
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
   Make it configurable as pixels per millimeter or something.
+- Remove scrollbars when zoomFactor is 1.
 - Make the scroll bars more like oem, with arrows at the top and bottom
-- Zoom on layout map when mouse scroll is used.
+- Zoom on layout map when mouse scroll is used. Make mouse pointer position the zoom focal point.
 - Expand zoom functionality to take up the entire window. Add pan controls. Add zoom controls.
 - Add layout map inside a MUI Card
 

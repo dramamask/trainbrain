@@ -139,8 +139,7 @@ export class Layout {
     // Get info on the piece we are going to delete (ourPiece)
     const ourPiece = this.pieces.get(pieceId);
     if (ourPiece == undefined) {
-      console.error("Cannot find the piece we need to delete. This shouldn't happen because we have input validation at the edge");
-      return;
+      throw new Error("Cannot find the piece we need to delete. This shouldn't happen because we have input validation at the edge");
     }
     const ourConnections = ourPiece.getConnections();
 
@@ -152,21 +151,25 @@ export class Layout {
     let firstPieceNeedsUpdating = false;
     const startPositionPiece = this.getStartPositionPiece()
     const firstPiece = startPositionPiece.getFirstPiece();
+    if (firstPiece.piece == null)     {
+      throw new Error("First piece should not be null at this point. Is this being called  before initialization is done?");
+    }
     if (firstPiece.piece.getId() == ourPiece.getId()) {
       firstPieceNeedsUpdating = true;
     }
 
-    Object.entries(ourConnections).forEach(([connectionName, layoutPiece]) => {
+    Object.entries(ourConnections).forEach(([connectionName, layoutPieceConnectedToUs]) => {
       if (firstPieceNeedsUpdating) {
-        if (layoutPiece != null) {
-          const theirConnectionNameToUs = layoutPiece.getConnectorName(ourPiece);
-          startPositionPiece.setFirstPiece(layoutPiece, theirConnectionNameToUs);
+        if (layoutPieceConnectedToUs != null) {
+          const theirConnectionNameToUs = layoutPieceConnectedToUs.getConnectorName(ourPiece);
+          startPositionPiece.setFirstPiece(layoutPieceConnectedToUs, theirConnectionNameToUs);
           firstPieceNeedsUpdating = false;
         }
       }
     });
 
     if (firstPieceNeedsUpdating) {
+      // The piece we are going to delete has no connections, so now the start position has no firstPiece anymore
       startPositionPiece.setFirstPiece(null, "");
     }
 
@@ -212,8 +215,7 @@ export class Layout {
   public async rotateLayoutPiece(pieceId: string): Promise<void> {
     const ourPiece = this.pieces.get(pieceId);
     if (ourPiece == undefined) {
-      console.error("Cannot find the piece we need to delete. This shouldn't happen because we have input validation at the edge");
-      return;
+      throw new Error("Cannot find the piece we need to delete. This shouldn't happen because we have input validation at the edge");
     }
 
     // Ask the piece to rotate itself
@@ -262,7 +264,7 @@ export class Layout {
     }
 
     switch(category) {
-      case "position":
+      case "startposition":
         return new StartPosition(id, pieceData, pieceDef);
       case "straight":
         return new Straight(id, pieceData, pieceDef);
@@ -312,6 +314,6 @@ export class Layout {
 
   // Kick off the call chain that calculates the coordinates for each piece
   private calculateAllCoordinates(): void {
-    this.getStartPositionPiece().kickOffCoordinateCalculations();
+    this.getStartPositionPiece().kickOffInitCoordinatesFromStartPosition();
   }
 }

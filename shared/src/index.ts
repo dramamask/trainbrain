@@ -5,7 +5,7 @@ export interface Coordinate {
 }
 
 // List of the different types of track pieces that we have
-export type TrackPieceCategory = "position" | "straight" | "curve" | "switch";
+export type TrackPieceCategory = "startposition" | "straight" | "curve" | "switch";
 
 // All possible connection names
 export type ConnectionName = "start" | "end" | "diverge";

@@ -14,7 +14,7 @@ import { KEY } from "./keydefinitions";
 export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {
     const trackLayout: UiLayout = trackLayoutStore.getTrackLayout() as UiLayout;
-    const startPositionPiece = trackLayout.pieces.find(piece => piece.category == "position") as UiLayoutPiece;
+    const startPositionPiece = trackLayout.pieces.find(piece => piece.id == "0") as UiLayoutPiece;
     const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
 
     if (KEY.RotateLayoutPieceInEditMode.includes(event.key)) {

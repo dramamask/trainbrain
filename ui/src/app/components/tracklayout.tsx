@@ -184,7 +184,7 @@ function renderSelectedTrackPiece(selectionState: ReturnType<typeof selectionSto
 // Get the React component associated with the track piece
 function getTrackPieceComponent(piece: UiLayoutPiece, hideWhenSelected: boolean) {
   switch (piece.category) {
-    case "position":
+    case "startposition":
       return <StartPosition piece={piece} key={piece.id} />
     case "straight":
       return <Straight hideWhenSelected={hideWhenSelected} piece={piece} key={piece.id} />;

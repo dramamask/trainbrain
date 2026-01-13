@@ -24,7 +24,7 @@ export class StartPosition extends LayoutPiece {
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
     this.coordinate = (data.attributes as PieceDefAttributes).coordinate;
-    this.firstPiece = (data.attributes as PieceDefAttributes).firstPiece;
+    this.firstPiece.connectorName = (data.attributes as PieceDefAttributes).firstPiece.connectorName;
   }
 
   public initConnections(connections: LayoutPieceMap): void {
@@ -40,7 +40,7 @@ export class StartPosition extends LayoutPiece {
   }
 
   // Kick of the call chain that initialializes the coordinates of every piece in the layout
-  public kickOffCoordinateCalculations(): void {
+  public kickOffInitCoordinatesFromStartPosition(): void {
     if (this.coordinate === null) {
       throw new Error("Start position's coordinate should be known!");
     }
@@ -70,9 +70,9 @@ export class StartPosition extends LayoutPiece {
     this.coordinate = coordinate;
 
     // All track pieces now need to update their position relative to me
-    this.kickOffInitCoordinates();
+    this.kickOffInitCoordinatesFromStartPosition();
 
-    // Save the position to the json DB
+    // Save the position to the in-memory json DB
     this.save();
   }
 
@@ -86,7 +86,7 @@ export class StartPosition extends LayoutPiece {
           heading: (this.coordinate as Coordinate).heading,
         },
         firstPiece: {
-          id: this.firstPiece.id,
+          id: this.firstPiece.piece ? this.firstPiece.piece.getId() : null,
           connectorName: this.firstPiece.connectorName,
         }
       },
@@ -113,5 +113,26 @@ export class StartPosition extends LayoutPiece {
     if (this.coordinate.heading >= 360) {
       this.coordinate.heading -= 360;
     }
+
+    // Save the position to the in-memory json DB
+    this.save();
+  }
+
+  public getFirstPiece() {
+    return this.firstPiece;
+  }
+
+  public setFirstPiece(layoutPiece: LayoutPiece | null, theirConnectionNameToUs: string) {
+    if ((layoutPiece == null && theirConnectionNameToUs != "") ||
+        (layoutPiece != null && theirConnectionNameToUs == ""))
+    {
+      throw new Error("Unexpected error in setFirstPiece()");
+    }
+
+    this.firstPiece.piece = layoutPiece;
+    this.firstPiece.connectorName = theirConnectionNameToUs;
+
+    // Save the position to the in-memory json DB
+    this.save();
   }
 }
