@@ -1,11 +1,13 @@
 import { Coordinate, TrackPieceDef, UiLayout } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
+import { NodeConnections } from "./types.js";
 import { pieceDefintionsDb, layoutPiecesDb, layoutNodesDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
 import { StartPosition } from "./startposition.js";
-import { ConnectionName, ConnectionsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import { ConnectionName, NodesData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import { LayoutNodeData } from "../data_types/layoutNodes.js";
 import { AddLayoutPieceData } from "../data_types/layoutPieces.js";
 
 // The Layout class contains all LayoutPiece objects
@@ -284,45 +286,29 @@ export class Layout {
     }
   }
 
-  // Return the list of node connections for a specific layout piece (as LayoutPiece class objects)
-  private getNodeConnections(piece: LayoutPieceData): LayoutPieceMap {
+  // Return a map of node connections that a specific layout piece is connected to
+  private getNodeConnections(piece: LayoutPieceData): NodeConnections {
     if (Object.keys(piece.nodeConnections).length === 0) {
       throw new Error("Node Connections not defined! Is this being called before initialization is done?");
     }
 
-    /* Start dirty code section */
-    // TODO: Come up with a cleaner way to initialize the firstPiece property for the StartPosition object
-    if (piece.type == "startPosition") {
-      // @ts-expect-error
-      return {"firstPiece": this.pieces.get(piece.attributes.firstPiece.id)};
-    }
-    /* End dirty code section */
-
-    return Object.fromEntries(
-      Object.entries(piece.connections).map(([key, value]) => [
-        key, // Name of the connection
-        (value === null) ? null : this.pieces.get(value.toString()) // Reference to a LayoutPiece
+    return new Map(
+      Object.entries(piece.nodeConnections).map(([connectionName, nodeId]) => [
+        connectionName,
+        (nodeId == null) ? null : this.nodes.get(nodeId),
       ])
-    ) as LayoutPieceMap;
+    ) as NodeConnections;
   }
 
-  // Return the StartPosition piece
-  private getStartPositionPiece(): StartPosition {
-    const piece = this.pieces.get("0");
-
-    if (!piece) {
-      throw new Error("Unexpected error. Cannot find layout piece 0.");
-    }
-
-    if (!(piece instanceof StartPosition)) {
-      throw new Error("Piece 0 should be a StartPosition piece.");
-    }
-
-    return piece;
+  // Return an array of pieces that a specific node is connected to
+  private getPieces(node: LayoutNodeData): LayoutPiece[] {
+    return node.pieces.map(pieceId => {
+      return this.pieces.get(pieceId);
+    }) as LayoutPiece[];
   }
 
   // Kick off the call chain that calculates the coordinates for each piece
   private calculateAllCoordinates(): void {
-    this.getStartPositionPiece().kickOffInitCoordinatesFromStartPosition();
+
   }
 }

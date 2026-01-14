@@ -4,21 +4,14 @@ import { NodeConnections } from "./types.js";
 import { ConnectionName } from "../data_types/layoutPieces.js";
 import { StartPosition } from "./startposition.js";
 
-// Definition of connections in the LayoutPiece classes
-export interface Nodes {
-  [key: string]: LayoutPiece | null; // This means this is a variable length list with key of type
-                                     // string (but really ConnectionName) and value being a LayoutPiece.
-}
-
 export abstract class LayoutPiece {
   protected id: string;
-  protected type: string = "";
-  protected attributes: object = {};
-  protected nodeConnections: NodeConnections = {};
+  protected pieceDefId: string = "";
+  protected nodeConnections: NodeConnections = new Map<string, LayoutPiece | null>();
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
-    this.type = data.type;
+    this.pieceDefId = data.pieceDefId;
   }
 
   // Assign the object that holds information of which side of the piece is connected to which node
