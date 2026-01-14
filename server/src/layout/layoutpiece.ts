@@ -1,16 +1,19 @@
-import { Coordinate, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, NodeConnectionsData, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { NodeConnections } from "./types.js";
 import { ConnectionName } from "../data_types/layoutPieces.js";
 import { StartPosition } from "./startposition.js";
+import { LayoutNode } from "./layoutnode.js";
 
 export abstract class LayoutPiece {
   protected id: string;
   protected pieceDefId: string = "";
-  protected nodeConnections: NodeConnections = new Map<string, LayoutPiece | null>();
+  protected category: string = "";
+  protected nodeConnections: NodeConnections = new Map<string, LayoutNode>();
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
+    this.category = pieceDef.category;
     this.pieceDefId = data.pieceDefId;
   }
 
@@ -32,10 +35,34 @@ export abstract class LayoutPiece {
   public abstract initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void;
 
   // Return our layout information in the UiLayoutPiece format
-  public abstract getUiLayoutPieceData(): UiLayoutPiece;
+  public getUiLayoutData(): UiLayoutPiece {
+    // Create deadEnds array for this piece
+    let deadEnds = Array.from(this.nodeConnections, ([connectionName, node]) => {
+        if (node.getOtherPiece(this) == null) {
+          return connectionName;
+        }
+        return "";
+    });
+    deadEnds = deadEnds.filter((connectionName) => connectionName != "");
+
+    // Create nodeConnections object for this piece
+    const nodeConnections: Record<string, string> = Object.fromEntries(
+      Array.from(this.nodeConnections).map(([connectionName, node]) => [
+        connectionName, node.getId()
+      ])
+    );
+
+    // Return the UiLayoutPiece object
+    return {
+      id: this.id,
+      category: this.category as TrackPieceCategory,
+      nodeConnections: nodeConnections,
+      deadEnds: deadEnds,
+    }
+  }
 
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
-  public abstract getLayoutPieceData(): LayoutPieceData;
+  public abstract getLayoutData(): LayoutPieceData;
 
   // Save the data for this layout piece to the track-layout json DB
   public abstract save(writeToFile?: boolean): Promise<void>; // writeToFile is optional

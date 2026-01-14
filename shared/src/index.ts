@@ -5,13 +5,13 @@ export interface Coordinate {
 }
 
 // List of the different types of track pieces that we have
-export type TrackPieceCategory = "startposition" | "straight" | "curve" | "switch";
+export type TrackPieceCategory = "straight" | "curve" | "switch";
 
 // All possible connection names
 export type ConnectionName = "start" | "end" | "diverge";
 
 // List of different possible values for the dead-end indicator for a UI layout piece
-export type DeadEnd = ConnectionName & null;
+export type DeadEnd = ConnectionName[];
 
 // Attributes for a Position type piece
 export interface UiAttributesPosition {
@@ -35,13 +35,24 @@ export interface UiAttributesCurve {
   radius: number | null;
 }
 
+// A list of node connection IDs for a specific layout piece
+export interface NodeConnectionsData {
+    [key: string]: string; // This is a variable length list with key of type string (but really
+                           // ConnectionName) and a value of type string that signifies a node ID.
+}
+
 // Definition of the data for a layout piece, optimized for drawing in the UI
 export interface UiLayoutPiece {
   id: string;
   category: TrackPieceCategory;
-  attributes: UiAttributesPosition | UiAttributesStraight | UiAttributesCurve;
-  deadEnd: DeadEnd;
+  nodeConnections: NodeConnectionsData;
+  deadEnds: string[]; // Array of connection names
 };
+
+export interface UiLayoutNode {
+  id: string;
+  coordinate: Coordinate;
+}
 
 // The structure that the server returns from the GET layout API call
 export interface UiLayout {
@@ -49,6 +60,7 @@ export interface UiLayout {
     error: string;
   };
   pieces: UiLayoutPiece[];
+  nodes: UiLayoutNode[];
 }
 
 // The structure of a track piece definition

@@ -9,9 +9,9 @@ const router: Router = Router();
 
 // Map URL sub-paths to controller methods
 router.get('/', layoutController.getLayout);
-router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
-router.delete('/piece/:index', indexLayoutPieceSchema, validate, layoutController.deleteLayoutPiece);
-router.put('/piece/rotate/:index', indexLayoutPieceSchema, validate, layoutController.rotateLayoutPiece);
-router.put('/start-position', coordinateSchema, validate, layoutController.updateStartPosition);
+// router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
+// router.delete('/piece/:index', indexLayoutPieceSchema, validate, layoutController.deleteLayoutPiece);
+// router.put('/piece/rotate/:index', indexLayoutPieceSchema, validate, layoutController.rotateLayoutPiece);
+// router.put('/start-position', coordinateSchema, validate, layoutController.updateStartPosition);
 
 export default router;
