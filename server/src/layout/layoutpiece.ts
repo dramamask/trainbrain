@@ -1,7 +1,7 @@
-import { Coordinate, NodeConnectionsData, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
+import { NodeConnectionsData, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
+import { layoutPiecesDb } from "../services/db.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { NodeConnections } from "./types.js";
-import { ConnectionName } from "../data_types/layoutPieces.js";
 import { StartPosition } from "./startposition.js";
 import { LayoutNode } from "./layoutnode.js";
 
@@ -17,22 +17,38 @@ export abstract class LayoutPiece {
     this.pieceDefId = data.pieceDefId;
   }
 
+  // Rotate the piece in it's current track piece location. Rotation logic is layout piece specific.
+  public abstract rotate(): void;
+
+  // Get the attributes specific to this layout piece type
+  public abstract getAttributes(): object;
+
   // Assign the object that holds information of which side of the piece is connected to which node
   public setNodeConnections(nodeConnections: NodeConnections): void {
     this.nodeConnections = nodeConnections;
   }
 
-  // Called on the first piece in the layout (the piece that is located at the start position)
-  // This piece needs to call initCoordinates() on all pieces it is connected to.
-  public abstract kickOffInitCoordinates(connectionName: string, connectorCoordinate: Coordinate): void;
-
   /**
-   * Initialize the physical coordinates of this layout piece.
+   * Save the data for this layout piece to the track-layout json DB
    *
-   * @param connectedPiece - the piece that is connected to us (we can lookup which of our connectors is connected to them )   *
-   * @param connectorCoordinate - the position of the connector with which we are connected to them
+   * @param writeToFile (optional) If true, write the DB to file immediately after saving the layout piece data
    */
-  public abstract initCoordinates(connectedPiece: LayoutPiece, connectorCoordinate: Coordinate): void;
+  public async save(writeToFile: boolean = true): Promise<void> {
+    layoutPiecesDb.data.pieces[this.id] = this.getLayoutData();
+
+    if (writeToFile) {
+      await layoutPiecesDb.write();
+    }
+  }
+
+  // Get the data for this layout piece, as it would be stored in the track-layout json DB
+  public getLayoutData(): LayoutPieceData {
+    return {
+      pieceDefId: this.pieceDefId,
+      attributes: this.getAttributes(),
+      nodeConnections: this.getNodeConnectionsData(),
+    }
+  }
 
   // Return our layout information in the UiLayoutPiece format
   public getUiLayoutData(): UiLayoutPiece {
@@ -61,67 +77,69 @@ export abstract class LayoutPiece {
     }
   }
 
-  // Get the data for this layout piece, as it would be stored in the track-layout json DB
-  public abstract getLayoutData(): LayoutPieceData;
-
-  // Save the data for this layout piece to the track-layout json DB
-  public abstract save(writeToFile?: boolean): Promise<void>; // writeToFile is optional
-
-  // Rotate the piece in it's current track piece location. Rotation logic is layout piece specific.
-  public abstract rotate(startPosition: StartPosition): void;
-
   // Return the ID of this layout piece
   public getId(): string {
     return this.id;
   }
 
-  // Return the object that defines the connections that we have to other layout pieces
-  public getConnections(): Connections {
-    return this.connections;
-  }
+  // // Return the object that defines the connections that we have to other layout pieces
+  // public getConnections(): Connections {
+  //   return this.connections;
+  // }
 
-  // Returns the LayoutPiece object that is connected to our connector named connectornName
-  public getConnector(connectorName: ConnectionName): LayoutPiece | null {
-    return this.connections[connectorName];
-  }
+  // // Returns the LayoutPiece object that is connected to our connector named connectornName
+  // public getConnector(connectorName: ConnectionName): LayoutPiece | null {
+  //   return this.connections[connectorName];
+  // }
 
-  // Return the name of our connector that connects us to a specific layoutPiece
-  public getConnectorName(layoutPiece: LayoutPiece): ConnectionName {
-    let foundName = "";
-    Object.entries(this.connections).forEach(([connectorName, connection]) => {
-      if (connection == null) {
-        return; // Go to next iteration
-      }
-      if (connection.getId() == layoutPiece.getId()) {
-        foundName = connectorName;
-      }
-    });
+  // // Return the name of our connector that connects us to a specific layoutPiece
+  // public getConnectorName(layoutPiece: LayoutPiece): ConnectionName {
+  //   let foundName = "";
+  //   Object.entries(this.connections).forEach(([connectorName, connection]) => {
+  //     if (connection == null) {
+  //       return; // Go to next iteration
+  //     }
+  //     if (connection.getId() == layoutPiece.getId()) {
+  //       foundName = connectorName;
+  //     }
+  //   });
 
-    if (foundName == "") {
-      throw new Error(`Did not find connection to specified layout piece (layout piece id: ${layoutPiece.getId()})`);
-    }
+  //   if (foundName == "") {
+  //     throw new Error(`Did not find connection to specified layout piece (layout piece id: ${layoutPiece.getId()})`);
+  //   }
 
-    return (foundName as ConnectionName);
-  }
+  //   return (foundName as ConnectionName);
+  // }
 
-  // Returns true if we are connected to layoutPiece
-  public areWeConnected(layoutPiece: LayoutPiece): boolean {
-    let foundName = "";
-    Object.entries(this.connections).forEach(([connectorName, connection]) => {
-      if (connection == null) {
-        return; // Go to next iteration
-      }
-      if (connection.getId() == layoutPiece.getId()) {
-        foundName = connectorName;
-      }
-    });
+  // // Returns true if we are connected to layoutPiece
+  // public areWeConnected(layoutPiece: LayoutPiece): boolean {
+  //   let foundName = "";
+  //   Object.entries(this.connections).forEach(([connectorName, connection]) => {
+  //     if (connection == null) {
+  //       return; // Go to next iteration
+  //     }
+  //     if (connection.getId() == layoutPiece.getId()) {
+  //       foundName = connectorName;
+  //     }
+  //   });
 
-    return (foundName != "");
-  }
+  //   return (foundName != "");
+  // }
 
-  // Update a specific connection for this layoutPiece
-  public updateConnection(connectionName: ConnectionName, connection: LayoutPiece | null): void {
-    this.connections[connectionName] = connection;
+  // // Update a specific connection for this layoutPiece
+  // public updateConnection(connectionName: ConnectionName, connection: LayoutPiece | null): void {
+  //   this.connections[connectionName] = connection;
+  // }
+
+  // Create nodeConnections object for this piece
+  protected getNodeConnectionsData(): NodeConnectionsData {
+    const nodeConnections: Record<string, string> = Object.fromEntries(
+      Array.from(this.nodeConnections).map(([connectionName, node]) => [
+        connectionName, node.getId()
+      ])
+    );
+
+    return nodeConnections;
   }
 
   // Convert from degrees to radians

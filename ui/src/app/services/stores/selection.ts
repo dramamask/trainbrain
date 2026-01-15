@@ -1,14 +1,11 @@
 "use client";
 
-import { getNextConnector } from "@/app/services/connectors";
-import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
-
 interface State {
   selectedTrackPiece: string;
-  selectedConnector: string;
+  selectedNode: string;
 }
 
-let state: State = { selectedTrackPiece: "", selectedConnector: "" };
+let state: State = { selectedTrackPiece: "", selectedNode: "" };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -35,44 +32,20 @@ export const store = {
     return state.selectedTrackPiece;
   },
 
-  getSelectedConnector(): string {
-    return state.selectedConnector;
+  getSelectedNode(): string {
+    return state.selectedNode;
   },
 
   setSelectedTrackPiece(pieceId: string): void {
-    const newState = { selectedTrackPiece: pieceId, selectedConnector: state.selectedConnector };
+    const newState = { selectedTrackPiece: pieceId, selectedNode: state.selectedNode };
     // Immutable update
     state = newState;
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
 
-  setSelectedConnector(connectorId: string): void {
-    const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedConnector: connectorId };
-    // Immutable update
-    state = newState;
-    // Notify React/listeners
-    listeners.forEach((callback) => callback());
-  },
-
-  toggleSelectedConnector(): void {
-    // Return if we don't have a selected piece
-    if (state.selectedTrackPiece == "") {
-      return;
-    }
-
-    // Log an error and return if we can't find data for the selected piece
-    const selectedPieceData = trackLayoutStore.getTrackPieceData(state.selectedTrackPiece);
-    if (!selectedPieceData || !(('category') in selectedPieceData)) {
-      console.error(`Selected piece data could not be found for piece ${state.selectedTrackPiece}`);
-      return;
-    }
-
-    // Create a new state with the next connector "in the list" for the selected piece
-    const newState = {
-      selectedTrackPiece: state.selectedTrackPiece,
-      selectedConnector: getNextConnector(selectedPieceData.category, state.selectedConnector)
-    };
+  setSelectedNode(nodeId: string): void {
+    const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedNode: nodeId };
     // Immutable update
     state = newState;
     // Notify React/listeners
@@ -80,15 +53,15 @@ export const store = {
   },
 
   deselectTrackPiece(): void {
-    const newState = { selectedTrackPiece: "", selectedConnector: state.selectedConnector };
+    const newState = { selectedTrackPiece: "", selectedNode: "" };
     // Immutable update
     state = newState;
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
 
-  deselectConnector(): void {
-    const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedConnector: "" };
+  deselectNode(): void {
+    const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedNode: "" };
     // Immutable update
     state = newState;
     // Notify React/listeners
@@ -96,7 +69,7 @@ export const store = {
   },
 
   deselectAll(): void {
-    const newState = { selectedTrackPiece: "", selectedConnector: "" };
+    const newState = { selectedTrackPiece: "", selectedNode: "" };
     // Immutable update
     state = newState;
     // Notify React/listeners

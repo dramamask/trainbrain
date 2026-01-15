@@ -13,6 +13,5 @@ export const KEY = {
   MoveLayoutLeftInEditMode: 'ArrowLeft',
   MoveLayoutRightInEditMode: 'ArrowRight',
   DeselectLayoutPieceInEditMode: 'Escape',
-  ToggleConnectorInEditMode: 'Tab',
   CloseErrorMessage: ['Escape', 'Enter'],
 }

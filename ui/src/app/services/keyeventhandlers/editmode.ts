@@ -45,9 +45,6 @@ export function handleKeyDown(event: KeyboardEvent) {
       case KEY.DeselectLayoutPieceInEditMode:
         selectionStore.deselectAll();
         break;
-      case KEY.ToggleConnectorInEditMode:
-        selectionStore.toggleSelectedConnector();
-        event.preventDefault(); // We don't want the tab key
       default:
         // Exit this function
         return;

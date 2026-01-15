@@ -17,15 +17,9 @@ import controlsSectionStyles from "../controlssection.module.css";
 
 export default function PieceDefCard({name, definition}: props) {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    const selectedLayoutPiece = selectionStore.getSelectedTrackPiece();
-    if (selectedLayoutPiece == "") {
-      errorStore.setError(getNoLayoutPieceSelectedMessage());
-      return;
-    }
-
-    const selectedConnector = selectionStore.getSelectedConnector();
-    if (selectedConnector == "") {
-      errorStore.setError(getNoConnectorSelectedMessage());
+    const selectedNode = selectionStore.getSelectedNode();
+    if (selectedNode == "") {
+      errorStore.setError(getNoNodeSelectedMessage());
       return;
     }
 
@@ -88,18 +82,10 @@ function getLayoutAttributes(pieceDefName: string): object {
   return {};
 }
 
-function getNoLayoutPieceSelectedMessage(): string {
-  let msg = "First select a track piece in the layout. Then select one of the layout piece connectors. ";
-  msg += "Next, click on an item in the list to insert that particular piece into the layout. "
-  msg += "The new piece will be inserted to the selected connector (which is outlined in red).";
-
-  return msg;
-}
-
-function getNoConnectorSelectedMessage(): string {
-  let msg = "Select one of the layout piece connectors. ";
+function getNoNodeSelectedMessage(): string {
+  let msg = "Please select a Node. ";
   msg += "Then click on an item in the list to insert that particular piece into the layout. "
-  msg += "The new piece will be inserted to the selected connector (which is outlined in red).";
+  msg += "The new piece will be inserted in place of the selected node.";
 
   return msg;
 }

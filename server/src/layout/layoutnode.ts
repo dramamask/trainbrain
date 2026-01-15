@@ -1,6 +1,6 @@
 import { Coordinate, UiLayoutNode } from "trainbrain-shared";
-import { LayoutPiece } from "./layoutpiece.js";
 import { layoutNodesDb } from "../services/db.js";
+import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNodeData } from "../data_types/layoutNodes.js";
 
 export class LayoutNode {
@@ -41,6 +41,19 @@ export class LayoutNode {
     return this.pieces[1 - index];
   }
 
+  /**
+   * Save the data for this layout piece to the track-layout json DB
+   *
+   * @param writeToFile (optional) If true, write the DB to file immediately after saving the layout piece data
+   */
+  public async save(writeToFile: boolean = true): Promise<void> {
+    layoutNodesDb.data.nodes[this.id] = this.getLayoutData();
+
+    if (writeToFile) {
+      await layoutNodesDb.write();
+    }
+  }
+
   // Get the data for this layout node, as it would be stored in the layout-nodes json DB
   public getLayoutData(): LayoutNodeData {
     return {
@@ -60,13 +73,5 @@ export class LayoutNode {
   public setCoordinate(coordinate: Coordinate): void {
     this.coordinate = coordinate;
     this.save();
-  }
-
-  public async save(writeToFile: boolean = true): Promise<void> {
-    layoutNodesDb.data.nodes[this.id] = this.getLayoutData();
-
-    if (writeToFile) {
-      await layoutNodesDb.write();
-    }
   }
 }

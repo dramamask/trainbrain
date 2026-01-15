@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { UiLayout, UiLayoutPiece } from "trainbrain-shared"
+import { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared"
 import { CircularProgress, Stack } from "@mui/material";
 import Error from "./error";
 import Curve from "./trackpieces/curve";
 import Straight from "./trackpieces/straight";
-import StartPosition from "./trackpieces/startposition";
+import Node from "./trackpieces/node";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
@@ -15,7 +15,7 @@ import { store as selectionStore } from "@/app/services/stores/selection";
 import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
 import { getSvgViewBox } from "../services/zoom/scrollbar/svg";
 import Scrollbar from "./scrollbar";
-import { getConnectorClassName, getTrackPieceContainerClassName } from "../services/classnames";
+import { getNodeClassName, getTrackPieceContainerClassName } from "../services/classnames";
 
 import styles from "./tracklayout.module.css";
 
@@ -62,9 +62,9 @@ export default function TrackLayout()
   const handleSvgClick = (event: React.MouseEvent<SVGSVGElement>) => {
     const target = event.target as SVGElement;
 
-    // Select the connector if the target is a connector
-    if (target.classList.contains(getConnectorClassName())) {
-      selectionStore.setSelectedConnector(target.id);
+    // Select the node if the target is a node
+    if (target.classList.contains(getNodeClassName())) {
+      selectionStore.setSelectedNode(target.id);
       return;
     }
 
@@ -74,7 +74,6 @@ export default function TrackLayout()
     // Select the track piece if the target is part of a track piece container
     if (group) {
       selectionStore.setSelectedTrackPiece(group.id);
-      selectionStore.setSelectedConnector("");
       return;
     }
 
@@ -114,9 +113,9 @@ export default function TrackLayout()
           >
             {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
             <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
-              { renderLayout(trackLayoutState.trackLayout) }
+              { renderNodes(trackLayoutState.trackLayout) }
+              { renderPieces(trackLayoutState.trackLayout) }
               { renderDebugContent(worldWidth, worldHeight) }
-              { renderSelectedTrackPiece(selectionState) }
             </g>
           </svg>
           <Error />
@@ -150,8 +149,21 @@ function isLayoutAvailable(layout: UiLayout) {
   return (Object.keys(layout).length != 0);
 }
 
-// Render the actual track pieces in the layout
-function renderLayout(layout: UiLayout) {
+// Render the nodes in the layout
+function renderNodes(layout: UiLayout) {
+  if (isLayoutAvailable(layout)) {
+    return (
+      // Iterate over the track layout and render each piece
+      layout.nodes.map(
+        (node: UiLayoutNode) => <Node node={node} key={node.id} />
+      )
+    )
+  }
+  return null;
+}
+
+// Render the track pieces in the layout
+function renderPieces(layout: UiLayout) {
   if (isLayoutAvailable(layout)) {
     return (
       // Iterate over the track layout and render each piece
@@ -163,29 +175,9 @@ function renderLayout(layout: UiLayout) {
   return null;
 }
 
-// Render the track piece that is selected
-// We render is seperatly so no part of any other component will render over top of this component
-// SVG doesn't have a z-order, so we have to handle it this way.
-function renderSelectedTrackPiece(selectionState: ReturnType<typeof selectionStore.getSnapshot>) {
-  if (selectionState.selectedTrackPiece == "") {
-    return null;
-  }
-
-  const trackPiece = trackLayoutStore.getTrackPieceData(selectionState.selectedTrackPiece);
-
-  if (!trackPiece) {
-    console.error(`Could not find track piece data for track piece '${selectionState.selectedTrackPiece}'`);
-    return false;
-  }
-
-  return getTrackPieceComponent(trackPiece, false);
-}
-
 // Get the React component associated with the track piece
 function getTrackPieceComponent(piece: UiLayoutPiece, hideWhenSelected: boolean) {
   switch (piece.category) {
-    case "startposition":
-      return <StartPosition piece={piece} key={piece.id} />
     case "straight":
       return <Straight hideWhenSelected={hideWhenSelected} piece={piece} key={piece.id} />;
     case "curve":

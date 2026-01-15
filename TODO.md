@@ -1,8 +1,11 @@
 # TODO
 
-- Change over to separate node objects. Nodes have coordinates.
+- Work on adding a piece.
+- Work on inserting a piece.
+- Work on moving the layout.
+- Work on deleting a piece.
+- Work on rotating a piece.
 - Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.
-- Do I need a proper exit for the server? It keeps exiting with code 2.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Do not allow start position move when a piece is selected. Info message.
 - Add the world size to the layout json file.
