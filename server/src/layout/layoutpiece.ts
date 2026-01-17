@@ -1,8 +1,7 @@
-import { NodeConnectionsData, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, NodeConnectionsData, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
 import { layoutPiecesDb } from "../services/db.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { NodeConnections } from "./types.js";
-import { StartPosition } from "./startposition.js";
 import { LayoutNode } from "./layoutnode.js";
 
 export abstract class LayoutPiece {
@@ -22,6 +21,14 @@ export abstract class LayoutPiece {
 
   // Get the attributes specific to this layout piece type
   public abstract getAttributes(): object;
+
+  /**
+   * Calculate the new coordinates of all connected nodes (based on our coordinate change) and tell those nodes to update their coordinate
+   *
+   * @param callingNodeId The ID of the node that called this method
+   * @param coordinate The coordinate of the calling node
+   */
+  public abstract updateCoordinate(callingNodeId: string, coordinate: Coordinate): void;
 
   // Assign the object that holds information of which side of the piece is connected to which node
   public setNodeConnections(nodeConnections: NodeConnections): void {

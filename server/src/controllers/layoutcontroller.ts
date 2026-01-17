@@ -5,7 +5,7 @@ import { layout } from "../services/init.js";
 import { Coordinate, UiLayout } from 'trainbrain-shared';
 import { AddLayoutPieceData } from '../data_types/layoutPieces.js';
 
-// Endpoint to get the track layout
+// API endpoint to get the track layout
 export const getLayout = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const uiLayout = layout.getUiLayout();
@@ -60,6 +60,7 @@ export const getLayout = (req: Request, res: Response, next: NextFunction): void
 //   }
 // }
 
+// TODO: rotate is the wrong word. It's flip, or change orientation or something like that.
 // // Endpoint to rotate a piece in the track layout
 // // Rotation logic depends on the type of track piece
 // export const rotateLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {
@@ -81,30 +82,31 @@ export const getLayout = (req: Request, res: Response, next: NextFunction): void
 //   }
 // }
 
-// // Endpoint to update the track layout start position
-// export const updateStartPosition = async (req: Request, res: Response, next: NextFunction) => {
-//   // matchedData only includes fields defined in the validator middleware for this route
-//   const data = matchedData(req);
+// API endpoint to change the position or heading of a node
+// This is used to move or rotate a node and everything that is connected to it
+export const updateNode = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData(req);
 
-//   try {
-//     const newStartPos: Coordinate = {
-//       x: Number(data.x),
-//       y: Number(data.y),
-//       heading: Number(data.heading)
-//     };
-//     await layout.updateStartPosition(newStartPos);
+  try {
+    const newCoordinate: Coordinate = {
+      x: Number(data.x),
+      y: Number(data.y),
+      heading: Number(data.heading)
+    };
+    await layout.updateNode(data.index, newCoordinate);
 
-//     const uiLayout = layout.getUiLayout();
-//     const status = getHttpStatusCode(uiLayout);
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
 
-//     res.header("Content-Type", "application/json");
-//     res.status(status).send(JSON.stringify(uiLayout));
-//   } catch (error) {
-//     console.error("Unknown error at the edge", error);
-//     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-//       .send("Unknown error at the edge. Check server logs.");
-//   }
-// }
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+  } catch (error) {
+    console.error("Unknown error at the edge", error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+      .send("Unknown error at the edge. Check server logs.");
+  }
+}
 
 // Returns the status code that we should use when returning the UI Layout,
 // based on the fact if there's an error message in the UI Layout message struct.

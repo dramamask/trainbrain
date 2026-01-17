@@ -2,7 +2,7 @@ import { param } from 'express-validator';
 import { layout } from '../services/init.js';
 
 // Validation for routes that have an index in the URL
-export const indexLayoutPieceSchema = [
+export const nodeIndexSchema = [
   param('index').exists({checkFalsy: true})
   .withMessage('Index is required')
   .isString()
@@ -17,9 +17,9 @@ export const indexLayoutPieceSchema = [
     return true;
   })
   .custom((id: string) => {
-    const highestIdAllowed = layout.getHighestPieceId();
+    const highestIdAllowed = layout.getHighestNodeId();
     if (Number(id) > highestIdAllowed) {
-      throw new Error("Index does not match an ID in the layout DB")
+      throw new Error("Index does not match a Node ID in the layout")
     }
     return true;
   }),

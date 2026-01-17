@@ -70,8 +70,14 @@ export class LayoutNode {
     };
   }
 
-  public setCoordinate(coordinate: Coordinate): void {
+  // Update the coordinate of this layout node
+  // Tell connected nodes to update their coordinates too
+  public updateCoordinate(coordinate: Coordinate): void {
     this.coordinate = coordinate;
     this.save();
+
+    this.pieces.forEach(piece => {
+      piece.updateCoordinate(this.id, this.coordinate);
+    });
   }
 }

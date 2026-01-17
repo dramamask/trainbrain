@@ -1,48 +1,42 @@
 "use client"
 
-import { UiAttributesPosition, UiLayout, UiLayoutPiece } from "trainbrain-shared";
+import { UiLayout } from "trainbrain-shared";
 import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { deleteTrackPiece, rotateTrackPiece, setStartPosition } from "@/app/services/api/tracklayout";
-import { MOVE_INCREMENT } from "@/app/config/config";
+import { deleteTrackPiece, rotateTrackPiece, updateNode } from "@/app/services/api/tracklayout";
+import { MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/config/config";
 import { KEYS } from "./keydefinitions";
 
 // Key Event Handler for Edit Mode
 // Note that all key event handlers need to be called from keynoardEventHandler.tsx
 export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {
-    const trackLayout: UiLayout = trackLayoutStore.getTrackLayout() as UiLayout;
-    const startPositionPiece = trackLayout.pieces.find(piece => piece.id == "0") as UiLayoutPiece;
-    const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
-
-    if (KEYS.RotateLayoutPiece.includes(event.key)) {
-        rotateLayoutPiece(selectionStore.getSelectedTrackPiece());
-    }
-
     switch (event.key) {
+      case KEYS.MoveNodeUp:
+        handleNodeUpdate("y", MOVE_INCREMENT, 0);
+        break;
+      case KEYS.MoveNodeRight:
+        handleNodeUpdate("x", MOVE_INCREMENT, 0);
+        break;
+      case KEYS.MoveNodeDown:
+        handleNodeUpdate("y", -MOVE_INCREMENT, 0);
+        break;
+      case KEYS.MoveNodeLeft:
+        handleNodeUpdate("x", -MOVE_INCREMENT, 0);
+        break;
+      case KEYS.RotateNodeRight:
+        handleNodeUpdate("x", 0, ROTATE_INCREMENT);
+        break;
+      case KEYS.RotateNodeLeft:
+        handleNodeUpdate("x", 0, -ROTATE_INCREMENT);
+        break;
       case KEYS.DeleteLayoutPiece:
         deleteLayoutPiece(selectionStore.getSelectedTrackPiece());
         selectionStore.deselectAll();
         break;
-      case KEYS.MoveLayoutUp:
-        startPositionAttributes.coordinate.y += MOVE_INCREMENT;
-        storeStartPosition(startPositionAttributes);
-        break;
-      case KEYS.MoveLayoutDown:
-        startPositionAttributes.coordinate.y -= MOVE_INCREMENT;
-        storeStartPosition(startPositionAttributes);
-        break;
-      case KEYS.MoveLayoutLeft:
-        startPositionAttributes.coordinate.x -= MOVE_INCREMENT;
-        storeStartPosition(startPositionAttributes);
-        break;
-      case KEYS.MoveLayoutRight:
-        startPositionAttributes.coordinate.x += MOVE_INCREMENT;
-        storeStartPosition(startPositionAttributes);
-        break;
-      case KEYS.DeselectLayoutPiece:
+      case KEYS.DeselectLayoutElement:
         selectionStore.deselectAll();
         break;
       default:
@@ -53,12 +47,29 @@ export function handleKeyDown(event: KeyboardEvent) {
 }
 
 // Call the server API to store the new start position
-function storeStartPosition(startPositionAttributes: UiAttributesPosition) {
-  setStartPosition(startPositionAttributes.coordinate)
+function handleNodeUpdate(axis: "x" | "y", increment: number, rotateAngle: number): void {
+  const nodeId = selectionStore.getSelectedNode();
+  if (!nodeId) {
+    errorStore.setError("First select a node that you want to move or rotate.");
+    return;
+  }
+
+  const nodeData = trackLayoutStore.getLayoutNodeData(nodeId);
+  if (!nodeData) {
+    throw new Error(`Unexpected error. Node data not found for nodeId: ${nodeId}`);
+  }
+
+  nodeData.coordinate[axis] += increment;
+  nodeData.coordinate.heading += rotateAngle;
+
+  // Call the server's API endpoint to update the node position
+  updateNode(nodeData)
     .then((layoutData: UiLayout) => {
+      // Update our local store with the new layout data that we received back from the server
       trackLayoutStore.setTrackLayout(layoutData);
     })
     .catch((error: Error) => {
+      // The server responded back with an error
       errorStore.setError(error.message);
       console.error("handleKeyDown().setStartPosition() error:", error);
     });

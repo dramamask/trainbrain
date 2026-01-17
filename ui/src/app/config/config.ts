@@ -19,3 +19,4 @@ export const SELECTED_NODE_COLOR = COLOR2_HIGHLIGHT;
 
 // Increment to move the track by if moving with keyboard shortcut
 export const MOVE_INCREMENT = 15; // Millimeters
+export const ROTATE_INCREMENT = 15; // Degrees

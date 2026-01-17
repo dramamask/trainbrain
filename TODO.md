@@ -1,6 +1,5 @@
 # TODO
 
-- Work on moving the layout.
 - Work on adding a piece.
 - Work on inserting a piece.
 - Work on deleting a piece.

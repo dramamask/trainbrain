@@ -1,7 +1,7 @@
 import { Coordinate, TrackPieceDef } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
+import { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
-import { StartPosition } from "./startposition.js";
 
 interface PieceDefAttributes {
   length: number;
@@ -20,6 +20,21 @@ export class Straight extends LayoutPiece {
 
   public getAttributes(): object {
     return {};
+  }
+
+  public updateCoordinate(callingNodeId: string, coordinate: Coordinate): void {
+    let oppositeSideNode: LayoutNode | undefined;
+    this.nodeConnections.forEach((node, side) => {
+      if (node.getId() !== callingNodeId) {
+        oppositeSideNode = node;
+      }
+    });
+
+    if (oppositeSideNode === undefined) {
+      throw new Error("A Straight piece should always have two connected nodes");
+    }
+
+    oppositeSideNode.updateCoordinate(this.calculateCoordinate(coordinate));
   }
 
   /**

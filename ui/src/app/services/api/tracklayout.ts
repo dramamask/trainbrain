@@ -1,4 +1,4 @@
-import { ConnectionName, Coordinate, UiLayout } from "trainbrain-shared";
+import { ConnectionName, Coordinate, UiLayout, UiLayoutNode } from "trainbrain-shared";
 import { apiGet, apiCall } from "./api";
 
 interface InsertedPieceInfo {
@@ -11,6 +11,13 @@ interface InsertedPieceInfo {
 // Get the track layuot structure
 export async function getTrackLayout(): Promise<UiLayout> {
   const data = await apiGet<UiLayout>("/layout");
+  return data;
+}
+
+// Update the position and/or heading of a layout node.
+// Note that this will also update the position and heading of all connected track pieces.
+export async function updateNode(nodeData: UiLayoutNode): Promise<UiLayout> {
+  const data = await apiCall<UiLayout>("PUT", `/layout/node/${nodeData.id}`, nodeData.coordinate);
   return data;
 }
 
@@ -31,11 +38,5 @@ export async function deleteTrackPiece(pieceId: string): Promise<UiLayout> {
 export async function rotateTrackPiece(pieceId: string): Promise<UiLayout> {
   const url = "/layout/piece/rotate/" + pieceId;
   const data = await apiCall<UiLayout>("PUT", url, {});
-  return data;
-}
-
-// Update the start position of the track layout. This includes the heading (i.e the orientation)
-export async function setStartPosition(coordinate: Coordinate): Promise<UiLayout> {
-  const data = await apiCall<UiLayout>("PUT", "/layout/start-position", coordinate);
   return data;
 }

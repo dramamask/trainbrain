@@ -1,6 +1,6 @@
 "use client";
 
-import { UiLayout, UiLayoutPiece } from "trainbrain-shared";
+import { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
 
 interface State {
   trackLayout: UiLayout;
@@ -40,7 +40,11 @@ export const store = {
     return state.trackLayout;
   },
 
-  getTrackPieceData(pieceId: string): UiLayoutPiece | undefined {
+  getLayoutPieceData(pieceId: string): UiLayoutPiece | undefined {
     return state.trackLayout.pieces.find(trackPiece => trackPiece.id == pieceId);
-  }
+  },
+
+  getLayoutNodeData(nodeId: string): UiLayoutNode | undefined {
+    return state.trackLayout.nodes.find(node => node.id == nodeId);
+  },
 };

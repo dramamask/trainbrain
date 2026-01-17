@@ -59,12 +59,15 @@ export class Layout {
   }
 
   // Update a node's coordinate
-  public async updateCoordinate(nodeId: string, coordinate: Coordinate): Promise<void> {
+  public async updateNode(nodeId: string, coordinate: Coordinate): Promise<void> {
     const node = this.nodes.get(nodeId);
     if (!node) {
       throw new Error("Cannot find node to update its coordinate");
     }
-    await node.setCoordinate(coordinate);
+    node.updateCoordinate(coordinate);
+
+    // Write the in-memory json DB to file
+    layoutNodesDb.write();
   }
 
   // // Add a piece to the layout
@@ -256,22 +259,36 @@ export class Layout {
   //   await layoutPiecesDb.write();
   // }
 
-  // // Find the layout piece with the highest numerical ID. Return the ID as a number.
-  // public getHighestPieceId(): number {
-  //   let highestId: number = 0;
+  // Find the layout node with the highest numerical ID. Return the ID as a number.
+  public getHighestNodeId(): number {
+    let highestId: number = 0;
 
-  //   this.pieces.forEach(piece => {
-  //     const numericalIdValue = Number(piece.getId());
-  //     if (numericalIdValue > highestId) {
-  //       highestId = numericalIdValue;
-  //     }
-  //   });
+    this.nodes.forEach(node => {
+      const numericalIdValue = Number(node.getId());
+      if (numericalIdValue > highestId) {
+        highestId = numericalIdValue;
+      }
+    });
 
-  //   return highestId;
-  // }
+    return highestId;
+  }
+
+  // Find the layout piece with the highest numerical ID. Return the ID as a number.
+  public getHighestPieceId(): number {
+    let highestId: number = 0;
+
+    this.pieces.forEach(piece => {
+      const numericalIdValue = Number(piece.getId());
+      if (numericalIdValue > highestId) {
+        highestId = numericalIdValue;
+      }
+    });
+
+    return highestId;
+  }
 
   // Create a new LayoutPiece of the correct type.
-  private createLayoutPiece(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
+  protected createLayoutPiece(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
     switch(pieceDef.category) {
       case "straight":
         return new Straight(id, pieceData, pieceDef);
@@ -283,7 +300,7 @@ export class Layout {
   }
 
   // Return a map of node connections that a specific layout piece is connected to
-  private getNodeConnections(piece: LayoutPieceData): NodeConnections {
+  protected getNodeConnections(piece: LayoutPieceData): NodeConnections {
     if (Object.keys(piece.nodeConnections).length === 0) {
       throw new Error("Node Connections not defined! Is this being called before initialization is done?");
     }
@@ -297,7 +314,7 @@ export class Layout {
   }
 
   // Return an array of pieces that a specific node is connected to
-  private getPieces(node: LayoutNodeData): LayoutPiece[] {
+  protected getPieces(node: LayoutNodeData): LayoutPiece[] {
     return node.pieces.map(pieceId => {
       return this.pieces.get(pieceId);
     }) as LayoutPiece[];
