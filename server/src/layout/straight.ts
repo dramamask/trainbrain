@@ -2,6 +2,7 @@ import { Coordinate, TrackPieceDef } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
+import { NodeConnections } from "./types.js";
 
 interface PieceDefAttributes {
   length: number;
@@ -15,14 +16,24 @@ export class Straight extends LayoutPiece {
     this.length = (pieceDef.attributes as PieceDefAttributes).length;
   }
 
-  // Don't do anything. Rotating a straight piece has no effect.
-  public rotate(): void {};
-
   public getAttributes(): object {
     return {};
   }
 
-  public updateCoordinate(callingNodeId: string, coordinate: Coordinate): void {
+  public createNodes(firstNodeId: number): NodeConnections {
+    if (this.nodeConnections.size != 0) {
+      throw new Error("Nodes have already been created for this layout piece");
+    }
+
+    this.nodeConnections.set("start", new LayoutNode(firstNodeId.toString(), { x: 0, y: 0, heading: 0 }));
+    this.nodeConnections.get("start")?.addPiece(this);
+    this.nodeConnections.set("end", new LayoutNode((firstNodeId + 1).toString(), { x: 0, y: 0, heading: 0 }));
+    this.nodeConnections.get("end")?.addPiece(this);
+
+    return this.nodeConnections;
+  }
+
+  public calculateCoordinatesAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void {
     let oppositeSideNode: LayoutNode | undefined;
     this.nodeConnections.forEach((node, side) => {
       if (node.getId() !== callingNodeId) {
@@ -34,7 +45,7 @@ export class Straight extends LayoutPiece {
       throw new Error("A Straight piece should always have two connected nodes");
     }
 
-    oppositeSideNode.updateCoordinate(this.calculateCoordinate(coordinate));
+    oppositeSideNode.setCoordinateAndContinue(this.id, this.calculateCoordinate(coordinate), loopProtector);
   }
 
   /**

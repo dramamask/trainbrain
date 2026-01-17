@@ -7,29 +7,40 @@ export class LayoutNode {
   id: string = "";
   pieces: LayoutPiece[] = [];
   coordinate: Coordinate = { x: 0, y: 0, heading: 0 };
+  loopProtector: string = "";
 
   constructor(id: string, coordinate: Coordinate) {
     this.id = id;
     this.coordinate = coordinate;
   }
 
+  // Set the pieces connected to this node
   public setPieces(pieces: LayoutPiece[]) {
     this.pieces = pieces;
+  }
+
+  // Add a piece to this node
+  public addPiece(piece: LayoutPiece) {
+    if (this.pieces.length >= 2) {
+      throw new Error("A layout node cannot have more than two pieces connected to it");
+    }
+    this.pieces.push(piece);
   }
 
   public getId(): string {
     return this.id;
   }
 
+  // Given one connected piece, return the other connected piece (or null if there is none)
   public getOtherPiece(piece: LayoutPiece): LayoutPiece | null {
     if (this.pieces.length > 2) {
-      throw new Error("getOtherPiece error: more than two pieces connected to node should not happen")
+      throw new Error("getOtherPieceById(): node should not have more than two pieces connected to it")
     }
 
-    const index = this.pieces.findIndex(pieceInArray => pieceInArray == piece);
+    const index = this.pieces.findIndex(pieceInArray => pieceInArray.getId() == piece.getId());
 
     if (index == -1) {
-      throw new Error("getOtherPiece error: given piece is unknown to me")
+      throw new Error("getOtherPieceById(): specified piece is unknown to me")
     }
 
     // There is no other piece. Return null.
@@ -70,14 +81,34 @@ export class LayoutNode {
     };
   }
 
-  // Update the coordinate of this layout node
-  // Tell connected nodes to update their coordinates too
-  public updateCoordinate(coordinate: Coordinate): void {
+  /**
+   * Set our coordinate and tell the connected piece on the other side to continue the update down the layout
+   *
+   * @param callingPieceId The ID of the piece that called this method
+   * @param coordinate The new coordinate for this node
+   * @param loopProtector A string to prevent infinite loops
+   */
+  public setCoordinateAndContinue(callingPieceId: string | null, coordinate: Coordinate, loopProtector: string): void {
+    // Prevent infinite loops by checking the loopProtector string
+    if (this.loopProtector === loopProtector) {
+      return;
+    }
+    this.loopProtector = loopProtector;
+
+    // Set our coordinate
     this.coordinate = coordinate;
     this.save();
 
-    this.pieces.forEach(piece => {
-      piece.updateCoordinate(this.id, this.coordinate);
+    // Tell all connected pieces (except the calling piece) to continue the update down the layout
+    this.pieces.forEach((piece, index) => {
+      if (piece.getId() !== callingPieceId) {
+        let coordinate = this.coordinate;
+        if (index > 0) {
+          // The layout piece at index 0 will face the heading direction. The other piece will face opposite the heading direction.
+          coordinate.heading = (this.coordinate.heading + 180) % 360;
+        }
+        piece.calculateCoordinatesAndContinue(this.id, coordinate, loopProtector);
+      }
     });
   }
 }

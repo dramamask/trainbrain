@@ -1,5 +1,6 @@
 # TODO
 
+- Change: a node has an x,y coordinate. The connected pieces have a heading.
 - Work on adding a piece.
 - Work on inserting a piece.
 - Work on deleting a piece.

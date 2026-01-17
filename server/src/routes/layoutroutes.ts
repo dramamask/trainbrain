@@ -11,7 +11,7 @@ const router: Router = Router();
 // Map URL sub-paths to controller methods
 router.get('/', layoutController.getLayout);
 router.put('/node/:index', nodeIndexSchema, coordinateSchema, validate, layoutController.updateNode);
-// router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
+router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
 // router.delete('/piece/:index', pieceIndexSchema, validate, layoutController.deleteLayoutPiece);
 // router.put('/piece/rotate/:index', pieceIndexSchema, validate, layoutController.rotateLayoutPiece);
 

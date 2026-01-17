@@ -16,21 +16,28 @@ export abstract class LayoutPiece {
     this.pieceDefId = data.pieceDefId;
   }
 
-  // Rotate the piece in it's current track piece location. Rotation logic is layout piece specific.
-  public abstract rotate(): void;
-
   // Get the attributes specific to this layout piece type
   public abstract getAttributes(): object;
 
   /**
-   * Calculate the new coordinates of all connected nodes (based on our coordinate change) and tell those nodes to update their coordinate
+   * Using the give coordinate calculate coordinates for all connected nodes and continue the update down the layout
    *
    * @param callingNodeId The ID of the node that called this method
    * @param coordinate The coordinate of the calling node
+   * @param loopProtector A string to prevent infinite loops
    */
-  public abstract updateCoordinate(callingNodeId: string, coordinate: Coordinate): void;
+  public abstract calculateCoordinatesAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void;
 
-  // Assign the object that holds information of which side of the piece is connected to which node
+  /**
+   * Create nodes at each connection point for this layout piece
+   * Each node is assigned a unique ID and a default uninitialized coordinate.
+   *
+   * @param firstNodeId The ID to assign to the first created node. Subsequent nodes will get incremented IDs.
+   * @return The "start" node for this layout piece
+   */
+  public abstract createNodes(firstNodeId: number): NodeConnections;
+
+  // Assign the nodeConnections object to this piece's nodeConnections property
   public setNodeConnections(nodeConnections: NodeConnections): void {
     this.nodeConnections = nodeConnections;
   }

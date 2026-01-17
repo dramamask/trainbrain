@@ -15,10 +15,9 @@ export interface Pieces {
 // All possible connection names
 export type ConnectionName = "start" | "end" | "diverge";
 
-// Data structure used to add a layout piece to an existing layout
+// Data structure used to add a new layout piece
 export interface AddLayoutPieceData {
-  connectToPiece: string;
-  connectionName: ConnectionName;
+  pieceId: string;
+  nodeId: string;
   pieceDefId: string;
-  layoutAttributes: object; // TODO: Is it worth it to list the layoutPieceAttributes here from each individual layout piece class?
 }

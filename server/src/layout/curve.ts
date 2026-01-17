@@ -3,6 +3,7 @@ import { LayoutNode } from "./layoutnode.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { TrackPieceDef } from "trainbrain-shared";
+import { NodeConnections } from "./types.js";
 
 interface PieceDefAttributes {
   angle: number;
@@ -23,7 +24,18 @@ export class Curve extends LayoutPiece {
     return {};
   }
 
-  public updateCoordinate(callingNodeId: string, coordinate: Coordinate): void {
+  public createNodes(firstNodeId: number): NodeConnections {
+    if (this.nodeConnections.size != 0) {
+      throw new Error("Nodes have already been created for this layout piece");
+    }
+
+    this.nodeConnections.set("start", new LayoutNode(firstNodeId.toString(), { x: 0, y: 0, heading: 0 }));
+    this.nodeConnections.set("end", new LayoutNode((firstNodeId + 1).toString(), { x: 0, y: 0, heading: 0 }));
+
+    return this.nodeConnections;
+  }
+
+  public calculateCoordinatesAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void {
     let oppositeSide = "";
     let oppositeSideNode: LayoutNode | undefined;
     this.nodeConnections.forEach((node, side) => {
@@ -44,7 +56,7 @@ export class Curve extends LayoutPiece {
       oppositeCoordinate = this.calculateEndCoordinate(coordinate);
     }
 
-    oppositeSideNode.updateCoordinate(oppositeCoordinate);
+    oppositeSideNode.setCoordinateAndContinue(this.id, oppositeCoordinate, loopProtector);
   }
 
   /**

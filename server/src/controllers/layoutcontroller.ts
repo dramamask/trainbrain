@@ -20,25 +20,25 @@ export const getLayout = (req: Request, res: Response, next: NextFunction): void
   }
 }
 
-// // Endpoint to add a piece to the track layout
-// export const addLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {
-//   // matchedData only includes fields defined in the validator middleware for this route
-//   const data = matchedData<AddLayoutPieceData>(req);
+// Endpoint to add a piece to the track layout
+export const addLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData<AddLayoutPieceData>(req);
 
-//   try {
-//     await layout.addLayoutPiece(data);
+  try {
+    await layout.addLayoutPiece(data);
 
-//     const uiLayout = layout.getUiLayout();
-//     const status = getHttpStatusCode(uiLayout);
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
 
-//     res.header("Content-Type", "application/json");
-//     res.status(status).send(JSON.stringify(uiLayout));
-//   } catch (error) {
-//     console.error("Unknown error at the edge", error);
-//     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-//       .send("Unknown error at the edge. Check server logs.");
-//   }
-// }
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+  } catch (error) {
+    console.error("Unknown error at the edge", error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+      .send("Unknown error at the edge. Check server logs.");
+  }
+}
 
 // // Endpoint to add a piece to the track layout
 // export const deleteLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {

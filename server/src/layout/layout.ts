@@ -5,7 +5,7 @@ import { NodeConnections } from "./types.js";
 import { pieceDefintionsDb, layoutPiecesDb, layoutNodesDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
-import { LayoutPieceData } from "../data_types/layoutPieces.js";
+import { AddLayoutPieceData, LayoutPieceData } from "../data_types/layoutPieces.js";
 import { LayoutNodeData } from "../data_types/layoutNodes.js";
 
 // The Layout class contains all LayoutPiece objects
@@ -58,21 +58,70 @@ export class Layout {
     }
   }
 
+  // Update the coordinates of a node and all connected nodes recursively
+  public updateConnectedNodeCoordinates(startNode: LayoutNode, coordinate: Coordinate): void {
+    const loopProtector = crypto.randomUUID();
+
+    startNode.setCoordinateAndContinue(null, coordinate, loopProtector);
+  }
+
   // Update a node's coordinate
   public async updateNode(nodeId: string, coordinate: Coordinate): Promise<void> {
     const node = this.nodes.get(nodeId);
     if (!node) {
       throw new Error("Cannot find node to update its coordinate");
     }
-    node.updateCoordinate(coordinate);
+    this.updateConnectedNodeCoordinates(node, coordinate);
 
     // Write the in-memory json DB to file
     layoutNodesDb.write();
   }
 
-  // // Add a piece to the layout
-  // public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
-  //   // Get the pieces that we need to connect to, and the connection names involved
+  /**
+   * Add a piece to the layout
+   *
+   * @param data The data for the new layout piece
+   *
+   * Order of operations:
+   * - TBD
+   *
+   *
+   */
+  public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
+    const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
+    const nodeToConnectTo = this.nodes.get(data.nodeId);
+    const pieceToConnectToStart = this.pieces.get(data.pieceId);
+
+    // Create the new layout piece (the new piece is not yet connected to anything)
+    const newPieceId = (this.getHighestPieceId() + 1).toString();
+    const newPieceData: LayoutPieceData = {
+      pieceDefId: data.pieceDefId,
+      attributes: {},
+      nodeConnections: {},
+    }
+    const newPiece = this.createLayoutPiece(newPieceId, newPieceData, pieceDef);
+
+    // Tell the new piece to create nodes for each of its connection points
+    const nodes = newPiece.createNodes(this.getHighestNodeId() + 1);
+
+    // Get the piece that will be on the "end" side of the new piece
+    const pieceToConnectToEnd = nodeToConnectTo?.getOtherPiece(pieceToConnectTo as LayoutPiece);
+
+    // Connect the new piece's start and end node to the pieces that are on either side of nodeToConnectTo
+    nodes.get("start")?.setPiece(newPiece, "start");
+    nodes.get("end")?.setPiece(newPiece, "end");
+
+
+    this.pieces.set(newPieceId, newPiece);
+
+
+    updateConnectedNodeCoordinates(//the new start node);
+
+    // Write the in-memory json DB to file
+    layoutNodesDb.write();
+  }
+
+    // Get the pieces that we need to connect to, and the connection names involved
   //   const piece1 = this.pieces.get(data.connectToPiece);
   //   if (!piece1) {
   //     throw new Error(`Could not find layout piece to connect to (piece id: ${data.connectToPiece})`);
