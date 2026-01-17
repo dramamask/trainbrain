@@ -1,8 +1,8 @@
 # TODO
 
+- Work on moving the layout.
 - Work on adding a piece.
 - Work on inserting a piece.
-- Work on moving the layout.
 - Work on deleting a piece.
 - Work on rotating a piece.
 - Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.

@@ -7,6 +7,16 @@
 }
 
 .heading {
-  padding-bottom: 10px;
+  color: #888888;
+  font-size: 0.75em;
   text-transform: uppercase;
+  font-weight: bold;
+  padding-bottom: 6px;
+}
+
+.category {
+  color: #888888;
+  font-size: 0.65em;
+  text-transform: uppercase;
+  padding: 8px 0 1px 0;
 }

@@ -1,7 +1,7 @@
 import { JSX } from "@emotion/react/jsx-runtime";
 import { capitalCase } from "change-case";
 import { Card, CardContent, Grid, Stack } from "@mui/material";
-import { KEY } from "@/app/services/keyeventhandlers/keydefinitions";
+import { KEYS, UI_CATEGORY } from "@/app/services/keyeventhandlers/keydefinitions";
 
 import styles from "./keyboardshortcuts.module.css"
 import csStyles from "./controlssection.module.css";
@@ -10,13 +10,13 @@ export default function KeyboardShortcuts() {
   return (
       <Card className={styles.card}>
         <CardContent className={styles.cardContent}>
-            <div className={csStyles.title + " " + styles.heading}>Keyboard Shortcuts</div>
+            <div className={styles.heading}>Keyboard Shortcuts</div>
             <Grid container spacing={1}>
               <Grid size="auto">
-                <Stack>{ renderKeys(KEY) }</Stack>
+                <Stack>{ renderKeys() }</Stack>
               </Grid>
               <Grid size="grow">
-                <Stack>{ renderDescriptions(KEY) }</Stack>
+                <Stack>{ renderDescriptions() }</Stack>
               </Grid>
             </Grid>
         </CardContent>
@@ -24,26 +24,32 @@ export default function KeyboardShortcuts() {
     )
 }
 
-// Render the list of keys for the keyboard shortcut list
-function renderKeys(keyObjectList: object): JSX.Element[] {
+// Render the list of keyboard shortcut keys
+function renderKeys(): JSX.Element[] {
   const listItems: JSX.Element[] = [];
 
-  Object.entries(keyObjectList).flatMap(([key, value]) => {
+  Object.entries(KEYS).flatMap(([key, value]) => {
+    const style = (key == UI_CATEGORY ? styles.category : csStyles.text);
+    const item = getKeyName(value) + (key == UI_CATEGORY ? ':' : '');
+
     listItems.push(
-      <div key={key} className={csStyles.text}><b>{getKeyName(value)}</b></div>
+      <div key={key} className={style}><b>{item}</b></div>
     )
   });
 
   return listItems;
 }
 
-// Render the list of descriptions for the keyboard shortcut list
-function renderDescriptions(keyObjectList: object): JSX.Element[] {
+// Render the list of descriptions for the keyboard shortcuts
+function renderDescriptions(): JSX.Element[] {
   const listItems: JSX.Element[] = [];
 
-  Object.entries(keyObjectList).flatMap(([key, value]) => {
+  Object.entries(KEYS).flatMap(([key, value]) => {
+    const item = (key == UI_CATEGORY ? '\u00A0' :capitalCase(key));
+    const style = (key == UI_CATEGORY ? styles.category : csStyles.text);
+
     listItems.push(
-      <div key={key} className={csStyles.text}>{capitalCase(key)}</div>
+      <div key={key} className={style}>{item}</div>
     )
   });
 

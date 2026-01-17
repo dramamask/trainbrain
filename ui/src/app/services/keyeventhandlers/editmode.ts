@@ -7,7 +7,7 @@ import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { deleteTrackPiece, rotateTrackPiece, setStartPosition } from "@/app/services/api/tracklayout";
 import { MOVE_INCREMENT } from "@/app/config/config";
-import { KEY } from "./keydefinitions";
+import { KEYS } from "./keydefinitions";
 
 // Key Event Handler for Edit Mode
 // Note that all key event handlers need to be called from keynoardEventHandler.tsx
@@ -17,32 +17,32 @@ export function handleKeyDown(event: KeyboardEvent) {
     const startPositionPiece = trackLayout.pieces.find(piece => piece.id == "0") as UiLayoutPiece;
     const startPositionAttributes = startPositionPiece.attributes as UiAttributesPosition;
 
-    if (KEY.RotateLayoutPieceInEditMode.includes(event.key)) {
+    if (KEYS.RotateLayoutPiece.includes(event.key)) {
         rotateLayoutPiece(selectionStore.getSelectedTrackPiece());
     }
 
     switch (event.key) {
-      case KEY.DeleteLayoutPieceInEditMode:
+      case KEYS.DeleteLayoutPiece:
         deleteLayoutPiece(selectionStore.getSelectedTrackPiece());
         selectionStore.deselectAll();
         break;
-      case KEY.MoveLayoutUpInEditMode:
+      case KEYS.MoveLayoutUp:
         startPositionAttributes.coordinate.y += MOVE_INCREMENT;
         storeStartPosition(startPositionAttributes);
         break;
-      case KEY.MoveLayoutDownInEditMode:
+      case KEYS.MoveLayoutDown:
         startPositionAttributes.coordinate.y -= MOVE_INCREMENT;
         storeStartPosition(startPositionAttributes);
         break;
-      case KEY.MoveLayoutLeftInEditMode:
+      case KEYS.MoveLayoutLeft:
         startPositionAttributes.coordinate.x -= MOVE_INCREMENT;
         storeStartPosition(startPositionAttributes);
         break;
-      case KEY.MoveLayoutRightInEditMode:
+      case KEYS.MoveLayoutRight:
         startPositionAttributes.coordinate.x += MOVE_INCREMENT;
         storeStartPosition(startPositionAttributes);
         break;
-      case KEY.DeselectLayoutPieceInEditMode:
+      case KEYS.DeselectLayoutPiece:
         selectionStore.deselectAll();
         break;
       default:
