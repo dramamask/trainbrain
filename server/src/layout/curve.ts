@@ -20,9 +20,20 @@ export class Curve extends LayoutPiece {
   protected angle: number;
   protected radius: number;
 
-  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
+  public static constructFromDbData(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef): Curve {
+    return new Curve(id, data.pieceDefId, pieceDef);
+  }
+
+  public static constructFromScratch(pieceId: string, pieceDefId: string, pieceDef: TrackPieceDef, nextNodeId: number, startHeading: number): Curve {
+    const newPiece = new Curve(pieceId, pieceDefId, pieceDef);
+    newPiece.createConnectorsAndNodes(nextNodeId, startHeading);
+
+    return newPiece;
+  }
+
+  private constructor(id: string, pieceDefId: string, pieceDef: TrackPieceDef) {
     const connectors = new LayoutPieceConnectors(NUM_CONNECTORS);
-    super(id, data, pieceDef, connectors);
+    super(id, pieceDefId, pieceDef.category, connectors);
 
     this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
     this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
@@ -32,18 +43,18 @@ export class Curve extends LayoutPiece {
     return {radius: this.radius};
   }
 
-  public createNodes(firstNodeId: number, startNodeHeading: number): LayoutPieceConnectors {
+  public createConnectorsAndNodes(firstNodeId: number, startHeading: number): LayoutPieceConnectors {
     if (this.connectors.getNumConnectors() != 0) {
       throw new FatalError("Nodes have already been created for this layout piece");
     }
 
     const startNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
-    this.connectors.createConnector("start", {heading: startNodeHeading, node: startNode});
+    this.connectors.createConnector("start", {heading: startHeading, node: startNode});
     startNode.connect(this, "LayoutPiece::createNodes()");
 
     const endNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
-    // Set heading to 0 for now. Will be calulated correctly when calculateCoordinatesAndContinue() is called
-    this.connectors.createConnector("end", {heading: 0, node: endNode});
+    const endHeading = startHeading + this.angle; // End-side always points to the right compared to the start-side
+    this.connectors.createConnector("end", {heading: endHeading, node: endNode});
     endNode.connect(this, "LayoutPiece::createNodes()");
 
     return this.connectors;

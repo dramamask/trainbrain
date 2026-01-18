@@ -40,7 +40,7 @@ export class LayoutPieceConnector {
   }
 
   public setHeading(heading: number): void {
-    this.heading = heading;
+    this.heading = this.normalizeAngle(heading);
   }
 
   // Connect to the given node
@@ -51,6 +51,11 @@ export class LayoutPieceConnector {
 
   // Increment the heading by a given amount
   public incrementHeading(headingIncrement: number): void {
-    this.heading = (this.heading + headingIncrement) % 360;
+    this.heading = this.normalizeAngle(this.heading + headingIncrement);
+  }
+
+  // Make sure the angle is always in the 0 to 359 degree range
+  protected normalizeAngle(angle: number): number {
+    return (angle % 360);
   }
 }

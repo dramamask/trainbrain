@@ -27,7 +27,7 @@ export class Layout {
       if (pieceDef == undefined) {
         throw new FatalError(`Unknown piece defintion ID found in layout json DB: ${pieceData.pieceDefId}`);
       }
-      this.pieces.set(key, this.createLayoutPiece(key, pieceData, pieceDef));
+      this.pieces.set(key, this.createLayoutPieceFromDB(key, pieceData, pieceDef));
     });
 
     // Create each layout node
@@ -35,12 +35,13 @@ export class Layout {
       this.nodes.set(key, new LayoutNode(key, nodeData.coordinate));
     });
 
-    // Assign the nodes to the layout pieces
+    // Connect the nodes and the layout pieces together
     Object.entries(layoutPiecesDb.data.pieces).forEach(([key, pieceData]) => {
       const piece = this.pieces.get(key);
       if (!piece) {
-        throw new FatalError("LayoutPiece not found when assigning nodes");
+        throw new FatalError("LayoutPiece not found");
       }
+
       const nodes = this.getNodes(pieceData.connectors);
       nodes.forEach((node, connectorName) => {
         this.connect(piece, node, connectorName);
@@ -79,14 +80,30 @@ export class Layout {
   }
 
   /**
-   * Insert a new piece in the layout
+   * Insert a new piece in the layout.
+   * Note that we will delete the specified node and replace it with the new piece and new nodes.
    *
    * @param data The information about what piece to insert and where
-   * data:
-   * - pieceDefId is the type of piece that we want to add.
-   * - pieceId is the existing piece in the layout that we want to connect the new piece to
-   * - nodeId is the node to which we want to connect the new piece
-   * I.e. insert a new piece that is connected to the specified existing piece, by way of the specified existing node.
+   *   data:
+   *   - pieceDefId is the type of piece that we want to add.
+   *   - pieceId is the existing piece in the layout that we want to connect the new piece to
+   *   - nodeId is the node that we will delete to make way for the new piece and its nodes
+   *
+   *                   SITUATION BEFORE:              SITUATION AFTER:
+   *
+   *                         O   O                         O   O
+   *                         |  /                          |  /
+   *                         | /                           | /
+   *                         |/                            |/
+   *   (node with ID nodeId) O                             O (new "end" node)
+   *                         |                             |
+   * (piece with ID pieceId) |                             | (new piece)
+   *                         |                             |
+   *                         O                             O (new "start" node)
+   *                                                       |
+   *                                                       | (piece with ID pieceId)
+   *                                                       |
+   *                                                       O
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
     // Get al the objects involved. Note that input validation has already been done.
@@ -104,14 +121,16 @@ export class Layout {
       }
     }
 
-    // Create the new layout piece (the new piece is not yet connected to anything)
-    const newPieceId = (this.getHighestPieceId() + 1).toString();
-    const newPieceData: LayoutPieceData = {
-      pieceDefId: data.pieceDefId,
-      connectors: {},
-    }
-    const newPiece = this.createLayoutPiece(newPieceId, newPieceData, pieceDef);
-    const connectors = newPiece.createNodes(this.getHighestNodeId() + 1, pieceToConnectToStart?.getHeading("end") || 0);
+    // Create the new layout piece and new nodes
+    // The new nodes and piece are connected to each other, but the nodes are not yet connected to the other piece(s) in the layout
+    const newPiece = this.createLayoutPieceAndNodesFromScratch(
+      (this.getHighestPieceId() + 1).toString(),
+      data.pieceDefId,
+      pieceDef,
+      this.getHighestNodeId() + 1,
+      pieceToConnectToStart?.getHeading("end") || 0
+    );
+    const connectors = newPiece.getConnectors();
 
     // Connect the existing pieces in the layout, and the new nodes, to each other
     if (pieceToConnectToStart) {
@@ -123,7 +142,7 @@ export class Layout {
     }
 
     // Add the new piece to the layout
-    this.pieces.set(newPieceId, newPiece);
+    this.pieces.set(newPiece.getId(), newPiece);
 
     // Add the new nodes to the layout
     connectors.forEach((connector) => {
@@ -327,13 +346,25 @@ export class Layout {
     return highestId;
   }
 
-  // Create a new LayoutPiece of the correct type.
-  protected createLayoutPiece(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
+  // Create a new layout piece from the provided layout DB data for this piece
+  protected createLayoutPieceFromDB(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
     switch(pieceDef.category) {
       case "straight":
-        return new Straight(id, pieceData, pieceDef);
+        return Straight.constructFromDbData(id, pieceData, pieceDef);
       case "curve":
-        return new Curve(id, pieceData, pieceDef);
+        return Curve.constructFromDbData(id, pieceData, pieceDef);
+      default:
+        throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.category}`)
+    }
+  }
+
+  // Create a new layout piece from scratch, using the provided info
+  public createLayoutPieceAndNodesFromScratch(pieceId: string, pieceDefId: string, pieceDef: TrackPieceDef, nextNodeId: number, startHeading: number): LayoutPiece {
+    switch(pieceDef.category) {
+      case "straight":
+        return Straight.constructFromScratch(pieceId, pieceDefId, pieceDef, nextNodeId, startHeading);
+      case "curve":
+        return Curve.constructFromScratch(pieceId, pieceDefId, pieceDef, nextNodeId, startHeading);
       default:
         throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.category}`)
     }
@@ -347,9 +378,19 @@ export class Layout {
   }
 
   // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively
-  protected updateAllConnectedCoordinatesAndHeadings(startNode: LayoutNode, coordinate: Coordinate, startConnectorHeading: number): void {
+  // Prerequisites:
+  // - The startNode needs to know its coordinate
+  // - Both layout pieces on either side of the node have to know their heading
+  protected updateAllConnectedCoordinatesAndHeadings(startNode: LayoutNode, coordinate: Coordinate): void {
     const loopProtector = crypto.randomUUID();
-    startNode.updateCoordinateAndContinue(null, coordinate, heading, loopProtector);
+
+    const pieces = startNode.getPieces();
+
+    // TBD
+    // pieces[0].
+
+    // To remove:
+    // startNode.updateCoordinateAndContinue(null, coordinate, loopProtector);
   }
 
   // Return an array of pieces that a specific node is connected to

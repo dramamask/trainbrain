@@ -1,7 +1,6 @@
 import { Coordinate, ConnectorName, TrackPieceCategory, TrackPieceDef, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
 import { layoutPiecesDb } from "../services/db.js";
 import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
-import { LayoutPieceConnectorsInfo } from "./types.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { FatalError } from "../errors/FatalError.js";
 import { LayoutNode } from "./layoutnode.js";
@@ -12,10 +11,10 @@ export abstract class LayoutPiece {
   protected category: string;
   protected connectors: LayoutPieceConnectors;
 
-  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef, connectors: LayoutPieceConnectors) {
+  protected constructor(id: string, pieceDefId: string, category: string, connectors: LayoutPieceConnectors) {
     this.id = id;
-    this.pieceDefId = data.pieceDefId;
-    this.category = pieceDef.category;
+    this.pieceDefId = pieceDefId;
+    this.category = category;
     this.connectors = connectors;
   }
 
@@ -34,14 +33,17 @@ export abstract class LayoutPiece {
   public abstract updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void;
 
   /**
-   * Create nodes at each connection point for this layout piece
+   * Create connectors and nodes at each connection point for this layout piece
    * Each node is assigned a unique ID and a default uninitialized coordinate.
+   * Each connector is assigned the proper heading.
    * Note that this method should only ever be called when a new layout piece is added to the layout for the first time.
    *
    * @param firstNodeId The ID to assign to the first created node. Subsequent nodes will get incremented IDs.
-   * @return The "start" node for this layout piece
+   * @param startHeading The heading of the start connector of the new piece
+   *
+   * @return The connectors for this piece (which have references to the nodes)
    */
-  public abstract createNodes(firstNodeId: number, startNodeHeading: number): LayoutPieceConnectors;
+  protected abstract createConnectorsAndNodes(firstNodeId: number, startHeading: number): LayoutPieceConnectors;
 
   // Return the ID of this layout piece
   public getId(): string {
@@ -56,6 +58,11 @@ export abstract class LayoutPiece {
     }
 
     return connector.getHeading();
+  }
+
+  // Return the connectors
+  public getConnectors(): LayoutPieceConnectors {
+    return this.connectors;
   }
 
   // Return the name of the connector that is connected to the given node
