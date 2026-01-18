@@ -379,18 +379,15 @@ export class Layout {
 
   // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively
   // Prerequisites:
-  // - The startNode needs to know its coordinate
-  // - Both layout pieces on either side of the node have to know their heading
+  // - The startNode knows its coordinate
+  // - Layout pieces on either side of the node have to know their heading
   protected updateAllConnectedCoordinatesAndHeadings(startNode: LayoutNode, coordinate: Coordinate): void {
     const loopProtector = crypto.randomUUID();
 
     const pieces = startNode.getPieces();
-
-    // TBD
-    // pieces[0].
-
-    // To remove:
-    // startNode.updateCoordinateAndContinue(null, coordinate, loopProtector);
+    pieces.forEach((piece, index) => {
+      piece.updateHeadingAndContinue(startNode.getId(), startNode.getCoordinate(), piece.getHeading(), loopProtector);
+    });
   }
 
   // Return an array of pieces that a specific node is connected to

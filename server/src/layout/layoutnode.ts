@@ -151,9 +151,10 @@ export class LayoutNode {
    *
    * @param callingPieceId The ID of the piece that called this method
    * @param coordinate The new coordinate for this node
+   * @param heading The heading to pass along to the piece we are going to call
    * @param loopProtector A string to prevent infinite loops
    */
-  public updateCoordinateAndContinue(callingPieceId: string | null, coordinate: Coordinate, loopProtector: string): void {
+  public updateCoordinateAndContinue(callingPieceId: string | null, coordinate: Coordinate, heading: number, loopProtector: string): void {
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
       return;
@@ -168,7 +169,7 @@ export class LayoutNode {
     this.pieces.forEach((piece, index) => {
       if (piece.getId() !== callingPieceId) {
         let coordinate = this.coordinate;
-        piece.updateHeadingAndContinue(this.id, coordinate, loopProtector);
+        piece.updateHeadingAndContinue(this.id, coordinate, heading, loopProtector);
       }
     });
   }

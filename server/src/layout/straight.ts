@@ -53,34 +53,45 @@ export class Straight extends LayoutPiece {
     return this.connectors;
   }
 
-  public updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void {
+  public updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void {
+    // Prevent infinite loops by checking the loopProtector string
+    if (this.loopProtector === loopProtector) {
+      return;
+    }
+    this.loopProtector = loopProtector;
+
+    // Update the heading
+    this.connectors.forEach((connector) => {
+      connector.setHeading(heading);
+    })
+
+    // Find the node that we need to call next.
     let oppositeSideNode: LayoutNode | undefined;
-    this.connectors.forEach((node, side) => {
-      if (node.getId() !== callingNodeId) {
-        oppositeSideNode = node;
+    this.connectors.forEach((connector, side) => {
+      if (connector.getNode().getId() !== callingNodeId) {
+        oppositeSideNode = connector.getNode();
       }
     });
-
     if (oppositeSideNode === undefined) {
       throw new FatalError("A Straight piece should always have two connected nodes");
     }
 
-    oppositeSideNode.updateCoordinateAndContinue(this.id, this.calculateCoordinate(coordinate), loopProtector);
+    // Call the next node
+    oppositeSideNode.updateCoordinateAndContinue(this.id, this.calculateCoordinate(coordinate, heading), heading, loopProtector);
   }
 
   /**
    * Calculates the coordinate and heading of one side of the track
    * piece based on the known coordinate of the other side of the piece.
    */
-  private calculateCoordinate(otherCoordinate: Coordinate): Coordinate {
+  private calculateCoordinate(otherCoordinate: Coordinate, heading: number): Coordinate {
     // Calculate x and y position based on the heading of the track piece
-    const dX = this.length * Math.sin(this.degreesToRadians(otherCoordinate.heading));
-    const dY = this.length * Math.cos(this.degreesToRadians(otherCoordinate.heading));
+    const dX = this.length * Math.sin(this.degreesToRadians(heading));
+    const dY = this.length * Math.cos(this.degreesToRadians(heading));
 
     return {
       x: this.roundTo2(otherCoordinate.x + dX),
       y: this.roundTo2(otherCoordinate.y + dY),
-      heading: otherCoordinate.heading,
     }
   }
 }

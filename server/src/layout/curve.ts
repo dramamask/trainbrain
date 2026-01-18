@@ -60,12 +60,18 @@ export class Curve extends LayoutPiece {
     return this.connectors;
   }
 
-  public updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void {
+  public updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void {
+    // Prevent infinite loops by checking the loopProtector string
+    if (this.loopProtector === loopProtector) {
+      return;
+    }
+    this.loopProtector = loopProtector;
+
     let oppositeSide = "";
     let oppositeSideNode: LayoutNode | undefined;
-    this.connectors.forEach((node, side) => {
-      if (node.getId() !== callingNodeId) {
-        oppositeSideNode = node;
+    this.connectors.forEach((connector, side) => {
+      if (connector.getNode().getId() !== callingNodeId) {
+        oppositeSideNode = connector.getNode();
         oppositeSide = side;
       }
     });
@@ -74,14 +80,17 @@ export class Curve extends LayoutPiece {
       throw new FatalError("A Curve piece should always have two connected nodes");
     }
 
-    let oppositeCoordinate: Coordinate;
+    let oppositeSideCoordinate: Coordinate;
+    let oppositeSideHeading : number;
     if (oppositeSide === "start") {
-      oppositeCoordinate = this.calculateStartCoordinate(coordinate);
+      let {osCoordinate, osHeading} = this.calculateStartCoordinate(coordinate);
+      oppositeSideCoordinate = osCoordinate;
+      oppositeSideHeading = osHeading;
     } else {
-      oppositeCoordinate = this.calculateEndCoordinate(coordinate);
+      let {oppositeSideCoordinate, oppositeSideHeading} = this.calculateEndCoordinate(coordinate);
     }
 
-    oppositeSideNode.updateCoordinateAndContinue(this.id, oppositeCoordinate, loopProtector);
+    oppositeSideNode.updateCoordinateAndContinue(this.id, oppositeSideCoordinate, oppositeSideHeading, loopProtector);
   }
 
   /**
@@ -89,23 +98,29 @@ export class Curve extends LayoutPiece {
    * a known start coordinate and the current piece's definition.
    *
    * Note that a curve always faces right as seen from the direction going from start to end!
+   *
+   * @param startCoordinate The start coordinate of this piece
+   * @param startHeading The start heading of this piece
+   * @returns [endCoordinate, endHeading]
    */
-  private calculateEndCoordinate(start: Coordinate): Coordinate {
+  private calculateEndCoordinate(startCoordinate: Coordinate, startHeading: number): {endCoordinate: Coordinate, endHeading: number} {
     // Calculate x and y position based on the angle of the track piece
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
 
     // Rotate the track piece to fit correctly on the end of the previous piece
-    const rotated = this.rotatePoint(dX, dY, start.heading);
+    const rotated = this.rotatePoint(dX, dY, startHeading);
     dX = rotated.x;
     dY = rotated.y;
 
     // Assign the x, y and heading based on the previous calculations
-    return {
-      x: this.roundTo2(start.x + dX),
-      y: this.roundTo2(start.y + dY),
-      heading: start.heading + this.angle,
-    }
+    return ({
+      endCoordinate: {
+        x: this.roundTo2(startCoordinate.x + dX),
+        y: this.roundTo2(startCoordinate.y + dY),
+      },
+      endHeading: startHeading + this.angle,
+    })
   }
 
   /**
@@ -113,8 +128,12 @@ export class Curve extends LayoutPiece {
    * a known end coordinate and the current piece's definition.
    *
    * Note that a curve always faces right as seen from the direction going from start to end!
+   *
+   * @param endCoordinate The start coordinate of this piece
+   * @param endHeading The start heading of this piece
+   * @returns [startCoordinate, startHeading]
    */
-  private calculateStartCoordinate(end: Coordinate): Coordinate {
+  private calculateStartCoordinate(endCoordinate: Coordinate, endHeading: number): {startCoordinate: Coordinate, startHeading: number} {
     // Calculate x and y position based on the angle of the track piece
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
@@ -126,16 +145,18 @@ export class Curve extends LayoutPiece {
     pieceAngle = (0 - pieceAngle);
 
     // Rotate the track piece to fit correctly on the end of the previous piece
-    const rotated = this.rotatePoint(dX, dY, end.heading);
+    const rotated = this.rotatePoint(dX, dY, endHeading);
     dX = rotated.x;
     dY = rotated.y;
 
     // Assign the x, y and heading based on the previous calculations
-    return {
-      x: this.roundTo2(end.x + dX),
-      y: this.roundTo2(end.y + dY),
-      heading: end.heading + pieceAngle,
-    }
+    return ({
+      startCoordinate: {
+        x: this.roundTo2(endCoordinate.x + dX),
+        y: this.roundTo2(endCoordinate.y + dY),
+      },
+      startHeading: endHeading + pieceAngle,
+    })
   }
 
   // We rotate the curve by swapping the start and end. Seen from the vantage point

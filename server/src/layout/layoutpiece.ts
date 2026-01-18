@@ -10,12 +10,14 @@ export abstract class LayoutPiece {
   protected pieceDefId: string;
   protected category: string;
   protected connectors: LayoutPieceConnectors;
+  protected loopProtector: string;
 
   protected constructor(id: string, pieceDefId: string, category: string, connectors: LayoutPieceConnectors) {
     this.id = id;
     this.pieceDefId = pieceDefId;
     this.category = category;
     this.connectors = connectors;
+    this.loopProtector = "";
   }
 
   /**
@@ -28,9 +30,10 @@ export abstract class LayoutPiece {
    *
    * @param callingNodeId The ID of the node that called this method
    * @param coordinate The coordinate of the calling node
+   * @param heading The heading to assign to the connector that is facing the calling node
    * @param loopProtector A string to prevent infinite loops
    */
-  public abstract updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void;
+  public abstract updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void;
 
   /**
    * Create connectors and nodes at each connection point for this layout piece
