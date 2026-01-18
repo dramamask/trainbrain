@@ -389,9 +389,9 @@ export class Layout {
 
     const pieces = startNode.getPieces();
     pieces.forEach((piece, index) => {
-      // TODO: Find out to which side of the piece is connected to the startNode
-      // TODO: Get that side's coordinate
-      piece.updateHeadingAndContinue(startNode.getId(), startNode.getCoordinate(), piece.getHeading(), loopProtector);
+      const connectorName = piece.getConnectorName(startNode);
+      const heading = piece.getConnectors().getConnector(connectorName).getHeading()
+      piece.updateHeadingAndContinue(startNode.getId(), startNode.getCoordinate(), heading, loopProtector);
     });
   }
 
