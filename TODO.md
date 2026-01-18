@@ -4,8 +4,8 @@
 - Work on adding a piece on the UI side after the server side is done.
 - Reorganizie shared section with different files to organize it better.
 - Work on inserting a piece.
+- Work on rotating a piece. Do need separate logic afterall?
 - Work on deleting a piece.
-- Work on rotating a piece.
 - Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Do not allow start position move when a piece is selected. Info message.

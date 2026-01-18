@@ -59,45 +59,44 @@ export class Layout {
   }
 
   // Update the coordinates of a node and all connected nodes recursively
-  public updateConnectedNodeCoordinates(startNode: LayoutNode, coordinate: Coordinate, headingIncrement: number): void {
-    startNode.getPieces().forEach(piece => {
-        piece.incrementHeading(headingIncrement);
-    });
-
+  public updateConnectedNodeCoordinates(startNode: LayoutNode, coordinate: Coordinate): void {
     const loopProtector = crypto.randomUUID();
     startNode.setCoordinateAndContinue(null, coordinate, loopProtector);
   }
 
   // Update a node's coordinate
-  public async updateNode(nodeId: string, coordinate: Coordinate, heading: number): Promise<void> {
+  public async updateNode(nodeId: string, coordinate: Coordinate, headingIncrement: number): Promise<void> {
     const node = this.nodes.get(nodeId);
     if (!node) {
       throw new Error("Cannot find node to update its coordinate");
     }
-    this.updateConnectedNodeCoordinates(node, coordinate, heading);
+
+    node.getPieces().forEach(piece => {
+        piece.incrementHeading(headingIncrement);
+    });
+
+    this.updateConnectedNodeCoordinates(node, coordinate);
 
     // Write the in-memory json DB to file
     layoutNodesDb.write();
   }
 
   /**
-   * Add a piece to the layout
+   * Insert a new piece in the layout
    *
-   * @param data The data for the new layout piece
+   * @param data The information about what piece to insert and where
    *
-   * Order of operations:
-   * - TBD
-   *
-   *
+   * The pieceDefId is the type of piece that we want to add.
+   * The nodeId is the node to which the new piece will be connected.
+   * The pieceId signifies the side of the node that we want to connect the new piece to.
+   * I.e. insert a new piece to the specified node on the side where the specified piece is connected right now.
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
-
-    // TODO: check what happens if  node has no piece on one or either side!!!!!!!!!!!!!!!!
-
+    // Get al the objects involved. Note that input validation has already been done.
     const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
     const nodeToReplace = this.nodes.get(data.nodeId);
-    const pieceToConnectToStart = this.pieces.get(data.pieceId) as LayoutPiece;
-    const pieceToConnectToEnd = nodeToReplace?.getOtherPiece(pieceToConnectToStart as LayoutPiece);
+    const pieceToConnectToStart = this.pieces.get(data.pieceId) || null;
+    const pieceToConnectToEnd = nodeToReplace?.getOtherPiece(pieceToConnectToStart) || null;
 
     // Create the new layout piece (the new piece is not yet connected to anything)
     const newPieceId = (this.getHighestPieceId() + 1).toString();
@@ -111,8 +110,8 @@ export class Layout {
     const nodes = newPiece.createNodes(this.getHighestNodeId() + 1);
 
     // Connect the new piece's start and end node to the pieces that are on either side of nodeToConnectTo
-    nodes.get("start")?.addPiece(pieceToConnectToStart as LayoutPiece);
-    nodes.get("end")?.addPiece(pieceToConnectToEnd as LayoutPiece);
+    nodes.get("start")?.addPiece(pieceToConnectToStart);
+    nodes.get("end")?.addPiece(pieceToConnectToEnd);
 
     // Add the new piece and the new nodes to the layout
     this.pieces.set(newPieceId, newPiece);
@@ -124,7 +123,7 @@ export class Layout {
     this.updateConnectedNodeCoordinates(
       this.nodes.get("start") as LayoutNode,
       nodeToReplace?.getCoordinate() as Coordinate,
-      pieceToConnectToStart.getHeading("end")
+      pieceToConnectToStart?.getHeading("end") || 0,
     );
 
     // Delete the old node that we are replacing

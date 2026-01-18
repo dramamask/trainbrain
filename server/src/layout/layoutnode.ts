@@ -27,23 +27,31 @@ export class LayoutNode {
   }
 
   // Given one connected piece, return the other connected piece (or null if there is none)
-  public getOtherPiece(piece: LayoutPiece): LayoutPiece | null {
-    if (this.pieces.length > 2) {
-      throw new Error("getOtherPieceById(): node should not have more than two pieces connected to it")
+  public getOtherPiece(piece: LayoutPiece | null): LayoutPiece | null {
+    // We are asking about a null piece
+    if (piece == null) {
+      switch (this.pieces.length) {
+        case 0:
+          return null;
+        case 1:
+          return this.pieces[0];
+        default:
+          throw new Error("This node is connected to two pieces. You are asking about a null piece. Does not compute.");
+      }
     }
 
+    // We are asking about an actual piece
     const index = this.pieces.findIndex(pieceInArray => pieceInArray.getId() == piece.getId());
-
     if (index == -1) {
-      throw new Error("getOtherPieceById(): specified piece is unknown to me")
+      throw new Error("The piece you are asking about is unknown to me")
     }
 
-    // There is no other piece. Return null.
+    // We are connected to the piece they are asking about, but not connected to any other pieces. Return null.
     if (this.pieces.length == 1) {
       return null;
     }
 
-    // There are two pieces. Return the other one.
+    // We are connected to the piece they are asking about, and one other piece. Return the other piece.
     return this.pieces[1 - index];
   }
 
@@ -65,14 +73,24 @@ export class LayoutNode {
 
   // Set the pieces connected to this node
   public setPieces(pieces: LayoutPiece[]) {
+    if (pieces.length > 2) {
+      throw new Error("It's not possible to add more than two pieces to a node");
+    }
     this.pieces = pieces;
   }
 
   // Add a piece to this node
-  public addPiece(piece: LayoutPiece) {
-    if (this.pieces.length >= 2) {
-      throw new Error("A layout node cannot have more than two pieces connected to it");
+  public addPiece(piece: LayoutPiece | null) {
+    if ((this.pieces.length) == 2) {
+      throw new Error("This node already has two pieces");
     }
+
+    // We are asking to connected nothing. This is a valid scenario. We don't need to do anything.
+    if (piece == null) {
+      return;
+    }
+
+    // Add the piece.
     this.pieces.push(piece);
   }
 

@@ -50,8 +50,8 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
       x: data.x,
       y: data.y,
     };
-    const newHeading = data.heading;
-    await layout.updateNode(data.index, newCoordinate, newHeading);
+    const headingIncrement = data.headingIncrement;
+    await layout.updateNode(data.index, newCoordinate, headingIncrement);
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);
