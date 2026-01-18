@@ -121,13 +121,13 @@ export class LayoutNode {
   }
 
   /**
-   * Set our coordinate and tell the connected piece on the other side to continue the update down the layout
+   * Set our coordinate. Tell the connected piece on the other side to update its heading, and to continue the update down the layout
    *
    * @param callingPieceId The ID of the piece that called this method
    * @param coordinate The new coordinate for this node
    * @param loopProtector A string to prevent infinite loops
    */
-  public setCoordinateAndContinue(callingPieceId: string | null, coordinate: Coordinate, loopProtector: string): void {
+  public updateCoordinateAndContinue(callingPieceId: string | null, coordinate: Coordinate, loopProtector: string): void {
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
       return;
@@ -142,7 +142,7 @@ export class LayoutNode {
     this.pieces.forEach((piece, index) => {
       if (piece.getId() !== callingPieceId) {
         let coordinate = this.coordinate;
-        piece.calculateCoordinatesAndContinue(this.id, coordinate, loopProtector);
+        piece.updateHeadingAndContinue(this.id, coordinate, loopProtector);
       }
     });
   }

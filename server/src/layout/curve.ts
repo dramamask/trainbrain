@@ -3,7 +3,9 @@ import { LayoutNode } from "./layoutnode.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { TrackPieceDef } from "trainbrain-shared";
-import { NodeConnections } from "./types.js";
+import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
+
+const NUM_CONNECTORS = 2; // This layout piece has two connectors
 
 interface PieceDefAttributes {
   angle: number;
@@ -18,7 +20,9 @@ export class Curve extends LayoutPiece {
   protected radius: number;
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
-    super(id, data, pieceDef);
+    const connectors = new LayoutPieceConnectors(NUM_CONNECTORS);
+    super(id, data, pieceDef, connectors);
+
     this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
     this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
   }
@@ -27,18 +31,24 @@ export class Curve extends LayoutPiece {
     return {radius: this.radius};
   }
 
-  public createNodes(firstNodeId: number): NodeConnections {
-    if (this.connectors.size != 0) {
+  public createNodes(firstNodeId: number, startNodeHeading: number): LayoutPieceConnectors {
+    if (this.connectors.getNumConnectors() != 0) {
       throw new Error("Nodes have already been created for this layout piece");
     }
 
-    this.connectors.set("start", new LayoutNode(firstNodeId.toString(), { x: 0, y: 0, heading: 0 }));
-    this.connectors.set("end", new LayoutNode((firstNodeId + 1).toString(), { x: 0, y: 0, heading: 0 }));
+    const startNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
+    this.connectors.addConnectorFromData("start", {heading: startNodeHeading, node: startNode});
+    startNode.addPiece(this);
+
+    const endNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
+    // Set heading to 0 for now. Will be calulated correctly when calculateCoordinatesAndContinue() is called
+    this.connectors.addConnectorFromData("end", {heading: 0, node: endNode});
+    endNode.addPiece(this);
 
     return this.connectors;
   }
 
-  public calculateCoordinatesAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void {
+  public updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void {
     let oppositeSide = "";
     let oppositeSideNode: LayoutNode | undefined;
     this.connectors.forEach((node, side) => {
@@ -59,7 +69,7 @@ export class Curve extends LayoutPiece {
       oppositeCoordinate = this.calculateEndCoordinate(coordinate);
     }
 
-    oppositeSideNode.setCoordinateAndContinue(this.id, oppositeCoordinate, loopProtector);
+    oppositeSideNode.updateCoordinateAndContinue(this.id, oppositeCoordinate, loopProtector);
   }
 
   /**

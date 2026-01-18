@@ -1,9 +1,7 @@
 import { Coordinate, ConnectorName, TrackPieceCategory, TrackPieceDef, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
 import { layoutPiecesDb } from "../services/db.js";
 import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
-import { LayoutPieceConnectorsInfo, NodeConnections } from "./types.js";
-import { LayoutNode } from "./layoutnode.js";
-import { LayoutPieceConnector } from "./layoutpiececonnector.js";
+import { LayoutPieceConnectorsInfo } from "./types.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { FatalError } from "../errors/FatalError.js";
 
@@ -13,11 +11,11 @@ export abstract class LayoutPiece {
   protected category: string;
   protected connectors: LayoutPieceConnectors;
 
-  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
+  constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef, connectors: LayoutPieceConnectors) {
     this.id = id;
     this.pieceDefId = data.pieceDefId;
     this.category = pieceDef.category;
-    this.connectors = new LayoutPieceConnectors(); // These are not set here. Needs a separate call to setConnectors().
+    this.connectors = connectors;
   }
 
   /**
@@ -32,7 +30,7 @@ export abstract class LayoutPiece {
    * @param coordinate The coordinate of the calling node
    * @param loopProtector A string to prevent infinite loops
    */
-  public abstract calculateCoordinatesAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void;
+  public abstract updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void;
 
   /**
    * Create nodes at each connection point for this layout piece
@@ -41,7 +39,7 @@ export abstract class LayoutPiece {
    * @param firstNodeId The ID to assign to the first created node. Subsequent nodes will get incremented IDs.
    * @return The "start" node for this layout piece
    */
-  public abstract createNodes(firstNodeId: number): NodeConnections;
+  public abstract createNodes(firstNodeId: number, startNodeHeading: number): LayoutPieceConnectors;
 
   // Return the ID of this layout piece
   public getId(): string {

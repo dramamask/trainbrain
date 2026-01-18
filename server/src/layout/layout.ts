@@ -66,24 +66,20 @@ export class Layout {
     }
   }
 
-  // Update the coordinates of a node and all connected nodes recursively
-  public updateConnectedNodeCoordinates(startNode: LayoutNode, coordinate: Coordinate): void {
-    const loopProtector = crypto.randomUUID();
-    startNode.setCoordinateAndContinue(null, coordinate, loopProtector);
-  }
-
-  // Update a node's coordinate
+  // Update a node's coordinate and/or the attached layout piece's heading
   public async updateNode(nodeId: string, coordinate: Coordinate, headingIncrement: number): Promise<void> {
     const node = this.nodes.get(nodeId);
     if (!node) {
       throw new Error("Cannot find node to update its coordinate");
     }
 
+    // Update the heading for the piece(s) connected to the node (if any)
     node.getPieces().forEach(piece => {
         piece.incrementHeading(headingIncrement);
     });
 
-    this.updateConnectedNodeCoordinates(node, coordinate);
+    // Update the coordinates of the node, and the heading and coordinates of all connected pieces and nodes recursively
+    this.updateAllConnectedCoordinatesAndHeadings(node, coordinate);
 
     // Write the in-memory json DB to file
     layoutNodesDb.write();
@@ -111,7 +107,7 @@ export class Layout {
       pieceToConnectToEnd = nodeToReplace?.getOtherPiece(pieceToConnectToStart) || null;
     } catch (error) {
       if (error instanceof NotConnectedError) {
-        throw new Error("The specified piece and node are not even connected dude!")
+        throw new FatalError("The specified piece and node are not even connected dude!")
       }
     }
 
@@ -124,11 +120,12 @@ export class Layout {
     const newPiece = this.createLayoutPiece(newPieceId, newPieceData, pieceDef);
 
     // Tell the new piece to create nodes for each of its connection points
-    const nodes = newPiece.createNodes(this.getHighestNodeId() + 1);
-
-    // Set the new piece's heading
+    const connectors = newPiece.createNodes(this.getHighestNodeId() + 1, pieceToConnectToStart?.getHeading("end") || 0);
 
     // Connect the new piece's start and end node to the pieces that are on either side of nodeToConnectTo
+    connectors.forEach((connector, connectorName) => {
+
+    })
     nodes.get("start")?.addPiece(pieceToConnectToStart);
     nodes.get("end")?.addPiece(pieceToConnectToEnd);
 
@@ -139,10 +136,9 @@ export class Layout {
     });
 
     // Update the coordinates and headings of all nodes and pieces connected to the new piece's start node
-    this.updateConnectedNodeCoordinates(
+    this.updateAllConnectedCoordinatesAndHeadings(
       this.nodes.get("start") as LayoutNode,
-      nodeToReplace?.getCoordinate() as Coordinate,
-      pieceToConnectToStart?.getHeading("end") || 0,
+      nodeToReplace?.getCoordinate() as Coordinate
     );
 
     // Delete the old node that we are replacing
@@ -344,12 +340,18 @@ export class Layout {
     }
   }
 
-  // Return an array of pieces that a specific node is connected to
-  protected getPieces(node: LayoutNodeData): LayoutPiece[] {
-    return node.pieces.map(pieceId => {
-      return this.pieces.get(pieceId);
-    }) as LayoutPiece[];
+  // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively
+  protected updateAllConnectedCoordinatesAndHeadings(startNode: LayoutNode, coordinate: Coordinate): void {
+    const loopProtector = crypto.randomUUID();
+    startNode.updateCoordinateAndContinue(null, coordinate, loopProtector);
   }
+
+  // // Return an array of pieces that a specific node is connected to
+  // protected getPieces(node: LayoutNodeData): LayoutPiece[] {
+  //   return node.pieces.map(pieceId => {
+  //     return this.pieces.get(pieceId);
+  //   }) as LayoutPiece[];
+  // }
 
   // Return the object that is needed to create a LayoutPieceConnectors class instance
   // All this method does is translate from a list that contains node IDs to the equivalent object that contains LayoutNode class instances
