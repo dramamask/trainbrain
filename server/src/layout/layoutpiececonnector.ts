@@ -43,7 +43,9 @@ export class LayoutPieceConnector {
     this.heading = heading;
   }
 
-  public setNode(node: LayoutNode): void {
+  // Connect to the given node
+  // Note that this disconnects us from whatever node we were connected to before
+  public connectToNode(node: LayoutNode): void {
     this.node = node;
   }
 

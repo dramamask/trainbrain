@@ -1,13 +1,6 @@
 # TODO
 
-- Layout piece setNodeConnections() does it need to set heading too? or is it okay like this?
-- Add deadend indicators in the node ui list
-- Look at createNodes() for Straight and Curve classes
-- Look at layout getNodeConnections() errors.
-- Fix createNodes() on the layout pieces
-- Heading calculations needs completing for adding a new piece.
-- Add the NotCosherError in other places where it makes sense.
-
+- Heading and coordinate calculations needs to be fixed
 - Work on adding a piece on the UI side after the server side is done.
 - Reorganizie shared section with different files to organize it better.
 - Work on inserting a piece.

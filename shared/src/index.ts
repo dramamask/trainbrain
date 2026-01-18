@@ -40,6 +40,7 @@ export interface UiLayoutPiece {
 export interface UiLayoutNode {
   id: string;
   coordinate: Coordinate;
+  deadEnd: boolean; // This node is a dead-end, i.e. it is not connected to a layout piece on one side
 }
 
 // The structure that the server returns from the GET layout API call

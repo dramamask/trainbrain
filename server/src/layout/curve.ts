@@ -4,6 +4,7 @@ import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { TrackPieceDef } from "trainbrain-shared";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
+import { FatalError } from "../errors/FatalError.js";
 
 const NUM_CONNECTORS = 2; // This layout piece has two connectors
 
@@ -33,17 +34,17 @@ export class Curve extends LayoutPiece {
 
   public createNodes(firstNodeId: number, startNodeHeading: number): LayoutPieceConnectors {
     if (this.connectors.getNumConnectors() != 0) {
-      throw new Error("Nodes have already been created for this layout piece");
+      throw new FatalError("Nodes have already been created for this layout piece");
     }
 
     const startNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
-    this.connectors.addConnectorFromData("start", {heading: startNodeHeading, node: startNode});
-    startNode.addPiece(this);
+    this.connectors.createConnector("start", {heading: startNodeHeading, node: startNode});
+    startNode.connect(this, "LayoutPiece::createNodes()");
 
     const endNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
     // Set heading to 0 for now. Will be calulated correctly when calculateCoordinatesAndContinue() is called
-    this.connectors.addConnectorFromData("end", {heading: 0, node: endNode});
-    endNode.addPiece(this);
+    this.connectors.createConnector("end", {heading: 0, node: endNode});
+    endNode.connect(this, "LayoutPiece::createNodes()");
 
     return this.connectors;
   }
@@ -59,7 +60,7 @@ export class Curve extends LayoutPiece {
     });
 
     if (oppositeSideNode === undefined || oppositeSide === "") {
-      throw new Error("A Curve piece should always have two connected nodes");
+      throw new FatalError("A Curve piece should always have two connected nodes");
     }
 
     let oppositeCoordinate: Coordinate;

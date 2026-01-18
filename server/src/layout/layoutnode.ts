@@ -3,6 +3,7 @@ import { layoutNodesDb } from "../services/db.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNodeData } from "../data_types/layoutNodes.js";
 import { NotConnectedError } from "../errors/NotConnectedError.js";
+import { FatalError } from "../errors/FatalError.js";
 
 export class LayoutNode {
   protected id: string;
@@ -62,7 +63,7 @@ export class LayoutNode {
         case 1:
           return this.pieces[0];
         default:
-          throw new Error("This node is connected to two pieces. You are asking about a null piece. Does not compute.");
+          throw new FatalError("This node is connected to two pieces. You are asking about a null piece. Does not compute.");
       }
     }
 
@@ -93,22 +94,32 @@ export class LayoutNode {
   public getUiLayoutData(): UiLayoutNode {
     return {
       id: this.id,
-      coordinate: this.coordinate
+      coordinate: this.coordinate,
+      deadEnd: this.isUiDeadEnd(),
     };
   }
 
-  // Set the pieces connected to this node
-  public setPieces(pieces: LayoutPiece[]) {
-    if (pieces.length > 2) {
-      throw new Error("It's not possible to add more than two pieces to a node");
-    }
-    this.pieces = pieces;
+  // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.
+  // Note that it's not a dead-end if it has no pieces connected to it. The UI shows those kinds of nodes in
+  // a different way.
+  protected isUiDeadEnd(): boolean {
+    return (this.pieces.length == 1);
   }
 
-  // Add a piece to this node
-  public addPiece(piece: LayoutPiece | null) {
+  // Connect this node to the given piece
+  public connect(piece: LayoutPiece | null, friendToken: string) {
+    // We risk the integraty of layout piece to node connections if we call this method willy nilly
+    switch (friendToken) {
+      case "LayoutPiece::createNodes()":
+        break;
+      case "Layout::connect()":
+        break;
+      default:
+        throw new FatalError("This method should only ever be called from the methods listed above.");
+    }
+
     if ((this.pieces.length) == 2) {
-      throw new Error("This node already has two pieces");
+      throw new FatalError("This node is already connected to two pieces");
     }
 
     // We are asking to connected nothing. This is a valid scenario. We don't need to do anything.
@@ -116,8 +127,23 @@ export class LayoutNode {
       return;
     }
 
-    // Add the piece.
+    // Add the piece
     this.pieces.push(piece);
+  }
+
+  // Disconnect this node from the given piece
+  public disconnect(friendToken: string): void {
+    // We risk the integraty of layout piece to node connections if we call this method willy nilly
+    switch (friendToken) {
+      case "LayoutPiece::createNodes()":
+        break;
+      case "Layout::connect()":
+        break;
+      default:
+        throw new FatalError("This method should only ever be called from the methods listed above.");
+    }
+
+    // Implementation TBD
   }
 
   /**

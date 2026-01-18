@@ -4,6 +4,7 @@ import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layout
 import { LayoutPieceConnectorsInfo } from "./types.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { FatalError } from "../errors/FatalError.js";
+import { LayoutNode } from "./layoutnode.js";
 
 export abstract class LayoutPiece {
   protected id: string;
@@ -35,6 +36,7 @@ export abstract class LayoutPiece {
   /**
    * Create nodes at each connection point for this layout piece
    * Each node is assigned a unique ID and a default uninitialized coordinate.
+   * Note that this method should only ever be called when a new layout piece is added to the layout for the first time.
    *
    * @param firstNodeId The ID to assign to the first created node. Subsequent nodes will get incremented IDs.
    * @return The "start" node for this layout piece
@@ -54,6 +56,11 @@ export abstract class LayoutPiece {
     }
 
     return connector.getHeading();
+  }
+
+  // Return the name of the connector that is connected to the given node
+  public getConnectorName(node: LayoutNode): ConnectorName {
+    return this.connectors.getConnectorName(node);
   }
 
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
@@ -79,9 +86,35 @@ export abstract class LayoutPiece {
     this.connectors.incrementHeading(headingIncrement);
   }
 
-  // Assign the nodeConnections object to this piece's nodeConnections property
-  public setConnectors(connectorsInfo: LayoutPieceConnectorsInfo): void {
-    this.connectors.setConnectors(connectorsInfo);
+  // Connect this piece to the given node, at the given connector
+  public connect(node: LayoutNode, connectorName: ConnectorName, friendToken: string): void {
+    // We risk the integraty of layout piece to node connections if we call this method willy nilly
+    switch (friendToken) {
+      case "LayoutPiece::createNodes()":
+        break;
+      case "Layout::connect()":
+        break;
+      default:
+        throw new FatalError("This method should only ever be called from the methods listed above.");
+    }
+
+    // Make the connection
+    this.connectors.connect(node, connectorName);
+  }
+
+  // Disconnect this piece from the given node, at the given connector
+  public disconnect(friendToken: string): void {
+    // We risk the integraty of layout piece to node connections if we call this method willy nilly
+    switch (friendToken) {
+      case "LayoutPiece::createNodes()":
+        break;
+      case "Layout::connect()":
+        break;
+      default:
+        throw new FatalError("This method should only ever be called from the methods listed above.");
+    }
+
+    // Implementation TBD
   }
 
   /**
@@ -97,7 +130,7 @@ export abstract class LayoutPiece {
     }
   }
 
-  // Create nodeConnections object for this piece
+  // Return our connectors information, in the format needed for the layout json DB
   protected getConnectorsData(): LayoutPieceConnectorsData {
     const connectorsData: LayoutPieceConnectorsData = {};
 

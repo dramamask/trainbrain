@@ -8,6 +8,7 @@ import { JSONFilePreset } from 'lowdb/node';
 import { Pieces } from '../data_types/layoutPieces.js';
 import { Nodes } from '../data_types/layoutNodes.js';
 import { PieceDefinitions } from '../data_types/pieceDefintions.js';
+import { FatalError } from '../errors/FatalError.js';
 
 // Default/empty data structure for the piece defintions json db
 const emptyPieceDefinitions: PieceDefinitions = {
@@ -44,7 +45,7 @@ try {
 } catch (error) {
   const message = "Error initializing DBs";
   console.error(message, error);
-  throw new Error(message);
+  throw new FatalError(message);
 }
 
 // Return the db path for a given db json file name

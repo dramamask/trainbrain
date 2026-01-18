@@ -2,6 +2,7 @@ import { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
 import { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
+import { LayoutNode } from "./layoutnode.js";
 
 /**
  * Simple class that is just a map of LayoutPieceConnectors
@@ -15,25 +16,6 @@ export class LayoutPieceConnectors {
     this.connectors = new Map<ConnectorName, LayoutPieceConnector>();
   }
 
-  // Add a connector if give the data for the connector
-  public addConnectorFromData(name: ConnectorName, connectorInfo: LayoutPieceConnectorInfo) {
-    if (this.connectors.size >= this.maxConnectors) {
-      throw new FatalError("That's more connectors than we are allowed to have");
-    }
-
-    const connector = new LayoutPieceConnector(connectorInfo);
-    this.connectors.set(name, connector);
-  }
-
-  // Add a connector if given the actual connector
-  public addConnector(name: ConnectorName, connector: LayoutPieceConnector) {
-    if (this.connectors.size >= this.maxConnectors) {
-      throw new FatalError("That's more connectors than we are allowed to have");
-    }
-
-    this.connectors.set(name, connector);
-  }
-
   // Return the connector with a given name
   public getConnector(name: ConnectorName): LayoutPieceConnector {
     const connector =  this.connectors.get(name);
@@ -45,28 +27,26 @@ export class LayoutPieceConnectors {
     return connector;
   }
 
+  // Return the name of the connector that is connected to the given node
+  public getConnectorName(nodeToFind: LayoutNode): ConnectorName {
+    let foundConnectorName = "";
+
+    this.connectors.forEach((connector, connectorName) => {
+      if (connector.getNode().getId() == nodeToFind.getId()) {
+        foundConnectorName = connectorName;
+      }
+    });
+
+    if (foundConnectorName == "") {
+      throw new FatalError("We are not connected to the specified node");
+    }
+
+    return foundConnectorName as ConnectorName;
+  }
+
   // Return the number of connectors that we have
   public getNumConnectors(): number {
     return this.connectors.size;
-  }
-
-  // This allows uses to do a forEach on this class. Is called the same way as you would call forEach on a Map.
-  public forEach(callback: (value: LayoutPieceConnector, key: ConnectorName, map: Map<ConnectorName, LayoutPieceConnector>) => void): void {
-    this.connectors.forEach(callback);
-  }
-
-  // Return all our connectors, except for the connector named givenConnectorName
-  public getOtherConnectors(givenConnectorName: ConnectorName): LayoutPieceConnectors {
-    const otherConnectors = new LayoutPieceConnectors(this.maxConnectors - 1);
-
-    this.connectors.forEach((connector, connectorName) => {
-      if (connectorName == givenConnectorName) {
-        return;
-      }
-      otherConnectors.addConnector(connectorName, connector)
-    })
-
-    return otherConnectors;
   }
 
   // Return the data about the node connections, in the format that is used in the layout pieceDB
@@ -80,6 +60,12 @@ export class LayoutPieceConnectors {
     return nodeConnections;
   }
 
+  // Connect a given node to the specified connector
+  // Note that this will disconnect us from whichever node we were connected to before
+  public connect(node: LayoutNode, connectorName: ConnectorName): void {
+    this.getConnector(connectorName).connectToNode(node);
+  }
+
   // Increment the heading of each connector by a given amount
   public incrementHeading(headingIncrement: number): void {
     this.connectors.forEach((connector, connectorName) => {
@@ -87,18 +73,21 @@ export class LayoutPieceConnectors {
     });
   }
 
-  // Create new connectors based on the provided connectors info
-  public setConnectors(connectorsInfo: LayoutPieceConnectorsInfo): void {
-    if (this.connectors.size > 0) {
-      throw new FatalError("We already have connectors");
+  // This allows uses to do a forEach on this class. Is called the same way as you would call forEach on a Map.
+  public forEach(callback: (value: LayoutPieceConnector, key: ConnectorName, map: Map<ConnectorName, LayoutPieceConnector>) => void): void {
+    this.connectors.forEach(callback);
+  }
+
+  /**
+   * Add a connector if give the data for the connector
+   * Note that this method should only ever be called when a new layout piece is added to the layout for the first time.
+   */
+  public createConnector(name: ConnectorName, connectorInfo: LayoutPieceConnectorInfo) {
+    if (this.connectors.size >= this.maxConnectors) {
+      throw new FatalError("That's more connectors than we are allowed to have");
     }
 
-    if (connectorsInfo.size > 0) {
-      throw new FatalError("That's more connectors than we are allowed to have")
-    }
-
-    Object.entries(connectorsInfo).forEach(([connectorName, connectorData]) => {
-      this.connectors.set(connectorName as ConnectorName, new LayoutPieceConnector(connectorData));
-    });
+    const connector = new LayoutPieceConnector(connectorInfo);
+    this.connectors.set(name, connector);
   }
 }
