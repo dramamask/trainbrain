@@ -83,11 +83,13 @@ export class Curve extends LayoutPiece {
     let oppositeSideCoordinate: Coordinate;
     let oppositeSideHeading : number;
     if (oppositeSide === "start") {
-      let {osCoordinate, osHeading} = this.calculateStartCoordinate(coordinate);
-      oppositeSideCoordinate = osCoordinate;
-      oppositeSideHeading = osHeading;
+      const result = this.calculateStartCoordinate(coordinate, heading);
+      oppositeSideCoordinate = result.startCoordinate;
+      oppositeSideHeading = result.startHeading;
     } else {
-      let {oppositeSideCoordinate, oppositeSideHeading} = this.calculateEndCoordinate(coordinate);
+      const result = this.calculateEndCoordinate(coordinate, heading);
+      oppositeSideCoordinate = result.endCoordinate;
+      oppositeSideHeading = result.endHeading;
     }
 
     oppositeSideNode.updateCoordinateAndContinue(this.id, oppositeSideCoordinate, oppositeSideHeading, loopProtector);

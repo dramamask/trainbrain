@@ -1,6 +1,8 @@
 # TODO
 
-- Heading and coordinate calculations needs to be fixed
+- Test just showing the start node.
+- Test updating position and rotation of start node.
+- Test adding a piece.
 - Work on adding a piece on the UI side after the server side is done.
 - Work on inserting a piece.
 - Work on rotating a piece. Do need separate logic afterall?
