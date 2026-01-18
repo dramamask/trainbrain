@@ -2,7 +2,7 @@ import { param } from 'express-validator';
 import { layout } from '../services/init.js';
 
 // Validation for routes that have an index in the URL
-export const pieceIndexSchema = [
+export const layoutPieceIndexSchema = [
   param('index')
   .exists({checkFalsy: true}).withMessage('Index is required')
   .isString().withMessage('Index must be a string')

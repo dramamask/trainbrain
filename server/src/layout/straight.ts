@@ -21,21 +21,21 @@ export class Straight extends LayoutPiece {
   }
 
   public createNodes(firstNodeId: number): NodeConnections {
-    if (this.nodeConnections.size != 0) {
+    if (this.connectors.size != 0) {
       throw new Error("Nodes have already been created for this layout piece");
     }
 
-    this.nodeConnections.set("start", new LayoutNode(firstNodeId.toString(), { x: 0, y: 0, heading: 0 }));
-    this.nodeConnections.get("start")?.addPiece(this);
-    this.nodeConnections.set("end", new LayoutNode((firstNodeId + 1).toString(), { x: 0, y: 0, heading: 0 }));
-    this.nodeConnections.get("end")?.addPiece(this);
+    this.connectors.set("start", new LayoutNode(firstNodeId.toString(), { x: 0, y: 0, heading: 0 }));
+    this.connectors.get("start")?.addPiece(this);
+    this.connectors.set("end", new LayoutNode((firstNodeId + 1).toString(), { x: 0, y: 0, heading: 0 }));
+    this.connectors.get("end")?.addPiece(this);
 
-    return this.nodeConnections;
+    return this.connectors;
   }
 
   public calculateCoordinatesAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void {
     let oppositeSideNode: LayoutNode | undefined;
-    this.nodeConnections.forEach((node, side) => {
+    this.connectors.forEach((node, side) => {
       if (node.getId() !== callingNodeId) {
         oppositeSideNode = node;
       }

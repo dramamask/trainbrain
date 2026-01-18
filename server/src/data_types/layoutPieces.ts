@@ -1,17 +1,19 @@
-import { NodeConnectionsData } from "trainbrain-shared";
+// Info about a connector on a layout piece
+export interface ConnectorInfoData {
+  heading: number;
+  node: string;
+}
+
+// Map of connector names and the info about them
+export type ConnectorsData = Record<string, ConnectorInfoData>; // The string key is really of type ConnectorName
 
 // Structure of the data for a layout piece in the layout pieces json DB
 export interface LayoutPieceData {
-  heading: number;
   pieceDefId: string;
-  attributes: object;
-  nodeConnections: NodeConnectionsData;
+  connectors: ConnectorsData;
 }
 
 // The structure of the layout json file
 export interface Pieces {
   pieces: Record<string, LayoutPieceData>,
 }
-
-// All possible connection names
-export type ConnectionName = "start" | "end" | "diverge";

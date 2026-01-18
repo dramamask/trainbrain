@@ -1,7 +1,7 @@
 # TODO
 
-- Change: a node has an x,y coordinate. The connected pieces have a heading.
-- Work on adding a piece.
+- Check what happens if  node has no piece on one or either side when adding a piece
+- Work on adding a piece on the UI side after the server side is done.
 - Reorganizie shared section with different files to organize it better.
 - Work on inserting a piece.
 - Work on deleting a piece.

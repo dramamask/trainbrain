@@ -14,21 +14,12 @@ export class LayoutNode {
     this.coordinate = coordinate;
   }
 
-  // Set the pieces connected to this node
-  public setPieces(pieces: LayoutPiece[]) {
-    this.pieces = pieces;
-  }
-
-  // Add a piece to this node
-  public addPiece(piece: LayoutPiece) {
-    if (this.pieces.length >= 2) {
-      throw new Error("A layout node cannot have more than two pieces connected to it");
-    }
-    this.pieces.push(piece);
-  }
-
   public getId(): string {
     return this.id;
+  }
+
+  public getCoordinate(): Coordinate {
+    return this.coordinate;
   }
 
   public getPieces(): LayoutPiece[] {
@@ -56,19 +47,6 @@ export class LayoutNode {
     return this.pieces[1 - index];
   }
 
-  /**
-   * Save the data for this layout piece to the track-layout json DB
-   *
-   * @param writeToFile (optional) If true, write the DB to file immediately after saving the layout piece data
-   */
-  public async save(writeToFile: boolean = true): Promise<void> {
-    layoutNodesDb.data.nodes[this.id] = this.getLayoutData();
-
-    if (writeToFile) {
-      await layoutNodesDb.write();
-    }
-  }
-
   // Get the data for this layout node, as it would be stored in the layout-nodes json DB
   public getLayoutData(): LayoutNodeData {
     return {
@@ -83,6 +61,19 @@ export class LayoutNode {
       id: this.id,
       coordinate: this.coordinate
     };
+  }
+
+  // Set the pieces connected to this node
+  public setPieces(pieces: LayoutPiece[]) {
+    this.pieces = pieces;
+  }
+
+  // Add a piece to this node
+  public addPiece(piece: LayoutPiece) {
+    if (this.pieces.length >= 2) {
+      throw new Error("A layout node cannot have more than two pieces connected to it");
+    }
+    this.pieces.push(piece);
   }
 
   /**
@@ -110,5 +101,18 @@ export class LayoutNode {
         piece.calculateCoordinatesAndContinue(this.id, coordinate, loopProtector);
       }
     });
+  }
+
+   /**
+   * Save the data for this layout piece to the track-layout json DB
+   *
+   * @param writeToFile (optional) If true, write the DB to file immediately after saving the layout piece data
+   */
+  public async save(writeToFile: boolean = true): Promise<void> {
+    layoutNodesDb.data.nodes[this.id] = this.getLayoutData();
+
+    if (writeToFile) {
+      await layoutNodesDb.write();
+    }
   }
 }

@@ -91,37 +91,47 @@ export class Layout {
    *
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
-    // const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
-    // const nodeToConnectTo = this.nodes.get(data.nodeId);
-    // const pieceToConnectToStart = this.pieces.get(data.pieceId);
 
-    // // Create the new layout piece (the new piece is not yet connected to anything)
-    // const newPieceId = (this.getHighestPieceId() + 1).toString();
-    // const newPieceData: LayoutPieceData = {
-    //   pieceDefId: data.pieceDefId,
-    //   attributes: {},
-    //   nodeConnections: {},
-    // }
-    // const newPiece = this.createLayoutPiece(newPieceId, newPieceData, pieceDef);
+    // TODO: check what happens if  node has no piece on one or either side!!!!!!!!!!!!!!!!
 
-    // // Tell the new piece to create nodes for each of its connection points
-    // const nodes = newPiece.createNodes(this.getHighestNodeId() + 1);
+    const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
+    const nodeToReplace = this.nodes.get(data.nodeId);
+    const pieceToConnectToStart = this.pieces.get(data.pieceId) as LayoutPiece;
+    const pieceToConnectToEnd = nodeToReplace?.getOtherPiece(pieceToConnectToStart as LayoutPiece);
 
-    // // Get the piece that will be on the "end" side of the new piece
-    // const pieceToConnectToEnd = nodeToConnectTo?.getOtherPiece(pieceToConnectTo as LayoutPiece);
+    // Create the new layout piece (the new piece is not yet connected to anything)
+    const newPieceId = (this.getHighestPieceId() + 1).toString();
+    const newPieceData: LayoutPieceData = {
+      pieceDefId: data.pieceDefId,
+      connectors: {},
+    }
+    const newPiece = this.createLayoutPiece(newPieceId, newPieceData, pieceDef);
 
-    // // Connect the new piece's start and end node to the pieces that are on either side of nodeToConnectTo
-    // nodes.get("start")?.setPiece(newPiece, "start");
-    // nodes.get("end")?.setPiece(newPiece, "end");
+    // Tell the new piece to create nodes for each of its connection points
+    const nodes = newPiece.createNodes(this.getHighestNodeId() + 1);
 
+    // Connect the new piece's start and end node to the pieces that are on either side of nodeToConnectTo
+    nodes.get("start")?.addPiece(pieceToConnectToStart as LayoutPiece);
+    nodes.get("end")?.addPiece(pieceToConnectToEnd as LayoutPiece);
 
-    // this.pieces.set(newPieceId, newPiece);
+    // Add the new piece and the new nodes to the layout
+    this.pieces.set(newPieceId, newPiece);
+    nodes.forEach((node) => {
+      this.nodes.set(node.getId(), node);
+    });
 
+    // Update the coordinates and headings of all nodes and pieces connected to the new piece's start node
+    this.updateConnectedNodeCoordinates(
+      this.nodes.get("start") as LayoutNode,
+      nodeToReplace?.getCoordinate() as Coordinate,
+      pieceToConnectToStart.getHeading("end")
+    );
 
-    // updateConnectedNodeCoordinates(//the new start node);
+    // Delete the old node that we are replacing
+    this.nodes.delete(nodeToReplace?.getId() as string);
 
-    // // Write the in-memory json DB to file
-    // layoutNodesDb.write();
+    // Write the in-memory json DB to file
+    layoutNodesDb.write();
   }
 
     // Get the pieces that we need to connect to, and the connection names involved
@@ -276,44 +286,9 @@ export class Layout {
   //   this.calculateAllCoordinates();
   // }
 
-  // // Rotate a piece in the layout
-  // // Note that rotation logic is piece specific
-  // public async rotateLayoutPiece(pieceId: string): Promise<void> {
-  //   const ourPiece = this.pieces.get(pieceId);
-  //   if (ourPiece == undefined) {
-  //     throw new Error("Cannot find the piece we need to delete. This shouldn't happen because we have input validation at the edge");
-  //   }
-
-  //   // Ask the piece to rotate itself
-  //   ourPiece.rotate(this.getStartPositionPiece());
-
-  //   // Write the in-memory json DB to file
-  //   trackLayoutDb.write();
-
-  //   // Recalculate all the coordinates
-  //   this.calculateAllCoordinates();
-  // }
-
-  // // Save the entire track layout
-  // public async save(): Promise<void> {
-  //   let layoutPiecesData: Record<string, LayoutPieceData> = {};
-  //   let layoutNodesData: Record<string, LayoutNode> = {};
-
-  //   this.pieces.forEach(piece => {
-  //     layoutPiecesData[piece.getId()] = piece.getLayoutPieceData()
-  //   });
-
-  //   this.nodes.forEach(node => {
-  //     layoutNodesData[node.getId()] = node.getLayoutNodeData()
-  //   });
-
-  //   layoutPiecesDb.data.pieces = layoutPiecesData;
-  //   await layoutPiecesDb.write();
-  // }
-
   // Find the layout node with the highest numerical ID. Return the ID as a number.
   public getHighestNodeId(): number {
-    let highestId: number = 0;
+    let highestId: number = -1;
 
     this.nodes.forEach(node => {
       const numericalIdValue = Number(node.getId());
@@ -327,7 +302,7 @@ export class Layout {
 
   // Find the layout piece with the highest numerical ID. Return the ID as a number.
   public getHighestPieceId(): number {
-    let highestId: number = 0;
+    let highestId: number = -1;
 
     this.pieces.forEach(piece => {
       const numericalIdValue = Number(piece.getId());
@@ -347,7 +322,7 @@ export class Layout {
       case "curve":
         return new Curve(id, pieceData, pieceDef);
       default:
-        throw new Error(`Undefined piece category in track-layout db: ${category}`)
+        throw new Error(`Undefined piece category in track-layout db: ${pieceDef.category}`)
     }
   }
 

@@ -5,10 +5,14 @@ import { pieceDefintionsDb } from '../services/db.js';
 export const addLayoutPieceSchema = [
   body('pieceId')
     .exists().withMessage("JSON parameter 'pieceId' is required")
-    .notEmpty()
     .isString().withMessage("JSON parameter 'pieceId' should be a string")
     .custom((id: string) => {
-      if(isNaN(Number(id))) {
+      // We don't have any pieces yet, so any pieceId is valid
+      if (layout.getHighestPieceId() == -1) {
+        return true;
+      }
+      // Validate that pieceId is a string representation of a numeric value
+      if (isNaN(Number(id))) {
         throw new Error("JSON parameter 'pieceId' should be a string representation of a numeric value");
       }
       if(Number(id) < 0) {
@@ -17,7 +21,13 @@ export const addLayoutPieceSchema = [
       return true;
     })
     .custom((id: string) => {
+      // Validate that pieceId matches an existing piece in the layout
       const highestIdAllowed = layout.getHighestPieceId();
+      // We don't have any pieces yet, so any pieceId is valid
+      if (highestIdAllowed == -1) {
+        return true;
+      }
+      // Validate that pieceId matches an existing piece in the layout
       if (Number(id) > highestIdAllowed) {
         throw new Error("The value of JSON parameter `pieceId` does not match a piece in the layout")
       }
@@ -26,7 +36,8 @@ export const addLayoutPieceSchema = [
 
   body('nodeId')
     .exists().withMessage("JSON parameter 'nodeId' is required")
-    .notEmpty().isString().withMessage("JSON parameter 'nodeId' should be a string")
+    .notEmpty().withMessage("JSON parameter 'nodeId' should not be empty")
+    .isString().withMessage("JSON parameter 'nodeId' should be a string")
     .custom((id: string) => {
       if(isNaN(Number(id))) {
         throw new Error("JSON parameter 'nodeId' should be a string representation of a numeric value");
@@ -46,8 +57,8 @@ export const addLayoutPieceSchema = [
 
   body('pieceDefId')
     .exists().withMessage("JSON parameter 'pieceDefId' is required")
-    .notEmpty().isString()
-    .withMessage("JSON parameter 'pieceDefId' should be a string")
+    .notEmpty().withMessage("JSON parameter 'pieceDefId' should not be empty")
+    .isString().withMessage("JSON parameter 'pieceDefId' should be a string")
     .custom((id: string) => {
       if (id in pieceDefintionsDb.data.definitions) {
         return true;

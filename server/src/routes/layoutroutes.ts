@@ -3,7 +3,7 @@ import { UpdateNodeSchema } from "../middleware/updatenodeschema.js";
 import { validate } from "../middleware/validate.js";
 import * as layoutController from "../controllers/layoutcontroller.js";
 import { addLayoutPieceSchema } from "../middleware/addlayoutpieceschema.js";
-import { pieceIndexSchema } from "../middleware/pieceindexschema.js";
+import { layoutPieceIndexSchema } from "../middleware/layoutpieceindexschema.js";
 import { nodeIndexSchema } from "../middleware/nodeindexschema.js";
 
 const router: Router = Router();

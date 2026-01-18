@@ -25,20 +25,20 @@ export class Curve extends LayoutPiece {
   }
 
   public createNodes(firstNodeId: number): NodeConnections {
-    if (this.nodeConnections.size != 0) {
+    if (this.connectors.size != 0) {
       throw new Error("Nodes have already been created for this layout piece");
     }
 
-    this.nodeConnections.set("start", new LayoutNode(firstNodeId.toString(), { x: 0, y: 0, heading: 0 }));
-    this.nodeConnections.set("end", new LayoutNode((firstNodeId + 1).toString(), { x: 0, y: 0, heading: 0 }));
+    this.connectors.set("start", new LayoutNode(firstNodeId.toString(), { x: 0, y: 0, heading: 0 }));
+    this.connectors.set("end", new LayoutNode((firstNodeId + 1).toString(), { x: 0, y: 0, heading: 0 }));
 
-    return this.nodeConnections;
+    return this.connectors;
   }
 
   public calculateCoordinatesAndContinue(callingNodeId: string, coordinate: Coordinate, loopProtector: string): void {
     let oppositeSide = "";
     let oppositeSideNode: LayoutNode | undefined;
-    this.nodeConnections.forEach((node, side) => {
+    this.connectors.forEach((node, side) => {
       if (node.getId() !== callingNodeId) {
         oppositeSideNode = node;
         oppositeSide = side;
