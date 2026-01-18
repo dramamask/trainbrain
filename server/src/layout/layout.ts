@@ -67,6 +67,9 @@ export class Layout {
       throw new FatalError("Cannot find node to update its coordinate");
     }
 
+    // Update the node's coordinate
+    node.setCoordinate(coordinate);
+
     // Update the heading for the piece(s) connected to the node (if any)
     node.getPieces().forEach(piece => {
         piece.incrementHeading(headingIncrement);
@@ -386,6 +389,8 @@ export class Layout {
 
     const pieces = startNode.getPieces();
     pieces.forEach((piece, index) => {
+      // TODO: Find out to which side of the piece is connected to the startNode
+      // TODO: Get that side's coordinate
       piece.updateHeadingAndContinue(startNode.getId(), startNode.getCoordinate(), piece.getHeading(), loopProtector);
     });
   }

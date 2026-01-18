@@ -146,6 +146,11 @@ export class LayoutNode {
     // Implementation TBD
   }
 
+  // Replace our coordinate with the given coordinate
+  public setCoordinate(coordinate: Coordinate): void {
+    this.coordinate = coordinate;
+  }
+
   /**
    * Set our coordinate. Tell the connected piece on the other side to update its heading, and to continue the update down the layout
    *
