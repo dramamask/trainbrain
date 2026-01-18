@@ -26,7 +26,6 @@ const emptyLayoutNodes: Nodes = {
       coordinate: {
         x: 0,
         y: 0,
-        heading: 0,
       }
     }
   }

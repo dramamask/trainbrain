@@ -3,10 +3,9 @@ import { layout } from '../services/init.js';
 
 // Validation for routes that have an index in the URL
 export const nodeIndexSchema = [
-  param('index').exists({checkFalsy: true})
-  .withMessage('Index is required')
-  .isString()
-  .withMessage('Index must be a string')
+  param('index')
+  .exists({checkFalsy: true}).withMessage('Index is required')
+  .isString().withMessage('Index must be a string')
   .custom((id: string) => {
     if(isNaN(Number(id))) {
       throw new Error("Index should be a string representation of a numeric value");

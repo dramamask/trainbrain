@@ -8,10 +8,12 @@ export abstract class LayoutPiece {
   protected id: string;
   protected pieceDefId: string = "";
   protected category: string = "";
+  protected heading: number = 0; // Degrees. Indicates heading from "start" node to "end" node. Zero is "north", positive clockwise.
   protected nodeConnections: NodeConnections = new Map<string, LayoutNode>();
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
+    this.heading = data.heading;
     this.category = pieceDef.category;
     this.pieceDefId = data.pieceDefId;
   }
@@ -42,6 +44,11 @@ export abstract class LayoutPiece {
     this.nodeConnections = nodeConnections;
   }
 
+  // Increment the heading of this layout piece by the given amount
+  public incrementHeading(headingIncrement: number): void {
+    this.heading = (this.heading + headingIncrement) % 360;
+  }
+
   /**
    * Save the data for this layout piece to the track-layout json DB
    *
@@ -59,6 +66,7 @@ export abstract class LayoutPiece {
   public getLayoutData(): LayoutPieceData {
     return {
       pieceDefId: this.pieceDefId,
+      heading: this.heading,
       attributes: this.getAttributes(),
       nodeConnections: this.getNodeConnectionsData(),
     }

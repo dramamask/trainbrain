@@ -2,6 +2,7 @@
 
 - Change: a node has an x,y coordinate. The connected pieces have a heading.
 - Work on adding a piece.
+- Reorganizie shared section with different files to organize it better.
 - Work on inserting a piece.
 - Work on deleting a piece.
 - Work on rotating a piece.

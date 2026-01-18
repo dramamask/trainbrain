@@ -1,7 +1,6 @@
 export interface Coordinate {
   x: number;
   y: number;
-  heading: number;
 }
 
 // List of the different types of track pieces that we have
@@ -72,3 +71,18 @@ export interface TrackPieceDef {
 
 // A list of TrackPieceDef records
 export type TrackPieceDefList = Record<string, TrackPieceDef>;
+
+// Data structure used to update a node's position and/or heading of connected pieces
+export interface UpdateNodeData {
+  index: string;
+  x: number;
+  y: number;
+  headingIncrement: number;
+}
+
+// Data structure used to add a new layout piece
+export interface AddLayoutPieceData {
+  pieceId: string;
+  nodeId: string;
+  pieceDefId: string;
+}

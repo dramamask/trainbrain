@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { matchedData } from 'express-validator';
 import { constants } from "http2";
 import { layout } from "../services/init.js";
-import { Coordinate, UiLayout } from 'trainbrain-shared';
-import { AddLayoutPieceData } from '../data_types/layoutPieces.js';
+import { AddLayoutPieceData, Coordinate, UiLayout, UpdateNodeData } from 'trainbrain-shared';
 
 // API endpoint to get the track layout
 export const getLayout = (req: Request, res: Response, next: NextFunction): void => {
@@ -27,6 +26,32 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
 
   try {
     await layout.addLayoutPiece(data);
+
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
+
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+  } catch (error) {
+    console.error("Unknown error at the edge", error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+      .send("Unknown error at the edge. Check server logs.");
+  }
+}
+
+// API endpoint to change the position of a node and/or the heading the piecces connected to the node
+// This is used to move or rotate a node and everything that is connected to it
+export const updateNode = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData<UpdateNodeData>(req);
+
+  try {
+    const newCoordinate: Coordinate = {
+      x: data.x,
+      y: data.y,
+    };
+    const newHeading = data.heading;
+    await layout.updateNode(data.index, newCoordinate, newHeading);
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);
@@ -81,32 +106,6 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
 //       .send("Unknown error at the edge. Check server logs.");
 //   }
 // }
-
-// API endpoint to change the position or heading of a node
-// This is used to move or rotate a node and everything that is connected to it
-export const updateNode = async (req: Request, res: Response, next: NextFunction) => {
-  // matchedData only includes fields defined in the validator middleware for this route
-  const data = matchedData(req);
-
-  try {
-    const newCoordinate: Coordinate = {
-      x: Number(data.x),
-      y: Number(data.y),
-      heading: Number(data.heading)
-    };
-    await layout.updateNode(data.index, newCoordinate);
-
-    const uiLayout = layout.getUiLayout();
-    const status = getHttpStatusCode(uiLayout);
-
-    res.header("Content-Type", "application/json");
-    res.status(status).send(JSON.stringify(uiLayout));
-  } catch (error) {
-    console.error("Unknown error at the edge", error);
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      .send("Unknown error at the edge. Check server logs.");
-  }
-}
 
 // Returns the status code that we should use when returning the UI Layout,
 // based on the fact if there's an error message in the UI Layout message struct.

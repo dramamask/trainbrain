@@ -6,7 +6,7 @@ Each piece has a name (the key), a category and attributes. The attributes as di
 
 # Layout definition
 The layout is stored in `db/track-layout.json`.
-Layout pieces have a node on each side of the piece. Nodes know their location and heading angle (i.e. ration angle).
+Layout pieces have a node on each side of the piece. Nodes know their location. Pieces know their heading.
 
 # Updating coordinates
 Coordinates need to be recalculated when a new layout piece is added, or an existing node is moved or rotated.

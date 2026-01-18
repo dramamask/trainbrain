@@ -1,4 +1,4 @@
-import { ConnectionName, Coordinate, UiLayout, UiLayoutNode } from "trainbrain-shared";
+import { ConnectionName, UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { apiGet, apiCall } from "./api";
 
 interface InsertedPieceInfo {
@@ -16,27 +16,27 @@ export async function getTrackLayout(): Promise<UiLayout> {
 
 // Update the position and/or heading of a layout node.
 // Note that this will also update the position and heading of all connected track pieces.
-export async function updateNode(nodeData: UiLayoutNode): Promise<UiLayout> {
-  const data = await apiCall<UiLayout>("PUT", `/layout/node/${nodeData.id}`, nodeData.coordinate);
-  return data;
+export async function updateNode(data: UpdateNodeData): Promise<UiLayout> {
+  const retVal = await apiCall<UiLayout>("PUT", `/layout/node/${data.index}`, data);
+  return retVal;
 }
 
 // Insert a track piece in the layout
 export async function insertTrackPiece(insertedPieceInfo: InsertedPieceInfo): Promise<UiLayout> {
-  const data = await apiCall<UiLayout>("POST", "/layout/piece", insertedPieceInfo);
-  return data;
+  const retVal = await apiCall<UiLayout>("POST", "/layout/piece", insertedPieceInfo);
+  return retVal;
 }
 
 // Delete a track piece from the layout
 export async function deleteTrackPiece(pieceId: string): Promise<UiLayout> {
   const url = "/layout/piece/" + pieceId;
-  const data = await apiCall<UiLayout>("DELETE", url, {});
-  return data;
+  const retVal = await apiCall<UiLayout>("DELETE", url, {});
+  return retVal;
 }
 
 // Delete a track piece from the layout
 export async function rotateTrackPiece(pieceId: string): Promise<UiLayout> {
   const url = "/layout/piece/rotate/" + pieceId;
-  const data = await apiCall<UiLayout>("PUT", url, {});
-  return data;
+  const retVal = await apiCall<UiLayout>("PUT", url, {});
+  return retVal;
 }

@@ -3,7 +3,7 @@ import { UiLayoutNode } from "trainbrain-shared";
 import { store as editModeStore } from "@/app/services/stores/editmode";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import * as config from "@/app/config/config";
-import { getNodeClassName } from "@/app/services/classnames";
+import { getNodeClassName } from "@/app/services/cssclassnames";
 
 import styles from "./node.module.css";
 

@@ -15,7 +15,7 @@ import { store as selectionStore } from "@/app/services/stores/selection";
 import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
 import { getSvgViewBox } from "../services/zoom/scrollbar/svg";
 import Scrollbar from "./scrollbar";
-import { getNodeClassName, getTrackPieceContainerClassName } from "../services/classnames";
+import { getNodeClassName, getTrackPieceContainerClassName } from "../services/cssclassnames";
 
 import styles from "./tracklayout.module.css";
 

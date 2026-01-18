@@ -6,7 +6,7 @@ import { LayoutNodeData } from "../data_types/layoutNodes.js";
 export class LayoutNode {
   id: string = "";
   pieces: LayoutPiece[] = [];
-  coordinate: Coordinate = { x: 0, y: 0, heading: 0 };
+  coordinate: Coordinate = { x: 0, y: 0 };
   loopProtector: string = "";
 
   constructor(id: string, coordinate: Coordinate) {
@@ -29,6 +29,10 @@ export class LayoutNode {
 
   public getId(): string {
     return this.id;
+  }
+
+  public getPieces(): LayoutPiece[] {
+    return this.pieces;
   }
 
   // Given one connected piece, return the other connected piece (or null if there is none)
@@ -103,10 +107,6 @@ export class LayoutNode {
     this.pieces.forEach((piece, index) => {
       if (piece.getId() !== callingPieceId) {
         let coordinate = this.coordinate;
-        if (index > 0) {
-          // The layout piece at index 0 will face the heading direction. The other piece will face opposite the heading direction.
-          coordinate.heading = (this.coordinate.heading + 180) % 360;
-        }
         piece.calculateCoordinatesAndContinue(this.id, coordinate, loopProtector);
       }
     });

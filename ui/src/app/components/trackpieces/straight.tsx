@@ -11,7 +11,7 @@ import {
 } from "@/app/services/trackpiece";
 import { store as editModeStore } from "@/app/services/stores/editmode";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { getTrackPieceContainerClassName } from "@/app/services/classnames";
+import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
 import * as config from "@/app/config/config";
 import Connector from "./node";
 import DeadEnd from "./components/deadend";

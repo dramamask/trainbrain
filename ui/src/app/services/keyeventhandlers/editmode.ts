@@ -1,6 +1,6 @@
 "use client"
 
-import { UiLayout } from "trainbrain-shared";
+import { UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
@@ -47,7 +47,7 @@ export function handleKeyDown(event: KeyboardEvent) {
 }
 
 // Call the server API to store the new start position
-function handleNodeUpdate(axis: "x" | "y", increment: number, rotateAngle: number): void {
+function handleNodeUpdate(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
   const nodeId = selectionStore.getSelectedNode();
   if (!nodeId) {
     errorStore.setError("First select a node that you want to move or rotate.");
@@ -59,11 +59,19 @@ function handleNodeUpdate(axis: "x" | "y", increment: number, rotateAngle: numbe
     throw new Error(`Unexpected error. Node data not found for nodeId: ${nodeId}`);
   }
 
-  nodeData.coordinate[axis] += increment;
-  nodeData.coordinate.heading += rotateAngle;
+  // Update the node coordinate
+  nodeData.coordinate[axis] += xyIncrement;
+
+  // Prepare the data to send to the server
+  const updateNodeData: UpdateNodeData = {
+    index: nodeId,
+    x: nodeData.coordinate.x,
+    y: nodeData.coordinate.y,
+    headingIncrement: headingIncrement,
+  }
 
   // Call the server's API endpoint to update the node position
-  updateNode(nodeData)
+  updateNode(updateNodeData)
     .then((layoutData: UiLayout) => {
       // Update our local store with the new layout data that we received back from the server
       trackLayoutStore.setTrackLayout(layoutData);

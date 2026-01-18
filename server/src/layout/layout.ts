@@ -1,11 +1,11 @@
-import { Coordinate, TrackPieceDef, UiLayout } from "trainbrain-shared";
+import { AddLayoutPieceData, Coordinate, TrackPieceDef, UiLayout } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
 import { NodeConnections } from "./types.js";
 import { pieceDefintionsDb, layoutPiecesDb, layoutNodesDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
-import { AddLayoutPieceData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { LayoutNodeData } from "../data_types/layoutNodes.js";
 
 // The Layout class contains all LayoutPiece objects
@@ -59,19 +59,22 @@ export class Layout {
   }
 
   // Update the coordinates of a node and all connected nodes recursively
-  public updateConnectedNodeCoordinates(startNode: LayoutNode, coordinate: Coordinate): void {
-    const loopProtector = crypto.randomUUID();
+  public updateConnectedNodeCoordinates(startNode: LayoutNode, coordinate: Coordinate, headingIncrement: number): void {
+    startNode.getPieces().forEach(piece => {
+        piece.incrementHeading(headingIncrement);
+    });
 
+    const loopProtector = crypto.randomUUID();
     startNode.setCoordinateAndContinue(null, coordinate, loopProtector);
   }
 
   // Update a node's coordinate
-  public async updateNode(nodeId: string, coordinate: Coordinate): Promise<void> {
+  public async updateNode(nodeId: string, coordinate: Coordinate, heading: number): Promise<void> {
     const node = this.nodes.get(nodeId);
     if (!node) {
       throw new Error("Cannot find node to update its coordinate");
     }
-    this.updateConnectedNodeCoordinates(node, coordinate);
+    this.updateConnectedNodeCoordinates(node, coordinate, heading);
 
     // Write the in-memory json DB to file
     layoutNodesDb.write();
@@ -88,37 +91,37 @@ export class Layout {
    *
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
-    const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
-    const nodeToConnectTo = this.nodes.get(data.nodeId);
-    const pieceToConnectToStart = this.pieces.get(data.pieceId);
+    // const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
+    // const nodeToConnectTo = this.nodes.get(data.nodeId);
+    // const pieceToConnectToStart = this.pieces.get(data.pieceId);
 
-    // Create the new layout piece (the new piece is not yet connected to anything)
-    const newPieceId = (this.getHighestPieceId() + 1).toString();
-    const newPieceData: LayoutPieceData = {
-      pieceDefId: data.pieceDefId,
-      attributes: {},
-      nodeConnections: {},
-    }
-    const newPiece = this.createLayoutPiece(newPieceId, newPieceData, pieceDef);
+    // // Create the new layout piece (the new piece is not yet connected to anything)
+    // const newPieceId = (this.getHighestPieceId() + 1).toString();
+    // const newPieceData: LayoutPieceData = {
+    //   pieceDefId: data.pieceDefId,
+    //   attributes: {},
+    //   nodeConnections: {},
+    // }
+    // const newPiece = this.createLayoutPiece(newPieceId, newPieceData, pieceDef);
 
-    // Tell the new piece to create nodes for each of its connection points
-    const nodes = newPiece.createNodes(this.getHighestNodeId() + 1);
+    // // Tell the new piece to create nodes for each of its connection points
+    // const nodes = newPiece.createNodes(this.getHighestNodeId() + 1);
 
-    // Get the piece that will be on the "end" side of the new piece
-    const pieceToConnectToEnd = nodeToConnectTo?.getOtherPiece(pieceToConnectTo as LayoutPiece);
+    // // Get the piece that will be on the "end" side of the new piece
+    // const pieceToConnectToEnd = nodeToConnectTo?.getOtherPiece(pieceToConnectTo as LayoutPiece);
 
-    // Connect the new piece's start and end node to the pieces that are on either side of nodeToConnectTo
-    nodes.get("start")?.setPiece(newPiece, "start");
-    nodes.get("end")?.setPiece(newPiece, "end");
-
-
-    this.pieces.set(newPieceId, newPiece);
+    // // Connect the new piece's start and end node to the pieces that are on either side of nodeToConnectTo
+    // nodes.get("start")?.setPiece(newPiece, "start");
+    // nodes.get("end")?.setPiece(newPiece, "end");
 
 
-    updateConnectedNodeCoordinates(//the new start node);
+    // this.pieces.set(newPieceId, newPiece);
 
-    // Write the in-memory json DB to file
-    layoutNodesDb.write();
+
+    // updateConnectedNodeCoordinates(//the new start node);
+
+    // // Write the in-memory json DB to file
+    // layoutNodesDb.write();
   }
 
     // Get the pieces that we need to connect to, and the connection names involved
