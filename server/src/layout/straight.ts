@@ -1,4 +1,4 @@
-import { Coordinate, TrackPieceDef } from "trainbrain-shared";
+import { Coordinate, TrackPieceDef, UiAttributesDataStraight } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
@@ -9,26 +9,29 @@ interface PieceDefAttributes {
 }
 
 export class Straight extends LayoutPiece {
-  length: number = 0;
+  protected length: number;
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
     this.length = (pieceDef.attributes as PieceDefAttributes).length;
   }
 
-  public getAttributes(): object {
-    return {};
-  }
+   public getUiAttributes(): UiAttributesDataStraight {
+      return {};
+    }
 
   public createNodes(firstNodeId: number): NodeConnections {
     if (this.connectors.size != 0) {
       throw new Error("Nodes have already been created for this layout piece");
     }
 
-    this.connectors.set("start", new LayoutNode(firstNodeId.toString(), { x: 0, y: 0, heading: 0 }));
-    this.connectors.get("start")?.addPiece(this);
-    this.connectors.set("end", new LayoutNode((firstNodeId + 1).toString(), { x: 0, y: 0, heading: 0 }));
-    this.connectors.get("end")?.addPiece(this);
+    const startNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
+    this.connectors.set("start", {heading: 0, node: startNode});
+    startNode.addPiece(this);
+
+    const endNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
+    this.connectors.set("end", {heading: 0, node: endNode});
+    endNode.addPiece(this);
 
     return this.connectors;
   }

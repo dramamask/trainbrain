@@ -1,17 +1,25 @@
 import { AddLayoutPieceData, Coordinate, TrackPieceDef, UiLayout } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
-import { NodeConnections } from "./types.js";
+import { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, NodeConnections } from "./types.js";
 import { pieceDefintionsDb, layoutPiecesDb, layoutNodesDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
-import { LayoutPieceData } from "../data_types/layoutPieces.js";
+import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 import { LayoutNodeData } from "../data_types/layoutNodes.js";
+import { NotConnectedError } from "../errors/NotConnectedError.js";
+import { LayoutPieceConnector } from "./layoutpiececonnector.js";
+import { FatalError } from "../errors/FatalError.js";
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
-  pieces = new Map<string, LayoutPiece>();
-  nodes = new Map<string, LayoutNode>();
+  protected pieces: Map<string, LayoutPiece>;
+  protected nodes: Map<string, LayoutNode>;
+
+  constructor() {
+    this.pieces = new Map<string, LayoutPiece>();
+    this.nodes = new Map<string, LayoutNode>();
+  }
 
   public init() {
     // Create each layout piece
@@ -34,7 +42,7 @@ export class Layout {
       if (!piece) {
         throw new Error("LayoutPiece not found when assigning nodes");
       }
-      piece.setNodeConnections(this.getNodeConnections(pieceData));
+      piece.setConnectors(this.getLayoutPieceConnectorsInfo(pieceData.connectors));
     });
 
     // Assign the layout pieces to the nodes
@@ -85,18 +93,27 @@ export class Layout {
    * Insert a new piece in the layout
    *
    * @param data The information about what piece to insert and where
-   *
-   * The pieceDefId is the type of piece that we want to add.
-   * The nodeId is the node to which the new piece will be connected.
-   * The pieceId signifies the side of the node that we want to connect the new piece to.
-   * I.e. insert a new piece to the specified node on the side where the specified piece is connected right now.
+   * data:
+   * - pieceDefId is the type of piece that we want to add.
+   * - pieceId is the existing piece in the layout that we want to connect the new piece to
+   * - nodeId is the node to which we want to connect the new piece
+   * I.e. insert a new piece that is connected to the specified existing piece, by way of the specified existing node.
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
     // Get al the objects involved. Note that input validation has already been done.
     const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
     const nodeToReplace = this.nodes.get(data.nodeId);
     const pieceToConnectToStart = this.pieces.get(data.pieceId) || null;
-    const pieceToConnectToEnd = nodeToReplace?.getOtherPiece(pieceToConnectToStart) || null;
+
+    // While getting the layout piece on the other end of the node, make sure the specified piece and node are actually connected to each other.
+    let pieceToConnectToEnd: LayoutPiece | null = null;
+    try {
+      pieceToConnectToEnd = nodeToReplace?.getOtherPiece(pieceToConnectToStart) || null;
+    } catch (error) {
+      if (error instanceof NotConnectedError) {
+        throw new Error("The specified piece and node are not even connected dude!")
+      }
+    }
 
     // Create the new layout piece (the new piece is not yet connected to anything)
     const newPieceId = (this.getHighestPieceId() + 1).toString();
@@ -108,6 +125,8 @@ export class Layout {
 
     // Tell the new piece to create nodes for each of its connection points
     const nodes = newPiece.createNodes(this.getHighestNodeId() + 1);
+
+    // Set the new piece's heading
 
     // Connect the new piece's start and end node to the pieces that are on either side of nodeToConnectTo
     nodes.get("start")?.addPiece(pieceToConnectToStart);
@@ -325,24 +344,27 @@ export class Layout {
     }
   }
 
-  // Return a map of node connections that a specific layout piece is connected to
-  protected getNodeConnections(piece: LayoutPieceData): NodeConnections {
-    if (Object.keys(piece.nodeConnections).length === 0) {
-      throw new Error("Node Connections not defined! Is this being called before initialization is done?");
-    }
-
-    return new Map(
-      Object.entries(piece.nodeConnections).map(([connectionName, nodeId]) => [
-        connectionName,
-        (nodeId == null) ? null : this.nodes.get(nodeId),
-      ])
-    ) as NodeConnections;
-  }
-
   // Return an array of pieces that a specific node is connected to
   protected getPieces(node: LayoutNodeData): LayoutPiece[] {
     return node.pieces.map(pieceId => {
       return this.pieces.get(pieceId);
     }) as LayoutPiece[];
+  }
+
+  // Return the object that is needed to create a LayoutPieceConnectors class instance
+  // All this method does is translate from a list that contains node IDs to the equivalent object that contains LayoutNode class instances
+  protected getLayoutPieceConnectorsInfo(data: LayoutPieceConnectorsData): LayoutPieceConnectorsInfo {
+    const connectorsInfo: LayoutPieceConnectorsInfo = new Map<string, LayoutPieceConnectorInfo>();
+
+    Object.entries(data).forEach(([connectorName, connectorData]) => {
+      const theNode = this.nodes.get(connectorName);
+      if (theNode == undefined) {
+        throw new FatalError("Node should be known by now");
+      }
+      const connectorInfo: LayoutPieceConnectorInfo = {heading: connectorData.heading, node: theNode};
+      connectorsInfo.set(connectorName, connectorInfo);
+    })
+
+    return connectorsInfo;
   }
 }

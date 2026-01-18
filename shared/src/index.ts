@@ -12,27 +12,16 @@ export type ConnectorName = "start" | "end" | "diverge";
 // List of different possible values for the dead-end indicator for a UI layout piece
 export type DeadEnd = ConnectorName[];
 
-// Attributes for a Position type piece
-export interface UiAttributesPosition {
-  position: Coordinate;
-}
-
 // Attributes for a Straight type piece
-export interface UiAttributesStraight {
-  coordinates: {
-    start: Coordinate;
-    end: Coordinate;
-  };
-}
+export interface UiAttributesDataStraight {}
 
 // Attributes for Curve type piece
-export interface UiAttributesCurve {
-  coordinates: {
-    start: Coordinate;
-    end: Coordinate;
-  };
+export interface UiAttributesDataCurve {
   radius: number | null;
 }
+
+// Ui Attributes is one of these types
+export type UiAttributesData = UiAttributesDataStraight | UiAttributesDataCurve;
 
 // A list of node connection IDs for a specific layout piece
 export interface NodeConnectionsData {
@@ -44,8 +33,8 @@ export interface NodeConnectionsData {
 export interface UiLayoutPiece {
   id: string;
   category: TrackPieceCategory;
+  attributes: UiAttributesData;
   nodeConnections: NodeConnectionsData;
-  deadEnds: string[]; // Array of connection names
 };
 
 export interface UiLayoutNode {

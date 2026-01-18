@@ -1,16 +1,16 @@
 // Info about a connector on a layout piece
-export interface ConnectorInfoData {
+export interface LayoutPieceConnectorData {
   heading: number;
   node: string;
 }
 
 // Map of connector names and the info about them
-export type ConnectorsData = Record<string, ConnectorInfoData>; // The string key is really of type ConnectorName
+export type LayoutPieceConnectorsData = Record<string, LayoutPieceConnectorData>; // The string key is really of type ConnectorName
 
 // Structure of the data for a layout piece in the layout pieces json DB
 export interface LayoutPieceData {
   pieceDefId: string;
-  connectors: ConnectorsData;
+  connectors: LayoutPieceConnectorsData;
 }
 
 // The structure of the layout json file

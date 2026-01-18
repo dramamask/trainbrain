@@ -2,16 +2,19 @@ import { Coordinate, UiLayoutNode } from "trainbrain-shared";
 import { layoutNodesDb } from "../services/db.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNodeData } from "../data_types/layoutNodes.js";
+import { NotConnectedError } from "../errors/NotConnectedError.js";
 
 export class LayoutNode {
-  id: string = "";
-  pieces: LayoutPiece[] = [];
-  coordinate: Coordinate = { x: 0, y: 0 };
-  loopProtector: string = "";
+  protected id: string;
+  protected coordinate: Coordinate;
+  protected pieces: LayoutPiece[];
+  protected loopProtector: string;
 
   constructor(id: string, coordinate: Coordinate) {
     this.id = id;
     this.coordinate = coordinate;
+    this.pieces = [];
+    this.loopProtector = "";
   }
 
   public getId(): string {
@@ -26,9 +29,32 @@ export class LayoutNode {
     return this.pieces;
   }
 
+  // Return true if this connector is connected to the specified layout piece. Otherwise return false.
+  public isConnectedtoPiece(piece: LayoutPiece | null): boolean {
+    // They are asking about a null piece.
+    if (piece == null) {
+      // We are connected to a null piece if we have less than 2 connected pieces.
+      if (this.pieces.length < 2) {
+        return true;
+      }
+      // We are connected to two actual pieces, so we are not connected to a null piece.
+      return false;
+    }
+
+    // They are asking about an actual piece. Check if we are connected to that piece.
+    const index = this.pieces.findIndex(pieceInArray => pieceInArray.getId() == piece.getId());
+    if (index >= 0) {
+      // We know the piece, so we are connected.
+      return true;
+    }
+
+    // We are not connected to this piece.
+    return false;
+  }
+
   // Given one connected piece, return the other connected piece (or null if there is none)
   public getOtherPiece(piece: LayoutPiece | null): LayoutPiece | null {
-    // We are asking about a null piece
+    // They are asking about a null piece
     if (piece == null) {
       switch (this.pieces.length) {
         case 0:
@@ -43,7 +69,7 @@ export class LayoutNode {
     // We are asking about an actual piece
     const index = this.pieces.findIndex(pieceInArray => pieceInArray.getId() == piece.getId());
     if (index == -1) {
-      throw new Error("The piece you are asking about is unknown to me")
+      throw new NotConnectedError("The piece you are asking about is unknown to me")
     }
 
     // We are connected to the piece they are asking about, but not connected to any other pieces. Return null.

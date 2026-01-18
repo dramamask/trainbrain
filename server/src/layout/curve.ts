@@ -1,4 +1,4 @@
-import { Coordinate } from "trainbrain-shared";
+import { Coordinate, UiAttributesDataCurve } from "trainbrain-shared";
 import { LayoutNode } from "./layoutnode.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
@@ -10,9 +10,12 @@ interface PieceDefAttributes {
   radius: number;
 }
 
+/**
+ * This is a Curved Layout piece
+ */
 export class Curve extends LayoutPiece {
-  angle: number = 0;
-  radius: number = 0;
+  protected angle: number;
+  protected radius: number;
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     super(id, data, pieceDef);
@@ -20,8 +23,8 @@ export class Curve extends LayoutPiece {
     this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
   }
 
-  public getAttributes(): object {
-    return {};
+  public getUiAttributes(): UiAttributesDataCurve {
+    return {radius: this.radius};
   }
 
   public createNodes(firstNodeId: number): NodeConnections {

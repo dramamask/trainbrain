@@ -1,30 +1,29 @@
-import { Coordinate, ConnectorName, TrackPieceCategory, TrackPieceDef, UiLayoutPiece } from "trainbrain-shared";
+import { Coordinate, ConnectorName, TrackPieceCategory, TrackPieceDef, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
 import { layoutPiecesDb } from "../services/db.js";
-import { ConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
-import { NodeConnections } from "./types.js";
+import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import { LayoutPieceConnectorsInfo, NodeConnections } from "./types.js";
 import { LayoutNode } from "./layoutnode.js";
-
-// Heading is in degrees. Zero is "north", positive clockwise.
-// Heading is the direction a train would go if it came in from another piece that
-// is connected to the "start" node, and moved through the piece to the next piece.
-
-interface ConnectorInfo {
-  heading: number;
-  node: LayoutNode;
-}
-type Connectors = Map<ConnectorName, ConnectorInfo>;
+import { LayoutPieceConnector } from "./layoutpiececonnector.js";
+import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
+import { FatalError } from "../errors/FatalError.js";
 
 export abstract class LayoutPiece {
   protected id: string;
-  protected pieceDefId: string = "";
-  protected category: string = "";
-  protected connectors: Connectors = new Map<ConnectorName, ConnectorInfo>();
+  protected pieceDefId: string;
+  protected category: string;
+  protected connectors: LayoutPieceConnectors;
 
   constructor(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef) {
     this.id = id;
-    this.category = pieceDef.category;
     this.pieceDefId = data.pieceDefId;
+    this.category = pieceDef.category;
+    this.connectors = new LayoutPieceConnectors(); // These are not set here. Needs a separate call to setConnectors().
   }
+
+  /**
+   * Return the UI attributes data for this specific layout piece
+   */
+  public abstract getUiAttributes(): UiAttributesData;
 
   /**
    * Using the give coordinate calculate coordinates for all connected nodes and continue the update down the layout
@@ -49,71 +48,42 @@ export abstract class LayoutPiece {
     return this.id;
   }
 
-  // Get the attributes specific to this layout piece type
-  public abstract getAttributes(): object;
-
   // Get the heading for a given connector on this layout piece
   public getHeading(connectorName: ConnectorName): number {
-    const connector = this.connectors.get(connectorName)
+    const connector = this.connectors.getConnector(connectorName)
     if (!connector) {
-      throw new Error(`Connector ${connectorName} not found on piece ${this.id}`);
+      throw new FatalError(`Connector ${connectorName} not found on piece ${this.id}`);
     }
 
-    return connector.heading;
+    return connector.getHeading();
   }
 
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
   public getLayoutData(): LayoutPieceData {
     return {
       pieceDefId: this.pieceDefId,
-      attributes: this.getAttributes(),
       connectors: this.getConnectorsData(),
     }
   }
 
   // Return our layout information in the UiLayoutPiece format
   public getUiLayoutData(): UiLayoutPiece {
-    // Create deadEnds array for this piece
-    let deadEnds = Array.from(this.connectors, ([connectorName, connectorInfo]) => {
-        if (connectorInfo.node.getOtherPiece(this) == null) {
-          return connectorName;
-        }
-        return null;
-    });
-    deadEnds = deadEnds.filter((connectorName) => connectorName != null);
-
-    // Create nodeConnections object for this piece
-    const nodeConnections: Record<string, string> = Object.fromEntries(
-      Array.from(this.connectors).map(([connectorName, connectorInfo]) => [
-        connectorName, connectorInfo.node.getId()
-      ])
-    );
-
-    // Return the UiLayoutPiece object
     return {
       id: this.id,
       category: this.category as TrackPieceCategory,
-      nodeConnections: nodeConnections,
-      deadEnds: deadEnds as string[],
+      attributes: this.getUiAttributes(),
+      nodeConnections: this.connectors.getNodeConnectionsData(),
     }
   }
 
   // Increment the heading of this layout piece by the given amount
   public incrementHeading(headingIncrement: number): void {
-    this.connectors.forEach((connectorInfo, connectorName) => {
-      connectorInfo.heading = (connectorInfo.heading + headingIncrement) % 360;
-    });
+    this.connectors.incrementHeading(headingIncrement);
   }
 
   // Assign the nodeConnections object to this piece's nodeConnections property
-  public setNodeConnections(nodeConnections: NodeConnections): void {
-    nodeConnections.forEach((node, connectorName) => {
-      const connectorInfo = {
-        heading: 0,  // Default heading, will be set properly later
-        node: node,
-      }
-      this.connectors.set(connectorName as ConnectorName, connectorInfo);
-    });
+  public setConnectors(connectorsInfo: LayoutPieceConnectorsInfo): void {
+    this.connectors.setConnectors(connectorsInfo);
   }
 
   /**
@@ -130,13 +100,13 @@ export abstract class LayoutPiece {
   }
 
   // Create nodeConnections object for this piece
-  protected getConnectorsData(): ConnectorsData {
-    const connectorsData: ConnectorsData = {};
+  protected getConnectorsData(): LayoutPieceConnectorsData {
+    const connectorsData: LayoutPieceConnectorsData = {};
 
-    this.connectors.forEach((connectorInfo, connectorName) => {
+    this.connectors.forEach((connector, connectorName) => {
       connectorsData[connectorName] = {
-        heading: connectorInfo.heading,
-        node: connectorInfo.node.getId(),
+        heading: connector.getHeading(),
+        node: connector.getNode().getId(),
       };
     });
 

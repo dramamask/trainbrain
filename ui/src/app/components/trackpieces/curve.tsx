@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { UiAttributesCurve, UiLayoutPiece } from "trainbrain-shared";
+import { UiAttributesDataCurve, UiLayoutPiece } from "trainbrain-shared";
 import {
   getDeadEndIndicatorPositions,
   getTopLeftCoordinate,
