@@ -94,6 +94,8 @@ export abstract class LayoutPiece {
   // Increment the heading of this layout piece by the given amount
   public incrementHeading(headingIncrement: number): void {
     this.connectors.incrementHeading(headingIncrement);
+
+    this.save();
   }
 
   // Connect this piece to the given node, at the given connector
@@ -110,6 +112,8 @@ export abstract class LayoutPiece {
 
     // Make the connection
     this.connectors.connect(node, connectorName);
+
+    this.save();
   }
 
   // Disconnect this piece from the given node, at the given connector
@@ -125,14 +129,17 @@ export abstract class LayoutPiece {
     }
 
     // Implementation TBD
+
+    this.save();
   }
 
   /**
-   * Save the data for this layout piece to the track-layout json DB
+   * Save the data for this layout piece to the track-layout json DB.
+   * All functions that update anything about the layout piece that is persisted should call the save function.
    *
    * @param writeToFile (optional) If true, write the DB to file immediately after saving the layout piece data
    */
-  public async save(writeToFile: boolean = true): Promise<void> {
+  public async save(writeToFile: boolean = false): Promise<void> {
     layoutPiecesDb.data.pieces[this.id] = this.getLayoutData();
 
     if (writeToFile) {

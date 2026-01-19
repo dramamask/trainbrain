@@ -144,11 +144,15 @@ export class LayoutNode {
     }
 
     // Implementation TBD
+
+    this.save();
   }
 
   // Replace our coordinate with the given coordinate
   public setCoordinate(coordinate: Coordinate): void {
     this.coordinate = coordinate;
+
+    this.save();
   }
 
   /**
@@ -167,8 +171,7 @@ export class LayoutNode {
     this.loopProtector = loopProtector;
 
     // Set our coordinate
-    this.coordinate = coordinate;
-    this.save();
+    this.setCoordinate(coordinate);
 
     // Tell all connected pieces (except the calling piece) to continue the update down the layout
     this.pieces.forEach((piece, index) => {

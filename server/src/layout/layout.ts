@@ -78,8 +78,9 @@ export class Layout {
     // Update the coordinates of the node, and the heading and coordinates of all connected pieces and nodes recursively
     this.updateAllConnectedCoordinatesAndHeadings(node, coordinate);
 
-    // Write the in-memory json DB to file
-    layoutNodesDb.write();
+    // Write the in-memory json DBs to file
+    await layoutNodesDb.write();
+    await layoutPiecesDb.write();
   }
 
   /**
@@ -165,8 +166,9 @@ export class Layout {
       startCoordinate
     );
 
-    // Write the in-memory json DB to file
+    // Write the in-memory json DBs to file
     layoutNodesDb.write();
+    layoutPiecesDb.write();
   }
 
     // Get the pieces that we need to connect to, and the connection names involved

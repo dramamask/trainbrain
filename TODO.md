@@ -1,6 +1,6 @@
 # TODO
 
-- Test just showing the start node.
+- Why is the layout-nodes.json file not being persisted to file!!!!!!!!!
 - Test updating position and rotation of start node.
 - Test adding a piece.
 - Work on adding a piece on the UI side after the server side is done.

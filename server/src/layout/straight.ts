@@ -50,6 +50,8 @@ export class Straight extends LayoutPiece {
     this.connectors.createConnector("end", {heading: endHeading, node: endNode});
     endNode.connect(this, "LayoutPiece::createNodes()");
 
+    this.save();
+
     return this.connectors;
   }
 
@@ -60,10 +62,11 @@ export class Straight extends LayoutPiece {
     }
     this.loopProtector = loopProtector;
 
-    // Update the heading
+    // Update our heading
     this.connectors.forEach((connector) => {
       connector.setHeading(heading);
     })
+    this.save();
 
     // Find the node that we need to call next.
     let oppositeSideNode: LayoutNode | undefined;
@@ -76,8 +79,9 @@ export class Straight extends LayoutPiece {
       throw new FatalError("A Straight piece should always have two connected nodes");
     }
 
-    // Call the next node
-    oppositeSideNode.updateCoordinateAndContinue(this.id, this.calculateCoordinate(coordinate, heading), heading, loopProtector);
+    // Calculate the coordinate for the next node, and call that next node
+    const nextNodeCoordinate = this.calculateCoordinate(coordinate, heading);
+    oppositeSideNode.updateCoordinateAndContinue(this.id, nextNodeCoordinate, heading, loopProtector);
   }
 
   /**

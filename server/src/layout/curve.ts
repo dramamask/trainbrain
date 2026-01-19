@@ -1,4 +1,4 @@
-import { Coordinate, UiAttributesDataCurve } from "trainbrain-shared";
+import { ConnectorName, Coordinate, UiAttributesDataCurve } from "trainbrain-shared";
 import { LayoutNode } from "./layoutnode.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceData } from "../data_types/layoutPieces.js";
@@ -57,6 +57,8 @@ export class Curve extends LayoutPiece {
     this.connectors.createConnector("end", {heading: endHeading, node: endNode});
     endNode.connect(this, "LayoutPiece::createNodes()");
 
+    this.save();
+
     return this.connectors;
   }
 
@@ -67,19 +69,24 @@ export class Curve extends LayoutPiece {
     }
     this.loopProtector = loopProtector;
 
+    // Identify the calling and opposite side
+    let callingSide = "";
     let oppositeSide = "";
     let oppositeSideNode: LayoutNode | undefined;
     this.connectors.forEach((connector, side) => {
-      if (connector.getNode().getId() !== callingNodeId) {
+      if (connector.getNode().getId() == callingNodeId) {
+        callingSide = side;
+      } else {
         oppositeSideNode = connector.getNode();
         oppositeSide = side;
       }
     });
 
-    if (oppositeSideNode === undefined || oppositeSide === "") {
+    if (oppositeSideNode === undefined || callingSide === "" || oppositeSide === "") {
       throw new FatalError("A Curve piece should always have two connected nodes");
     }
 
+    // Calculate our heading and the coordinate for the next node
     let oppositeSideCoordinate: Coordinate;
     let oppositeSideHeading : number;
     if (oppositeSide === "start") {
@@ -92,6 +99,12 @@ export class Curve extends LayoutPiece {
       oppositeSideHeading = result.endHeading;
     }
 
+    // Update our heading
+    this.connectors.getConnector(callingSide as ConnectorName).setHeading(heading);
+    this.connectors.getConnector(oppositeSide as ConnectorName).setHeading(oppositeSideHeading);
+    this.save();
+
+    // Call the next node
     oppositeSideNode.updateCoordinateAndContinue(this.id, oppositeSideCoordinate, oppositeSideHeading, loopProtector);
   }
 
