@@ -20,11 +20,11 @@ import { LayoutPieceConnectorInfo } from "./types.js";
  *
  * "start" node heading:    0 degrees (straight up)
  * "end" node heading:      0 degrees (straight up)
- * "diverge" node heading: 18 degrees (slightly to the right)
+ * "diverge" node heading: 22 degrees (slightly to the right)
  */
 export class LayoutPieceConnector {
   protected heading: number;
-  protected node: LayoutNode;
+  protected node: LayoutNode | null;
 
   constructor(connectorInfo: LayoutPieceConnectorInfo) {
     this.heading = connectorInfo.heading;
@@ -35,7 +35,7 @@ export class LayoutPieceConnector {
     return this.heading;
   }
 
-  public getNode(): LayoutNode {
+  public getNode(): LayoutNode | null {
     return this.node;
   }
 
@@ -45,8 +45,13 @@ export class LayoutPieceConnector {
 
   // Connect to the given node
   // Note that this disconnects us from whatever node we were connected to before
-  public connectToNode(node: LayoutNode): void {
+  public connectToNode(node: LayoutNode | null): void {
     this.node = node;
+  }
+
+  // Disconnect from whichever node we are connected to
+  public disconnectFromNode(): void {
+    this.node = null;
   }
 
   // Increment the heading by a given amount

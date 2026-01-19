@@ -25,7 +25,7 @@ export type UiAttributesData = UiAttributesDataStraight | UiAttributesDataCurve;
 
 // A list of node connection IDs for a specific layout piece
 export interface NodeConnectionsData {
-    [key: string]: string; // This is a variable length list with key of type string (but really
+    [key: string]: string | null; // This is a variable length list with key of type string (but really
                            // ConnectionName) and a value of type string that signifies a node ID.
 }
 

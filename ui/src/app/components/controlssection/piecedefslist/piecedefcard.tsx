@@ -1,10 +1,9 @@
 import { Card, CardContent, Stack } from "@mui/material";
-import { ConnectionName, TrackPieceDef, UiLayout } from "trainbrain-shared";
+import { AddLayoutPieceData, TrackPieceDef, UiLayout } from "trainbrain-shared";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
-import { store as pieceDefStore } from "@/app/services/stores/piecedefs";
-import { insertTrackPiece } from "@/app/services/api/tracklayout";
+import { addTrackPiece } from "@/app/services/api/tracklayout";
 import { getLastInsertedTrackPieceId } from "@/app/services/tracklayout";
 
 interface props {
@@ -17,13 +16,7 @@ import controlsSectionStyles from "../controlssection.module.css";
 
 export default function PieceDefCard({name, definition}: props) {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    const selectedNode = selectionStore.getSelectedNode();
-    if (selectedNode == "") {
-      errorStore.setError(getNoNodeSelectedMessage());
-      return;
-    }
-
-    insertTrackPieceInLayout(name, selectedLayoutPiece, selectedConnector as ConnectionName);
+    addTrackPieceToLayout(name);
   };
 
   return (
@@ -50,24 +43,39 @@ export default function PieceDefCard({name, definition}: props) {
 
 // Call the API endpoint to insert the track piece into the layout.
 // The endpoint returns the new UI Layout definition. We store that in the trackLayoutStore.
-function insertTrackPieceInLayout(
-  pieceDefName:string, selectedLayoutPiece: string, selectedConnector: ConnectionName
-): void {
-  const insertedPieceInfo = {
-    connectionName: selectedConnector,
-    connectToPiece: selectedLayoutPiece,
-    pieceDefId: pieceDefName,
-    layoutAttributes: getLayoutAttributes(pieceDefName),
+function addTrackPieceToLayout(pieceDefName:string): void {
+  // Get the selected piece (unless the layout is empty)
+  let selectedPiece = "";
+  if (trackLayoutStore.getTrackLayout().pieces.length > 0) {
+    const selectedPiece = selectionStore.getSelectedLayoutPiece();
+    if (selectedPiece == "") {
+      errorStore.setError(getNoPieceSelectedMessage());
+    }
   }
 
-  insertTrackPiece(insertedPieceInfo)
+  // Get the selected node
+  const selectedNode = selectionStore.getSelectedNode();
+  if (selectedNode == "") {
+    errorStore.setError(getNoNodeSelectedMessage());
+    return;
+  }
+
+  // Assemble the data for the API call
+  const data: AddLayoutPieceData = {
+    nodeId: selectedNode,
+    pieceId: selectedPiece,
+    pieceDefId: pieceDefName,
+  }
+
+  // Call the API to add the track piece
+  addTrackPiece(data)
     .then((layoutData: UiLayout) => {
         // Store the new track layout that was returned by the API endpoint (includes the newly inserted piece)
         trackLayoutStore.setTrackLayout(layoutData);
 
         // Select the newly inserted piece
         const lastInsertedId = getLastInsertedTrackPieceId()
-        selectionStore.setSelectedTrackPiece(lastInsertedId)
+        selectionStore.setSelectedLayoutPiece(lastInsertedId)
       })
       .catch((error: Error) => {
         errorStore.setError(error.message);
@@ -75,17 +83,25 @@ function insertTrackPieceInLayout(
       });
 }
 
-// Assemble layout attributes for the piece that is about to be inserted
-function getLayoutAttributes(pieceDefName: string): object {
+// Return the message that will be displayed when no node is selected
+function getNoNodeSelectedMessage(): string {
+  let msg = "Please select a node (on the layout map). ";
+  msg += "Then click an item in the list to insert that particular piece into the layout. "
 
-  // We currently don't have a layout piece that uses attributes
-  return {};
+  if (trackLayoutStore.getTrackLayout().pieces.length == 0) {
+    msg += "The new piece will be connected to the selected node, pointing up.";
+  } else {
+    msg += "The new piece will be connected to the track piece you selected, on the side of the selected node.";
+  }
+
+  return msg;
 }
 
-function getNoNodeSelectedMessage(): string {
-  let msg = "Please select a Node. ";
-  msg += "Then click on an item in the list to insert that particular piece into the layout. "
-  msg += "The new piece will be inserted in place of the selected node.";
+// Get the message that will be displayed when no layout piece is selected
+function getNoPieceSelectedMessage(): string {
+  let msg = "Please select a track piece first (on the layout map). Then click select a node. ";
+  msg += "Then click an item in the list to insert that particular piece into the layout. "
+  msg += "The new piece will be connected to the track piece you selected, on the side of the selected node.";
 
   return msg;
 }

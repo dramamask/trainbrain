@@ -1,8 +1,7 @@
 # TODO
 
-- Why is the layout-nodes.json file not being persisted to file!!!!!!!!!
-- Test updating position and rotation of start node.
 - Test adding a piece.
+- Refactor connectors to use Set instead of array.
 - Work on adding a piece on the UI side after the server side is done.
 - Work on inserting a piece.
 - Work on rotating a piece. Do need separate logic afterall?

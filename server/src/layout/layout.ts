@@ -9,6 +9,7 @@ import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layout
 import { LayoutNodeData } from "../data_types/layoutNodes.js";
 import { NotConnectedError } from "../errors/NotConnectedError.js";
 import { FatalError } from "../errors/FatalError.js";
+import { start } from "node:repl";
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
@@ -42,7 +43,7 @@ export class Layout {
         throw new FatalError("LayoutPiece not found");
       }
 
-      const nodes = this.getNodes(pieceData.connectors);
+      const nodes = this.getNodesFromConnectorsData(pieceData.connectors);
       nodes.forEach((node, connectorName) => {
         this.connect(piece, node, connectorName);
       });
@@ -91,38 +92,43 @@ export class Layout {
    *   data:
    *   - pieceDefId is the type of piece that we want to add.
    *   - pieceId is the existing piece in the layout that we want to connect the new piece to
-   *   - nodeId is the node that we will delete to make way for the new piece and its nodes
+   *   - nodeId is the node that connected to the start-side of the new piece
    *
    *                   SITUATION BEFORE:              SITUATION AFTER:
    *
-   *                         O   O                         O   O
-   *                         |  /                          |  /
-   *                         | /                           | /
-   *                         |/                            |/
-   *   (node with ID nodeId) O                             O (new "end" node)
+   *                                                       O   O
+   *                                                       |  /
+   *                                                       | /
+   *                                                       |/
+   *                         O   O                         O (new "end" node)
+   *                         |  /                          |
+   *                         | /                           | (new piece)
+   *                         |/                            |
+   *   (node with ID nodeId) O                             O (node with ID nodeId)
    *                         |                             |
-   * (piece with ID pieceId) |                             | (new piece)
+   * (piece with ID pieceId) |                             | (piece with ID pieceId)
    *                         |                             |
-   *                         O                             O (new "start" node)
-   *                                                       |
-   *                                                       | (piece with ID pieceId)
-   *                                                       |
-   *                                                       O
+   *                         O                              O
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
     // Get al the objects involved. Note that input validation has already been done.
     const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
-    const nodeToReplace = this.nodes.get(data.nodeId);
+    const nodeToConnectToStart = this.nodes.get(data.nodeId) as LayoutNode;
     const pieceToConnectToStart = this.pieces.get(data.pieceId) || null;
 
     // While getting the layout piece on the other end of the node, make sure the specified piece and node are actually connected to each other.
     let pieceToConnectToEnd: LayoutPiece | null = null;
     try {
-      pieceToConnectToEnd = nodeToReplace?.getOtherPiece(pieceToConnectToStart) || null;
+      pieceToConnectToEnd = nodeToConnectToStart?.getOtherPiece(pieceToConnectToStart) || null;
     } catch (error) {
       if (error instanceof NotConnectedError) {
         throw new FatalError("The specified piece and node are not even connected dude!")
       }
+    }
+
+    // Disconnect nodeToConnectToStart from it's opposite-side layout piece (so we can connect it to the new piece)
+    if (pieceToConnectToEnd) {
+      this.disconnect(pieceToConnectToEnd, nodeToConnectToStart);
     }
 
     // Create the new layout piece and new nodes
@@ -131,40 +137,32 @@ export class Layout {
       (this.getHighestPieceId() + 1).toString(),
       data.pieceDefId,
       pieceDef,
+      nodeToConnectToStart,
       this.getHighestNodeId() + 1,
       pieceToConnectToStart?.getHeading("end") || 0
     );
-    const connectors = newPiece.getConnectors();
+    const newPieceConnectors = newPiece.getConnectors();
 
-    // Connect the existing pieces in the layout, and the new nodes, to each other
-    if (pieceToConnectToStart) {
-      this.connect(pieceToConnectToStart, connectors.getConnector("start").getNode(), "end");
-    }
+    // Connect the existing piece in the layout, and the new piece's end-node, to each other
     if (pieceToConnectToEnd) {
-      const connectorName = pieceToConnectToEnd.getConnectorName(nodeToReplace as LayoutNode)
-      this.connect(pieceToConnectToEnd, connectors.getConnector("start").getNode(), connectorName);
+      const connectorName = pieceToConnectToEnd.getConnectorName(nodeToConnectToStart as LayoutNode)
+      this.connect(pieceToConnectToEnd, newPieceConnectors.getConnector("start")?.getNode(), connectorName);
     }
 
     // Add the new piece to the layout
     this.pieces.set(newPiece.getId(), newPiece);
 
     // Add the new nodes to the layout
-    connectors.forEach((connector) => {
+    newPieceConnectors.forEach((connector) => {
       const node = connector.getNode();
+      if (node == null) {
+        throw new FatalError("Each connector should be connected to a node already");
+      }
       this.nodes.set(node.getId(), node);
     });
 
-    // Get the startCoordinate for the new layout piece
-    const startCoordinate = nodeToReplace?.getCoordinate() as Coordinate
-
-    // Delete the old node that we are replacing
-    this.nodes.delete(nodeToReplace?.getId() as string);
-
     // Update the coordinates and headings of all nodes and pieces connected to the new piece's start node
-    this.updateAllConnectedCoordinatesAndHeadings(
-      this.nodes.get("start") as LayoutNode,
-      startCoordinate
-    );
+    this.updateAllConnectedCoordinatesAndHeadings(nodeToConnectToStart, nodeToConnectToStart.getCoordinate());
 
     // Write the in-memory json DBs to file
     layoutNodesDb.write();
@@ -364,22 +362,27 @@ export class Layout {
   }
 
   // Create a new layout piece from scratch, using the provided info
-  public createLayoutPieceAndNodesFromScratch(pieceId: string, pieceDefId: string, pieceDef: TrackPieceDef, nextNodeId: number, startHeading: number): LayoutPiece {
+  public createLayoutPieceAndNodesFromScratch(pieceId: string, pieceDefId: string, pieceDef: TrackPieceDef, startNode: LayoutNode, nextNodeId: number, startHeading: number): LayoutPiece {
     switch(pieceDef.category) {
       case "straight":
-        return Straight.constructFromScratch(pieceId, pieceDefId, pieceDef, nextNodeId, startHeading);
+        return Straight.constructFromScratch(pieceId, pieceDefId, pieceDef, startNode, nextNodeId, startHeading);
       case "curve":
-        return Curve.constructFromScratch(pieceId, pieceDefId, pieceDef, nextNodeId, startHeading);
+        return Curve.constructFromScratch(pieceId, pieceDefId, pieceDef, startNode, nextNodeId, startHeading);
       default:
         throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.category}`)
     }
   }
 
-  // Connect piece to node at the specified piece's connector
-  // This is the only
-  protected connect(piece: LayoutPiece, node: LayoutNode, connectorName: ConnectorName): void {
-    piece.connect(node, connectorName, "Layout::connect()", );
-    node.connect(piece, "Layout::connect()", );
+  // Connect piece and node together, at the specified piece's connector
+  protected connect(piece: LayoutPiece, node: LayoutNode | null, connectorName: ConnectorName): void {
+    piece.connect(node, connectorName, "Layout::connect()");
+    node?.connect(piece, "Layout::connect()", );
+  }
+
+  // Disconnect piece and node from each other.
+  protected disconnect(piece: LayoutPiece, node: LayoutNode): void {
+    piece.disconnect(node, "Layout::disconnect()");
+    node.disconnect(piece, "Layout::disconnect()")
   }
 
   // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively
@@ -405,10 +408,16 @@ export class Layout {
   }
 
   // Return a map of all nodes defined in connectorsData
-  protected getNodes(connectorsData: LayoutPieceConnectorsData): Map<ConnectorName, LayoutNode> {
+  protected getNodesFromConnectorsData(connectorsData: LayoutPieceConnectorsData): Map<ConnectorName, LayoutNode> {
     const nodes = new Map<ConnectorName, LayoutNode>();
 
     Object.entries(connectorsData).forEach(([connectorName, connector]) => {
+      if (connector.node == null) {
+        return;
+      }
+      if (this.nodes.get(connector.node) == undefined) {
+        throw new FatalError("The data in connectorsData should only contain existing node IDs");
+      }
       nodes.set(connectorName.toString() as ConnectorName, this.nodes.get(connector.node) as LayoutNode);
     });
 

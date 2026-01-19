@@ -82,12 +82,12 @@ export function getBottomRightCoordinate(indicatorPositions: LineCoordinates): C
 
 // Check if this track piece is selected
 export function thisTrackPieceIsSelected(pieceId: string): boolean {
-  return (selectionStore.getSelectedTrackPiece() == pieceId);
+  return (selectionStore.getSelectedLayoutPiece() == pieceId);
 }
 
 // Return the name of the selected connector (if our track piece is selected)
 export function ourSelectedConnector(pieceId: string): string {
-  if (selectionStore.getSelectedTrackPiece() != pieceId) {
+  if (selectionStore.getSelectedLayoutPiece() != pieceId) {
     return "";
   }
 

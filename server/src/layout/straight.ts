@@ -18,9 +18,9 @@ export class Straight extends LayoutPiece {
     return new Straight(id, data.pieceDefId, pieceDef);
   }
 
-  public static constructFromScratch(pieceId: string, pieceDefId: string, pieceDef: TrackPieceDef, nextNodeId: number, startHeading: number): Straight {
+  public static constructFromScratch(pieceId: string, pieceDefId: string, pieceDef: TrackPieceDef, startNode: LayoutNode, nextNodeId: number, startHeading: number): Straight {
     const newPiece = new Straight(pieceId, pieceDefId, pieceDef);
-    newPiece.createConnectorsAndNodes(nextNodeId, startHeading);
+    newPiece.createConnectorsAndNodes(startNode, nextNodeId, startHeading);
 
     return newPiece;
   }
@@ -36,15 +36,16 @@ export class Straight extends LayoutPiece {
     return {};
   }
 
-  public createConnectorsAndNodes(firstNodeId: number, startHeading: number): LayoutPieceConnectors {
+  public createConnectorsAndNodes(startNode: LayoutNode, firstNodeId: number, startHeading: number): LayoutPieceConnectors {
     if (this.connectors.getNumConnectors() != 0) {
       throw new FatalError("Nodes have already been created for this layout piece");
     }
 
-    const startNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
+    // Create a start connector and add the start node
     this.connectors.createConnector("start", {heading: startHeading, node: startNode});
     startNode.connect(this, "LayoutPiece::createNodes()");
 
+    // Create a new node and an end connector, and connect them together
     const endNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
     const endHeading = startHeading; // Heading at the end is the same as the start because this is a straight piece
     this.connectors.createConnector("end", {heading: endHeading, node: endNode});
@@ -71,8 +72,8 @@ export class Straight extends LayoutPiece {
     // Find the node that we need to call next.
     let oppositeSideNode: LayoutNode | undefined;
     this.connectors.forEach((connector, side) => {
-      if (connector.getNode().getId() !== callingNodeId) {
-        oppositeSideNode = connector.getNode();
+      if (connector.getNode()?.getId() !== callingNodeId) {
+        oppositeSideNode = connector.getNode() ?? undefined;
       }
     });
     if (oppositeSideNode === undefined) {

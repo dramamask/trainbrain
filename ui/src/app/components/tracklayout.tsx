@@ -71,13 +71,13 @@ export default function TrackLayout()
     // If the target is something else, find the track piece container that it is part of
     const group = (event.target as Element).closest("." + getTrackPieceContainerClassName()) as SVGElement;
 
-    // Select the track piece if the target is part of a track piece container
+    // Select the track piece if the target is a track piece container
     if (group) {
-      selectionStore.setSelectedTrackPiece(group.id);
+      selectionStore.setSelectedLayoutPiece(group.id);
       return;
     }
 
-    // We clicked on something other than a track piece, deselect everything
+    // Deselect everything because we clicked on something other than a node or a track piece
     selectionStore.deselectAll();
     return;
   }

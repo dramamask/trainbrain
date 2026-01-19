@@ -28,11 +28,11 @@ export class LayoutPieceConnectors {
   }
 
   // Return the name of the connector that is connected to the given node
-  public getConnectorName(nodeToFind: LayoutNode): ConnectorName {
+  public getConnectorName(nodeToFind: LayoutNode | null): ConnectorName {
     let foundConnectorName = "";
 
     this.connectors.forEach((connector, connectorName) => {
-      if (connector.getNode().getId() == nodeToFind.getId()) {
+      if (connector.getNode()?.getId() == nodeToFind?.getId()) {
         foundConnectorName = connectorName;
       }
     });
@@ -51,10 +51,10 @@ export class LayoutPieceConnectors {
 
   // Return the data about the node connections, in the format that is used in the layout pieceDB
   public getNodeConnectionsData(): NodeConnectionsData {
-    const nodeConnections: Record<string, string> = {};
+    const nodeConnections: Record<string, string | null> = {};
 
     this.connectors.forEach((connector, connectorName) => {
-      nodeConnections[connectorName] = connector.getNode().getId();
+      nodeConnections[connectorName] = connector.getNode()?.getId() ?? null;
     });
 
     return nodeConnections;
@@ -62,8 +62,17 @@ export class LayoutPieceConnectors {
 
   // Connect a given node to the specified connector
   // Note that this will disconnect us from whichever node we were connected to before
-  public connect(node: LayoutNode, connectorName: ConnectorName): void {
-    this.getConnector(connectorName).connectToNode(node);
+  public connect(nodeToConnectTo: LayoutNode | null, connectorNameToConnectTo: ConnectorName): void {
+    this.getConnector(connectorNameToConnectTo).connectToNode(nodeToConnectTo);
+  }
+
+  // Disconnect a given node from whichever connector it is currently connected to
+  public disconnect(nodeToDisconnectFrom: LayoutNode): void {
+    this.connectors.forEach((connector, connectorName) => {
+      if(connector.getNode()?.getId() == nodeToDisconnectFrom.getId()) {
+        connector.disconnectFromNode();
+      }
+    });
   }
 
   // Increment the heading of each connector by a given amount

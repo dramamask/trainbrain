@@ -1,12 +1,5 @@
-import { ConnectionName, UiLayout, UpdateNodeData } from "trainbrain-shared";
+import { AddLayoutPieceData, UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { apiGet, apiCall } from "./api";
-
-interface InsertedPieceInfo {
-  connectionName: ConnectionName,
-  connectToPiece: string,
-  pieceDefId: string,
-  layoutAttributes: object,
-}
 
 // Get the track layuot structure
 export async function getTrackLayout(): Promise<UiLayout> {
@@ -21,9 +14,9 @@ export async function updateNode(data: UpdateNodeData): Promise<UiLayout> {
   return retVal;
 }
 
-// Insert a track piece in the layout
-export async function insertTrackPiece(insertedPieceInfo: InsertedPieceInfo): Promise<UiLayout> {
-  const retVal = await apiCall<UiLayout>("POST", "/layout/piece", insertedPieceInfo);
+// Add a track piece to the layout
+export async function addTrackPiece(data: AddLayoutPieceData): Promise<UiLayout> {
+  const retVal = await apiCall<UiLayout>("POST", "/layout/piece", data);
   return retVal;
 }
 

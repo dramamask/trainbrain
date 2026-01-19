@@ -33,7 +33,7 @@ export function handleKeyDown(event: KeyboardEvent) {
         handleNodeUpdate("x", 0, -ROTATE_INCREMENT);
         break;
       case KEYS.DeleteLayoutPiece:
-        deleteLayoutPiece(selectionStore.getSelectedTrackPiece());
+        deleteLayoutPiece(selectionStore.getSelectedLayoutPiece());
         selectionStore.deselectAll();
         break;
       case KEYS.DeselectLayoutElement:

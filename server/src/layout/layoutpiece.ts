@@ -46,7 +46,7 @@ export abstract class LayoutPiece {
    *
    * @return The connectors for this piece (which have references to the nodes)
    */
-  protected abstract createConnectorsAndNodes(firstNodeId: number, startHeading: number): LayoutPieceConnectors;
+  protected abstract createConnectorsAndNodes(startNode: LayoutNode, firstNodeId: number, startHeading: number): LayoutPieceConnectors;
 
   // Return the ID of this layout piece
   public getId(): string {
@@ -99,7 +99,7 @@ export abstract class LayoutPiece {
   }
 
   // Connect this piece to the given node, at the given connector
-  public connect(node: LayoutNode, connectorName: ConnectorName, friendToken: string): void {
+  public connect(node: LayoutNode | null, connectorName: ConnectorName, friendToken: string): void {
     // We risk the integraty of layout piece to node connections if we call this method willy nilly
     switch (friendToken) {
       case "LayoutPiece::createNodes()":
@@ -117,18 +117,17 @@ export abstract class LayoutPiece {
   }
 
   // Disconnect this piece from the given node, at the given connector
-  public disconnect(friendToken: string): void {
+  public disconnect(node: LayoutNode, friendToken: string): void {
     // We risk the integraty of layout piece to node connections if we call this method willy nilly
     switch (friendToken) {
-      case "LayoutPiece::createNodes()":
-        break;
-      case "Layout::connect()":
+      case "Layout::disconnect()":
         break;
       default:
         throw new FatalError("This method should only ever be called from the methods listed above.");
     }
 
-    // Implementation TBD
+    // Disconnect
+    this.connectors.disconnect(node)
 
     this.save();
   }
@@ -154,7 +153,7 @@ export abstract class LayoutPiece {
     this.connectors.forEach((connector, connectorName) => {
       connectorsData[connectorName] = {
         heading: connector.getHeading(),
-        node: connector.getNode().getId(),
+        node: connector.getNode()?.getId() || null,
       };
     });
 

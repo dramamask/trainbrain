@@ -132,18 +132,25 @@ export class LayoutNode {
   }
 
   // Disconnect this node from the given piece
-  public disconnect(friendToken: string): void {
+  public disconnect(piece: LayoutPiece, friendToken: string): void {
     // We risk the integraty of layout piece to node connections if we call this method willy nilly
     switch (friendToken) {
-      case "LayoutPiece::createNodes()":
-        break;
-      case "Layout::connect()":
+      case "Layout::disconnect()":
         break;
       default:
         throw new FatalError("This method should only ever be called from the methods listed above.");
     }
 
-    // Implementation TBD
+    if ((this.pieces.length) == 0) {
+      throw new FatalError("This node doesn't have any connects");
+    }
+
+    if (piece == null) {
+      throw new FatalError("We can't disconnect from nothing");
+    }
+
+    // Remove the piece
+    this.pieces = this.pieces.filter(pieceWeAreConnectedTo => piece.getId() == pieceWeAreConnectedTo.getId());
 
     this.save();
   }

@@ -1,11 +1,11 @@
 "use client";
 
 interface State {
-  selectedTrackPiece: string;
+  selectedLayoutPiece: string;
   selectedNode: string;
 }
 
-let state: State = { selectedTrackPiece: "", selectedNode: "" };
+let state: State = { selectedLayoutPiece: "", selectedNode: "" };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -28,16 +28,16 @@ export const store = {
     return state;
   },
 
-  getSelectedTrackPiece(): string {
-    return state.selectedTrackPiece;
+  getSelectedLayoutPiece(): string {
+    return state.selectedLayoutPiece;
   },
 
   getSelectedNode(): string {
     return state.selectedNode;
   },
 
-  setSelectedTrackPiece(pieceId: string): void {
-    const newState = { selectedTrackPiece: pieceId, selectedNode: state.selectedNode };
+  setSelectedLayoutPiece(pieceId: string): void {
+    const newState = { selectedLayoutPiece: pieceId, selectedNode: state.selectedNode };
     // Immutable update
     state = newState;
     // Notify React/listeners
@@ -45,7 +45,7 @@ export const store = {
   },
 
   setSelectedNode(nodeId: string): void {
-    const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedNode: nodeId };
+    const newState = { selectedLayoutPiece: state.selectedLayoutPiece, selectedNode: nodeId };
     // Immutable update
     state = newState;
     // Notify React/listeners
@@ -53,7 +53,7 @@ export const store = {
   },
 
   deselectTrackPiece(): void {
-    const newState = { selectedTrackPiece: "", selectedNode: "" };
+    const newState = { selectedLayoutPiece: "", selectedNode: "" };
     // Immutable update
     state = newState;
     // Notify React/listeners
@@ -61,7 +61,7 @@ export const store = {
   },
 
   deselectNode(): void {
-    const newState = { selectedTrackPiece: state.selectedTrackPiece, selectedNode: "" };
+    const newState = { selectedLayoutPiece: state.selectedLayoutPiece, selectedNode: "" };
     // Immutable update
     state = newState;
     // Notify React/listeners
@@ -69,7 +69,7 @@ export const store = {
   },
 
   deselectAll(): void {
-    const newState = { selectedTrackPiece: "", selectedNode: "" };
+    const newState = { selectedLayoutPiece: "", selectedNode: "" };
     // Immutable update
     state = newState;
     // Notify React/listeners
