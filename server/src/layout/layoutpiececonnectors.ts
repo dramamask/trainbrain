@@ -27,21 +27,26 @@ export class LayoutPieceConnectors {
     return connector;
   }
 
-  // Return the name of the connector that is connected to the given node
-  public getConnectorName(nodeToFind: LayoutNode | null): ConnectorName {
-    let foundConnectorName = "";
+  // Return the the connector that is connected to the given node
+  public getConnectorConnectedToNode(nodeToFind: LayoutNode | null): LayoutPieceConnector {
+    let foundConnector;
 
     this.connectors.forEach((connector, connectorName) => {
       if (connector.getNode()?.getId() == nodeToFind?.getId()) {
-        foundConnectorName = connectorName;
+        foundConnector = connector;
       }
     });
 
-    if (foundConnectorName == "") {
+    if (foundConnector == undefined) {
       throw new FatalError("We are not connected to the specified node");
     }
 
-    return foundConnectorName as ConnectorName;
+    return foundConnector;
+  }
+
+  // Return the name of the connector that is connected to the given node
+  public getConnectorName(nodeToFind: LayoutNode | null): ConnectorName {
+    return this.getConnectorConnectedToNode(nodeToFind)?.getName() as ConnectorName;
   }
 
   // Return the number of connectors that we have
@@ -96,7 +101,7 @@ export class LayoutPieceConnectors {
       throw new FatalError("That's more connectors than we are allowed to have");
     }
 
-    const connector = new LayoutPieceConnector(connectorInfo);
+    const connector = new LayoutPieceConnector(connectorInfo, name);
     this.connectors.set(name, connector);
   }
 }

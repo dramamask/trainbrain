@@ -4,6 +4,7 @@ import { store as editModeStore } from "@/app/services/stores/editmode";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import * as config from "@/app/config/config";
 import { getNodeClassName } from "@/app/services/cssclassnames";
+import DeadEnd from "./components/deadend";
 
 import styles from "./node.module.css";
 
@@ -21,17 +22,26 @@ export default function node({node}: props) {
 
   const [isHovered, setIsHovered] = useState(false);
 
+  // const indicatorPositions = getDeadEndIndicatorPositions(attributes.coordinates.start, attributes.coordinates.end);
+
   return (
-    <circle
-      id={node.id}
-      className={styles.connector + " " + getNodeClassName()}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      cx={node.coordinate.x}
-      cy={node.coordinate.y}
-      r={getRadius(isNodeSelected, isHovered)}
-      fill={getFillColor(inEditMode, isNodeSelected)}
-    />
+    <g>
+      <circle
+        id={node.id}
+        className={styles.connector + " " + getNodeClassName()}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        cx={node.coordinate.x}
+        cy={node.coordinate.y}
+        r={getRadius(isNodeSelected, isHovered)}
+        fill={getFillColor(inEditMode, isNodeSelected)}
+      />
+      <DeadEnd
+        draw={!inEditMode && node.deadEnd}
+        coordinateOne={indicatorPositions.start.one}
+        coordinateTwo={indicatorPositions.start.two}
+      />
+    </g>
   )
 }
 

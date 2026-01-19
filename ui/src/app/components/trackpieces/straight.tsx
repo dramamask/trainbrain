@@ -41,7 +41,7 @@ export default function Straight({hideWhenSelected, piece}: props) {
   // const startIsDeadEnd = (piece.deadEnd == "start");
   // const endIsdeadEnd = (piece.deadEnd == "end");
 
-  // // Render the component
+  // Render the component
   // return (
   //   // For the group, one className is for styling, the other to help us select the track piece with the mouse
   //   <g
@@ -63,20 +63,6 @@ export default function Straight({hideWhenSelected, piece}: props) {
   //       color={getTrackPieceColor(inEditMode, isTrackPieceSelected)}
   //       coordinateOne={attributes.coordinates.start}
   //       coordinateTwo={attributes.coordinates.end}
-  //     />
-  //     <Connector
-  //       draw={isTrackPieceSelected && inEditMode}
-  //       connectorId="start"
-  //       coordinate={attributes.coordinates.start}
-  //       trackPieceIsSelected={isTrackPieceSelected}
-  //       connectorIsSelected={selectedConnector == "start"}
-  //     />
-  //     <Connector
-  //       draw={isTrackPieceSelected && inEditMode}
-  //       connectorId="end"
-  //       coordinate={attributes.coordinates.end}
-  //       trackPieceIsSelected={isTrackPieceSelected}
-  //       connectorIsSelected={selectedConnector == "end"}
   //     />
   //     <DeadEnd
   //       draw={!inEditMode && startIsDeadEnd}

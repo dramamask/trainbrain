@@ -40,6 +40,7 @@ export interface UiLayoutPiece {
 export interface UiLayoutNode {
   id: string;
   coordinate: Coordinate;
+  heading: number | null; // The heading of the piece that is connected to this node, or null if no piece is connected to this node
   deadEnd: boolean; // This node is a dead-end, i.e. it is not connected to a layout piece on one side
 }
 

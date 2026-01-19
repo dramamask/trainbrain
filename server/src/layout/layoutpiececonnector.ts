@@ -25,10 +25,12 @@ import { LayoutPieceConnectorInfo } from "./types.js";
 export class LayoutPieceConnector {
   protected heading: number;
   protected node: LayoutNode | null;
+  protected name: string;
 
-  constructor(connectorInfo: LayoutPieceConnectorInfo) {
+  constructor(connectorInfo: LayoutPieceConnectorInfo, name: string) {
     this.heading = connectorInfo.heading;
     this.node = connectorInfo.node;
+    this.name = name;
   }
 
   public getHeading(): number {
@@ -37,6 +39,10 @@ export class LayoutPieceConnector {
 
   public getNode(): LayoutNode | null {
     return this.node;
+  }
+
+  public getName(): string {
+    return this.name;
   }
 
   public setHeading(heading: number): void {

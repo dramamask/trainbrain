@@ -95,15 +95,9 @@ export class LayoutNode {
     return {
       id: this.id,
       coordinate: this.coordinate,
+      heading: this.getHeading() || null,
       deadEnd: this.isUiDeadEnd(),
     };
-  }
-
-  // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.
-  // Note that it's not a dead-end if it has no pieces connected to it. The UI shows those kinds of nodes in
-  // a different way.
-  protected isUiDeadEnd(): boolean {
-    return (this.pieces.length == 1);
   }
 
   // Connect this node to the given piece
@@ -200,5 +194,27 @@ export class LayoutNode {
     if (writeToFile) {
       await layoutNodesDb.write();
     }
+  }
+
+   // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.
+  // Note that it's not a dead-end if it has no pieces connected to it. The UI shows those kinds of nodes in
+  // a different way.
+  protected isUiDeadEnd(): boolean {
+    return (this.pieces.length == 1);
+  }
+
+  // Return the heading of the side of the piece that we are connected to, or undefined if we are not connected to any pieces
+  protected getHeading(): number | undefined {
+    let heading;
+
+    this.pieces.forEach((piece) => {
+      heading = piece.getConnectorConnectedToNode(this)?.getHeading();
+      console.log(`Node ${this.getId()}: ${heading}`);
+      if (heading != undefined) {
+        return;
+      }
+    });
+
+    return heading;
   }
 }

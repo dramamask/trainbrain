@@ -4,6 +4,7 @@ import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layout
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { FatalError } from "../errors/FatalError.js";
 import { LayoutNode } from "./layoutnode.js";
+import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 
 export abstract class LayoutPiece {
   protected id: string;
@@ -66,6 +67,11 @@ export abstract class LayoutPiece {
   // Return the connectors
   public getConnectors(): LayoutPieceConnectors {
     return this.connectors;
+  }
+
+  // Return our layoutPieceConnector that is connected to the specified node
+  public getConnectorConnectedToNode(node: LayoutNode): LayoutPieceConnector {
+    return this.connectors.getConnectorConnectedToNode(node);
   }
 
   // Return the name of the connector that is connected to the given node
