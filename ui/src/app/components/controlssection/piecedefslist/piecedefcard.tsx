@@ -47,7 +47,7 @@ function addTrackPieceToLayout(pieceDefName:string): void {
   // Get the selected piece (unless the layout is empty)
   let selectedPiece = "";
   if (trackLayoutStore.getTrackLayout().pieces.length > 0) {
-    const selectedPiece = selectionStore.getSelectedLayoutPiece();
+    selectedPiece = selectionStore.getSelectedLayoutPiece();
     if (selectedPiece == "") {
       errorStore.setError(getNoPieceSelectedMessage());
     }
@@ -75,7 +75,8 @@ function addTrackPieceToLayout(pieceDefName:string): void {
 
         // Select the newly inserted piece and node
         const [pieceId, nodeId] = getLastInsertedLayoutPieceAndNodeId(layoutData);
-        console.log("Selected: ", [pieceId, nodeId]);
+        console.log("Setting selected piece: ", pieceId);
+        console.log("Setting selected node: ", nodeId);
         selectionStore.setSelectedLayoutPiece(pieceId);
         selectionStore.setSelectedNode(nodeId);
       })
