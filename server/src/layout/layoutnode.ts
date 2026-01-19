@@ -95,7 +95,7 @@ export class LayoutNode {
     return {
       id: this.id,
       coordinate: this.coordinate,
-      heading: this.getHeading() || null,
+      heading: this.getHeading() ?? null,
       deadEnd: this.isUiDeadEnd(),
     };
   }
@@ -209,7 +209,6 @@ export class LayoutNode {
 
     this.pieces.forEach((piece) => {
       heading = piece.getConnectorConnectedToNode(this)?.getHeading();
-      console.log(`Node ${this.getId()}: ${heading}`);
       if (heading != undefined) {
         return;
       }
