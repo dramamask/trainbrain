@@ -8,7 +8,6 @@ import { degreesToRadians } from "@/app/services/math";
 import DeadEnd from "@/app/components/trackpieces/components/deadend";
 
 import styles from "./node.module.css";
-import { LineCoordinate } from '@/app/services/trackpiece';
 
 interface props {
   node: UiLayoutNode;
