@@ -1,19 +1,19 @@
 import { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
-import { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
 import { LayoutNode } from "./layoutnode.js";
 
 /**
- * Simple class that is just a map of LayoutPieceConnectors
+ * Class that knows all the connectors of a layout piece
  */
 export class LayoutPieceConnectors {
-  protected maxConnectors: number;
   protected connectors: Map<ConnectorName, LayoutPieceConnector>;
 
-  constructor(maxConnectors: number) {
-    this.maxConnectors = maxConnectors;
+  constructor(connectorNames: ConnectorName[]) {
     this.connectors = new Map<ConnectorName, LayoutPieceConnector>();
+    connectorNames.forEach((name) => {
+      this.connectors.set(name, new LayoutPieceConnector(name, 0, null));
+    })
   }
 
   // Return the connector with a given name
@@ -90,18 +90,5 @@ export class LayoutPieceConnectors {
   // This allows uses to do a forEach on this class. Is called the same way as you would call forEach on a Map.
   public forEach(callback: (value: LayoutPieceConnector, key: ConnectorName, map: Map<ConnectorName, LayoutPieceConnector>) => void): void {
     this.connectors.forEach(callback);
-  }
-
-  /**
-   * Add a connector if give the data for the connector
-   * Note that this method should only ever be called when a new layout piece is added to the layout for the first time.
-   */
-  public createConnector(name: ConnectorName, connectorInfo: LayoutPieceConnectorInfo) {
-    if (this.connectors.size >= this.maxConnectors) {
-      throw new FatalError("That's more connectors than we are allowed to have");
-    }
-
-    const connector = new LayoutPieceConnector(connectorInfo, name);
-    this.connectors.set(name, connector);
   }
 }

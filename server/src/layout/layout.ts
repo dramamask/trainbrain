@@ -28,7 +28,7 @@ export class Layout {
       if (pieceDef == undefined) {
         throw new FatalError(`Unknown piece defintion ID found in layout json DB: ${pieceData.pieceDefId}`);
       }
-      this.pieces.set(key, this.createLayoutPieceFromDB(key, pieceData, pieceDef));
+      this.pieces.set(key, this.createLayoutPiece(key, pieceData.pieceDefId, pieceDef));
     });
 
     // Create each layout node
@@ -45,7 +45,7 @@ export class Layout {
 
       const nodes = this.getNodesFromConnectorsData(pieceData.connectors);
       nodes.forEach((node, connectorName) => {
-        this.connect(piece, node, connectorName);
+        this.connect(piece, connectorName, node);
       });
     });
   }
@@ -126,40 +126,28 @@ export class Layout {
       }
     }
 
-    // Disconnect nodeToConnectToStart from it's opposite-side layout piece (so we can connect it to the new piece)
-    if (pieceToConnectToEnd) {
-      this.disconnect(pieceToConnectToEnd, nodeToConnectToStart);
-    }
-
-    // Create the new layout piece and new nodes
-    // The new nodes and piece are connected to each other, but the nodes are not yet connected to the other piece(s) in the layout
-    const newPiece = this.createLayoutPieceAndNodesFromScratch(
+    // Create the new layout piece
+    const newPiece = this.createLayoutPiece(
       (this.getHighestPieceId() + 1).toString(),
       data.pieceDefId,
       pieceDef,
-      nodeToConnectToStart,
-      this.getHighestNodeId() + 1,
-      pieceToConnectToStart?.getHeading("end") || 0
     );
     const newPieceConnectors = newPiece.getConnectors();
 
-    // Connect the existing piece in the layout, and the new piece's end-node, to each other
+    // Create a new node that will be connected to the end-side of the new piece
+    const newEndNode = new LayoutNode((this.getHighestNodeId() + 1).toString(), {x:0, y:0}); // Coordinate will be calculated later
+
+    // Connect the new piece and the appropriate nodes together (the order of operations in this block matters!)
     if (pieceToConnectToEnd) {
       const connectorName = pieceToConnectToEnd.getConnectorName(nodeToConnectToStart as LayoutNode)
-      this.connect(pieceToConnectToEnd, newPieceConnectors.getConnector("start")?.getNode(), connectorName);
+      this.connect(pieceToConnectToEnd, connectorName, newEndNode);
     }
+    this.connect(newPiece, "end", newEndNode);
+    this.connect(newPiece, "start", nodeToConnectToStart);
 
-    // Add the new piece to the layout
+    // Add the new piece and node to the layout
     this.pieces.set(newPiece.getId(), newPiece);
-
-    // Add the new nodes to the layout
-    newPieceConnectors.forEach((connector) => {
-      const node = connector.getNode();
-      if (node == null) {
-        throw new FatalError("Each connector should be connected to a node already");
-      }
-      this.nodes.set(node.getId(), node);
-    });
+    this.nodes.set(newEndNode.getId(), newEndNode);
 
     // Update the coordinates and headings of all nodes and pieces connected to the new piece's start node
     this.updateAllConnectedCoordinatesAndHeadings(nodeToConnectToStart, nodeToConnectToStart.getCoordinate());
@@ -168,82 +156,6 @@ export class Layout {
     layoutNodesDb.write();
     layoutPiecesDb.write();
   }
-
-    // Get the pieces that we need to connect to, and the connection names involved
-  //   const piece1 = this.pieces.get(data.connectToPiece);
-  //   if (!piece1) {
-  //     throw new FatalError(`Could not find layout piece to connect to (piece id: ${data.connectToPiece})`);
-  //   }
-  //   const piece1ConnectionName = data.connectionName;
-  //   const piece2 = piece1.getConnector(piece1ConnectionName);
-  //   let piece2ConnectionName = "";
-  //   if (piece2) {
-  //     piece2ConnectionName = piece2.getConnectorName(piece1);
-  //   }
-
-  //   // Get the track piece definition data
-  //   const pieceDefData: TrackPieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
-  //   if (!pieceDefData) {
-  //     throw new FatalError("Could not find the track piece definition data");
-  //   }
-
-  //   // Assemble connections
-  //   // TODO: How will this work for switch and cross pieces??????????
-  //   let connectionsData: ConnectionsData = {start: null, end: null};
-  //   let connections: LayoutPieceMap = {};
-  //   if (data.connectionName == "end") {
-  //     connectionsData = {
-  //       start: piece1.getId(),
-  //       end: (piece2 ? piece2.getId() : null),
-  //     }
-  //     connections = {
-  //       start: piece1,
-  //       end: piece2,
-  //     }
-  //   }
-  //   if (data.connectionName == "start") {
-  //     connectionsData = {
-  //       start: (piece2 ? piece2.getId() : null),
-  //       end: piece1.getId(),
-  //     }
-  //     connections = {
-  //       start: piece2,
-  //       end: piece1,
-  //     }
-  //   }
-
-  //   // Assemble the layout piece data
-  //   const layoutPieceData: LayoutPieceData = {
-  //     type: data.pieceDefId,
-  //     attributes: data.layoutAttributes,
-  //     connections: connectionsData,
-  //   }
-
-  //   // Create the new piece
-  //   const newId = (this.getHighestPieceId() + 1).toString();
-  //   const newPiece = this.createLayoutPiece(newId, layoutPieceData, pieceDefData);
-  //   this.pieces.set(newPiece.getId(), newPiece);
-  //   newPiece.initConnections(connections);
-
-  //   // Update connections for the neighboring pieces
-  //   piece1.updateConnection(piece1ConnectionName, newPiece);
-  //   if (piece2) {
-  //     piece2.updateConnection(piece2ConnectionName as ConnectionName, newPiece);
-  //   }
-
-  //   // Save the three pieces
-  //   newPiece.save();
-  //   piece1.save();
-  //   if (piece2) {
-  //     piece2.save();
-  //   }
-
-  //   // Write the in-memory json DB to file
-  //   trackLayoutDb.write();
-
-  //   // Recalculate all the coordinates
-  //   this.calculateAllCoordinates();
-  // }
 
   // // Delete a piece from the layout
   // public async deleteLayoutPiece(pieceId: string): Promise<void> {
@@ -350,31 +262,19 @@ export class Layout {
   }
 
   // Create a new layout piece from the provided layout DB data for this piece
-  protected createLayoutPieceFromDB(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
+  protected createLayoutPiece(id: string, pieceDefId: string, pieceDef: TrackPieceDef): LayoutPiece {
     switch(pieceDef.category) {
       case "straight":
-        return Straight.constructFromDbData(id, pieceData, pieceDef);
+        return new Straight(id, pieceDefId, pieceDef);
       case "curve":
-        return Curve.constructFromDbData(id, pieceData, pieceDef);
-      default:
-        throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.category}`)
-    }
-  }
-
-  // Create a new layout piece from scratch, using the provided info
-  public createLayoutPieceAndNodesFromScratch(pieceId: string, pieceDefId: string, pieceDef: TrackPieceDef, startNode: LayoutNode, nextNodeId: number, startHeading: number): LayoutPiece {
-    switch(pieceDef.category) {
-      case "straight":
-        return Straight.constructFromScratch(pieceId, pieceDefId, pieceDef, startNode, nextNodeId, startHeading);
-      case "curve":
-        return Curve.constructFromScratch(pieceId, pieceDefId, pieceDef, startNode, nextNodeId, startHeading);
+        return new Curve(id, pieceDefId, pieceDef);
       default:
         throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.category}`)
     }
   }
 
   // Connect piece and node together, at the specified piece's connector
-  protected connect(piece: LayoutPiece, node: LayoutNode | null, connectorName: ConnectorName): void {
+  protected connect(piece: LayoutPiece, connectorName: ConnectorName, node: LayoutNode | null): void {
     piece.connect(node, connectorName, "Layout::connect()");
     node?.connect(piece, "Layout::connect()", );
   }

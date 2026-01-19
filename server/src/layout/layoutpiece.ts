@@ -36,19 +36,6 @@ export abstract class LayoutPiece {
    */
   public abstract updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void;
 
-  /**
-   * Create connectors and nodes at each connection point for this layout piece
-   * Each node is assigned a unique ID and a default uninitialized coordinate.
-   * Each connector is assigned the proper heading.
-   * Note that this method should only ever be called when a new layout piece is added to the layout for the first time.
-   *
-   * @param firstNodeId The ID to assign to the first created node. Subsequent nodes will get incremented IDs.
-   * @param startHeading The heading of the start connector of the new piece
-   *
-   * @return The connectors for this piece (which have references to the nodes)
-   */
-  protected abstract createConnectorsAndNodes(startNode: LayoutNode, firstNodeId: number, startHeading: number): LayoutPieceConnectors;
-
   // Return the ID of this layout piece
   public getId(): string {
     return this.id;

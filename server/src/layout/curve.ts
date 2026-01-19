@@ -1,12 +1,12 @@
 import { ConnectorName, Coordinate, UiAttributesDataCurve } from "trainbrain-shared";
 import { LayoutNode } from "./layoutnode.js";
 import { LayoutPiece } from "./layoutpiece.js";
-import { LayoutPieceData } from "../data_types/layoutPieces.js";
 import { TrackPieceDef } from "trainbrain-shared";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { FatalError } from "../errors/FatalError.js";
+import { LayoutPieceData } from "../data_types/layoutPieces.js";
 
-const NUM_CONNECTORS = 2; // This layout piece has two connectors
+const CONNECTOR_NAMES = ["start", "end"];
 
 interface PieceDefAttributes {
   angle: number;
@@ -20,19 +20,8 @@ export class Curve extends LayoutPiece {
   protected angle: number;
   protected radius: number;
 
-  public static constructFromDbData(id: string, data: LayoutPieceData, pieceDef: TrackPieceDef): Curve {
-    return new Curve(id, data.pieceDefId, pieceDef);
-  }
-
-  public static constructFromScratch(pieceId: string, pieceDefId: string, pieceDef: TrackPieceDef, startNode: LayoutNode, nextNodeId: number, startHeading: number): Curve {
-    const newPiece = new Curve(pieceId, pieceDefId, pieceDef);
-    newPiece.createConnectorsAndNodes(startNode, nextNodeId, startHeading);
-
-    return newPiece;
-  }
-
-  private constructor(id: string, pieceDefId: string, pieceDef: TrackPieceDef) {
-    const connectors = new LayoutPieceConnectors(NUM_CONNECTORS);
+  public constructor(id: string, pieceDefId: string, pieceDef: TrackPieceDef) {
+    const connectors = new LayoutPieceConnectors(CONNECTOR_NAMES as ConnectorName[]);
     super(id, pieceDefId, pieceDef.category, connectors);
 
     this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
@@ -41,26 +30,6 @@ export class Curve extends LayoutPiece {
 
   public getUiAttributes(): UiAttributesDataCurve {
     return {radius: this.radius};
-  }
-
-  public createConnectorsAndNodes(startNode: LayoutNode, firstNodeId: number, startHeading: number): LayoutPieceConnectors {
-    if (this.connectors.getNumConnectors() != 0) {
-      throw new FatalError("Nodes have already been created for this layout piece");
-    }
-
-    // Create a start connector and add the start node
-    this.connectors.createConnector("start", {heading: startHeading, node: startNode});
-    startNode.connect(this, "LayoutPiece::createNodes()");
-
-    // Create a new node and an end connector, and connect them together
-    const endNode = new LayoutNode(firstNodeId.toString(), { x: 0, y: 0})
-    const endHeading = startHeading + this.angle; // End-side always points to the right compared to the start-side
-    this.connectors.createConnector("end", {heading: endHeading, node: endNode});
-    endNode.connect(this, "LayoutPiece::createNodes()");
-
-    this.save();
-
-    return this.connectors;
   }
 
   public updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void {

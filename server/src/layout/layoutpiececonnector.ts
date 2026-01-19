@@ -1,5 +1,5 @@
+import { ConnectorName } from "trainbrain-shared";
 import { LayoutNode } from "./layoutnode.js";
-import { LayoutPieceConnectorInfo } from "./types.js";
 
 /**
  * This class represents an end side of a layout piece.
@@ -25,12 +25,12 @@ import { LayoutPieceConnectorInfo } from "./types.js";
 export class LayoutPieceConnector {
   protected heading: number;
   protected node: LayoutNode | null;
-  protected name: string;
+  protected name: ConnectorName;
 
-  constructor(connectorInfo: LayoutPieceConnectorInfo, name: string) {
-    this.heading = connectorInfo.heading;
-    this.node = connectorInfo.node;
+  constructor(name: ConnectorName, heading: number, node: LayoutNode | null) {
     this.name = name;
+    this.heading = heading;
+    this.node = node;
   }
 
   public getHeading(): number {

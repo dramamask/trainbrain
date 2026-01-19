@@ -1,8 +1,10 @@
 # TODO
 
 - Work on displaying a piece in the UI.
+- Add readme diagram about piece, connector and node
 - Work on adding a piece on the UI side after the server side is done.
 - Refactor connectors to use Set instead of array.
+- Coordinates should be allowed to be undefined. We could then even invalidate them when something changes.
 - Test rotating a piece.
 - Work on deleting a piece.
 - Reorganizie "shared" project folder section with different files to organize it better.
