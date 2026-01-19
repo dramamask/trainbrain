@@ -8,6 +8,7 @@
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.
 - Test rotating a piece.
 - Work on deleting a piece.
+- Look into how garbage collection works. Which class objects should i decouple from each other when deleting a piece?
 - Reorganizie "shared" project folder section with different files to organize it better.
 - Send the PieceDefId to the UI so the UI can show it with a tooltip of something
 - Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.

@@ -6,14 +6,14 @@ import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 
 export function getLastInsertedTrackPieceId(): string {
   const trackLayoutList = trackLayoutStore.getTrackLayout().pieces
-  const keys = Object.keys(trackLayoutList);
-  const highestNumberKey = keys.at(-1);
+  const keys = Object.keys(trackLayoutList)
+  const lastInsertedLayoutPieceId = keys[keys.length - 1];
 
-  if (highestNumberKey == undefined) {
+  if (lastInsertedLayoutPieceId == undefined) {
     console.error("Unexpected error. this should not happen.")
-    return "1";
+    return "0";
   }
 
-  return highestNumberKey;
+  return lastInsertedLayoutPieceId;
 }
 

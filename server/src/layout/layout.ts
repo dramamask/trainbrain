@@ -113,8 +113,6 @@ export class Layout {
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
     console.log("Incoming request data:", data);
 
-    return;
-
     // Get al the objects involved. Note that input validation has already been done.
     const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
     const nodeToConnectToStart = this.nodes.get(data.nodeId) as LayoutNode;
@@ -284,7 +282,7 @@ export class Layout {
   // Connect piece and node together, at the specified piece's connector
   protected connect(piece: LayoutPiece, connectorName: ConnectorName, node: LayoutNode): void {
     piece.connect(node, connectorName, "Layout::connect()");
-    node?.connect(piece, "Layout::connect()", );
+    node.connect(piece, "Layout::connect()", );
   }
 
   // Disconnect a node from a piece.

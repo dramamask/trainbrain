@@ -123,6 +123,8 @@ export class LayoutNode {
 
     // Add the piece
     this.pieces.push(piece);
+
+    this.save();
   }
 
   // Disconnect this node from the given piece
