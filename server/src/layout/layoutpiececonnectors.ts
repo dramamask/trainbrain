@@ -12,7 +12,7 @@ export class LayoutPieceConnectors {
   constructor(connectorNames: ConnectorName[]) {
     this.connectors = new Map<ConnectorName, LayoutPieceConnector>();
     connectorNames.forEach((name) => {
-      this.connectors.set(name, new LayoutPieceConnector(name, 0, null));
+      this.connectors.set(name, new LayoutPieceConnector(name, 0, undefined));
     })
   }
 
@@ -28,7 +28,7 @@ export class LayoutPieceConnectors {
   }
 
   // Return the the connector that is connected to the given node
-  public getConnectorConnectedToNode(nodeToFind: LayoutNode | null): LayoutPieceConnector {
+  public getConnectorConnectedToNode(nodeToFind: LayoutNode): LayoutPieceConnector | undefined {
     let foundConnector;
 
     this.connectors.forEach((connector, connectorName) => {
@@ -37,15 +37,11 @@ export class LayoutPieceConnectors {
       }
     });
 
-    if (foundConnector == undefined) {
-      throw new FatalError("We are not connected to the specified node");
-    }
-
     return foundConnector;
   }
 
   // Return the name of the connector that is connected to the given node
-  public getConnectorName(nodeToFind: LayoutNode | null): ConnectorName {
+  public getConnectorName(nodeToFind: LayoutNode): ConnectorName | undefined {
     return this.getConnectorConnectedToNode(nodeToFind)?.getName() as ConnectorName;
   }
 
@@ -56,10 +52,14 @@ export class LayoutPieceConnectors {
 
   // Return the data about the node connections, in the format that is used in the layout pieceDB
   public getNodeConnectionsData(): NodeConnectionsData {
-    const nodeConnections: Record<string, string | null> = {};
+    const nodeConnections: Record<string, string> = {};
 
     this.connectors.forEach((connector, connectorName) => {
-      nodeConnections[connectorName] = connector.getNode()?.getId() ?? null;
+      const node = connector.getNode()
+      if (node === undefined) {
+        throw new FatalError("All node connections should be defined by now");
+      }
+      nodeConnections[connectorName] = node.getId();
     });
 
     return nodeConnections;
@@ -67,17 +67,8 @@ export class LayoutPieceConnectors {
 
   // Connect a given node to the specified connector
   // Note that this will disconnect us from whichever node we were connected to before
-  public connect(nodeToConnectTo: LayoutNode | null, connectorNameToConnectTo: ConnectorName): void {
+  public connect(nodeToConnectTo: LayoutNode, connectorNameToConnectTo: ConnectorName): void {
     this.getConnector(connectorNameToConnectTo).connectToNode(nodeToConnectTo);
-  }
-
-  // Disconnect a given node from whichever connector it is currently connected to
-  public disconnect(nodeToDisconnectFrom: LayoutNode): void {
-    this.connectors.forEach((connector, connectorName) => {
-      if(connector.getNode()?.getId() == nodeToDisconnectFrom.getId()) {
-        connector.disconnectFromNode();
-      }
-    });
   }
 
   // Increment the heading of each connector by a given amount

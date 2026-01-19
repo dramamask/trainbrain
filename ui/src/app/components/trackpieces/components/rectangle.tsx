@@ -3,20 +3,20 @@ import * as config from "@/app/config/config";
 
 interface connectorProps {
   visible: boolean; // Whether the shape is drawn as visible or invisible
-  coordinateOne: Coordinate; // Coordinate one corner
-  coordinateTwo: Coordinate; // Coordinate of the diagonally opposite corner
+  topLeft: Coordinate;
+  bottomRight: Coordinate;
 }
 
 // Render a reactangle
-export default function Rectangle({visible, coordinateOne, coordinateTwo}: connectorProps) {
+export default function Rectangle({visible, topLeft, bottomRight}: connectorProps) {
   const stroke = visible ? config.TRACK_COLOR : "none";
 
   return (
     <rect
-      x={coordinateOne.x}
-      y={coordinateOne.y}
-      width={Math.abs(coordinateOne.x - coordinateTwo.x)}
-      height={Math.abs(coordinateOne.y - coordinateTwo.y)}
+      x={topLeft.x}
+      y={bottomRight.y} // This is weird. There's something odd going on with the y values
+      width={Math.abs(topLeft.x - bottomRight.x)}
+      height={Math.abs(topLeft.y - bottomRight.y)}
       stroke={stroke}
       strokeWidth={config.STROKE_WIDTH}
       fill="none"

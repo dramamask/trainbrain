@@ -2,82 +2,60 @@
  * Functions used in multiple track pieces
  */
 
-import { Coordinate, UiLayoutPiece } from "trainbrain-shared";
-import { degreesToRadians } from "./math";
-import * as config from "@/app/config/config"
+import { Coordinate } from "trainbrain-shared";
+import * as config from "@/app/config/config";
 import { store as selectionStore } from "@/app/services/stores/selection";
 
-export interface LineCoordinate {
-  one: Coordinate;
-  two: Coordinate,
+/**
+ * Return the bounding box coordinates for the given track piece coordinates
+ *
+ * @param pieceCoordinates The coordinates associated with the track piece *
+ * @returns The top-left and bottom-right coordinates of the bounding box around the track piece
+ */
+export function getBoundingBox(pieceCoordinates: Coordinate[]): [Coordinate, Coordinate] {
+  // Calculate the corner coordinates of the bounding box
+  let topLeft = getTopLeftCoordinate(pieceCoordinates);
+  let bottomRight = getBottomRightCoordinate(pieceCoordinates);
+
+  // Check to see if the bounding box is big enough in both x and y directions
+  const [dx, dy] = getSpread([topLeft, bottomRight]);
+
+  const xSpreadIcrementNeeded = (dx < config.DEADEND_INDICATOR_LENGTH) ? Math.abs(config.DEADEND_INDICATOR_LENGTH - dx) : 0;
+  const ySpreadIncrementNeeded = (dy < config.DEADEND_INDICATOR_LENGTH) ? Math.abs(config.DEADEND_INDICATOR_LENGTH - dy): 0;
+
+  // Make the bounding box bigger if needed
+  if (xSpreadIcrementNeeded > 0 || ySpreadIncrementNeeded > 0) {
+    [topLeft, bottomRight] = increaseSpread(xSpreadIcrementNeeded, ySpreadIncrementNeeded, topLeft, bottomRight);
+  }
+
+  // Return the bounding box top-left and bottom-right coordinates
+  return [topLeft, bottomRight];
 }
 
-export interface LineCoordinates {
-  start: LineCoordinate;
-  end: LineCoordinate,
+// Get the top left x, y coordinate based on all the x and y values in the specified coordinates
+function getTopLeftCoordinate(coordinates: Coordinate[]): Coordinate {
+  let xMin = Number.MAX_VALUE;
+  let yMax = 0;
+
+  coordinates.forEach((coordinate) => {
+    xMin = Math.min(xMin, coordinate.x);
+    yMax = Math.max(yMax, coordinate.y);
+  })
+
+  return {x: xMin, y: yMax}
 }
 
-// Get the positions for the indicators at the start and end of a track piece
-export function getDeadEndIndicatorPositions(start: Coordinate, end: Coordinate): LineCoordinates
-{
-  const indicatorHalfLength = config.DEADEND_INDICATOR_LENGTH / 2;
+// Get the bottom right x, y coordiante based on all the x and y values in the specified coordinates
+function getBottomRightCoordinate(coordinates: Coordinate[]): Coordinate {
+  let xMax = 0;
+  let yMin = Number.MAX_VALUE;
 
-  const headingRadStart = degreesToRadians(start.heading);
-  const headingRadEnd = degreesToRadians(end.heading);
+  coordinates.forEach((coordinate) => {
+    xMax = Math.max(xMax, coordinate.x);
+    yMin = Math.min(yMin, coordinate.y);
+  })
 
-  const dxStart = indicatorHalfLength * Math.cos(headingRadStart);
-  const dyStart = indicatorHalfLength * Math.sin(headingRadStart);
-  const dxEnd = indicatorHalfLength * Math.cos(headingRadEnd);
-  const dyEnd = indicatorHalfLength * Math.sin(headingRadEnd);
-
-  return {
-    start: {
-      one: {x: start.x - dxStart, y: start.y + dyStart, heading: 0},
-      two: {x: start.x + dxStart, y: start.y - dyStart, heading: 0},
-    },
-    end: {
-      one: {x: end.x + dxEnd, y: end.y - dyEnd, heading: 0},
-      two: {x: end.x - dxEnd, y: end.y + dyEnd, heading: 0},
-    },
-  };
-}
-
-// Get the top left coordinate of all the indicator position coordinates
-export function getTopLeftCoordinate(indicatorPositions: LineCoordinates): Coordinate {
-  const x = Math.min(
-    indicatorPositions.start.one.x,
-    indicatorPositions.start.two.x,
-    indicatorPositions.end.one.x,
-    indicatorPositions.end.two.x,
-  );
-
-  const y = Math.min(
-    indicatorPositions.start.one.y,
-    indicatorPositions.start.two.y,
-    indicatorPositions.end.one.y,
-    indicatorPositions.end.two.y,
-  )
-
-  return {x: x, y: y, heading: 0}
-}
-
-// Get the bottom right coordinate of all the indicator position coordinates
-export function getBottomRightCoordinate(indicatorPositions: LineCoordinates): Coordinate {
-  const x = Math.max(
-    indicatorPositions.start.one.x,
-    indicatorPositions.start.two.x,
-    indicatorPositions.end.one.x,
-    indicatorPositions.end.two.x,
-  );
-
-  const y = Math.max(
-    indicatorPositions.start.one.y,
-    indicatorPositions.start.two.y,
-    indicatorPositions.end.one.y,
-    indicatorPositions.end.two.y,
-  )
-
-  return {x: x, y: y, heading: 0}
+  return {x: xMax, y: yMin}
 }
 
 // Check if this track piece is selected
@@ -85,11 +63,33 @@ export function thisTrackPieceIsSelected(pieceId: string): boolean {
   return (selectionStore.getSelectedLayoutPiece() == pieceId);
 }
 
-// Return the name of the selected connector (if our track piece is selected)
-export function ourSelectedConnector(pieceId: string): string {
-  if (selectionStore.getSelectedLayoutPiece() != pieceId) {
-    return "";
-  }
+// Get the spread of both the x and y valus in all the given coordinates
+function getSpread(coordinates: Coordinate[]): [dx: number, dy: number] {
+  let xMin = Number.MAX_VALUE;
+  let yMin = Number.MAX_VALUE;
+  let xMax = 0;
+  let yMax = 0;
 
-  return selectionStore.getSelectedConnector();
+  coordinates.forEach((coordinate) => {
+    xMin = Math.min(xMin, coordinate.x);
+    yMin = Math.min(yMin, coordinate.y);
+    xMax = Math.max(xMax, coordinate.x);
+    yMax = Math.max(yMax, coordinate.y);
+  })
+
+  return [
+    xMax - xMin,
+    yMax - yMin,
+  ]
+}
+
+// Increase the spread between the topLeft and bottomRight
+function increaseSpread(xIncremant: number, yIncrement: number, topLeft: Coordinate, bottomRight: Coordinate): [Coordinate, Coordinate] {
+  topLeft.x -= (xIncremant / 2);
+  bottomRight.x += (xIncremant / 2)
+
+  topLeft.y += (yIncrement / 2);
+  bottomRight.y -= (yIncrement / 2);
+
+  return [topLeft, bottomRight];
 }

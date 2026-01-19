@@ -3,18 +3,5 @@
     "description": "This file lists the track pieces that make up the train track layout. Nodes are in separate file."
   },
   "pieces": {
-    "0": {
-      "pieceDefId": "LGB-600",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "0"
-        },
-        "end": {
-          "heading": 0,
-          "node": "1"
-        }
-      }
-    }
   }
 }

@@ -1,5 +1,6 @@
 import { ConnectorName } from "trainbrain-shared";
 import { LayoutNode } from "./layoutnode.js";
+import { FatalError } from "../errors/FatalError.js";
 
 /**
  * This class represents an end side of a layout piece.
@@ -24,10 +25,10 @@ import { LayoutNode } from "./layoutnode.js";
  */
 export class LayoutPieceConnector {
   protected heading: number;
-  protected node: LayoutNode | null;
+  protected node: LayoutNode | undefined; // Undefined only before the associated layout piece is fully initialized
   protected name: ConnectorName;
 
-  constructor(name: ConnectorName, heading: number, node: LayoutNode | null) {
+  constructor(name: ConnectorName, heading: number, node: LayoutNode | undefined) {
     this.name = name;
     this.heading = heading;
     this.node = node;
@@ -37,7 +38,7 @@ export class LayoutPieceConnector {
     return this.heading;
   }
 
-  public getNode(): LayoutNode | null {
+  public getNode(): LayoutNode | undefined {
     return this.node;
   }
 
@@ -51,13 +52,8 @@ export class LayoutPieceConnector {
 
   // Connect to the given node
   // Note that this disconnects us from whatever node we were connected to before
-  public connectToNode(node: LayoutNode | null): void {
+  public connectToNode(node: LayoutNode): void {
     this.node = node;
-  }
-
-  // Disconnect from whichever node we are connected to
-  public disconnectFromNode(): void {
-    this.node = null;
   }
 
   // Increment the heading by a given amount

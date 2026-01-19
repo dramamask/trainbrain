@@ -5,6 +5,7 @@
 - Work on adding a piece on the UI side after the server side is done.
 - Refactor connectors to use Set instead of array.
 - Coordinates should be allowed to be undefined. We could then even invalidate them when something changes.
+- Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.
 - Test rotating a piece.
 - Work on deleting a piece.
 - Reorganizie "shared" project folder section with different files to organize it better.

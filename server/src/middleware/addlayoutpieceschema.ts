@@ -8,9 +8,15 @@ export const addLayoutPieceSchema = [
     .isString().withMessage("JSON parameter 'pieceId' should be a string")
     .custom((id: string) => {
       // We don't have any pieces yet, so any pieceId is valid
-      if (layout.getHighestPieceId() == -1) {
+      if (layout.getNumberOfLayoutPieces() == 0) {
         return true;
       }
+
+      if (id.trim() == "") {
+        throw new Error("JSON parameter 'pieceId' may not be an a string once the layout contains a layout piece");
+      }
+
+      //throw new Error(`Num: ${Number(id)}, isNaN: ${isNaN(Number(id)) ? "true": "false"}`);
       // Validate that pieceId is a string representation of a numeric value
       if (isNaN(Number(id))) {
         throw new Error("JSON parameter 'pieceId' should be a string representation of a numeric value");
@@ -21,13 +27,13 @@ export const addLayoutPieceSchema = [
       return true;
     })
     .custom((id: string) => {
-      // Validate that pieceId matches an existing piece in the layout
-      const highestIdAllowed = layout.getHighestPieceId();
       // We don't have any pieces yet, so any pieceId is valid
-      if (highestIdAllowed == -1) {
+      if (layout.getNumberOfLayoutPieces() == 0) {
         return true;
       }
+
       // Validate that pieceId matches an existing piece in the layout
+      const highestIdAllowed = layout.getHighestPieceId();
       if (Number(id) > highestIdAllowed) {
         throw new Error("The value of JSON parameter `pieceId` does not match a piece in the layout")
       }

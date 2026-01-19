@@ -1,12 +1,14 @@
 import { useState, useSyncExternalStore } from 'react';
-import { UiLayoutNode } from "trainbrain-shared";
+import { Coordinate, UiLayoutNode } from "trainbrain-shared";
 import { store as editModeStore } from "@/app/services/stores/editmode";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import * as config from "@/app/config/config";
 import { getNodeClassName } from "@/app/services/cssclassnames";
-import DeadEnd from "./components/deadend";
+import { degreesToRadians } from "@/app/services/math";
+import DeadEnd from "@/app/components/trackpieces/components/deadend";
 
 import styles from "./node.module.css";
+import { LineCoordinate } from '@/app/services/trackpiece';
 
 interface props {
   node: UiLayoutNode;
@@ -22,7 +24,7 @@ export default function node({node}: props) {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  // const indicatorPositions = getDeadEndIndicatorPositions(attributes.coordinates.start, attributes.coordinates.end);
+  const indicatorCoordinates = getDeadEndIndicatorPosition(node.coordinate, node.heading ?? 0);
 
   return (
     <g>
@@ -38,8 +40,8 @@ export default function node({node}: props) {
       />
       <DeadEnd
         draw={!inEditMode && node.deadEnd}
-        coordinateOne={indicatorPositions.start.one}
-        coordinateTwo={indicatorPositions.start.two}
+        coordinateOne={indicatorCoordinates.one}
+        coordinateTwo={indicatorCoordinates.two}
       />
     </g>
   )
@@ -65,4 +67,20 @@ function getFillColor(inEditMode: boolean, isNodeSelected: boolean): string {
   }
 
   return config.NODE_COLOR;
+}
+
+// Get the positions for the indicators at the start and end of a track piece
+function getDeadEndIndicatorPosition(coordinate: Coordinate, heading: number): LineCoordinate
+{
+  const indicatorHalfLength = config.DEADEND_INDICATOR_LENGTH / 2;
+
+  const headingRad = degreesToRadians(heading);
+
+  const dx = indicatorHalfLength * Math.cos(headingRad);
+  const dy = indicatorHalfLength * Math.sin(headingRad);
+
+  return {
+    one: {x: coordinate.x - dx, y: coordinate.y + dy},
+    two: {x: coordinate.x + dx, y: coordinate.y - dy},
+  };
 }

@@ -113,8 +113,8 @@ export default function TrackLayout()
           >
             {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
             <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
-              { renderNodes(trackLayoutState.trackLayout) }
               { renderPieces(trackLayoutState.trackLayout) }
+              { renderNodes(trackLayoutState.trackLayout) }
               { renderDebugContent(worldWidth, worldHeight) }
             </g>
           </svg>
@@ -168,7 +168,7 @@ function renderPieces(layout: UiLayout) {
     return (
       // Iterate over the track layout and render each piece
       layout.pieces.map(
-        (piece: UiLayoutPiece) => getTrackPieceComponent(piece, true)
+        (piece: UiLayoutPiece) => getTrackPieceComponent(piece)
       )
     )
   }
@@ -176,10 +176,10 @@ function renderPieces(layout: UiLayout) {
 }
 
 // Get the React component associated with the track piece
-function getTrackPieceComponent(piece: UiLayoutPiece, hideWhenSelected: boolean) {
+function getTrackPieceComponent(piece: UiLayoutPiece) {
   switch (piece.category) {
     case "straight":
-      return <Straight hideWhenSelected={hideWhenSelected} piece={piece} key={piece.id} />;
+      return <Straight piece={piece} key={piece.id} />;
     case "curve":
       return <Curve piece={piece} key={piece.id} />;
     default:

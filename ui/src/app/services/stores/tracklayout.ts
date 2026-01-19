@@ -40,11 +40,19 @@ export const store = {
     return state.trackLayout;
   },
 
-  getLayoutPieceData(pieceId: string): UiLayoutPiece | undefined {
-    return state.trackLayout.pieces.find(trackPiece => trackPiece.id == pieceId);
+  getLayoutPieceData(pieceId: string): UiLayoutPiece {
+    const piece = state.trackLayout.pieces.find(trackPiece => trackPiece.id == pieceId);
+    if (piece == undefined) {
+      throw new Error("This function should never be called for a non-existing piece");
+    }
+    return piece;
   },
 
-  getLayoutNodeData(nodeId: string): UiLayoutNode | undefined {
-    return state.trackLayout.nodes.find(node => node.id == nodeId);
+  getLayoutNodeData(nodeId: string): UiLayoutNode {
+    const node = state.trackLayout.nodes.find(node => node.id == nodeId);
+    if (node == undefined) {
+      throw new Error("This function should never be called for a non-existing node");
+    }
+    return node;
   },
 };

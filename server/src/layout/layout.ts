@@ -111,6 +111,10 @@ export class Layout {
    *                         O                              O
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
+    console.log("Incoming request data:", data);
+
+    return;
+
     // Get al the objects involved. Note that input validation has already been done.
     const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
     const nodeToConnectToStart = this.nodes.get(data.nodeId) as LayoutNode;
@@ -132,14 +136,13 @@ export class Layout {
       data.pieceDefId,
       pieceDef,
     );
-    const newPieceConnectors = newPiece.getConnectors();
 
     // Create a new node that will be connected to the end-side of the new piece
     const newEndNode = new LayoutNode((this.getHighestNodeId() + 1).toString(), {x:0, y:0}); // Coordinate will be calculated later
 
     // Connect the new piece and the appropriate nodes together (the order of operations in this block matters!)
     if (pieceToConnectToEnd) {
-      const connectorName = pieceToConnectToEnd.getConnectorName(nodeToConnectToStart as LayoutNode)
+      const connectorName = pieceToConnectToEnd.getConnectorName(nodeToConnectToStart as LayoutNode) as ConnectorName;
       this.connect(pieceToConnectToEnd, connectorName, newEndNode);
     }
     this.connect(newPiece, "end", newEndNode);
@@ -247,6 +250,11 @@ export class Layout {
     return highestId;
   }
 
+  // Return the number of layout pieces in our layout
+  getNumberOfLayoutPieces(): number {
+    return this.pieces.size;
+  }
+
   // Find the layout piece with the highest numerical ID. Return the ID as a number.
   public getHighestPieceId(): number {
     let highestId: number = -1;
@@ -274,14 +282,18 @@ export class Layout {
   }
 
   // Connect piece and node together, at the specified piece's connector
-  protected connect(piece: LayoutPiece, connectorName: ConnectorName, node: LayoutNode | null): void {
+  protected connect(piece: LayoutPiece, connectorName: ConnectorName, node: LayoutNode): void {
     piece.connect(node, connectorName, "Layout::connect()");
     node?.connect(piece, "Layout::connect()", );
   }
 
-  // Disconnect piece and node from each other.
+  // Disconnect a node from a piece.
+  // FYI: A piece can never be disconnected from a node. A piece is always connected to a node. A piece can be
+  // connected to a different node, but it will always be connected to a node. It will never be in a disconnected state.
   protected disconnect(piece: LayoutPiece, node: LayoutNode): void {
-    piece.disconnect(node, "Layout::disconnect()");
+    if (piece.getConnectorConnectedToNode(node) !== undefined) {
+      throw new FatalError("Cannot disconnect this node from the given piece. The piece is still connected to this node")
+    }
     node.disconnect(piece, "Layout::disconnect()")
   }
 
@@ -294,8 +306,8 @@ export class Layout {
 
     const pieces = startNode.getPieces();
     pieces.forEach((piece, index) => {
-      const connectorName = piece.getConnectorName(startNode);
-      const heading = piece.getConnectors().getConnector(connectorName).getHeading()
+      const connectorName = piece.getConnectorName(startNode) as ConnectorName;
+      const heading = piece.getConnectors().getConnector(connectorName).getHeading() ?? 0
       piece.updateHeadingAndContinue(startNode.getId(), startNode.getCoordinate(), heading, loopProtector);
     });
   }

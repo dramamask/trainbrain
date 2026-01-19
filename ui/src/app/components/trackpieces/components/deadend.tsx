@@ -9,7 +9,7 @@ interface connectorProps {
 
 // Render the dead-end indicator. Which is an indicator to show that a track piece is not
 // connected to another piece. Dead-end indicators are shows in normal mode (not edit mode).
-export default function deaded({draw, coordinateOne, coordinateTwo}: connectorProps) {
+export default function deadEnd({draw, coordinateOne, coordinateTwo}: connectorProps) {
   if (!draw) {
     return false;
   }

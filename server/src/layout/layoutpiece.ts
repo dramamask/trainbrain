@@ -57,12 +57,12 @@ export abstract class LayoutPiece {
   }
 
   // Return our layoutPieceConnector that is connected to the specified node
-  public getConnectorConnectedToNode(node: LayoutNode): LayoutPieceConnector {
+  public getConnectorConnectedToNode(node: LayoutNode): LayoutPieceConnector | undefined {
     return this.connectors.getConnectorConnectedToNode(node);
   }
 
   // Return the name of the connector that is connected to the given node
-  public getConnectorName(node: LayoutNode): ConnectorName {
+  public getConnectorName(node: LayoutNode): ConnectorName | undefined {
     return this.connectors.getConnectorName(node);
   }
 
@@ -92,7 +92,7 @@ export abstract class LayoutPiece {
   }
 
   // Connect this piece to the given node, at the given connector
-  public connect(node: LayoutNode | null, connectorName: ConnectorName, friendToken: string): void {
+  public connect(node: LayoutNode, connectorName: ConnectorName, friendToken: string): void {
     // We risk the integraty of layout piece to node connections if we call this method willy nilly
     switch (friendToken) {
       case "LayoutPiece::createNodes()":
@@ -105,22 +105,6 @@ export abstract class LayoutPiece {
 
     // Make the connection
     this.connectors.connect(node, connectorName);
-
-    this.save();
-  }
-
-  // Disconnect this piece from the given node, at the given connector
-  public disconnect(node: LayoutNode, friendToken: string): void {
-    // We risk the integraty of layout piece to node connections if we call this method willy nilly
-    switch (friendToken) {
-      case "Layout::disconnect()":
-        break;
-      default:
-        throw new FatalError("This method should only ever be called from the methods listed above.");
-    }
-
-    // Disconnect
-    this.connectors.disconnect(node)
 
     this.save();
   }
