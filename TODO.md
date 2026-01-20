@@ -30,4 +30,6 @@
 - Zoom on layout map when mouse scroll is used. Make mouse pointer position the zoom focal point.
 - Expand zoom functionality to take up the entire window. Add pan controls. Add zoom controls.
 - Add layout map inside a MUI Card
+- Make cards collapsable where there's only a title bar visible.
+- Add react grid (or whatever it is called) for the cards in right side "controls section"
 
