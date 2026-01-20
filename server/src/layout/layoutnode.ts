@@ -95,7 +95,7 @@ export class LayoutNode {
     return {
       id: this.id,
       coordinate: this.coordinate,
-      heading: this.getHeading() ?? null,
+      heading: this.getHeadingForUi(),
       deadEnd: this.isUiDeadEnd(),
     };
   }
@@ -176,10 +176,13 @@ export class LayoutNode {
     // Set our coordinate
     this.setCoordinate(coordinate);
 
-    // Tell all connected pieces (except the calling piece) to continue the update down the layout
+    console.log("Node " + this.getId() + " says: my coordinate is now ", coordinate);
+
+    // Tell the other connected piece to continue the update down the layout
     this.pieces.forEach((piece, index) => {
       if (piece.getId() !== callingPieceId) {
         let coordinate = this.coordinate;
+        console.log("Node " + this.getId() + " says: I'm now calling piece " + piece.getId());
         piece.updateHeadingAndContinue(this.id, coordinate, heading, loopProtector);
       }
     });
@@ -205,17 +208,17 @@ export class LayoutNode {
     return (this.pieces.length == 1);
   }
 
-  // Return the heading of the side of the piece that we are connected to, or undefined if we are not connected to any pieces
-  protected getHeading(): number | undefined {
-    let heading;
+  /**
+   * If this piece is a dead-end (only one piece connected) then return the heading of the side of
+   * the piece that we are connected to, otherwise return null. This is used for UI purposes only.
+   *
+   * @returns {number} heading
+   */
+  protected getHeadingForUi(): number | null{
+    if (this.isUiDeadEnd()) {
+      return this.pieces[0].getHeadingFromNode(this)
+    }
 
-    this.pieces.forEach((piece) => {
-      heading = piece.getConnectorConnectedToNode(this)?.getHeading();
-      if (heading != undefined) {
-        return;
-      }
-    });
-
-    return heading;
+    return null;
   }
 }

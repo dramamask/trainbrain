@@ -2,18 +2,31 @@ import { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
 import { LayoutNode } from "./layoutnode.js";
+import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 
 /**
  * Class that knows all the connectors of a layout piece
  */
 export class LayoutPieceConnectors {
-  protected connectors: Map<ConnectorName, LayoutPieceConnector>;
+  protected readonly connectors: Map<ConnectorName, LayoutPieceConnector>;
 
-  constructor(connectorNames: ConnectorName[]) {
+  constructor(connectorsData: LayoutPieceConnectorsData) {
     this.connectors = new Map<ConnectorName, LayoutPieceConnector>();
-    connectorNames.forEach((name) => {
-      this.connectors.set(name, new LayoutPieceConnector(name, 0, undefined));
+    Object.entries(connectorsData).forEach(([key, data]) => {
+      const name = key as ConnectorName;
+      this.connectors.set(name, new LayoutPieceConnector(name, data.heading));
     })
+  }
+
+  // Return the heading of the connector
+  public getHeading(name: ConnectorName): number {
+    const connector = this.connectors.get(name);
+
+    if (connector == null) {
+      throw new FatalError(`We don't have a connector called '${name}'`);
+    }
+
+    return connector.getHeading();
   }
 
   // Return the connector with a given name
@@ -69,6 +82,17 @@ export class LayoutPieceConnectors {
   // Note that this will disconnect us from whichever node we were connected to before
   public connect(nodeToConnectTo: LayoutNode, connectorNameToConnectTo: ConnectorName): void {
     this.getConnector(connectorNameToConnectTo).connectToNode(nodeToConnectTo);
+  }
+
+  // Increment the heading of each connector by a given amount
+  public setHeading(name: ConnectorName, heading: number): void {
+     const connector =  this.connectors.get(name);
+
+    if (connector == null) {
+      throw new FatalError(`We don't have a connector called '${name}'`);
+    }
+
+    return connector.setHeading(heading);
   }
 
   // Increment the heading of each connector by a given amount

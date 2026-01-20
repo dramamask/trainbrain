@@ -1,8 +1,6 @@
 # TODO
 
-- Work on displaying a piece in the UI.
-- Add readme diagram about piece, connector and node
-- Work on adding a piece on the UI side after the server side is done.
+- Debug adding pieces. Debug UI side and server side.
 - Refactor connectors to use Set instead of array.
 - Coordinates should be allowed to be undefined. We could then even invalidate them when something changes.
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.

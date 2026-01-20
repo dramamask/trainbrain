@@ -2,11 +2,8 @@ import { ConnectorName, Coordinate, UiAttributesDataCurve } from "trainbrain-sha
 import { LayoutNode } from "./layoutnode.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { TrackPieceDef } from "trainbrain-shared";
-import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { FatalError } from "../errors/FatalError.js";
-import { LayoutPieceData } from "../data_types/layoutPieces.js";
-
-const CONNECTOR_NAMES = ["start", "end"];
+import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 
 interface PieceDefAttributes {
   angle: number;
@@ -20,9 +17,12 @@ export class Curve extends LayoutPiece {
   protected angle: number;
   protected radius: number;
 
-  public constructor(id: string, pieceDefId: string, pieceDef: TrackPieceDef) {
-    const connectors = new LayoutPieceConnectors(CONNECTOR_NAMES as ConnectorName[]);
-    super(id, pieceDefId, pieceDef.category, connectors);
+  public constructor(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef) {
+     // We need to define the connector config data if no data is included in the pieceData (this happens when adding a new layout piece at run-time)
+    if (Object.keys(pieceData.connectors).length == 0) {
+      pieceData.connectors = Curve.createConnectorsData(pieceData.heading);
+    }
+    super(id, pieceData, pieceDef.category);
 
     this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
     this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
@@ -104,7 +104,7 @@ export class Curve extends LayoutPiece {
         x: this.roundTo2(startCoordinate.x + dX),
         y: this.roundTo2(startCoordinate.y + dY),
       },
-      endHeading: startHeading + this.angle,
+      endHeading: startHeading + 180 + this.angle,
     })
   }
 
@@ -123,11 +123,8 @@ export class Curve extends LayoutPiece {
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
 
-    // Invert the angle and the x-coordinate because the piece is now facing left
-    // (start and end are reversed)
-    let pieceAngle = this.angle;
+    // Invert the  x-coordinate because the piece is now facing left (start and end are reversed)
     dX = (0 - dX);
-    pieceAngle = (0 - pieceAngle);
 
     // Rotate the track piece to fit correctly on the end of the previous piece
     const rotated = this.rotatePoint(dX, dY, endHeading);
@@ -140,43 +137,26 @@ export class Curve extends LayoutPiece {
         x: this.roundTo2(endCoordinate.x + dX),
         y: this.roundTo2(endCoordinate.y + dY),
       },
-      startHeading: endHeading + pieceAngle,
+      startHeading: endHeading + 180 - this.angle,
     })
   }
 
-  // We rotate the curve by swapping the start and end. Seen from the vantage point
-  // of the layout's start position, this will result in rotating the bend of the
-  // curve the other way.
-  public rotate(): void {
-  //   const piece1 = this.connections.start;
-  //   const piece2 = this.connections.end;
+  /**
+   * Create layout piece connectors data for this layout piece, and return it.
+   * This is something that a layout piece needs to do when a new layout piece is added during run time.
+   * The layout piece needs to do this because the UI (which triggers this action) doesn't have all the
+   * data about the new piece's connectors.
+   *
+   * @returns {LayoutPieceConnectorsData}
+   */
+  static createConnectorsData(heading: number | undefined): LayoutPieceConnectorsData {
+    if (heading === undefined) {
+      throw new FatalError("I'm not getting anything! I'm getting nothing! What am I supposed to do? You gotta give me something")
+    }
 
-  //   this.connections.start = piece2;
-  //   this.connections.end = piece1;
-
-  //   // Update the start positition if needed
-  //   if (startPosition.areWeConnected(this)) {
-  //     if (startPosition.getFirstPiece().connectorName == "start") {
-  //       startPosition.setFirstPiece(this, "end");
-  //     } else {
-  //       startPosition.setFirstPiece(this, "start");
-  //     }
-  //   }
-
-  //   // Write the new connections to the json DB
-  //   this.save();
+    return {
+      "start": { heading: heading, node: null },
+      "end": { heading: heading, node: null },
+    }
   }
-
-  // // Get the dead-end indicator for the UiLayoutPiece
-  //   private getDeadEnd(): DeadEnd {
-  //     if (this.connections.start == null) {
-  //       return "start";
-  //     }
-
-  //     if (this.connections.end == null) {
-  //       return "end";
-  //     }
-
-  //     return null;
-  //   }
 }

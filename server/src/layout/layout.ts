@@ -9,7 +9,6 @@ import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layout
 import { LayoutNodeData } from "../data_types/layoutNodes.js";
 import { NotConnectedError } from "../errors/NotConnectedError.js";
 import { FatalError } from "../errors/FatalError.js";
-import { start } from "node:repl";
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
@@ -28,7 +27,7 @@ export class Layout {
       if (pieceDef == undefined) {
         throw new FatalError(`Unknown piece defintion ID found in layout json DB: ${pieceData.pieceDefId}`);
       }
-      this.pieces.set(key, this.createLayoutPiece(key, pieceData.pieceDefId, pieceDef));
+      this.pieces.set(key, this.createLayoutPiece(key, pieceData, pieceDef));
     });
 
     // Create each layout node
@@ -94,25 +93,23 @@ export class Layout {
    *   - pieceId is the existing piece in the layout that we want to connect the new piece to
    *   - nodeId is the node that connected to the start-side of the new piece
    *
-   *                   SITUATION BEFORE:              SITUATION AFTER:
+   *             SITUATION BEFORE:                  SITUATION AFTER:
    *
-   *                                                       O   O
-   *                                                       |  /
-   *                                                       | /
-   *                                                       |/
-   *                         O   O                         O (new "end" node)
-   *                         |  /                          |
-   *                         | /                           | (new piece)
-   *                         |/                            |
-   *   (node with ID nodeId) O                             O (node with ID nodeId)
-   *                         |                             |
-   * (piece with ID pieceId) |                             | (piece with ID pieceId)
-   *                         |                             |
-   *                         O                              O
+   *                                                           O   O
+   *                                                           |  /
+   *                                                           | /
+   *                                                           |/
+   *                         O   O                             O (new "end" node)
+   *                         |  /                              |
+   *                         | /                               | (new piece)
+   *                         |/                                |
+   *   (node with ID nodeId) O           (node with ID nodeId) O
+   *                         |                                 |
+   * (piece with ID pieceId) |         (piece with ID pieceId) |
+   *                         |                                 |
+   *                         O                                 O
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
-    console.log("Incoming request data:", data);
-
     // Get al the objects involved. Note that input validation has already been done.
     const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
     const nodeToConnectToStart = this.nodes.get(data.nodeId) as LayoutNode;
@@ -129,9 +126,14 @@ export class Layout {
     }
 
     // Create the new layout piece
+    const pieceData: LayoutPieceData = {
+      pieceDefId: data.pieceDefId,
+      connectors: {},
+      heading: pieceToConnectToStart?.getHeadingFromNode(nodeToConnectToStart) ?? 0,
+    }
     const newPiece = this.createLayoutPiece(
       (this.getHighestPieceId() + 1).toString(),
-      data.pieceDefId,
+      pieceData,
       pieceDef,
     );
 
@@ -268,12 +270,12 @@ export class Layout {
   }
 
   // Create a new layout piece from the provided layout DB data for this piece
-  protected createLayoutPiece(id: string, pieceDefId: string, pieceDef: TrackPieceDef): LayoutPiece {
+  protected createLayoutPiece(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef): LayoutPiece {
     switch(pieceDef.category) {
       case "straight":
-        return new Straight(id, pieceDefId, pieceDef);
+        return new Straight(id, pieceData, pieceDef);
       case "curve":
-        return new Curve(id, pieceDefId, pieceDef);
+        return new Curve(id, pieceData, pieceDef);
       default:
         throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.category}`)
     }
@@ -289,8 +291,8 @@ export class Layout {
   // FYI: A piece can never be disconnected from a node. A piece is always connected to a node. A piece can be
   // connected to a different node, but it will always be connected to a node. It will never be in a disconnected state.
   protected disconnect(piece: LayoutPiece, node: LayoutNode): void {
-    if (piece.getConnectorConnectedToNode(node) !== undefined) {
-      throw new FatalError("Cannot disconnect this node from the given piece. The piece is still connected to this node")
+    if (piece.isConnectToNode(node)) {
+      throw new FatalError("Cannot disconnect this node from the given piece. The piece is still connected to that node")
     }
     node.disconnect(piece, "Layout::disconnect()")
   }
@@ -304,8 +306,14 @@ export class Layout {
 
     const pieces = startNode.getPieces();
     pieces.forEach((piece, index) => {
+      console.log("Layout object says: start node's coordinate: ", startNode.getCoordinate());
+
       const connectorName = piece.getConnectorName(startNode) as ConnectorName;
-      const heading = piece.getConnectors().getConnector(connectorName).getHeading() ?? 0
+      console.log("Layout object says: start node is connected to connector: ", connectorName);
+
+      const heading = piece.getHeading(connectorName);
+      console.log("Layout object says: this connector has a heading of: ", heading);
+
       piece.updateHeadingAndContinue(startNode.getId(), startNode.getCoordinate(), heading, loopProtector);
     });
   }
