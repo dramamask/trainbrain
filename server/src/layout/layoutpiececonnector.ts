@@ -25,12 +25,12 @@ import { LayoutNode } from "./layoutnode.js";
 export class LayoutPieceConnector {
   protected readonly name: ConnectorName;
   protected heading: number;
-  protected node: LayoutNode | undefined; // Undefined only before the associated layout piece is fully initialized
+  protected node: LayoutNode;
 
-  constructor(name: ConnectorName, heading: number) {
+  constructor(name: ConnectorName, node: LayoutNode, heading: number) {
     this.name = name;
     this.heading = heading;
-    this.node = undefined;
+    this.node = node;
   }
 
   // Return the heading of the connector
@@ -46,10 +46,9 @@ export class LayoutPieceConnector {
     return this.name;
   }
 
-  // Connect to the given node
-  // Note that this disconnects us from whatever node we were connected to before
-  public connectToNode(node: LayoutNode): void {
-    this.node = node;
+  // Replace our current node connection with this new one
+  public replaceNodeConnection(newNode: LayoutNode): void {
+    this.node = newNode;
   }
 
   // Set the heading of this connector

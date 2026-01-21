@@ -1,20 +1,20 @@
-import { Coordinate, UiLayoutNode } from "trainbrain-shared";
+import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
+import type { LayoutPiece } from "./layoutpiece.js";
+import type { LayoutNodeData } from "../data_types/layoutNodes.js";
 import { layoutNodesDb } from "../services/db.js";
-import { LayoutPiece } from "./layoutpiece.js";
-import { LayoutNodeData } from "../data_types/layoutNodes.js";
-import { NotConnectedError } from "../errors/NotConnectedError.js";
 import { FatalError } from "../errors/FatalError.js";
+import { NotConnectedError } from "../errors/NotConnectedError.js";
 
 export class LayoutNode {
-  protected id: string;
-  protected coordinate: Coordinate;
-  protected pieces: LayoutPiece[];
+  protected readonly id: string;
+  protected readonly pieces: Map<string | undefined, LayoutPiece | null>;
+  protected coordinate: Coordinate | undefined;
   protected loopProtector: string;
 
-  constructor(id: string, coordinate: Coordinate) {
+  constructor(id: string, coordinate: Coordinate | undefined) {
     this.id = id;
     this.coordinate = coordinate;
-    this.pieces = [];
+    this.pieces = new Map<string | undefined, LayoutPiece | null>([[undefined, null],[undefined,null]]);
     this.loopProtector = "";
   }
 
@@ -23,132 +23,76 @@ export class LayoutNode {
   }
 
   public getCoordinate(): Coordinate {
+    if (this.coordinate === undefined) {
+      throw new FatalError("The coordinate should be known by know.");
+    }
+
     return this.coordinate;
   }
 
-  public getPieces(): LayoutPiece[] {
-    return this.pieces;
+  public incrementHeading(headingIncrement: number): void {
+    this.pieces.forEach(piece => piece?.incrementHeading(headingIncrement));
   }
 
   // Return true if this connector is connected to the specified layout piece. Otherwise return false.
   public isConnectedtoPiece(piece: LayoutPiece | null): boolean {
-    // They are asking about a null piece.
-    if (piece == null) {
-      // We are connected to a null piece if we have less than 2 connected pieces.
-      if (this.pieces.length < 2) {
+    this.pieces.forEach(ourPiece => {
+      if(ourPiece?.getId() == piece?.getId()) {
         return true;
       }
-      // We are connected to two actual pieces, so we are not connected to a null piece.
-      return false;
-    }
+    });
 
-    // They are asking about an actual piece. Check if we are connected to that piece.
-    const index = this.pieces.findIndex(pieceInArray => pieceInArray.getId() == piece.getId());
-    if (index >= 0) {
-      // We know the piece, so we are connected.
-      return true;
-    }
-
-    // We are not connected to this piece.
     return false;
   }
 
   // Given one connected piece, return the other connected piece (or null if there is none)
   public getOtherPiece(piece: LayoutPiece | null): LayoutPiece | null {
-    // They are asking about a null piece
-    if (piece == null) {
-      switch (this.pieces.length) {
-        case 0:
-          return null;
-        case 1:
-          return this.pieces[0];
-        default:
-          throw new FatalError("This node is connected to two pieces. You are asking about a null piece. Does not compute.");
+    // Try to find piece
+    let foundPieceConnectorName: string | undefined;
+    this.pieces.forEach((ourPiece, connectorName) => {
+      if (ourPiece?.getId() == piece?.getId()) {
+        foundPieceConnectorName = connectorName;
       }
+    })
+
+    if (foundPieceConnectorName === undefined) {
+      throw new NotConnectedError("We don't have the piece you asked for, so we cannot tell you what the other piece is");
     }
 
-    // We are asking about an actual piece
-    const index = this.pieces.findIndex(pieceInArray => pieceInArray.getId() == piece.getId());
-    if (index == -1) {
-      throw new NotConnectedError("The piece you are asking about is unknown to me")
-    }
+    // Get the other piece
+    let otherPiece: LayoutPiece | null = null;
+    this.pieces.forEach((ourPiece, connectorName) => {
+      if (connectorName != foundPieceConnectorName) {
+        otherPiece = ourPiece;
+      }
+    });
 
-    // We are connected to the piece they are asking about, but not connected to any other pieces. Return null.
-    if (this.pieces.length == 1) {
-      return null;
-    }
-
-    // We are connected to the piece they are asking about, and one other piece. Return the other piece.
-    return this.pieces[1 - index];
+    return otherPiece;
   }
 
   // Get the data for this layout node, as it would be stored in the layout-nodes json DB
   public getLayoutData(): LayoutNodeData {
+    if (this.coordinate === undefined) {
+      throw new FatalError("The coordinate should be known by know.");
+    }
+
     return {
-      pieces: this.pieces.map(piece => piece.getId()),
       coordinate: this.coordinate
     };
   }
 
   // Return our layout information in the UiLayoutNode format
   public getUiLayoutData(): UiLayoutNode {
+    if (this.coordinate === undefined) {
+      throw new FatalError("The coordinate should be known by know.");
+    }
+
     return {
       id: this.id,
       coordinate: this.coordinate,
       heading: this.getHeadingForUi(),
       deadEnd: this.isUiDeadEnd(),
     };
-  }
-
-  // Connect this node to the given piece
-  public connect(piece: LayoutPiece | null, friendToken: string) {
-    // We risk the integraty of layout piece to node connections if we call this method willy nilly
-    switch (friendToken) {
-      case "LayoutPiece::createNodes()":
-        break;
-      case "Layout::connect()":
-        break;
-      default:
-        throw new FatalError("This method should only ever be called from the methods listed above.");
-    }
-
-    if ((this.pieces.length) == 2) {
-      throw new FatalError("This node is already connected to two pieces");
-    }
-
-    // We are asking to connected nothing. This is a valid scenario. We don't need to do anything.
-    if (piece == null) {
-      return;
-    }
-
-    // Add the piece
-    this.pieces.push(piece);
-
-    this.save();
-  }
-
-  // Disconnect this node from the given piece
-  public disconnect(piece: LayoutPiece, friendToken: string): void {
-    // We risk the integraty of layout piece to node connections if we call this method willy nilly
-    switch (friendToken) {
-      case "Layout::disconnect()":
-        break;
-      default:
-        throw new FatalError("This method should only ever be called from the methods listed above.");
-    }
-
-    if ((this.pieces.length) == 0) {
-      throw new FatalError("This node doesn't have any connects");
-    }
-
-    if (piece == null) {
-      throw new FatalError("We can't disconnect from nothing");
-    }
-
-    // Remove the piece
-    this.pieces = this.pieces.filter(pieceWeAreConnectedTo => piece.getId() == pieceWeAreConnectedTo.getId());
-
-    this.save();
   }
 
   // Replace our coordinate with the given coordinate
@@ -179,11 +123,11 @@ export class LayoutNode {
     console.log("Node " + this.getId() + " says: my coordinate is now ", coordinate);
 
     // Tell the other connected piece to continue the update down the layout
-    this.pieces.forEach((piece, index) => {
-      if (piece.getId() !== callingPieceId) {
-        let coordinate = this.coordinate;
-        console.log("Node " + this.getId() + " says: I'm now calling piece " + piece.getId());
-        piece.updateHeadingAndContinue(this.id, coordinate, heading, loopProtector);
+    this.pieces.forEach(piece => {
+      if (piece?.getId() !== callingPieceId) {
+        let coordinate = this.coordinate as Coordinate;
+        console.log("Node " + this.getId() + " says: I'm now calling piece " + piece?.getId());
+        piece?.updateHeadingAndContinue(this.id, coordinate, heading, loopProtector);
       }
     });
   }
@@ -205,7 +149,14 @@ export class LayoutNode {
   // Note that it's not a dead-end if it has no pieces connected to it. The UI shows those kinds of nodes in
   // a different way.
   protected isUiDeadEnd(): boolean {
-    return (this.pieces.length == 1);
+    let connectionCount = 0;
+    this.pieces.forEach(piece => {
+      if (piece !== null) {
+        connectionCount++;
+      }
+    })
+
+    return (connectionCount === 1);
   }
 
   /**
@@ -215,8 +166,17 @@ export class LayoutNode {
    * @returns {number} heading
    */
   protected getHeadingForUi(): number | null{
-    if (this.isUiDeadEnd()) {
-      return this.pieces[0].getHeadingFromNode(this)
+    let connectionCount = 0;
+    let heading = null;
+    this.pieces.forEach((piece, connectorName) => {
+      if (piece !== null) {
+        connectionCount++;
+        heading = piece.getHeading(connectorName as ConnectorName);
+      }
+    })
+
+    if (connectionCount == 1) {
+      return heading;
     }
 
     return null;

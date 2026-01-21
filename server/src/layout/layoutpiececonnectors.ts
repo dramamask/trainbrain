@@ -2,7 +2,7 @@ import { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
 import { LayoutNode } from "./layoutnode.js";
-import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
+import { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
 
 /**
  * Class that knows all the connectors of a layout piece
@@ -10,11 +10,12 @@ import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 export class LayoutPieceConnectors {
   protected readonly connectors: Map<ConnectorName, LayoutPieceConnector>;
 
-  constructor(connectorsData: LayoutPieceConnectorsData) {
+  constructor(connectorsInfo: LayoutPieceConnectorsInfo) {
     this.connectors = new Map<ConnectorName, LayoutPieceConnector>();
-    Object.entries(connectorsData).forEach(([key, data]) => {
-      const name = key as ConnectorName;
-      this.connectors.set(name, new LayoutPieceConnector(name, data.heading));
+    Object.entries(connectorsInfo).forEach(([key, value]) => {
+      const connectorName = key as ConnectorName;
+      const connectorInfo = value as LayoutPieceConnectorInfo;
+      this.connectors.set(connectorName, new LayoutPieceConnector(connectorName, connectorInfo.node, connectorInfo.heading));
     })
   }
 
@@ -40,24 +41,6 @@ export class LayoutPieceConnectors {
     return connector;
   }
 
-  // Return the the connector that is connected to the given node
-  public getConnectorConnectedToNode(nodeToFind: LayoutNode): LayoutPieceConnector | undefined {
-    let foundConnector;
-
-    this.connectors.forEach((connector, connectorName) => {
-      if (connector.getNode()?.getId() == nodeToFind?.getId()) {
-        foundConnector = connector;
-      }
-    });
-
-    return foundConnector;
-  }
-
-  // Return the name of the connector that is connected to the given node
-  public getConnectorName(nodeToFind: LayoutNode): ConnectorName | undefined {
-    return this.getConnectorConnectedToNode(nodeToFind)?.getName() as ConnectorName;
-  }
-
   // Return the number of connectors that we have
   public getNumConnectors(): number {
     return this.connectors.size;
@@ -80,11 +63,11 @@ export class LayoutPieceConnectors {
 
   // Connect a given node to the specified connector
   // Note that this will disconnect us from whichever node we were connected to before
-  public connect(nodeToConnectTo: LayoutNode, connectorNameToConnectTo: ConnectorName): void {
-    this.getConnector(connectorNameToConnectTo).connectToNode(nodeToConnectTo);
+  public replaceNodeConnection(nodeToConnectTo: LayoutNode, connectorNameToConnectTo: ConnectorName): void {
+    this.getConnector(connectorNameToConnectTo).replaceNodeConnection(nodeToConnectTo);
   }
 
-  // Increment the heading of each connector by a given amount
+  // Set the heading for a specific connector
   public setHeading(name: ConnectorName, heading: number): void {
      const connector =  this.connectors.get(name);
 

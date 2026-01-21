@@ -10,7 +10,6 @@ export type LayoutPieceConnectorsData = Record<string, LayoutPieceConnectorData>
 // Structure of the data for a layout piece in the layout pieces json DB
 export interface LayoutPieceData {
   pieceDefId: string;
-  heading?: number,
   connectors: LayoutPieceConnectorsData;
 }
 

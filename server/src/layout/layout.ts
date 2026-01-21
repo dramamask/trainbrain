@@ -1,12 +1,13 @@
-import { AddLayoutPieceData, ConnectorName, Coordinate, TrackPieceDef, UiLayout } from "trainbrain-shared";
+import type { AddLayoutPieceData, ConnectorName, Coordinate, TrackPieceDef, UiLayout } from "trainbrain-shared";
+import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
+import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import type { LayoutNodeData } from "../data_types/layoutNodes.js";
+import { NodeFactory } from "./nodeFactory.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
-import { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
 import { pieceDefintionsDb, layoutPiecesDb, layoutNodesDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
-import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
-import { LayoutNodeData } from "../data_types/layoutNodes.js";
 import { NotConnectedError } from "../errors/NotConnectedError.js";
 import { FatalError } from "../errors/FatalError.js";
 
@@ -18,34 +19,23 @@ export class Layout {
   constructor() {
     this.pieces = new Map<string, LayoutPiece>();
     this.nodes = new Map<string, LayoutNode>();
+    this.nodeFactory = new NodeFactory(this);
   }
 
   public init() {
+    // Create each layout node
+    Object.entries(layoutNodesDb.data.nodes).forEach(([key, nodeData]) => {
+      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate));
+    });
+
     // Create each layout piece
+    // The layout piece creates the connect between itself and the node
     Object.entries(layoutPiecesDb.data.pieces).forEach(([key, pieceData]) => {
       const pieceDef = pieceDefintionsDb.data.definitions[pieceData.pieceDefId]
       if (pieceDef == undefined) {
         throw new FatalError(`Unknown piece defintion ID found in layout json DB: ${pieceData.pieceDefId}`);
       }
       this.pieces.set(key, this.createLayoutPiece(key, pieceData, pieceDef));
-    });
-
-    // Create each layout node
-    Object.entries(layoutNodesDb.data.nodes).forEach(([key, nodeData]) => {
-      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate));
-    });
-
-    // Connect the nodes and the layout pieces together
-    Object.entries(layoutPiecesDb.data.pieces).forEach(([key, pieceData]) => {
-      const piece = this.pieces.get(key);
-      if (!piece) {
-        throw new FatalError("LayoutPiece not found");
-      }
-
-      const nodes = this.getNodesFromConnectorsData(pieceData.connectors);
-      nodes.forEach((node, connectorName) => {
-        this.connect(piece, connectorName, node);
-      });
     });
   }
 
@@ -60,6 +50,14 @@ export class Layout {
     }
   }
 
+  /**
+   * Add a node to the list of nodes
+   * @param node
+   */
+  public async addNode(node: LayoutNode): Promise<void> {
+    this.nodes.set(node.getId(), node);
+  }
+
   // Update a node's coordinate and/or the attached layout piece's heading
   public async updateNode(nodeId: string, coordinate: Coordinate, headingIncrement: number): Promise<void> {
     const node = this.nodes.get(nodeId);
@@ -71,9 +69,7 @@ export class Layout {
     node.setCoordinate(coordinate);
 
     // Update the heading for the piece(s) connected to the node (if any)
-    node.getPieces().forEach(piece => {
-        piece.incrementHeading(headingIncrement);
-    });
+    node.incrementHeading(headingIncrement);
 
     // Update the coordinates of the node, and the heading and coordinates of all connected pieces and nodes recursively
     this.updateAllConnectedCoordinatesAndHeadings(node, coordinate);
@@ -281,22 +277,6 @@ export class Layout {
     }
   }
 
-  // Connect piece and node together, at the specified piece's connector
-  protected connect(piece: LayoutPiece, connectorName: ConnectorName, node: LayoutNode): void {
-    piece.connect(node, connectorName, "Layout::connect()");
-    node.connect(piece, "Layout::connect()", );
-  }
-
-  // Disconnect a node from a piece.
-  // FYI: A piece can never be disconnected from a node. A piece is always connected to a node. A piece can be
-  // connected to a different node, but it will always be connected to a node. It will never be in a disconnected state.
-  protected disconnect(piece: LayoutPiece, node: LayoutNode): void {
-    if (piece.isConnectToNode(node)) {
-      throw new FatalError("Cannot disconnect this node from the given piece. The piece is still connected to that node")
-    }
-    node.disconnect(piece, "Layout::disconnect()")
-  }
-
   // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively
   // Prerequisites:
   // - The startNode knows its coordinate
@@ -325,23 +305,6 @@ export class Layout {
     }) as LayoutPiece[];
   }
 
-  // Return a map of all nodes defined in connectorsData
-  protected getNodesFromConnectorsData(connectorsData: LayoutPieceConnectorsData): Map<ConnectorName, LayoutNode> {
-    const nodes = new Map<ConnectorName, LayoutNode>();
-
-    Object.entries(connectorsData).forEach(([connectorName, connector]) => {
-      if (connector.node == null) {
-        return;
-      }
-      if (this.nodes.get(connector.node) == undefined) {
-        throw new FatalError("The data in connectorsData should only contain existing node IDs");
-      }
-      nodes.set(connectorName.toString() as ConnectorName, this.nodes.get(connector.node) as LayoutNode);
-    });
-
-    return nodes;
-  }
-
   // Return the object that is needed to create a LayoutPieceConnectors class instance
   // All this method does is translate from a list that contains node IDs to the equivalent object that contains LayoutNode class instances
   protected getLayoutPieceConnectorsInfo(data: LayoutPieceConnectorsData): LayoutPieceConnectorsInfo {
@@ -357,5 +320,21 @@ export class Layout {
     })
 
     return connectorsInfo;
+  }
+
+  /**
+   * Save the entire layout to the DB
+   */
+  protected async save(): Promise<void> {
+    this.nodes.forEach(node => {
+      node.save();
+    });
+
+    this.nodes.forEach(piece => {
+      piece.save();
+    });
+
+    await layoutNodesDb.write();
+    await layoutPiecesDb.write();
   }
 }

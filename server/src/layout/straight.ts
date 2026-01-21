@@ -1,7 +1,9 @@
-import { Coordinate, TrackPieceDef, UiAttributesDataStraight } from "trainbrain-shared";
+import type { Coordinate, TrackPieceDef, UiAttributesDataStraight } from "trainbrain-shared";
+import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
 import { LayoutPiece } from "./layoutpiece.js";
+import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { LayoutNode } from "./layoutnode.js";
-import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 import { FatalError } from "../errors/FatalError.js";
 
 interface PieceDefAttributes {
@@ -12,14 +14,13 @@ interface PieceDefAttributes {
  * This is a straight layout piece
  */
 export class Straight extends LayoutPiece {
-  protected length: number;
+  protected readonly length: number;
+  protected readonly connectors: LayoutPieceConnectors;
 
-  public constructor(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef) {
-    // We need to define the connector config data if no data is included in the pieceData (this happens when adding a new layout piece at run-time)
-    if (Object.keys(pieceData.connectors).length == 0) {
-      pieceData.connectors = Straight.createConnectorsData(pieceData.heading);
-    }
-    super(id, pieceData, pieceDef.category);
+ public constructor(id: string, pieceInfo: LayoutPieceInfo, pieceDef: TrackPieceDef) {
+     super(id, pieceInfo, pieceDef.category);
+     pieceInfo.connectors = this.addMissingConnectorsAndNodes(pieceInfo.connectors);
+     this.connectors = new LayoutPieceConnectors(pieceInfo.connectors);
 
     this.length = (pieceDef.attributes as PieceDefAttributes).length;
   }
@@ -38,7 +39,6 @@ export class Straight extends LayoutPiece {
     // Update our heading
     this.connectors.setHeading("start", heading);
     this.connectors.setHeading("end", heading + 180);
-    this.save();
 
     console.log("Piece " + this.getId() + " says: my heading is now " + heading);
 
@@ -61,11 +61,37 @@ export class Straight extends LayoutPiece {
     oppositeSideNode.updateCoordinateAndContinue(this.id, nextNodeCoordinate, heading, loopProtector);
   }
 
+  protected addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo {
+    if (data.get("start") === undefined) {
+      // New node has an unknown heading and coordinate
+      data.set("start", {
+        heading: undefined,
+        node: this.nodeFactory.create(undefined),
+      })
+    }
+
+    if (data.get("end") === undefined) {
+      // New node has an oppsite heading of the start node, and an unknown coordinate
+      let oppositeHeading;
+      const startConnectorInfo = data.get("start") as LayoutPieceConnectorInfo;
+      const startConnectorHeading = startConnectorInfo.heading;
+      if (startConnectorHeading !== undefined) {
+        oppositeHeading = startConnectorHeading + 180;
+      }
+      data.set("end", {
+        heading: oppositeHeading,
+        node: this.nodeFactory.create(undefined),
+      })
+    }
+
+    return data;
+  }
+
   /**
    * Calculates the coordinate and heading of one side of the track
    * piece based on the known coordinate of the other side of the piece.
    */
-  private calculateCoordinate(otherCoordinate: Coordinate, heading: number): Coordinate {
+  protected calculateCoordinate(otherCoordinate: Coordinate, heading: number): Coordinate {
     // Calculate x and y position based on the heading of the track piece
     const dX = this.length * Math.sin(this.degreesToRadians(heading));
     const dY = this.length * Math.cos(this.degreesToRadians(heading));
@@ -73,25 +99,6 @@ export class Straight extends LayoutPiece {
     return {
       x: this.roundTo2(otherCoordinate.x + dX),
       y: this.roundTo2(otherCoordinate.y + dY),
-    }
-  }
-
-  /**
-   * Create layout piece connectors data for this layout piece, and return it.
-   * This is something that a layout piece needs to do when a new layout piece is added during run time.
-   * The layout piece needs to do this because the UI (which triggers this action) doesn't have all the
-   * data about the new piece's connectors.
-   *
-   * @returns {LayoutPieceConnectorsData}
-   */
-  static createConnectorsData(heading: number | undefined): LayoutPieceConnectorsData {
-    if (heading === undefined) {
-      throw new FatalError("I'm not getting anything! I'm getting nothing! What am I supposed to do? You gotta give me something")
-    }
-
-    return {
-      "start": { heading: heading, node: null },
-      "end": { heading: heading, node: null },
     }
   }
 }

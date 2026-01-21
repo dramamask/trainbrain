@@ -1,23 +1,26 @@
-import { Coordinate, ConnectorName, TrackPieceCategory, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
+import type { Coordinate, ConnectorName, TrackPieceCategory, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
+import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import type { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
+import type { PieceDef } from "./piecedef.js";
+import type { LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
+import type { NodeFactory } from "./nodeFactory.js";
 import { layoutPiecesDb } from "../services/db.js";
-import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
-import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { FatalError } from "../errors/FatalError.js";
-import { LayoutNode } from "./layoutnode.js";
 
 export abstract class LayoutPiece {
   protected readonly id: string;
-  protected readonly pieceDefId: string;
+  protected readonly pieceDef: PieceDef;
   protected readonly category: string;
-  protected readonly connectors: LayoutPieceConnectors;
+  protected readonly nodeFactory: NodeFactory;
+  protected readonly abstract connectors: LayoutPieceConnectors;
   protected loopProtector: string;
 
-  protected constructor(id: string, pieceData: LayoutPieceData, category: string) {
+  protected constructor(id: string, pieceInfo: LayoutPieceInfo, category: string, nodeFactory: NodeFactory) {
     this.id = id;
-    this.pieceDefId = pieceData.pieceDefId;
+    this.pieceDef = pieceInfo.pieceDef;
     this.category = category;
+    this.nodeFactory = nodeFactory;
     this.loopProtector = "";
-    this.connectors = new LayoutPieceConnectors(pieceData.connectors);
   }
 
   /**
@@ -37,6 +40,11 @@ export abstract class LayoutPiece {
    */
   public abstract updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void;
 
+  /**
+   * Examine the LayoutPieceConnectorsInfo that was received and add any missing connectors and nodes
+   */
+  protected abstract addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo;
+
   // Return the ID of this layout piece
   public getId(): string {
     return this.id;
@@ -52,26 +60,10 @@ export abstract class LayoutPiece {
     return connector.getHeading();
   }
 
-  // Get the heading for a given connector on this layout piece
-  public getHeadingFromNode(node: LayoutNode): number {
-    const connectorName = this.connectors.getConnectorName(node);
-    if (!connectorName) {
-      throw new FatalError("I do not know this node you are speaking of")
-    }
-
-    return this.getHeading(connectorName);
-
-  }
-
-  // Return the name of the connector that is connected to the given node
-  public getConnectorName(node: LayoutNode): ConnectorName | undefined {
-    return this.connectors.getConnectorName(node);
-  }
-
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
   public getLayoutData(): LayoutPieceData {
     return {
-      pieceDefId: this.pieceDefId,
+      pieceDefId: this.pieceDef.getId(),
       connectors: this.getConnectorsData(),
     }
   }
@@ -89,35 +81,6 @@ export abstract class LayoutPiece {
   // Increment the heading of this layout piece by the given amount
   public incrementHeading(headingIncrement: number): void {
     this.connectors.incrementHeading(headingIncrement);
-
-    this.save();
-  }
-
-  // Connect this piece to the given node, at the given connector
-  public connect(node: LayoutNode, connectorName: ConnectorName, friendToken: string): void {
-    // We risk the integraty of layout piece to node connections if we call this method willy nilly
-    switch (friendToken) {
-      case "LayoutPiece::createNodes()":
-        break;
-      case "Layout::connect()":
-        break;
-      default:
-        throw new FatalError("This method should only ever be called from the methods listed above.");
-    }
-
-    // Make the connection
-    this.connectors.connect(node, connectorName);
-
-    this.save();
-  }
-
-  /**
-   * Return true if this layout piece is connected to the given node
-   *
-   * @param node
-   */
-  public isConnectToNode(node: LayoutNode): boolean {
-    return (this.connectors.getConnectorName(node) === undefined);
   }
 
   /**

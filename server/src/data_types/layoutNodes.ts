@@ -2,7 +2,6 @@ import { Coordinate } from "trainbrain-shared";
 
 // Structure of the data for a layout piece in the layout pieces json DB
 export interface LayoutNodeData {
-  pieces: string[]; // An array of strings that signify the layoutPieces it is connected to
   coordinate: Coordinate;
 }
 

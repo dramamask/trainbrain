@@ -4,7 +4,7 @@
 Piece definitions are stored in `db/piece-definitions.json`.
 Each piece has a name (the key), a category and attributes. The attributes as different from each piece type. The class associated with the piece type knows the meaning of the attributes object. The piece type classes are in the `src/layout` folder.
 
-# Layout definition
+## Layout definition
 The layout is stored in `db/track-layout.json`.
 Layout pieces have a node on each side of the piece. Nodes know their location. Pieces know their heading. This is a graph type situation.
 
@@ -59,8 +59,11 @@ Each connector object has a heading. The heading is always defined as moving in 
 
 ```
 
-# Updating coordinates
+## Updating coordinates
 Coordinates need to be recalculated when a new layout piece is added, or an existing node is moved or rotated.
 Recalculation always starts at the Layout class object with its `updateAllConnectedCoordinatesAndHeadings()` method. This method kicks off a chain call, that starts at the node(s) that were affected in the update, and goes from node to piece until all connected nodes and pieces have been updated.
 
 In case of a loop we need to know when to stop. So a variable called `loopProtector` gets passed along with each of these function calls. Each node will store the `loopProtector` value. The call chain will stop once a node get's passed a `loopProtector` value that they already know.
+
+## Writing to the DB
+Writing to the DB should only be done at the end handling a request, before returning the response to the caller.

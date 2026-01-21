@@ -1,9 +1,10 @@
-import { ConnectorName, Coordinate, UiAttributesDataCurve } from "trainbrain-shared";
-import { LayoutNode } from "./layoutnode.js";
+import type { ConnectorName, Coordinate, TrackPieceDef, UiAttributesDataCurve } from "trainbrain-shared";
+import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import type { LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
 import { LayoutPiece } from "./layoutpiece.js";
-import { TrackPieceDef } from "trainbrain-shared";
+import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
+import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
-import { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 
 interface PieceDefAttributes {
   angle: number;
@@ -14,15 +15,14 @@ interface PieceDefAttributes {
  * This is a Curved Layout piece
  */
 export class Curve extends LayoutPiece {
-  protected angle: number;
-  protected radius: number;
+  protected readonly angle: number;
+  protected readonly radius: number;
+  protected readonly connectors: LayoutPieceConnectors;
 
-  public constructor(id: string, pieceData: LayoutPieceData, pieceDef: TrackPieceDef) {
-     // We need to define the connector config data if no data is included in the pieceData (this happens when adding a new layout piece at run-time)
-    if (Object.keys(pieceData.connectors).length == 0) {
-      pieceData.connectors = Curve.createConnectorsData(pieceData.heading);
-    }
-    super(id, pieceData, pieceDef.category);
+  public constructor(id: string, pieceInfo: LayoutPieceInfo, pieceDef: TrackPieceDef) {
+    super(id, pieceInfo, pieceDef.category);
+    pieceInfo.connectors = this.addMissingConnectorsAndNodes(pieceInfo.connectors);
+    this.connectors = new LayoutPieceConnectors(pieceInfo.connectors);
 
     this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
     this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
@@ -72,10 +72,35 @@ export class Curve extends LayoutPiece {
     // Update our heading
     this.connectors.getConnector(callingSide as ConnectorName).setHeading(heading);
     this.connectors.getConnector(oppositeSide as ConnectorName).setHeading(oppositeSideHeading);
-    this.save();
 
     // Call the next node
     oppositeSideNode.updateCoordinateAndContinue(this.id, oppositeSideCoordinate, oppositeSideHeading, loopProtector);
+  }
+
+  protected addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo {
+    if (data.get("start") === undefined) {
+      // New node has an unknown heading and coordinate
+      data.set("start", {
+        heading: undefined,
+        node: this.nodeFactory.create(undefined),
+      })
+    }
+
+    if (data.get("end") === undefined) {
+      // New node has an oppsite heading of the start node, and an unknown coordinate
+      let oppositeHeading;
+      const startConnectorInfo = data.get("start") as LayoutPieceConnectorInfo;
+      const startConnectorHeading = startConnectorInfo.heading;
+      if (startConnectorHeading !== undefined) {
+        oppositeHeading = startConnectorHeading + 180;
+      }
+      data.set("end", {
+        heading: oppositeHeading,
+        node: this.nodeFactory.create(undefined),
+      })
+    }
+
+    return data;
   }
 
   /**
@@ -88,7 +113,7 @@ export class Curve extends LayoutPiece {
    * @param startHeading The start heading of this piece
    * @returns [endCoordinate, endHeading]
    */
-  private calculateEndCoordinate(startCoordinate: Coordinate, startHeading: number): {endCoordinate: Coordinate, endHeading: number} {
+  protected calculateEndCoordinate(startCoordinate: Coordinate, startHeading: number): {endCoordinate: Coordinate, endHeading: number} {
     // Calculate x and y position based on the angle of the track piece
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
@@ -118,7 +143,7 @@ export class Curve extends LayoutPiece {
    * @param endHeading The start heading of this piece
    * @returns [startCoordinate, startHeading]
    */
-  private calculateStartCoordinate(endCoordinate: Coordinate, endHeading: number): {startCoordinate: Coordinate, startHeading: number} {
+  protected calculateStartCoordinate(endCoordinate: Coordinate, endHeading: number): {startCoordinate: Coordinate, startHeading: number} {
     // Calculate x and y position based on the angle of the track piece
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
@@ -139,24 +164,5 @@ export class Curve extends LayoutPiece {
       },
       startHeading: endHeading + 180 - this.angle,
     })
-  }
-
-  /**
-   * Create layout piece connectors data for this layout piece, and return it.
-   * This is something that a layout piece needs to do when a new layout piece is added during run time.
-   * The layout piece needs to do this because the UI (which triggers this action) doesn't have all the
-   * data about the new piece's connectors.
-   *
-   * @returns {LayoutPieceConnectorsData}
-   */
-  static createConnectorsData(heading: number | undefined): LayoutPieceConnectorsData {
-    if (heading === undefined) {
-      throw new FatalError("I'm not getting anything! I'm getting nothing! What am I supposed to do? You gotta give me something")
-    }
-
-    return {
-      "start": { heading: heading, node: null },
-      "end": { heading: heading, node: null },
-    }
   }
 }
