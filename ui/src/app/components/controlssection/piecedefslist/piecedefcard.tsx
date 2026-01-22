@@ -1,5 +1,5 @@
 import { Card, CardContent, Stack } from "@mui/material";
-import { AddLayoutPieceData, TrackPieceDef, UiLayout } from "trainbrain-shared";
+import { AddLayoutPieceData, PieceDefData, UiLayout } from "trainbrain-shared";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
@@ -8,7 +8,7 @@ import { getLastInsertedLayoutPieceAndNodeId } from "@/app/services/tracklayout"
 
 interface props {
   name: string;
-  definition: TrackPieceDef;
+  definition: PieceDefData;
 }
 
 import styles from "./piecedefcard.module.css"

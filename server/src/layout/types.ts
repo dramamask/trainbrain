@@ -4,7 +4,7 @@ import { PieceDef } from "./piecedef.js";
 // Info needed to create a LayoutPieceConnector class instance
 export interface LayoutPieceConnectorInfo {
   heading: number | undefined,
-  node: LayoutNode | null,
+  node: LayoutNode,
 }
 
 // Info needed to create a LayoutPieceConnectors class instance

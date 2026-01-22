@@ -3,6 +3,7 @@ import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
 import { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
+import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 
 /**
  * Class that knows all the connectors of a layout piece
@@ -20,7 +21,7 @@ export class LayoutPieceConnectors {
   }
 
   // Return the heading of the connector
-  public getHeading(name: ConnectorName): number {
+  public getHeading(name: ConnectorName): number | undefined{
     const connector = this.connectors.get(name);
 
     if (connector == null) {
@@ -46,16 +47,30 @@ export class LayoutPieceConnectors {
     return this.connectors.size;
   }
 
-  // Return the data about the node connections, in the format that is used in the layout pieceDB
+  // Return our connectors information, in the format needed for the layout json DB
+  public getConnectorsData(): LayoutPieceConnectorsData {
+    const connectorsData: LayoutPieceConnectorsData = {};
+
+    this.connectors.forEach((connector, connectorName) => {
+      const heading = connector.getHeading();
+      if (heading === undefined) {
+        throw new FatalError("The heading should be defined at this point");
+      }
+      connectorsData[connectorName] = {
+        heading: heading,
+        node: connector.getNode().getId(),
+      };
+    });
+
+    return connectorsData;
+  }
+
+  // Return the data about the node connections, in the format that is used in the UI Layout Data
   public getNodeConnectionsData(): NodeConnectionsData {
     const nodeConnections: Record<string, string> = {};
 
     this.connectors.forEach((connector, connectorName) => {
-      const node = connector.getNode()
-      if (node === undefined) {
-        throw new FatalError("All node connections should be defined by now");
-      }
-      nodeConnections[connectorName] = node.getId();
+      nodeConnections[connectorName] = connector.getNode().getId();
     });
 
     return nodeConnections;
@@ -83,10 +98,5 @@ export class LayoutPieceConnectors {
     this.connectors.forEach((connector, connectorName) => {
       connector.incrementHeading(headingIncrement);
     });
-  }
-
-  // This allows uses to do a forEach on this class. Is called the same way as you would call forEach on a Map.
-  public forEach(callback: (value: LayoutPieceConnector, key: ConnectorName, map: Map<ConnectorName, LayoutPieceConnector>) => void): void {
-    this.connectors.forEach(callback);
   }
 }

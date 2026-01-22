@@ -1,10 +1,10 @@
-import type { ConnectorName, Coordinate, TrackPieceDef, UiAttributesDataCurve } from "trainbrain-shared";
-import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
-import type { LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
+import type { ConnectorName, Coordinate, PieceDefData, UiAttributesDataCurve } from "trainbrain-shared";
+import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
+import { NodeFactory } from "./nodeFactory.js";
 
 interface PieceDefAttributes {
   angle: number;
@@ -19,13 +19,13 @@ export class Curve extends LayoutPiece {
   protected readonly radius: number;
   protected readonly connectors: LayoutPieceConnectors;
 
-  public constructor(id: string, pieceInfo: LayoutPieceInfo, pieceDef: TrackPieceDef) {
-    super(id, pieceInfo, pieceDef.category);
+  public constructor(id: string, pieceInfo: LayoutPieceInfo, nodeFactory: NodeFactory) {
+    super(id, pieceInfo, nodeFactory);
     pieceInfo.connectors = this.addMissingConnectorsAndNodes(pieceInfo.connectors);
     this.connectors = new LayoutPieceConnectors(pieceInfo.connectors);
 
-    this.angle = (pieceDef.attributes as PieceDefAttributes).angle;
-    this.radius = (pieceDef.attributes as PieceDefAttributes).radius;
+    this.angle = (pieceInfo.pieceDef.getAttributes() as PieceDefAttributes).angle;
+    this.radius = (pieceInfo.pieceDef.getAttributes() as PieceDefAttributes).radius;
   }
 
   public getUiAttributes(): UiAttributesDataCurve {

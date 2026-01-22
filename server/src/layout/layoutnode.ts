@@ -98,8 +98,6 @@ export class LayoutNode {
   // Replace our coordinate with the given coordinate
   public setCoordinate(coordinate: Coordinate): void {
     this.coordinate = coordinate;
-
-    this.save();
   }
 
   /**
@@ -132,20 +130,7 @@ export class LayoutNode {
     });
   }
 
-   /**
-   * Save the data for this layout piece to the track-layout json DB
-   *
-   * @param writeToFile (optional) If true, write the DB to file immediately after saving the layout piece data
-   */
-  public async save(writeToFile: boolean = true): Promise<void> {
-    layoutNodesDb.data.nodes[this.id] = this.getLayoutData();
-
-    if (writeToFile) {
-      await layoutNodesDb.write();
-    }
-  }
-
-   // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.
+  // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.
   // Note that it's not a dead-end if it has no pieces connected to it. The UI shows those kinds of nodes in
   // a different way.
   protected isUiDeadEnd(): boolean {

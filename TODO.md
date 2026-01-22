@@ -1,8 +1,7 @@
 # TODO
 
-- make class for piece-definition. piece object has references instead of id. makes renaming pieces easier.
+- Fix coordiante calc chain functions
 - Restrict access to writing to the DB form all classes except the layout class. Friendtoken?
-- Redo layout init
 - no piece insert. only add on dead-end. redo piece add.
 - remove now obsolote node and piece methods. and connectors and connector methods.
 - combine layout-nodes and layout-piece.json so we can have more atomic saves.

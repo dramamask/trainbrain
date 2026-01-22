@@ -1,17 +1,39 @@
-import { TrackPieceCategory, TrackPieceDef } from "trainbrain-shared";
+import { TrackPieceCategory, PieceDefData } from "trainbrain-shared";
 
 export class PieceDef {
-  protected readonly id: string;
+  protected id: string;
+  protected description: string;
   protected readonly category: TrackPieceCategory;
   protected readonly attributes: object;
-  protected readonly description: string;
 
-  constructor(id: string, pieceDefData:TrackPieceDef) {
+  constructor(id: string, pieceDefData:PieceDefData) {
     this.id = id;
     this.category = pieceDefData.category;
     this.attributes = pieceDefData.attributes;
     this.description = pieceDefData.description;
   }
 
-  // To be continued
+  public getId(): string {
+    return this.id;
+  }
+
+  public setId(value: string): void {
+    this.id = value;
+  }
+
+  public getDescription(): string {
+    return this.description;
+  }
+
+  public setDescription(value: string): void {
+    this.description = value;
+  }
+
+  public getCategory(): TrackPieceCategory {
+    return this.category;
+  }
+
+  public getAttributes(): object {
+    return this.attributes;
+  }
 }

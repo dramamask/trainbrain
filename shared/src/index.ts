@@ -53,15 +53,15 @@ export interface UiLayout {
   nodes: UiLayoutNode[];
 }
 
-// The structure of a track piece definition
-export interface TrackPieceDef {
+// Data structure to define a track piece definition
+export interface PieceDefData {
     category: TrackPieceCategory;
     description: string;
     attributes: object;
 }
 
-// A list of TrackPieceDef records
-export type TrackPieceDefList = Record<string, TrackPieceDef>;
+// A list of PieceDefData records
+export type PieceDefDataList = Record<string, PieceDefData>;
 
 // Data structure used to update a node's position and/or heading of connected pieces
 export interface UpdateNodeData {

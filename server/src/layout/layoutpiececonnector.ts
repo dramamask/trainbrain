@@ -1,5 +1,6 @@
 import { ConnectorName } from "trainbrain-shared";
 import { LayoutNode } from "./layoutnode.js";
+import { FatalError } from "../errors/FatalError.js";
 
 /**
  * This class represents an end side of a layout piece.
@@ -21,24 +22,27 @@ import { LayoutNode } from "./layoutnode.js";
  * "start" node relative heading:     0 degrees (N)
  * "end" node relative heading:     180 degrees (S)
  * "diverge" node relative heading: 202 degrees (SSW)
+ *
+ * The heading may be undefined when a new piece is in the process of being created or moved.
+ * The heading should always be a defined number as soon as piece creation/moving is done.
  */
 export class LayoutPieceConnector {
   protected readonly name: ConnectorName;
-  protected heading: number;
+  protected heading: number | undefined;
   protected node: LayoutNode;
 
-  constructor(name: ConnectorName, node: LayoutNode, heading: number) {
+  constructor(name: ConnectorName, node: LayoutNode, heading: number | undefined) {
     this.name = name;
     this.heading = heading;
     this.node = node;
   }
 
   // Return the heading of the connector
-  public getHeading(): number {
+  public getHeading(): number | undefined {
     return this.heading;
   }
 
-  public getNode(): LayoutNode | undefined {
+  public getNode(): LayoutNode {
     return this.node;
   }
 
@@ -58,6 +62,9 @@ export class LayoutPieceConnector {
 
   // Increment the heading by a given amount
   public incrementHeading(headingIncrement: number): void {
+    if (this.heading === undefined) {
+      throw new FatalError("Heading should be known right now");
+    }
     this.heading = this.normalizeAngle(this.heading + headingIncrement);
   }
 

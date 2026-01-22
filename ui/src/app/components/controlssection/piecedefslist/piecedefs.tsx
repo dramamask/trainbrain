@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Card, CardContent, CircularProgress, Stack } from "@mui/material";
-import { TrackPieceDef, TrackPieceDefList } from "trainbrain-shared";
+import { PieceDefData, PieceDefDataList } from "trainbrain-shared";
 import { getPieceDef } from "@/app/services/api/piecedef";
 import { store as pieceDefStore } from "@/app/services/stores/piecedefs";
 import { store as errorStore } from "@/app/services/stores/error";
@@ -20,7 +20,7 @@ export default function ControlsSection() {
   // Fetch the layout from the back-end server
   useEffect(() => {
     getPieceDef()
-      .then((pieceDefList: TrackPieceDefList) => {
+      .then((pieceDefList: PieceDefDataList) => {
         pieceDefStore.setPieceDefs(pieceDefList);
         setLoading(false);
       })
@@ -54,14 +54,14 @@ export default function ControlsSection() {
 }
 
 // Render the list of piece definitions
-function renderPieceDefList(pieceDefs: TrackPieceDefList) {
+function renderPieceDefList(pieceDefs: PieceDefDataList) {
   return (
     Object.entries(pieceDefs).map(([key, value]) => getPieceDefComponent(key, value))
   )
 }
 
 // Return the component that renders the particular piece definition
-function getPieceDefComponent(name: string, definition: TrackPieceDef) {
+function getPieceDefComponent(name: string, definition: PieceDefData) {
   return (
     <PieceDefCard key={name} name={name} definition={definition} />
   )

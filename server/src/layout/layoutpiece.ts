@@ -10,15 +10,13 @@ import { FatalError } from "../errors/FatalError.js";
 export abstract class LayoutPiece {
   protected readonly id: string;
   protected readonly pieceDef: PieceDef;
-  protected readonly category: string;
   protected readonly nodeFactory: NodeFactory;
   protected readonly abstract connectors: LayoutPieceConnectors;
   protected loopProtector: string;
 
-  protected constructor(id: string, pieceInfo: LayoutPieceInfo, category: string, nodeFactory: NodeFactory) {
+  protected constructor(id: string, pieceInfo: LayoutPieceInfo, nodeFactory: NodeFactory) {
     this.id = id;
     this.pieceDef = pieceInfo.pieceDef;
-    this.category = category;
     this.nodeFactory = nodeFactory;
     this.loopProtector = "";
   }
@@ -51,20 +49,15 @@ export abstract class LayoutPiece {
   }
 
   // Get the heading for a given connector on this layout piece
-  public getHeading(connectorName: ConnectorName): number {
-    const connector = this.connectors.getConnector(connectorName)
-    if (!connector) {
-      throw new FatalError(`Connector ${connectorName} not found on piece ${this.id}`);
-    }
-
-    return connector.getHeading();
+  public getHeading(connectorName: ConnectorName): number | undefined {
+    return this.connectors.getHeading(connectorName)
   }
 
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
   public getLayoutData(): LayoutPieceData {
     return {
       pieceDefId: this.pieceDef.getId(),
-      connectors: this.getConnectorsData(),
+      connectors: this.connectors.getConnectorsData(),
     }
   }
 
@@ -72,7 +65,7 @@ export abstract class LayoutPiece {
   public getUiLayoutData(): UiLayoutPiece {
     return {
       id: this.id,
-      category: this.category as TrackPieceCategory,
+      category: this.pieceDef.getCategory() as TrackPieceCategory,
       attributes: this.getUiAttributes(),
       nodeConnections: this.connectors.getNodeConnectionsData(),
     }
@@ -81,34 +74,6 @@ export abstract class LayoutPiece {
   // Increment the heading of this layout piece by the given amount
   public incrementHeading(headingIncrement: number): void {
     this.connectors.incrementHeading(headingIncrement);
-  }
-
-  /**
-   * Save the data for this layout piece to the track-layout json DB.
-   * All functions that update anything about the layout piece that is persisted should call the save function.
-   *
-   * @param writeToFile (optional) If true, write the DB to file immediately after saving the layout piece data
-   */
-  public async save(writeToFile: boolean = false): Promise<void> {
-    layoutPiecesDb.data.pieces[this.id] = this.getLayoutData();
-
-    if (writeToFile) {
-      await layoutPiecesDb.write();
-    }
-  }
-
-  // Return our connectors information, in the format needed for the layout json DB
-  protected getConnectorsData(): LayoutPieceConnectorsData {
-    const connectorsData: LayoutPieceConnectorsData = {};
-
-    this.connectors.forEach((connector, connectorName) => {
-      connectorsData[connectorName] = {
-        heading: connector.getHeading(),
-        node: connector.getNode()?.getId() || null,
-      };
-    });
-
-    return connectorsData;
   }
 
   // Convert from degrees to radians

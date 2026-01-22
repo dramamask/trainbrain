@@ -1,10 +1,10 @@
-import type { Coordinate, TrackPieceDef, UiAttributesDataStraight } from "trainbrain-shared";
-import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import type { Coordinate, UiAttributesDataStraight } from "trainbrain-shared";
 import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
+import { NodeFactory } from "./nodeFactory.js";
 
 interface PieceDefAttributes {
   length: number;
@@ -17,12 +17,12 @@ export class Straight extends LayoutPiece {
   protected readonly length: number;
   protected readonly connectors: LayoutPieceConnectors;
 
- public constructor(id: string, pieceInfo: LayoutPieceInfo, pieceDef: TrackPieceDef) {
-     super(id, pieceInfo, pieceDef.category);
+ public constructor(id: string, pieceInfo: LayoutPieceInfo, nodeFactory: NodeFactory) {
+     super(id, pieceInfo, nodeFactory);
      pieceInfo.connectors = this.addMissingConnectorsAndNodes(pieceInfo.connectors);
      this.connectors = new LayoutPieceConnectors(pieceInfo.connectors);
 
-    this.length = (pieceDef.attributes as PieceDefAttributes).length;
+    this.length = (pieceInfo.pieceDef.getAttributes()  as PieceDefAttributes).length;
   }
 
   public getUiAttributes(): UiAttributesDataStraight {
@@ -37,7 +37,7 @@ export class Straight extends LayoutPiece {
     this.loopProtector = loopProtector;
 
     // Update our heading
-    this.connectors.setHeading("start", heading);
+    this.connectors.setHeading("start", heading); // TODO: fix this. Can come from the other side!
     this.connectors.setHeading("end", heading + 180);
 
     console.log("Piece " + this.getId() + " says: my heading is now " + heading);

@@ -1,7 +1,7 @@
 // Info about a connector on a layout piece
 export interface LayoutPieceConnectorData {
   heading: number;
-  node: string | null; // Null is used when a layout piece is added at run-time
+  node: string;
 }
 
 // Map of connector names and the info about them

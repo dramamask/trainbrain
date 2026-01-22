@@ -1,12 +1,12 @@
 "use client";
 
-import { TrackPieceDef, TrackPieceDefList } from "trainbrain-shared";
+import { PieceDefData, PieceDefDataList } from "trainbrain-shared";
 
 interface State {
-  pieceDefs: TrackPieceDefList;
+  pieceDefs: PieceDefDataList;
 }
 
-let state: State = { pieceDefs: <TrackPieceDefList>{} };
+let state: State = { pieceDefs: <PieceDefDataList>{} };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -29,18 +29,18 @@ export const store = {
     return state;
   },
 
-  setPieceDefs(value: TrackPieceDefList): void {
+  setPieceDefs(value: PieceDefDataList): void {
     // Immutable update
     state = { pieceDefs: value };
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
 
-  getPieceDefList(): TrackPieceDefList {
+  getPieceDefList(): PieceDefDataList {
     return state.pieceDefs;
   },
 
-  getPieceDefData(pieceDefId: string): TrackPieceDef | undefined {
+  getPieceDefData(pieceDefId: string): PieceDefData | undefined {
     return state.pieceDefs[pieceDefId];
   }
 };
