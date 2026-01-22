@@ -1,7 +1,6 @@
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
-import { layoutNodesDb } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NotConnectedError } from "../errors/NotConnectedError.js";
 
@@ -14,7 +13,7 @@ export class LayoutNode {
   constructor(id: string, coordinate: Coordinate | undefined) {
     this.id = id;
     this.coordinate = coordinate;
-    this.pieces = new Map<string | undefined, LayoutPiece | null>([[undefined, null],[undefined,null]]);
+    this.pieces = new Map<ConnectorName | undefined, LayoutPiece | null>([[undefined, null],[undefined,null]]);
     this.loopProtector = "";
   }
 
@@ -30,8 +29,19 @@ export class LayoutNode {
     return this.coordinate;
   }
 
-  public incrementHeading(headingIncrement: number): void {
-    this.pieces.forEach(piece => piece?.incrementHeading(headingIncrement));
+  /**
+   * If we are connected to the given piece, return the name of their connector that we are connected to.
+   */
+  public getConnectorName(pieceToLookFor: LayoutPiece): ConnectorName | undefined {
+    let theirConnectorName;
+
+    this.pieces.forEach((piece, connectorName) => {
+      if (pieceToLookFor.getId() == piece?.getId()) {
+        theirConnectorName = connectorName;
+      }
+    });
+
+    return theirConnectorName;
   }
 
   // Return true if this connector is connected to the specified layout piece. Otherwise return false.
@@ -43,6 +53,13 @@ export class LayoutNode {
     });
 
     return false;
+  }
+
+  /**
+   * Return the layout pieces this node is connected to
+   */
+  public getPieces(): LayoutPiece[] {
+    return Object.values(this.pieces).map(value => value);
   }
 
   // Given one connected piece, return the other connected piece (or null if there is none)
@@ -108,7 +125,7 @@ export class LayoutNode {
    * @param heading The heading to pass along to the piece we are going to call
    * @param loopProtector A string to prevent infinite loops
    */
-  public updateCoordinateAndContinue(callingPieceId: string | null, coordinate: Coordinate, heading: number, loopProtector: string): void {
+  public updateCoordinateAndContinue(callingPiece: LayoutPiece, coordinate: Coordinate, heading: number, loopProtector: string): void {
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
       return;
@@ -121,13 +138,8 @@ export class LayoutNode {
     console.log("Node " + this.getId() + " says: my coordinate is now ", coordinate);
 
     // Tell the other connected piece to continue the update down the layout
-    this.pieces.forEach(piece => {
-      if (piece?.getId() !== callingPieceId) {
-        let coordinate = this.coordinate as Coordinate;
-        console.log("Node " + this.getId() + " says: I'm now calling piece " + piece?.getId());
-        piece?.updateHeadingAndContinue(this.id, coordinate, heading, loopProtector);
-      }
-    });
+    const oppositeSidePiece = this.getOtherPiece(callingPiece);
+    oppositeSidePiece?.updateHeadingAndContinue(this, coordinate, heading, loopProtector);
   }
 
   // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.

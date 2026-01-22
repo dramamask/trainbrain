@@ -78,7 +78,7 @@ export class Layout {
     node.setCoordinate(coordinate);
 
     // Update the heading for the piece(s) connected to the node (if any)
-    node.incrementHeading(headingIncrement);
+    node.getPieces().forEach(piece => piece.incrementHeading(headingIncrement));
 
     // Update the coordinates of the node, and the heading and coordinates of all connected pieces and nodes recursively
     this.updateAllConnectedCoordinatesAndHeadings(node, coordinate);
@@ -212,34 +212,6 @@ export class Layout {
     }
   }
 
-  // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively
-  // Prerequisites:
-  // - The startNode knows its coordinate
-  // - Layout pieces on either side of the node have to know their heading
-  protected updateAllConnectedCoordinatesAndHeadings(startNode: LayoutNode, coordinate: Coordinate): void {
-    const loopProtector = crypto.randomUUID();
-
-    const pieces = startNode.getPieces();
-    pieces.forEach((piece, index) => {
-      console.log("Layout object says: start node's coordinate: ", startNode.getCoordinate());
-
-      const connectorName = piece.getConnectorName(startNode) as ConnectorName;
-      console.log("Layout object says: start node is connected to connector: ", connectorName);
-
-      const heading = piece.getHeading(connectorName);
-      console.log("Layout object says: this connector has a heading of: ", heading);
-
-      piece.updateHeadingAndContinue(startNode.getId(), startNode.getCoordinate(), heading, loopProtector);
-    });
-  }
-
-  // Return an array of pieces that a specific node is connected to
-  protected getPieces(node: LayoutNodeData): LayoutPiece[] {
-    return node.pieces.map(pieceId => {
-      return this.pieces.get(pieceId);
-    }) as LayoutPiece[];
-  }
-
   // Return info on the connectors needed to create a LayoutPiece
   // All this method does is translate from a list that contains object IDs to the equivalent objects
   protected getLayoutPieceInfo(data: LayoutPieceData): LayoutPieceInfo {
@@ -266,6 +238,33 @@ export class Layout {
     }
 
     return pieceInfo;
+  }
+
+  // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively
+  // Prerequisites:
+  // - The startNode knows its coordinate
+  // - Layout pieces on either side of the node have to know their heading
+  protected updateAllConnectedCoordinatesAndHeadings(startNode: LayoutNode, coordinate: Coordinate): void {
+    const loopProtector = crypto.randomUUID();
+
+    const pieces = startNode.getPieces();
+    console.log("Layout object says: start node's coordinate: ", startNode.getCoordinate());
+
+    pieces.forEach(piece => {
+      const connectorName = startNode.getConnectorName(piece);
+      if (connectorName === undefined) {
+        throw new FatalError("We are connected to them. This should return a name");
+      }
+      console.log("Layout object says: start node is connected to this piece's connector: ", connectorName);
+
+      const heading = piece.getHeading(connectorName);
+      if (heading === undefined) {
+        throw new FatalError("Heading needs to be known when we kick of this chain");
+      }
+      console.log("Layout object says: this connector has a heading of: ", heading);
+
+      piece.updateHeadingAndContinue(startNode, startNode.getCoordinate(), heading, loopProtector);
+    });
   }
 
   /**

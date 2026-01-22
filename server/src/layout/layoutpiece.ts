@@ -1,11 +1,10 @@
 import type { Coordinate, ConnectorName, TrackPieceCategory, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
-import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import type { LayoutPieceData } from "../data_types/layoutPieces.js";
 import type { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import type { PieceDef } from "./piecedef.js";
 import type { LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
 import type { NodeFactory } from "./nodeFactory.js";
-import { layoutPiecesDb } from "../services/db.js";
-import { FatalError } from "../errors/FatalError.js";
+import { LayoutNode } from "./layoutnode.js";
 
 export abstract class LayoutPiece {
   protected readonly id: string;
@@ -36,7 +35,7 @@ export abstract class LayoutPiece {
    * @param heading The heading to assign to the connector that is facing the calling node
    * @param loopProtector A string to prevent infinite loops
    */
-  public abstract updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void;
+  public abstract updateHeadingAndContinue(callingNode: LayoutNode, coordinate: Coordinate, heading: number, loopProtector: string): void;
 
   /**
    * Examine the LayoutPieceConnectorsInfo that was received and add any missing connectors and nodes

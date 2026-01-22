@@ -1,5 +1,5 @@
-import { ConnectorName } from "trainbrain-shared";
-import { LayoutNode } from "./layoutnode.js";
+import type { ConnectorName } from "trainbrain-shared";
+import type { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 
 /**

@@ -29,36 +29,34 @@ export class Straight extends LayoutPiece {
     return {};
   }
 
-  public updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void {
+  public updateHeadingAndContinue(callingNode: LayoutNode, coordinate: Coordinate, heading: number, loopProtector: string): void {
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
       return;
     }
     this.loopProtector = loopProtector;
 
+    // Figure out which side of the piece the call is coming from
+    const callingSideConnectorName = this.connectors.getConnectorName(callingNode);
+    if (callingSideConnectorName === undefined) {
+      throw new FatalError("We should be connected to the calling node");
+    }
+    const oppositeSideConnectorName = callingSideConnectorName == "start" ? "end" : "start";
+
     // Update our heading
-    this.connectors.setHeading("start", heading); // TODO: fix this. Can come from the other side!
-    this.connectors.setHeading("end", heading + 180);
+    this.connectors.setHeading(callingSideConnectorName, heading);
+    this.connectors.setHeading(oppositeSideConnectorName, heading + 180);
 
     console.log("Piece " + this.getId() + " says: my heading is now " + heading);
 
-    // Find the node that we need to call next.
-    let oppositeSideNode: LayoutNode | undefined;
-    this.connectors.forEach((connector, side) => {
-      if (connector.getNode()?.getId() !== callingNodeId) {
-        oppositeSideNode = connector.getNode() ?? undefined;
-      }
-    });
-    if (oppositeSideNode === undefined) {
-      throw new FatalError("A Straight piece should always have two connected nodes");
-    }
-
-    console.log("Piece " + this.getId() + " says: I'm going to call node " + oppositeSideNode.getId());
-
-    // Calculate the coordinate for the next node, and call that next node
+    // Calculate the coordinate for the next node
     const nextNodeCoordinate = this.calculateCoordinate(coordinate, heading);
     console.log("Piece " + this.getId() + " says: I've calculated the node's coordinate as: ", nextNodeCoordinate);
-    oppositeSideNode.updateCoordinateAndContinue(this.id, nextNodeCoordinate, heading, loopProtector);
+
+    // Call the next node
+    const oppositeSideNode = this.connectors.getConnector(oppositeSideConnectorName).getNode();
+    console.log("Piece " + this.getId() + " says: I'm going to call node " + oppositeSideNode.getId());
+    oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, heading, loopProtector);
   }
 
   protected addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo {

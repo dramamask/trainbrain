@@ -1,9 +1,9 @@
-import { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
+import type { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
+import type { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
+import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
+import type { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
-import { LayoutNode } from "./layoutnode.js";
-import { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
-import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 
 /**
  * Class that knows all the connectors of a layout piece
@@ -40,6 +40,22 @@ export class LayoutPieceConnectors {
     }
 
     return connector;
+  }
+
+  /**
+   * Return the name of the connector at which we are connected to the given node
+   * @param node
+   */
+  public getConnectorName(node: LayoutNode): ConnectorName | undefined {
+    let connectorName;
+    Object.values(this.connectors).some(connector => {
+      if (connector.getNode().getId() == node.getId()) {
+        connectorName = connector.getName();
+        return true;
+      }
+    })
+
+    return connectorName;
   }
 
   // Return the number of connectors that we have

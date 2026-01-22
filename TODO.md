@@ -1,20 +1,22 @@
 # TODO
 
-- Fix coordiante calc chain functions
-- Restrict access to writing to the DB form all classes except the layout class. Friendtoken?
+- Test coordinate calc chain function call.
+- Test showing node "0" in the UI.
+- Bring back the save functions for node and piece (get from github);
+- Restrict access to writing to the DB from all classes except the layout class. Friendtoken?
 - no piece insert. only add on dead-end. redo piece add.
 - remove now obsolote node and piece methods. and connectors and connector methods.
 - combine layout-nodes and layout-piece.json so we can have more atomic saves.
 - add aka instead of decription to piece-def.
 - show piece info with more detail. show attributes.
 - all multiple piece and node selections.
-- less logic in the fornt end, mor ein the back-end related to performing operations and given user errors.
+- less logic in the front end, mor ein the back-end related to performing operations and given user errors.
 - server, catch errors at api edge and return with api retval.
 - Debug adding pieces. Debug UI side and server side.
 - Coordinates should be allowed to be undefined. We could then even invalidate them when something changes.
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.
 - Test rotating a piece.
-- Work on deleting a piece.
+- Work on deleting a piece. Either delete by selecting a track piece or delete in between two nodes. if in between two nodes then we need to update the "daisy chain" method to accept an end-at-this-node type param. Rename the function to dais-chain something and make it flexible to be able to do different things. maybe take an object as input that contains params and a command name or something.
 - Look into how garbage collection works. Which class objects should i decouple from each other when deleting a piece?
 - Reorganizie "shared" project folder section with different files to organize it better.
 - Send the PieceDefId to the UI so the UI can show it with a tooltip of something

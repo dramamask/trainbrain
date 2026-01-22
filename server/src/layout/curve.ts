@@ -32,49 +32,42 @@ export class Curve extends LayoutPiece {
     return {radius: this.radius};
   }
 
-  public updateHeadingAndContinue(callingNodeId: string, coordinate: Coordinate, heading: number, loopProtector: string): void {
+  public updateHeadingAndContinue(callingNode: LayoutNode, coordinate: Coordinate, heading: number, loopProtector: string): void {
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
       return;
     }
     this.loopProtector = loopProtector;
 
-    // Identify the calling and opposite side
-    let callingSide = "";
-    let oppositeSide = "";
-    let oppositeSideNode: LayoutNode | undefined;
-    this.connectors.forEach((connector, side) => {
-      if (callingNodeId == connector.getNode()?.getId()) {
-        callingSide = side;
-      } else {
-        oppositeSideNode = connector.getNode() ?? undefined;
-        oppositeSide = side;
-      }
-    });
-
-    if (oppositeSideNode === undefined || callingSide === "" || oppositeSide === "") {
-      throw new FatalError("A Curve piece should always have two connected nodes");
+    // Figure out which side of the piece the call is coming from
+    const callingSideConnectorName = this.connectors.getConnectorName(callingNode);
+    if (callingSideConnectorName === undefined) {
+      throw new FatalError("We should be connected to the calling node");
     }
+    const oppositeSideConnectorName = callingSideConnectorName == "start" ? "end" : "start";
 
     // Calculate our heading and the coordinate for the next node
     let oppositeSideCoordinate: Coordinate;
     let oppositeSideHeading : number;
-    if (oppositeSide === "start") {
-      const result = this.calculateStartCoordinate(coordinate, heading);
-      oppositeSideCoordinate = result.startCoordinate;
-      oppositeSideHeading = result.startHeading;
-    } else {
+
+    if (callingSideConnectorName === "start") {
       const result = this.calculateEndCoordinate(coordinate, heading);
-      oppositeSideCoordinate = result.endCoordinate;
-      oppositeSideHeading = result.endHeading;
+      oppositeSideCoordinate = result.coordinate;
+      oppositeSideHeading = result.heading;
+    } else {
+      const result = this.calculateStartCoordinate(coordinate, heading);
+      oppositeSideCoordinate = result.coordinate;
+      oppositeSideHeading = result.heading;
     }
 
     // Update our heading
-    this.connectors.getConnector(callingSide as ConnectorName).setHeading(heading);
-    this.connectors.getConnector(oppositeSide as ConnectorName).setHeading(oppositeSideHeading);
+    this.connectors.setHeading(callingSideConnectorName, heading);
+    this.connectors.setHeading(oppositeSideConnectorName, oppositeSideHeading);
 
     // Call the next node
-    oppositeSideNode.updateCoordinateAndContinue(this.id, oppositeSideCoordinate, oppositeSideHeading, loopProtector);
+    const oppositeSideNode = this.connectors.getConnector(oppositeSideConnectorName).getNode();
+    const nextPieceHeading = oppositeSideHeading + 180; // Their heading will be facing the opposite site (heading always faces into the piece)
+    oppositeSideNode.updateCoordinateAndContinue(this, oppositeSideCoordinate, nextPieceHeading, loopProtector);
   }
 
   protected addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo {
@@ -92,7 +85,7 @@ export class Curve extends LayoutPiece {
       const startConnectorInfo = data.get("start") as LayoutPieceConnectorInfo;
       const startConnectorHeading = startConnectorInfo.heading;
       if (startConnectorHeading !== undefined) {
-        oppositeHeading = startConnectorHeading + 180;
+        oppositeHeading = startConnectorHeading + this.angle + 180;
       }
       data.set("end", {
         heading: oppositeHeading,
@@ -113,7 +106,7 @@ export class Curve extends LayoutPiece {
    * @param startHeading The start heading of this piece
    * @returns [endCoordinate, endHeading]
    */
-  protected calculateEndCoordinate(startCoordinate: Coordinate, startHeading: number): {endCoordinate: Coordinate, endHeading: number} {
+  protected calculateEndCoordinate(startCoordinate: Coordinate, startHeading: number): {coordinate: Coordinate, heading: number} {
     // Calculate x and y position based on the angle of the track piece
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
@@ -125,11 +118,11 @@ export class Curve extends LayoutPiece {
 
     // Assign the x, y and heading based on the previous calculations
     return ({
-      endCoordinate: {
+      coordinate: {
         x: this.roundTo2(startCoordinate.x + dX),
         y: this.roundTo2(startCoordinate.y + dY),
       },
-      endHeading: startHeading + 180 + this.angle,
+      heading: startHeading + this.angle + 180,
     })
   }
 
@@ -143,7 +136,7 @@ export class Curve extends LayoutPiece {
    * @param endHeading The start heading of this piece
    * @returns [startCoordinate, startHeading]
    */
-  protected calculateStartCoordinate(endCoordinate: Coordinate, endHeading: number): {startCoordinate: Coordinate, startHeading: number} {
+  protected calculateStartCoordinate(endCoordinate: Coordinate, endHeading: number): {coordinate: Coordinate, heading: number} {
     // Calculate x and y position based on the angle of the track piece
     let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
     let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
@@ -158,11 +151,11 @@ export class Curve extends LayoutPiece {
 
     // Assign the x, y and heading based on the previous calculations
     return ({
-      startCoordinate: {
+      coordinate: {
         x: this.roundTo2(endCoordinate.x + dX),
         y: this.roundTo2(endCoordinate.y + dY),
       },
-      startHeading: endHeading + 180 - this.angle,
+      heading: endHeading - this.angle + 180,
     })
   }
 }
