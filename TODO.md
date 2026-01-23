@@ -2,7 +2,6 @@
 
 - Test coordinate calc chain function call.
 - Test showing node "0" in the UI.
-- Bring back the save functions for node and piece (get from github);
 - Restrict access to writing to the DB from all classes except the layout class. Friendtoken?
 - no piece insert. only add on dead-end. redo piece add.
 - remove now obsolote node and piece methods. and connectors and connector methods.

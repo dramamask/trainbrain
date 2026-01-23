@@ -60,11 +60,24 @@ export class Layout {
   }
 
   /**
-   * Add a node to the list of nodes
-   * @param node
+   * Return the node object with the given ID
    */
-  public async addNode(node: LayoutNode): Promise<void> {
-    this.nodes.set(node.getId(), node);
+  public getNode(id: string): LayoutNode | undefined {
+    return this.nodes.get(id);
+  }
+
+   /**
+   * Return the layout piece object with the given ID
+   */
+  public getLayoutPiece(id: string): LayoutPiece | undefined {
+    return this.pieces.get(id);
+  }
+
+  /**
+   * Return the piece definition object with the given ID
+   */
+  public getPieceDef(id: string): PieceDef | undefined {
+    return this.pieceDefs.get(id);
   }
 
   // Update a node's coordinate and/or the attached layout piece's heading

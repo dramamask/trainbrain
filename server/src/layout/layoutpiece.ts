@@ -4,6 +4,7 @@ import type { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import type { PieceDef } from "./piecedef.js";
 import type { LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
 import type { NodeFactory } from "./nodeFactory.js";
+import { layoutPiecesDb } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 
 export abstract class LayoutPiece {
@@ -73,6 +74,14 @@ export abstract class LayoutPiece {
   // Increment the heading of this layout piece by the given amount
   public incrementHeading(headingIncrement: number): void {
     this.connectors.incrementHeading(headingIncrement);
+  }
+
+  /**
+   * Save the data for this layout piece to the in-memory track-layout json DB.
+   * Note that this function does not write anything to the actual DB file. Only the Layout file writes to the DB file.
+   */
+  public save(): void {
+    layoutPiecesDb.data.pieces[this.id] = this.getLayoutData();
   }
 
   // Convert from degrees to radians

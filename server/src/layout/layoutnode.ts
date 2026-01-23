@@ -1,6 +1,7 @@
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
+import { layoutNodesDb } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NotConnectedError } from "../errors/NotConnectedError.js";
 
@@ -140,6 +141,14 @@ export class LayoutNode {
     // Tell the other connected piece to continue the update down the layout
     const oppositeSidePiece = this.getOtherPiece(callingPiece);
     oppositeSidePiece?.updateHeadingAndContinue(this, coordinate, heading, loopProtector);
+  }
+
+  /**
+   * Save the data for this layout node to the in-memory track-layout json DB.
+   * Note that this function does not write anything to the actual DB file. Only the Layout file writes to the DB file.
+   */
+  public save(): void {
+    layoutNodesDb.data.nodes[this.id] = this.getLayoutData();
   }
 
   // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.
