@@ -1,17 +1,15 @@
 # TODO
 
+- Debug adding pieces. Debug UI side and server side.
 - Test coordinate calc chain function call.
-- Test showing node "0" in the UI.
 - Restrict access to writing to the DB from all classes except the layout class. Friendtoken?
-- no piece insert. only add on dead-end. redo piece add.
 - remove now obsolote node and piece methods. and connectors and connector methods.
 - combine layout-nodes and layout-piece.json so we can have more atomic saves.
 - add aka instead of decription to piece-def.
 - show piece info with more detail. show attributes.
 - all multiple piece and node selections.
-- less logic in the front end, mor ein the back-end related to performing operations and given user errors.
+- less logic in the front end, more in the back-end related to performing operations and given user errors.
 - server, catch errors at api edge and return with api retval.
-- Debug adding pieces. Debug UI side and server side.
 - Coordinates should be allowed to be undefined. We could then even invalidate them when something changes.
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.
 - Test rotating a piece.

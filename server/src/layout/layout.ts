@@ -80,6 +80,14 @@ export class Layout {
     return this.pieceDefs.get(id);
   }
 
+  /**
+   * Add a node to our list of nodes.
+   * Called by the NodeFactory
+   */
+  public addNode(node: LayoutNode): void {
+    this.nodes.set(node.getId(), node);
+  }
+
   // Update a node's coordinate and/or the attached layout piece's heading
   public async updateNode(nodeId: string, coordinate: Coordinate, headingIncrement: number): Promise<void> {
     const node = this.nodes.get(nodeId);
@@ -130,17 +138,11 @@ export class Layout {
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
     // Get al the objects involved. Note that input validation has already been done.
     const pieceDef = pieceDefintionsDb.data.definitions[data.pieceDefId];
-    const nodeToConnectToStart = this.nodes.get(data.nodeId) as LayoutNode;
-    const pieceToConnectToStart = this.pieces.get(data.pieceId) || null;
+    const nodeToConnectTo = this.nodes.get(data.nodeId) as LayoutNode;
 
-    // While getting the layout piece on the other end of the node, make sure the specified piece and node are actually connected to each other.
-    let pieceToConnectToEnd: LayoutPiece | null = null;
-    try {
-      pieceToConnectToEnd = nodeToConnectToStart?.getOtherPiece(pieceToConnectToStart) || null;
-    } catch (error) {
-      if (error instanceof NotConnectedError) {
-        throw new FatalError("The specified piece and node are not even connected dude!")
-      }
+    // Send error message back tot he UI
+    if (nodeToConnectTo.getPieces().length == 2) {
+      throw new Error("We cannot add a layout piece to this node. This node already is connected to two layout pieces.")
     }
 
     // Create the new layout piece

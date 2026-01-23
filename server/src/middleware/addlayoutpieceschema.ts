@@ -1,6 +1,5 @@
 import { body } from 'express-validator';
 import { layout } from '../services/init.js';
-import { pieceDefintionsDb } from '../services/db.js';
 
 export const addLayoutPieceSchema = [
   body('nodeId')
