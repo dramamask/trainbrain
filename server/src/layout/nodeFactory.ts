@@ -16,7 +16,7 @@ export class NodeFactory {
    */
   public create(coordinate: Coordinate | undefined, piece: LayoutPiece | null, connector: ConnectorName | undefined): LayoutNode {
     const id = (this.layout.getHighestNodeId() + 1).toString();
-    const node = new LayoutNode(id, coordinate);
+    const node = new LayoutNode(id, coordinate, this);
     this.layout.addNode(node);
 
     if (!piece) {

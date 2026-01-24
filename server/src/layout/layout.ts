@@ -29,7 +29,7 @@ export class Layout {
 
     // Create each layout node
     Object.entries(layoutNodesDb.data.nodes).forEach(([key, nodeData]) => {
-      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate));
+      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate, this.nodeFactory));
     });
 
     // Create each layout piece

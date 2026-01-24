@@ -7,10 +7,10 @@ import { FatalError } from "../errors/FatalError.js";
 import { NotConnectedError } from "../errors/NotConnectedError.js";
 
 interface Connection {
-  piece: LayoutPiece | null, connector: ConnectorName | undefined,
+  piece: LayoutPiece | null, connectorName: ConnectorName | undefined,
 };
 
-const NoConnection = {piece: null, connector: undefined};
+const NoConnection = {piece: null, connectorName: undefined};
 
 export class LayoutNode {
   protected readonly id: string;
@@ -44,7 +44,7 @@ export class LayoutNode {
   public getConnectorName(pieceToLookFor: LayoutPiece): ConnectorName | undefined {
     for(const connection of this.connections) {
       if (connection.piece?.getId() == pieceToLookFor.getId()) {
-        return connection.connector;
+        return connection.connectorName;
       }
     }
     return undefined;
@@ -82,19 +82,6 @@ export class LayoutNode {
     return this.connections.filter(connection => connection.piece !== null).map(connection => connection.piece as LayoutPiece);
   }
 
-  /**
-   * Return the other connected piece.
-   * Note that this function is also expected to work if we supply null as the pieceToLookFor.
-   */
-  public getOtherPiece(pieceToLookFor: LayoutPiece | null): LayoutPiece | null {
-    for(let i = 0; i < 2; i++) {
-      if(this.connections[0].piece?.getId() == pieceToLookFor?.getId()) {
-        return this.connections[1-i].piece;
-      }
-    }
-    throw new FatalError("We're not connected to this piece")
-  }
-
   // Get the data for this layout node, as it would be stored in the layout-nodes json DB
   public getLayoutData(): LayoutNodeData {
     if (this.coordinate === undefined) {
@@ -129,13 +116,17 @@ export class LayoutNode {
    * Connect this node to the given Layout Piece.
    *
    * @param piece The layout piece to connect to
-   * @param connector The name of the piece's connector that is connected to this node
+   * @param connectorName The name of the piece's connector that is connected to this node
    */
-  public connect(piece: LayoutPiece, connector: ConnectorName): void {
+  public connect(piece: LayoutPiece, connectorName: ConnectorName): void {
     for(const connection of this.connections) {
       if (connection.piece == null) {
+        // Connect us to the piece
         connection.piece = piece;
-        connection.connector = connector;
+        connection.connectorName = connectorName;
+
+        // Connect the piece to us
+        piece.connect(this, connectorName);
         return;
       }
     }
@@ -153,13 +144,21 @@ export class LayoutNode {
       throw new FatalError("Cannot connect nodes together that already have two layout pieces connected to it");
     }
 
-    const piece = nodeToBeDeleted.getOtherPiece(null);
-    const connectorName = piece?.getConnectorName(nodeToBeDeleted); // Name of the piece's connector that is connected to that node
-    nodeToBeDeleted.disconnect(piece);
+    // Get the connection details of the node that is going to be deleted. We need these details because
+    // we need to connect to the piece it is connected to (if it is connected to another piece).
+    const connection = nodeToBeDeleted.getOtherConnection(null);
+
+    // If nodeToBeDeleted is conneced to another piece, disconnect it from the piece
+    if (connection.piece !== null) {
+      nodeToBeDeleted.disconnect(connection.piece);
+    }
+
+    // Delete nodeToBeDeleted
     this.nodeFactory.delete(nodeToBeDeleted);
 
-    if (piece !== null && connectorName !== undefined) {
-      this.connect(piece, connectorName);
+    // Make a connection between us and the piece (that nodeToBeDeleted was connected to)
+    if (connection.piece !== null && connection.connectorName !== undefined) {
+      this.connect(connection.piece, connection.connectorName);
     }
 
     // TODO: update positions
@@ -186,8 +185,8 @@ export class LayoutNode {
     console.log("Node " + this.getId() + " says: my coordinate is now ", coordinate);
 
     // Tell the other connected piece to continue the update down the layout
-    const oppositeSidePiece = this.getOtherPiece(callingPiece);
-    oppositeSidePiece?.updateHeadingAndContinue(this, coordinate, heading, loopProtector);
+    const oppositeSideConnection = this.getOtherConnection(callingPiece);
+    oppositeSideConnection.piece?.updateHeadingAndContinue(this, coordinate, heading, loopProtector);
   }
 
   /**
@@ -196,6 +195,34 @@ export class LayoutNode {
    */
   public save(): void {
     layoutNodesDb.data.nodes[this.id] = this.getLayoutData();
+  }
+
+  /**
+   * Return the other connected piece.
+   * Note that this function is also expected to work if we supply null as the pieceToLookFor.
+   */
+  protected getOtherConnection(pieceToLookFor: LayoutPiece | null): Connection {
+    for(let i = 0; i < 2; i++) {
+      if(this.connections[0].piece?.getId() == pieceToLookFor?.getId()) {
+        return this.connections[1-i];
+      }
+    }
+    throw new FatalError("We're not connected to this piece")
+  }
+
+  /**
+   * Disconnect this node from the given LayoutPiece
+   */
+  protected disconnect(piece: LayoutPiece): void {
+    for(const connection of this.connections) {
+      if (connection.piece?.getId() == piece.getId()) {
+        connection.piece = null;
+        connection.connectorName = undefined;
+        return; // Returns from the function
+      }
+    }
+
+    throw new FatalError("We were asked to disconnect from a piece that we are not connected to");
   }
 
   // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.
@@ -224,7 +251,7 @@ export class LayoutNode {
     this.connections.forEach(connection => {
       if (connection.piece !== null) {
         connectionCount++;
-        heading = connection.piece.getHeading(connection.connector as ConnectorName);
+        heading = connection.piece.getHeading(connection.connectorName as ConnectorName);
       }
     })
 

@@ -75,7 +75,7 @@ export class Curve extends LayoutPiece {
       // New node has an unknown heading and coordinate
       data.set("start", {
         heading: undefined,
-        node: this.nodeFactory.create(undefined),
+        node: this.nodeFactory.create(undefined, null, undefined), // Just create the node, don't connect it to us yet (this will happen later down the call chain)
       })
     }
 
@@ -85,11 +85,11 @@ export class Curve extends LayoutPiece {
       const startConnectorInfo = data.get("start") as LayoutPieceConnectorInfo;
       const startConnectorHeading = startConnectorInfo.heading;
       if (startConnectorHeading !== undefined) {
-        oppositeHeading = startConnectorHeading + this.angle + 180;
+        oppositeHeading = startConnectorHeading + 180;
       }
       data.set("end", {
         heading: oppositeHeading,
-        node: this.nodeFactory.create(undefined),
+        node: this.nodeFactory.create(undefined, null, undefined),// Just create the node, don't connect it to us yet (this will happen later down the call chain)
       })
     }
 

@@ -22,6 +22,8 @@ export class Straight extends LayoutPiece {
      pieceInfo.connectors = this.addMissingConnectorsAndNodes(pieceInfo.connectors);
      this.connectors = new LayoutPieceConnectors(pieceInfo.connectors);
 
+    // TODO: connected those nodes from pieceInfo.connectors to us
+
     this.length = (pieceInfo.pieceDef.getAttributes()  as PieceDefAttributes).length;
   }
 
@@ -54,7 +56,7 @@ export class Straight extends LayoutPiece {
     console.log("Piece " + this.getId() + " says: I've calculated the node's coordinate as: ", nextNodeCoordinate);
 
     // Call the next node
-    const oppositeSideNode = this.connectors.getConnector(oppositeSideConnectorName).getNode();
+    const oppositeSideNode = this.connectors.getNode(oppositeSideConnectorName);
     console.log("Piece " + this.getId() + " says: I'm going to call node " + oppositeSideNode.getId());
     oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, heading, loopProtector);
   }
@@ -64,7 +66,7 @@ export class Straight extends LayoutPiece {
       // New node has an unknown heading and coordinate
       data.set("start", {
         heading: undefined,
-        node: this.nodeFactory.create(undefined),
+        node: this.nodeFactory.create(undefined, null, undefined), // Just create the node, don't connect it to us yet (this will happen later down the call chain)
       })
     }
 
@@ -78,7 +80,7 @@ export class Straight extends LayoutPiece {
       }
       data.set("end", {
         heading: oppositeHeading,
-        node: this.nodeFactory.create(undefined),
+        node: this.nodeFactory.create(undefined, null, undefined),// Just create the node, don't connect it to us yet (this will happen later down the call chain)
       })
     }
 
