@@ -12,7 +12,7 @@ export class NodeFactory {
   }
 
   /**
-   * Create a node
+   * Create a node and connect it to the given piece
    */
   public create(coordinate: Coordinate | undefined, piece: LayoutPiece | null, connector: ConnectorName | undefined): LayoutNode {
     const id = (this.layout.getHighestNodeId() + 1).toString();
@@ -29,5 +29,18 @@ export class NodeFactory {
     }
 
     throw new FatalError("We need to know the name of the connector to be able to connect to a layout piece");
+  }
+
+  /**
+   * Delete a node.
+   *
+   * We will only delete a node that is not connected to anything more.
+   */
+  public delete(node: LayoutNode):void {
+    if (node.getNumberOfConnections() !== 0) {
+      throw new FatalError("Cannot delete a node that is still connected to things")
+    }
+
+    this.layout.deleteNode(node);
   }
 }

@@ -1,6 +1,7 @@
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
+import type { NodeFactory } from "./nodeFactory.js";
 import { layoutNodesDb } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NotConnectedError } from "../errors/NotConnectedError.js";
@@ -15,12 +16,14 @@ export class LayoutNode {
   protected readonly id: string;
   protected readonly connections: [Connection, Connection];
   protected coordinate: Coordinate | undefined;
+  protected readonly nodeFactory: NodeFactory;
   protected loopProtector: string;
 
-  constructor(id: string, coordinate: Coordinate | undefined) {
+  constructor(id: string, coordinate: Coordinate | undefined, nodeFactory: NodeFactory) {
     this.id = id;
     this.coordinate = coordinate;
     this.connections = [NoConnection, NoConnection];
+    this.nodeFactory = nodeFactory;
     this.loopProtector = "";
   }
 
@@ -32,7 +35,6 @@ export class LayoutNode {
     if (this.coordinate === undefined) {
       throw new FatalError("The coordinate should be known by know.");
     }
-
     return this.coordinate;
   }
 
@@ -45,7 +47,6 @@ export class LayoutNode {
         return connection.connector;
       }
     }
-
     return undefined;
   }
 
@@ -56,15 +57,29 @@ export class LayoutNode {
         return true;
       }
     }
-
     return false;
+  }
+
+  /**
+   * Return the number of objects this node is connected to
+   */
+  public getNumberOfConnections(): number {
+    let count = 0;
+
+    this.connections.forEach(connection => {
+      if (connection.piece !== null) {
+        count++;
+      }
+    });
+
+    return count;
   }
 
   /**
    * Return the layout pieces this node is connected to
    */
   public getPieces(): LayoutPiece[] {
-    return this.connections.filter(connection => connection.piece).map(connection => connection.piece as LayoutPiece);
+    return this.connections.filter(connection => connection.piece !== null).map(connection => connection.piece as LayoutPiece);
   }
 
   /**
@@ -77,7 +92,6 @@ export class LayoutNode {
         return this.connections[1-i].piece;
       }
     }
-
     throw new FatalError("We're not connected to this piece")
   }
 
@@ -102,7 +116,7 @@ export class LayoutNode {
       id: this.id,
       coordinate: this.coordinate,
       heading: this.getHeadingForUi(),
-      deadEnd: this.isUiDeadEnd(),
+      deadEnd: this.isDeadEnd(),
     };
   }
 
@@ -112,7 +126,10 @@ export class LayoutNode {
   }
 
   /**
-   * Connect this node to the given Layout Piece
+   * Connect this node to the given Layout Piece.
+   *
+   * @param piece The layout piece to connect to
+   * @param connector The name of the piece's connector that is connected to this node
    */
   public connect(piece: LayoutPiece, connector: ConnectorName): void {
     for(const connection of this.connections) {
@@ -122,8 +139,30 @@ export class LayoutNode {
         return;
       }
     }
-
     throw new FatalError("We can not be connected to more than two pieces")
+  }
+
+  /**
+   * Merge with the given node.
+   *
+   * This node will remain in the same position. The given node will be deleted,
+   * and the piece it is connected to will end up being connected to this node.
+   */
+  public mergeWith(nodeToBeDeleted: LayoutNode): void {
+    if (this.getNumberOfConnections() > 1 && nodeToBeDeleted.getNumberOfConnections() > 1) {
+      throw new FatalError("Cannot connect nodes together that already have two layout pieces connected to it");
+    }
+
+    const piece = nodeToBeDeleted.getOtherPiece(null);
+    const connectorName = piece?.getConnectorName(nodeToBeDeleted); // Name of the piece's connector that is connected to that node
+    nodeToBeDeleted.disconnect(piece);
+    this.nodeFactory.delete(nodeToBeDeleted);
+
+    if (piece !== null && connectorName !== undefined) {
+      this.connect(piece, connectorName);
+    }
+
+    // TODO: update positions
   }
 
   /**
@@ -162,7 +201,7 @@ export class LayoutNode {
   // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.
   // Note that it's not a dead-end if it has no pieces connected to it. The UI shows those kinds of nodes in
   // a different way.
-  protected isUiDeadEnd(): boolean {
+  protected isDeadEnd(): boolean {
     let connectionCount = 0;
     this.connections.forEach(connection => {
       if (connection.piece !== null) {

@@ -38,7 +38,10 @@ export class LayoutPieceConnector {
   }
 
   // Return the heading of the connector
-  public getHeading(): number | undefined {
+  public getHeading(): number {
+    if (this.heading === undefined) {
+      throw new FatalError("The heading should be known at this point. Nobody should be asking for this heading before the heading is defined.");
+    }
     return this.heading;
   }
 

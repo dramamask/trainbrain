@@ -1,6 +1,7 @@
 # TODO
 
 - Debug adding pieces. Debug UI side and server side.
+- Convert NodeFactory to a proper Nodes class that holds the nodes map.
 - Test coordinate calc chain function call.
 - Restrict access to writing to the DB from all classes except the layout class. Friendtoken?
 - remove now obsolote node and piece methods. and connectors and connector methods.
@@ -8,8 +9,9 @@
 - add aka instead of decription to piece-def.
 - show piece info with more detail. show attributes.
 - all multiple piece and node selections.
-- less logic in the front end, more in the back-end related to performing operations and given user errors.
+- Catch validation errors and return in proper error format that the UI knows.
 - server, catch errors at api edge and return with api retval.
+- less logic in the front end, more in the back-end related to performing operations and given user errors.
 - Coordinates should be allowed to be undefined. We could then even invalidate them when something changes.
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.
 - Test rotating a piece.
@@ -40,4 +42,4 @@
 - Add layout map inside a MUI Card
 - Make cards collapsable where there's only a title bar visible.
 - Add react grid (or whatever it is called) for the cards in right side "controls section"
-
+- Add tracing with spans. Use OTEL?

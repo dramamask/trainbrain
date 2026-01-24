@@ -6,6 +6,7 @@ import type { LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
 import type { NodeFactory } from "./nodeFactory.js";
 import { layoutPiecesDb } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
+import { FatalError } from "../errors/FatalError.js";
 
 export abstract class LayoutPiece {
   protected readonly id: string;
@@ -43,14 +44,38 @@ export abstract class LayoutPiece {
    */
   protected abstract addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo;
 
-  // Return the ID of this layout piece
+  /**
+   * Return this layout piece's ID
+   */
   public getId(): string {
     return this.id;
   }
 
-  // Get the heading for a given connector on this layout piece
-  public getHeading(connectorName: ConnectorName): number | undefined {
-    return this.connectors.getHeading(connectorName)
+  /**
+   * Return the heading at a given connector
+   */
+  public getHeading(name: ConnectorName): number {
+    return this.connectors.getHeading(name)
+  }
+
+  /**
+   * Return the node that is present at the given connector
+   */
+  public getNode(name: ConnectorName): LayoutNode {
+    return this.connectors.getNode(name);
+  }
+
+  /**
+   * Get the name of the connector that is connected to the given node
+   */
+  getConnectorName(node: LayoutNode): ConnectorName {
+    const name = this.connectors.getConnectorName(node);
+
+    if (name == undefined) {
+      throw new FatalError(`This layout piece is not connected to node '${node.getId()}'`);
+    }
+
+    return name;
   }
 
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
@@ -72,8 +97,8 @@ export abstract class LayoutPiece {
   }
 
   // Increment the heading of this layout piece by the given amount
-  public incrementHeading(headingIncrement: number): void {
-    this.connectors.incrementHeading(headingIncrement);
+  public incrementHeading(incement: number): void {
+    this.connectors.incrementHeading(incement);
   }
 
   /**

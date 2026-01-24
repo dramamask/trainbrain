@@ -5,9 +5,11 @@ export interface Coordinate {
 
 // List of the different types of track pieces that we have
 export type TrackPieceCategory = "straight" | "curve" | "switch";
+export const possibleTrackPieceCategories = ["straight", "curve", "switch"];
 
 // All possible connector names
 export type ConnectorName = "start" | "end" | "diverge";
+export const possibleConnectorNames = ["start", "end", "diverge"];
 
 // List of different possible values for the dead-end indicator for a UI layout piece
 export type DeadEnd = ConnectorName[];

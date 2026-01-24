@@ -1,4 +1,5 @@
 import type { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
+import { possibleConnectorNames } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
 import type { LayoutNode } from "./layoutnode.js";
@@ -13,15 +14,15 @@ export class LayoutPieceConnectors {
 
   constructor(connectorsInfo: LayoutPieceConnectorsInfo) {
     this.connectors = new Map<ConnectorName, LayoutPieceConnector>();
-    Object.entries(connectorsInfo).forEach(([key, value]) => {
-      const connectorName = key as ConnectorName;
-      const connectorInfo = value as LayoutPieceConnectorInfo;
+    Object.entries(connectorsInfo).forEach(([key, connectorInfo]) => {
+      const connectorName = this.validateConnectorName(key);
       this.connectors.set(connectorName, new LayoutPieceConnector(connectorName, connectorInfo.node, connectorInfo.heading));
     })
   }
 
+
   // Return the heading of the connector
-  public getHeading(name: ConnectorName): number | undefined{
+  public getHeading(name: ConnectorName): number {
     const connector = this.connectors.get(name);
 
     if (connector == null) {
@@ -31,23 +32,13 @@ export class LayoutPieceConnectors {
     return connector.getHeading();
   }
 
-  // Return the connector with a given name
-  public getConnector(name: ConnectorName): LayoutPieceConnector {
-    const connector =  this.connectors.get(name);
-
-    if (connector == null) {
-      throw new FatalError(`We don't have a connector called '${name}'`);
-    }
-
-    return connector;
-  }
-
   /**
    * Return the name of the connector at which we are connected to the given node
    * @param node
    */
   public getConnectorName(node: LayoutNode): ConnectorName | undefined {
     let connectorName;
+
     Object.values(this.connectors).some(connector => {
       if (connector.getNode().getId() == node.getId()) {
         connectorName = connector.getName();
@@ -56,6 +47,13 @@ export class LayoutPieceConnectors {
     })
 
     return connectorName;
+  }
+
+  /**
+   * Return the node connected to the connector with the given name
+   */
+  public getNode(name: ConnectorName): LayoutNode {
+    return this.getConnector(name).getNode();
   }
 
   // Return the number of connectors that we have
@@ -114,5 +112,28 @@ export class LayoutPieceConnectors {
     this.connectors.forEach((connector, connectorName) => {
       connector.incrementHeading(headingIncrement);
     });
+  }
+
+  // Return the connector with a given name
+  protected getConnector(name: ConnectorName): LayoutPieceConnector {
+    const connector =  this.connectors.get(name);
+
+    if (connector == null) {
+      throw new FatalError(`We don't have a connector called '${name}'`);
+    }
+
+    return connector;
+  }
+
+  /**
+   * Make sure that the given name is a connector name.
+   * Return the name as the proper ConnectorName type.
+   * Throw an error if the name is not a known allowed connector name.
+   */
+  protected validateConnectorName(name: string): ConnectorName {
+     if (!(name in possibleConnectorNames)) {
+        throw new FatalError("Unknown connector name encountered");
+      }
+      return (name as ConnectorName)
   }
 }
