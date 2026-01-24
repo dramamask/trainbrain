@@ -31,7 +31,7 @@ export class Straight extends LayoutPiece {
     return {};
   }
 
-  public updateHeadingAndContinue(callingNode: LayoutNode, coordinate: Coordinate, heading: number, loopProtector: string): void {
+  public updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void {
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
       return;
@@ -41,7 +41,9 @@ export class Straight extends LayoutPiece {
     // Figure out which side of the piece the call is coming from
     const callingSideConnectorName = this.connectors.getConnectorName(callingNode);
     if (callingSideConnectorName === undefined) {
-      throw new FatalError("We should be connected to the calling node");
+      console.log(`Piece ${this.getId()}: my start connector is connected to node ${this.connectors.getNode("start").getId()}`);
+      console.log(`Piece ${this.getId()}: my end connector is connected to node ${this.connectors.getNode("end").getId()}`);
+      throw new FatalError(`Piece ${this.getId()}: we should be connected to the calling node (node ID ${callingNode.getId()})`);
     }
     const oppositeSideConnectorName = callingSideConnectorName == "start" ? "end" : "start";
 
@@ -52,7 +54,7 @@ export class Straight extends LayoutPiece {
     console.log("Piece " + this.getId() + " says: my heading is now " + heading);
 
     // Calculate the coordinate for the next node
-    const nextNodeCoordinate = this.calculateCoordinate(coordinate, heading);
+    const nextNodeCoordinate = this.calculateCoordinate(callingNode.getCoordinate(), heading);
     console.log("Piece " + this.getId() + " says: I've calculated the node's coordinate as: ", nextNodeCoordinate);
 
     // Call the next node

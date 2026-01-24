@@ -35,7 +35,7 @@ export class Curve extends LayoutPiece {
     return {radius: this.radius};
   }
 
-  public updateHeadingAndContinue(callingNode: LayoutNode, coordinate: Coordinate, heading: number, loopProtector: string): void {
+  public updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void {
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
       return;
@@ -54,11 +54,11 @@ export class Curve extends LayoutPiece {
     let oppositeSideHeading : number;
 
     if (callingSideConnectorName === "start") {
-      const result = this.calculateEndCoordinate(coordinate, heading);
+      const result = this.calculateEndCoordinate(callingNode.getCoordinate(), heading);
       oppositeSideCoordinate = result.coordinate;
       oppositeSideHeading = result.heading;
     } else {
-      const result = this.calculateStartCoordinate(coordinate, heading);
+      const result = this.calculateStartCoordinate(callingNode.getCoordinate(), heading);
       oppositeSideCoordinate = result.coordinate;
       oppositeSideHeading = result.heading;
     }

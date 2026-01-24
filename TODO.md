@@ -2,7 +2,7 @@
 
 - Debug adding pieces. Debug UI side and server side.
 - Convert NodeFactory to a proper Nodes class that holds the nodes map.
-- Test coordinate calc chain function call.
+- Test updating node coordiante and heading through UI.
 - Restrict access to writing to the DB from all classes except the layout class. Friendtoken?
 - remove now obsolote node and piece methods. and connectors and connector methods.
 - combine layout-nodes and layout-piece.json so we can have more atomic saves.

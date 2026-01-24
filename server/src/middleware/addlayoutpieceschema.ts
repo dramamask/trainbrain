@@ -11,6 +11,7 @@ export const addLayoutPieceSchema = [
       if (!node) {
         throw new Error("JSON parameter 'nodeId' does not match a node in the layout");
       }
+      return true;
     }),
 
   body('pieceDefId')
@@ -18,9 +19,10 @@ export const addLayoutPieceSchema = [
     .notEmpty().withMessage("JSON parameter 'pieceDefId' should not be empty")
     .isString().withMessage("JSON parameter 'pieceDefId' should be a string")
     .custom((id: string) => {
-      const node = layout.getNode(id);
-      if (!node) {
+      const pieceDef = layout.getPieceDef(id);
+      if (!pieceDef) {
         throw new Error("JSON parameter 'pieceDefId' does not match a known piece definition");
       }
+      return true;
     }),
 ];

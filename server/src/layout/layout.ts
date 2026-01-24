@@ -1,4 +1,4 @@
-import type { AddLayoutPieceData, Coordinate, TrackPieceCategory, UiLayout } from "trainbrain-shared";
+import type { AddLayoutPieceData, ConnectorName, Coordinate, TrackPieceCategory, UiLayout } from "trainbrain-shared";
 import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
 import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 import { NodeFactory } from "./nodeFactory.js";
@@ -69,6 +69,14 @@ export class Layout {
   }
 
   /**
+   * Return the piece defintion object with the given ID
+   * Only used by the request validation code
+   */
+  public getPieceDef(id: string): PieceDef | undefined {
+    return this.pieceDefs.getPieceDefWithoutCheck(id);
+  }
+
+  /**
    * Add a node to our list of nodes.
    * Only used by the NodeFactory
    */
@@ -99,15 +107,17 @@ export class Layout {
     node.setCoordinate(coordinate);
 
     // Update the heading for the piece(s) connected to the node (if any)
-    node.getPieces().forEach(piece => piece.incrementHeading(headingIncrement));
+    node.getConnections().forEach(connection => connection.piece?.incrementHeading(headingIncrement));
 
     // Update the coordinates of the node, and the heading and coordinates of all connected pieces and nodes recursively
-    // TODO: this should be called from inside the layout piece or node. Not from there.
-    this.updateAllConnectedCoordinatesAndHeadings(node, coordinate);
+    const loopProtector = crypto.randomUUID();
+    const connections = node.getConnections();
+    connections.forEach(connection => {
+      connection.piece?.updateHeadingAndContinue(node, connection.piece?.getHeading(connection.connectorName as ConnectorName), loopProtector);
+    });
 
-    // Write the in-memory json DBs to file
-    await layoutNodesDb.write();
-    await layoutPiecesDb.write();
+    // Save the newly changed layout to file
+    this.save();
   }
 
   /**
@@ -135,18 +145,22 @@ export class Layout {
 
     // Send error message back tot he UI
     // TODO: Add this to the validation when we are able to return validation errors in a proper format  that the UI can handle
-    if (nodeToConnectTo.getPieces().length == 2) {
-      throw new Error("We cannot add a layout piece to this node. This node already is connected to two layout pieces.")
+    if (nodeToConnectTo.getNumberOfConnections() == 2) {
+      throw new Error(`We cannot connect a layout piece to this node because it is alerady connected to two layout pieces. Node ID: ${nodeToConnectTo.getId()}`);
     }
 
     // Create the new layout piece
     const connectorsData: LayoutPieceConnectorsData = {
       "start" : {
-        heading: undefined,// TODO: how to do this? when to get this info? where to get it from for the first piece?
+        heading: undefined, // This will be set later
         node: nodeToConnectTo.getId(),
       }
     }
     const newPiece = this.createLayoutPiece(this.getNewPieceId(), connectorsData, pieceDef);
+
+    // Update new node's coordinate
+    const loopProtector = crypto.randomUUID();
+    newPiece.updateHeadingAndContinue(nodeToConnectTo, this.getPieceHeading(newPiece, nodeToConnectTo), loopProtector);
 
     // Add the new piece to the layout
     this.pieces.set(newPiece.getId(), newPiece);
@@ -155,7 +169,22 @@ export class Layout {
     this.save();
   }
 
-  // Find the layout node with the highest numerical ID. Return the ID as a number.
+  /**
+   * Return the heading for a piece, based on the heading of the piece connected to the same node.
+   */
+  protected getPieceHeading(piece: LayoutPiece, connectedToNode : LayoutNode): number{
+    const otherConnection = connectedToNode.getOtherConnection(piece);
+
+    if (otherConnection.piece === null || otherConnection.connectorName === undefined) {
+      return 0;
+    }
+
+    return otherConnection.piece.getHeading(otherConnection.connectorName) + 180;
+  }
+
+  /**
+   *  Find the layout node with the highest numerical ID. Return the ID as a number.
+   */
   public getHighestNodeId(): number {
     let highestId: number = -1;
 
@@ -169,12 +198,16 @@ export class Layout {
     return highestId;
   }
 
-  // Return the number of layout pieces in our layout
+  /**
+   * Return the number of layout pieces in our layout
+   */
   getNumberOfLayoutPieces(): number {
     return this.pieces.size;
   }
 
-  // Find the layout piece with the highest numerical ID. Return the ID as a number.
+  /**
+   * Find the layout piece with the highest numerical ID. Return the ID as a number.
+   */
   public getHighestPieceId(): number {
     let highestId: number = -1;
 
@@ -195,7 +228,9 @@ export class Layout {
     return (this.getHighestPieceId() + 1).toString();
   }
 
-  // Create a new layout piece from the provided layout DB data for this piece
+  /**
+   * Create a new layout piece from the provided layout DB data for this piece
+   */
   protected createLayoutPiece(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef): LayoutPiece {
     switch(pieceDef.getCategory()) {
       case "straight":
@@ -207,30 +242,6 @@ export class Layout {
     }
   }
 
-  // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively
-  // Prerequisites:
-  // - The startNode knows its coordinate
-  // - Layout pieces on either side of the node have to know their heading
-  protected updateAllConnectedCoordinatesAndHeadings(startNode: LayoutNode, coordinate: Coordinate): void {
-    const loopProtector = crypto.randomUUID();
-
-    const pieces = startNode.getPieces();
-    console.log("Layout object says: start node's coordinate: ", startNode.getCoordinate());
-
-    pieces.forEach(piece => {
-      const connectorName = startNode.getConnectorName(piece);
-      if (connectorName === undefined) {
-        throw new FatalError("We are connected to them. This should return a name");
-      }
-      console.log("Layout object says: start node is connected to this piece's connector: ", connectorName);
-
-      const heading = piece.getHeading(connectorName);
-      console.log("Layout object says: this connector has a heading of: ", heading);
-
-      piece.updateHeadingAndContinue(startNode, startNode.getCoordinate(), heading, loopProtector);
-    });
-  }
-
   /**
    * Save the entire layout to the DB
    */
@@ -239,7 +250,7 @@ export class Layout {
       node.save();
     });
 
-    this.nodes.forEach(piece => {
+    this.pieces.forEach(piece => {
       piece.save();
     });
 

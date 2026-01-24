@@ -12,12 +12,18 @@ export class PieceDefs {
     this.pieceDefs = new Map<string, PieceDef>();
   }
 
+  /**
+   * Create all the PieceDef objects
+   */
   public init() {
     Object.entries(pieceDefintionsDb.data.definitions).forEach(([key, def]) => {
       this.pieceDefs.set(key, new PieceDef(key, def));
     })
   }
 
+  /**
+   * Return the PieceDef object
+   */
   public getPieceDef(id: string): PieceDef {
     const pieceDef = this.pieceDefs.get(id);
 
@@ -26,5 +32,12 @@ export class PieceDefs {
     }
 
     return pieceDef;
+  }
+
+  /**
+   * Return the PieceDef object, or undefined if it does not exist
+   */
+  public getPieceDefWithoutCheck(id: string): PieceDef | undefined {
+    return this.pieceDefs.get(id);
   }
 }

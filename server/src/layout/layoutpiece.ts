@@ -19,7 +19,17 @@ export abstract class LayoutPiece {
     this.loopProtector = "";
 
     connectorsData = LayoutPiece.addMissingConnectorsData(connectorNames, connectorsData);
+    console.log(connectorsData);
     this.connectors = new LayoutPieceConnectors(connectorsData, nodeFactory);
+
+    console.log('--- Before calling connectNodesToUs ---');
+
+    console.log(`Piece 0, "start" connector connected to node: ${this.connectors.getNode("start").getId()}`);
+    console.log(`Piece 0, "end" connector connected to node: ${this.connectors.getNode("end").getId()}`);
+    console.log(`Node 0: `, this.connectors.getNode("start"));
+    console.log(`Node 1: `, this.connectors.getNode("end"));
+
+    console.log('--- During calling connectNodesToUs ---');
 
     this.connectNodesToUs(connectorNames);
   }
@@ -39,17 +49,17 @@ export abstract class LayoutPiece {
    * @param heading The heading to assign to the connector that is facing the calling node
    * @param loopProtector A string to prevent infinite loops
    */
-  public abstract updateHeadingAndContinue(callingNode: LayoutNode, coordinate: Coordinate, heading: number, loopProtector: string): void;
+  public abstract updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void;
 
   /**
    * Examine the connectors data that was received and add any missing data that we need to create this layout piece
    */
   static addMissingConnectorsData(connectorNames: ConnectorName[], data: LayoutPieceConnectorsData): LayoutPieceConnectorsData {
-    connectorNames.forEach(connectorName => {
+    for(const connectorName of connectorNames) {
       if (!(connectorName in data)) {
         data[connectorName] = { heading: undefined, node: undefined };
       }
-    });
+    };
 
     return data;
   }
@@ -125,6 +135,7 @@ export abstract class LayoutPiece {
    */
   protected connectNodesToUs(connectorNames: ConnectorName[]): void {
     connectorNames.forEach(connectorName => {
+      console.log(`Piece ${this.getId()}: asking node ${this.connectors.getNode(connectorName).getId()} to connect us`)
       this.connectors.getNode(connectorName).connect(this, connectorName);
     })
   }

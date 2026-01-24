@@ -1,6 +1,9 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import cors from "cors";
+import { initProcessHandlers } from './services/processhandlers.js';
 import apiRoutes from "./routes/index.js";
+
+initProcessHandlers();
 
 const PORT = 3001;
 const app = express();
@@ -18,6 +21,12 @@ app.use(cors({
 
 // Load routes
 app.use("/", apiRoutes);
+
+// Global exception handler
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.error(err);
+  res.status(err.status || 500).json({ messages: { error: "Unknown error at the edge. Check server logs." } })
+});
 
 // Test route for debugging purposes
 app.get("/test", (req, res) => {

@@ -39,16 +39,11 @@ export class LayoutPieceConnectors {
    * @param node
    */
   public getConnectorName(node: LayoutNode): ConnectorName | undefined {
-    let connectorName;
-
-    Object.values(this.connectors).some(connector => {
+    for(const [name, connector] of this.connectors) {
       if (connector.getNode().getId() == node.getId()) {
-        connectorName = connector.getName();
-        return true;
+        return name;
       }
-    })
-
-    return connectorName;
+    }
   }
 
   /**
@@ -133,8 +128,8 @@ export class LayoutPieceConnectors {
    * Throw an error if the name is not a known allowed connector name.
    */
   protected validateConnectorName(name: string): ConnectorName {
-     if (!(name in possibleConnectorNames)) {
-        throw new FatalError("Unknown connector name encountered");
+     if (!possibleConnectorNames.includes(name)) {
+        throw new FatalError(`Unknown connector name encountered: '${name}'`);
       }
       return (name as ConnectorName)
   }

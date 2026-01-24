@@ -4,13 +4,10 @@ import type { LayoutNodeData } from "../data_types/layoutNodes.js";
 import type { NodeFactory } from "./nodeFactory.js";
 import { layoutNodesDb } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
-import { NotConnectedError } from "../errors/NotConnectedError.js";
 
 interface Connection {
   piece: LayoutPiece | null, connectorName: ConnectorName | undefined,
 };
-
-const NoConnection = {piece: null, connectorName: undefined};
 
 export class LayoutNode {
   protected readonly id: string;
@@ -22,7 +19,7 @@ export class LayoutNode {
   constructor(id: string, coordinate: Coordinate | undefined, nodeFactory: NodeFactory) {
     this.id = id;
     this.coordinate = coordinate;
-    this.connections = [NoConnection, NoConnection];
+    this.connections = [{piece: null, connectorName: undefined}, {piece: null, connectorName: undefined}];
     this.nodeFactory = nodeFactory;
     this.loopProtector = "";
   }
@@ -76,10 +73,13 @@ export class LayoutNode {
   }
 
   /**
-   * Return the layout pieces this node is connected to
+   * Return the connection info for each piece that this node is connected to.
+   * Note that this is different from this connections, which always has two entries.
+   * This function only returns a Connection objects for connections that are connected
+   * to a piece. This means that this funtion may return an array of 0, 1, or 2 entries.
    */
-  public getPieces(): LayoutPiece[] {
-    return this.connections.filter(connection => connection.piece !== null).map(connection => connection.piece as LayoutPiece);
+  public getConnections(): Connection[] {
+    return this.connections.filter(connection => connection.piece !== null).map(connection => connection as Connection);
   }
 
   // Get the data for this layout node, as it would be stored in the layout-nodes json DB
@@ -119,13 +119,20 @@ export class LayoutNode {
    * @param connectorName The name of the piece's connector that is connected to this node
    */
   public connect(piece: LayoutPiece, connectorName: ConnectorName): void {
+    console.log(`Node ${this.getId()}: piece ${piece.getId()} asks us to connect to them on their connector '${connectorName}'`)
+    console.log(`- right now our connection 0 -> connected to piece ${this.connections[0].piece?.getId()} through their connector '${this.connections[0].connectorName}'`);
+    console.log(`- right now our connection 1 -> connected to piece ${this.connections[1].piece?.getId()} through their connector '${this.connections[1].connectorName}'`);
+
+    let index = 0;
     for(const connection of this.connections) {
-      if (connection.piece == null) {
+      if (connection.piece === null) {
+        console.log(`Node ${this.getId()}: I'm adding piece '${piece.getId()}' to my connection ${index}, with connectorName ${connectorName}`);
         // Connect us to the piece
         connection.piece = piece;
         connection.connectorName = connectorName;
         return;
       }
+      index++;
     }
     throw new FatalError("We can not be connected to more than two pieces")
   }
@@ -157,8 +164,6 @@ export class LayoutNode {
     if (connection.piece !== null && connection.connectorName !== undefined) {
       this.connect(connection.piece, connection.connectorName);
     }
-
-    // TODO: update positions
   }
 
   /**
@@ -183,7 +188,7 @@ export class LayoutNode {
 
     // Tell the other connected piece to continue the update down the layout
     const oppositeSideConnection = this.getOtherConnection(callingPiece);
-    oppositeSideConnection.piece?.updateHeadingAndContinue(this, coordinate, heading, loopProtector);
+    oppositeSideConnection.piece?.updateHeadingAndContinue(this, heading, loopProtector);
   }
 
   /**
