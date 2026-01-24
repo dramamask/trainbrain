@@ -1,30 +1,30 @@
-import type { Coordinate, UiAttributesDataStraight } from "trainbrain-shared";
-import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
+import type { ConnectorName, Coordinate, UiAttributesDataStraight } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodeFactory.js";
+import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
+import { PieceDef } from "./piecedef.js";
 
+// Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
   length: number;
 }
+
+// All connector names for this piece
+const CONNECTOR_NAMES: ConnectorName[] = ["start", "end"];
 
 /**
  * This is a straight layout piece
  */
 export class Straight extends LayoutPiece {
   protected readonly length: number;
-  protected readonly connectors: LayoutPieceConnectors;
 
- public constructor(id: string, pieceInfo: LayoutPieceInfo, nodeFactory: NodeFactory) {
-     super(id, pieceInfo, nodeFactory);
-     pieceInfo.connectors = this.addMissingConnectorsAndNodes(pieceInfo.connectors);
-     this.connectors = new LayoutPieceConnectors(pieceInfo.connectors);
+  public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
+    super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory);
 
-    // TODO: connected those nodes from pieceInfo.connectors to us
-
-    this.length = (pieceInfo.pieceDef.getAttributes()  as PieceDefAttributes).length;
+    this.length = (pieceDef.getAttributes()  as PieceDefAttributes).length;
   }
 
   public getUiAttributes(): UiAttributesDataStraight {
@@ -61,44 +61,18 @@ export class Straight extends LayoutPiece {
     oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, heading, loopProtector);
   }
 
-  protected addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo {
-    if (data.get("start") === undefined) {
-      // New node has an unknown heading and coordinate
-      data.set("start", {
-        heading: undefined,
-        node: this.nodeFactory.create(undefined, null, undefined), // Just create the node, don't connect it to us yet (this will happen later down the call chain)
-      })
-    }
-
-    if (data.get("end") === undefined) {
-      // New node has an oppsite heading of the start node, and an unknown coordinate
-      let oppositeHeading;
-      const startConnectorInfo = data.get("start") as LayoutPieceConnectorInfo;
-      const startConnectorHeading = startConnectorInfo.heading;
-      if (startConnectorHeading !== undefined) {
-        oppositeHeading = startConnectorHeading + 180;
-      }
-      data.set("end", {
-        heading: oppositeHeading,
-        node: this.nodeFactory.create(undefined, null, undefined),// Just create the node, don't connect it to us yet (this will happen later down the call chain)
-      })
-    }
-
-    return data;
-  }
-
   /**
    * Calculates the coordinate and heading of one side of the track
    * piece based on the known coordinate of the other side of the piece.
    */
   protected calculateCoordinate(otherCoordinate: Coordinate, heading: number): Coordinate {
     // Calculate x and y position based on the heading of the track piece
-    const dX = this.length * Math.sin(this.degreesToRadians(heading));
-    const dY = this.length * Math.cos(this.degreesToRadians(heading));
+    const dX = this.length * Math.sin(LayoutPiece.degreesToRadians(heading));
+    const dY = this.length * Math.cos(LayoutPiece.degreesToRadians(heading));
 
     return {
-      x: this.roundTo2(otherCoordinate.x + dX),
-      y: this.roundTo2(otherCoordinate.y + dY),
+      x: otherCoordinate.x + dX,
+      y: otherCoordinate.y + dY,
     }
   }
 }

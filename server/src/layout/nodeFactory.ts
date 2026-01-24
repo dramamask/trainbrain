@@ -12,6 +12,16 @@ export class NodeFactory {
   }
 
   /**
+   * Return the node with the given ID
+   */
+  public getNode(id: string | undefined) : LayoutNode | undefined {
+    if (id === undefined) {
+      return undefined;
+    }
+    return this.layout.getNode(id);
+  }
+
+  /**
    * Create a node and connect it to the given piece
    */
   public create(coordinate: Coordinate | undefined, piece: LayoutPiece | null, connector: ConnectorName | undefined): LayoutNode {

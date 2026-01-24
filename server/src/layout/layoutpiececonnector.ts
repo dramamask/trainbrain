@@ -1,5 +1,7 @@
+import type { LayoutPieceConnectorData } from "../data_types/layoutPieces.js";
 import type { ConnectorName } from "trainbrain-shared";
 import type { LayoutNode } from "./layoutnode.js";
+import type { NodeFactory } from "./nodeFactory.js";
 import { FatalError } from "../errors/FatalError.js";
 
 /**
@@ -31,9 +33,14 @@ export class LayoutPieceConnector {
   protected heading: number | undefined;
   protected node: LayoutNode;
 
-  constructor(name: ConnectorName, node: LayoutNode, heading: number | undefined) {
+  constructor(name: ConnectorName, data: LayoutPieceConnectorData, nodeFactory: NodeFactory) {
     this.name = name;
-    this.heading = heading;
+    this.heading = data.heading;
+
+    let node = nodeFactory.getNode(data.node);
+    if (node == undefined) {
+       node = nodeFactory.create(undefined, null, undefined);
+    }
     this.node = node;
   }
 

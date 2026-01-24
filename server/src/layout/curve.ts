@@ -1,15 +1,21 @@
-import type { ConnectorName, Coordinate, PieceDefData, UiAttributesDataCurve } from "trainbrain-shared";
-import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
+import type { ConnectorName, Coordinate, UiAttributesDataCurve } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodeFactory.js";
+import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
+import { PieceDef } from "./piecedef.js";
 
+// Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
   angle: number;
   radius: number;
 }
+
+// All connector names for this piece
+const CONNECTOR_NAMES: ConnectorName[] = ["start", "end"];
+
 
 /**
  * This is a Curved Layout piece
@@ -17,15 +23,12 @@ interface PieceDefAttributes {
 export class Curve extends LayoutPiece {
   protected readonly angle: number;
   protected readonly radius: number;
-  protected readonly connectors: LayoutPieceConnectors;
 
-  public constructor(id: string, pieceInfo: LayoutPieceInfo, nodeFactory: NodeFactory) {
-    super(id, pieceInfo, nodeFactory);
-    pieceInfo.connectors = this.addMissingConnectorsAndNodes(pieceInfo.connectors);
-    this.connectors = new LayoutPieceConnectors(pieceInfo.connectors);
+ public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
+     super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory);
 
-    this.angle = (pieceInfo.pieceDef.getAttributes() as PieceDefAttributes).angle;
-    this.radius = (pieceInfo.pieceDef.getAttributes() as PieceDefAttributes).radius;
+    this.angle = (pieceDef.getAttributes()  as PieceDefAttributes).angle;
+    this.radius = (pieceDef.getAttributes()  as PieceDefAttributes).radius;
   }
 
   public getUiAttributes(): UiAttributesDataCurve {
@@ -65,33 +68,20 @@ export class Curve extends LayoutPiece {
     this.connectors.setHeading(oppositeSideConnectorName, oppositeSideHeading);
 
     // Call the next node
-    const oppositeSideNode = this.connectors.getConnector(oppositeSideConnectorName).getNode();
+    const oppositeSideNode = this.connectors.getNode(oppositeSideConnectorName);
     const nextPieceHeading = oppositeSideHeading + 180; // Their heading will be facing the opposite site (heading always faces into the piece)
     oppositeSideNode.updateCoordinateAndContinue(this, oppositeSideCoordinate, nextPieceHeading, loopProtector);
   }
 
-  protected addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo {
-    if (data.get("start") === undefined) {
-      // New node has an unknown heading and coordinate
-      data.set("start", {
-        heading: undefined,
-        node: this.nodeFactory.create(undefined, null, undefined), // Just create the node, don't connect it to us yet (this will happen later down the call chain)
-      })
-    }
-
-    if (data.get("end") === undefined) {
-      // New node has an oppsite heading of the start node, and an unknown coordinate
-      let oppositeHeading;
-      const startConnectorInfo = data.get("start") as LayoutPieceConnectorInfo;
-      const startConnectorHeading = startConnectorInfo.heading;
-      if (startConnectorHeading !== undefined) {
-        oppositeHeading = startConnectorHeading + 180;
+  /**
+   * Examine the connectors data that was received and add any missing data that we need to create this layout piece
+   */
+  protected addMissingConnectorsData(data: LayoutPieceConnectorsData): LayoutPieceConnectorsData {
+    ["start", "end"].forEach(connectorName => {
+      if (!(connectorName in data)) {
+        data[connectorName] = { heading: undefined, node: undefined };
       }
-      data.set("end", {
-        heading: oppositeHeading,
-        node: this.nodeFactory.create(undefined, null, undefined),// Just create the node, don't connect it to us yet (this will happen later down the call chain)
-      })
-    }
+    });
 
     return data;
   }
@@ -108,19 +98,19 @@ export class Curve extends LayoutPiece {
    */
   protected calculateEndCoordinate(startCoordinate: Coordinate, startHeading: number): {coordinate: Coordinate, heading: number} {
     // Calculate x and y position based on the angle of the track piece
-    let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
-    let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
+    let dX = this.radius * (1 - Math.cos(LayoutPiece.degreesToRadians(this.angle)));
+    let dY = this.radius * Math.sin(LayoutPiece.degreesToRadians(this.angle));
 
     // Rotate the track piece to fit correctly on the end of the previous piece
-    const rotated = this.rotatePoint(dX, dY, startHeading);
+    const rotated = LayoutPiece.rotatePoint(dX, dY, startHeading);
     dX = rotated.x;
     dY = rotated.y;
 
     // Assign the x, y and heading based on the previous calculations
     return ({
       coordinate: {
-        x: this.roundTo2(startCoordinate.x + dX),
-        y: this.roundTo2(startCoordinate.y + dY),
+        x: startCoordinate.x + dX,
+        y: startCoordinate.y + dY,
       },
       heading: startHeading + this.angle + 180,
     })
@@ -138,22 +128,22 @@ export class Curve extends LayoutPiece {
    */
   protected calculateStartCoordinate(endCoordinate: Coordinate, endHeading: number): {coordinate: Coordinate, heading: number} {
     // Calculate x and y position based on the angle of the track piece
-    let dX = this.radius * (1 - Math.cos(this.degreesToRadians(this.angle)));
-    let dY = this.radius * Math.sin(this.degreesToRadians(this.angle));
+    let dX = this.radius * (1 - Math.cos(LayoutPiece.degreesToRadians(this.angle)));
+    let dY = this.radius * Math.sin(LayoutPiece.degreesToRadians(this.angle));
 
     // Invert the  x-coordinate because the piece is now facing left (start and end are reversed)
     dX = (0 - dX);
 
     // Rotate the track piece to fit correctly on the end of the previous piece
-    const rotated = this.rotatePoint(dX, dY, endHeading);
+    const rotated = LayoutPiece.rotatePoint(dX, dY, endHeading);
     dX = rotated.x;
     dY = rotated.y;
 
     // Assign the x, y and heading based on the previous calculations
     return ({
       coordinate: {
-        x: this.roundTo2(endCoordinate.x + dX),
-        y: this.roundTo2(endCoordinate.y + dY),
+        x: endCoordinate.x + dX,
+        y: endCoordinate.y + dY,
       },
       heading: endHeading - this.angle + 180,
     })

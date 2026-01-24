@@ -1,10 +1,12 @@
 import type { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
-import { possibleConnectorNames } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
-import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo } from "./types.js";
 import type { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
+import { NodeFactory } from "./nodeFactory.js";
+
+// TODO: Move this to train-brain-shared when we figure out how to handle module vs commonjs for train-brain-shared
+const possibleConnectorNames = ["start", "end", "diverge"];
 
 /**
  * Class that knows all the connectors of a layout piece
@@ -12,14 +14,14 @@ import { FatalError } from "../errors/FatalError.js";
 export class LayoutPieceConnectors {
   protected readonly connectors: Map<ConnectorName, LayoutPieceConnector>;
 
-  constructor(connectorsInfo: LayoutPieceConnectorsInfo) {
+  constructor(connectorsData: LayoutPieceConnectorsData, nodeFactory: NodeFactory) {
     this.connectors = new Map<ConnectorName, LayoutPieceConnector>();
-    Object.entries(connectorsInfo).forEach(([key, connectorInfo]) => {
+
+    Object.entries(connectorsData).forEach(([key, connectorData]) => {
       const connectorName = this.validateConnectorName(key);
-      this.connectors.set(connectorName, new LayoutPieceConnector(connectorName, connectorInfo.node, connectorInfo.heading));
+      this.connectors.set(connectorName, new LayoutPieceConnector(connectorName, connectorData, nodeFactory));
     })
   }
-
 
   // Return the heading of the connector
   public getHeading(name: ConnectorName): number {

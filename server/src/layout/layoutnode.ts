@@ -101,7 +101,7 @@ export class LayoutNode {
 
     return {
       id: this.id,
-      coordinate: this.coordinate,
+      coordinate: LayoutNode.roundTo2(this.coordinate),
       heading: this.getHeadingForUi(),
       deadEnd: this.isDeadEnd(),
     };
@@ -124,9 +124,6 @@ export class LayoutNode {
         // Connect us to the piece
         connection.piece = piece;
         connection.connectorName = connectorName;
-
-        // Connect the piece to us
-        piece.connect(this, connectorName);
         return;
       }
     }
@@ -201,7 +198,7 @@ export class LayoutNode {
    * Return the other connected piece.
    * Note that this function is also expected to work if we supply null as the pieceToLookFor.
    */
-  protected getOtherConnection(pieceToLookFor: LayoutPiece | null): Connection {
+  public getOtherConnection(pieceToLookFor: LayoutPiece | null): Connection {
     for(let i = 0; i < 2; i++) {
       if(this.connections[0].piece?.getId() == pieceToLookFor?.getId()) {
         return this.connections[1-i];
@@ -260,5 +257,12 @@ export class LayoutNode {
     }
 
     return null;
+  }
+
+  // Round a number to two decimal points
+  static roundTo2(coordiante: Coordinate): Coordinate {
+    coordiante.x = Math.round(coordiante.x * 100) / 100;
+    coordiante.y = Math.round(coordiante.y * 100) / 100;
+    return coordiante;
   }
 }

@@ -1,7 +1,7 @@
 // Info about a connector on a layout piece
 export interface LayoutPieceConnectorData {
-  heading: number;
-  node: string;
+  heading: number | undefined;
+  node: string | undefined;
 }
 
 // Map of connector names and the info about them

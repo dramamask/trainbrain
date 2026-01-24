@@ -1,6 +1,6 @@
 import type { AddLayoutPieceData, Coordinate, TrackPieceCategory, UiLayout } from "trainbrain-shared";
 import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
-import type { LayoutPieceData } from "../data_types/layoutPieces.js";
+import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 import { NodeFactory } from "./nodeFactory.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
@@ -9,6 +9,7 @@ import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
 import { FatalError } from "../errors/FatalError.js";
 import { PieceDefs } from "./pieceDefs.js";
+import { PieceDef } from "./piecedef.js";
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
@@ -36,7 +37,7 @@ export class Layout {
     // The layout piece will create connects between itself and any nodes it is connected to
     Object.entries(layoutPiecesDb.data.pieces).forEach(([key, pieceData]) => {
       const pieceDef = this.pieceDefs.getPieceDef(pieceData.pieceDefId)
-      this.pieces.set(key, this.createLayoutPiece(key, pieceData, pieceDef.getCategory()));
+      this.pieces.set(key, this.createLayoutPiece(key, pieceData.connectors, pieceDef));
     });
   }
 
@@ -130,6 +131,7 @@ export class Layout {
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
     // Note that input validation has already been done.
     const nodeToConnectTo = this.nodes.get(data.nodeId) as LayoutNode;
+    const pieceDef = this.pieceDefs.getPieceDef(data.pieceDefId);
 
     // Send error message back tot he UI
     // TODO: Add this to the validation when we are able to return validation errors in a proper format  that the UI can handle
@@ -138,16 +140,13 @@ export class Layout {
     }
 
     // Create the new layout piece
-    const pieceData: LayoutPieceData = { pieceDefId: data.pieceDefId, connectors: {} };
-    const newPiece = this.createLayoutPiece(
-      this.getNewPieceId(),
-      pieceData,
-      this.pieceDefs.getPieceDef(data.pieceDefId).getCategory(),
-    );
-
-    // Connect the new piece to the given node
-    const nodeToBeDeleted = newPiece.getNode("start");
-    nodeToConnectTo.mergeWith(nodeToBeDeleted);
+    const connectorsData: LayoutPieceConnectorsData = {
+      "start" : {
+        heading: undefined,// TODO: how to do this? when to get this info? where to get it from for the first piece?
+        node: nodeToConnectTo.getId(),
+      }
+    }
+    const newPiece = this.createLayoutPiece(this.getNewPieceId(), connectorsData, pieceDef);
 
     // Add the new piece to the layout
     this.pieces.set(newPiece.getId(), newPiece);
@@ -197,45 +196,15 @@ export class Layout {
   }
 
   // Create a new layout piece from the provided layout DB data for this piece
-  protected createLayoutPiece(id: string, pieceData: LayoutPieceData, pieceCategory: TrackPieceCategory): LayoutPiece {
-    const pieceInfo = this.getLayoutPieceInfo(pieceData);
-
-    switch(pieceCategory) {
+  protected createLayoutPiece(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef): LayoutPiece {
+    switch(pieceDef.getCategory()) {
       case "straight":
-        return new Straight(id, pieceInfo, this.nodeFactory);
+        return new Straight(id, connectorsData, pieceDef, this.nodeFactory);
       case "curve":
-        return new Curve(id, pieceInfo, this.nodeFactory);
+        return new Curve(id, connectorsData, pieceDef, this.nodeFactory);
       default:
-        throw new FatalError(`Undefined piece category in track-layout db: ${pieceCategory}`)
+        throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.getCategory()}`)
     }
-  }
-
-  // Return info on the connectors needed to create a LayoutPiece
-  // All this method does is translate from a list that contains object IDs to the equivalent objects
-  protected getLayoutPieceInfo(data: LayoutPieceData): LayoutPieceInfo {
-    // Get the connectors info
-    const connectorsInfo: LayoutPieceConnectorsInfo = new Map<string, LayoutPieceConnectorInfo>();
-    Object.entries(data).forEach(([connectorName, connectorData]) => {
-      const node = this.nodes.get(connectorData.node);
-      if (node == undefined) {
-        throw new FatalError("Node should be known by now");
-      }
-      connectorsInfo.set(connectorName, {heading: connectorData.heading, node: node});
-    })
-
-    // Get the piece def
-    const pieceDef = this.pieceDefs.getPieceDef(data.pieceDefId);
-    if (pieceDef === undefined) {
-      throw new FatalError("PieceDef should be known by now");
-    }
-
-    // Put it all togeter
-    const pieceInfo = {
-      pieceDef: pieceDef,
-      connectors: connectorsInfo,
-    }
-
-    return pieceInfo;
   }
 
   // Update the coordinates of a node, and the heading and coordinates of all connected pieces and nodes recursively

@@ -1,9 +1,8 @@
 import type { Coordinate, ConnectorName, TrackPieceCategory, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
-import type { LayoutPieceData } from "../data_types/layoutPieces.js";
-import type { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
-import type { PieceDef } from "./piecedef.js";
-import type { LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
+import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 import type { NodeFactory } from "./nodeFactory.js";
+import type { PieceDef } from "./piecedef.js";
+import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { layoutPiecesDb } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
@@ -11,15 +10,18 @@ import { FatalError } from "../errors/FatalError.js";
 export abstract class LayoutPiece {
   protected readonly id: string;
   protected readonly pieceDef: PieceDef;
-  protected readonly nodeFactory: NodeFactory;
-  protected readonly abstract connectors: LayoutPieceConnectors;
+  protected readonly connectors: LayoutPieceConnectors;
   protected loopProtector: string;
 
-  protected constructor(id: string, pieceInfo: LayoutPieceInfo, nodeFactory: NodeFactory) {
+  protected constructor(id: string, connectorsData: LayoutPieceConnectorsData, connectorNames: ConnectorName[], pieceDef: PieceDef, nodeFactory: NodeFactory) {
     this.id = id;
-    this.pieceDef = pieceInfo.pieceDef;
-    this.nodeFactory = nodeFactory;
+    this.pieceDef = pieceDef;
     this.loopProtector = "";
+
+    connectorsData = LayoutPiece.addMissingConnectorsData(connectorNames, connectorsData);
+    this.connectors = new LayoutPieceConnectors(connectorsData, nodeFactory);
+
+    this.connectNodesToUs(connectorNames);
   }
 
   /**
@@ -40,9 +42,17 @@ export abstract class LayoutPiece {
   public abstract updateHeadingAndContinue(callingNode: LayoutNode, coordinate: Coordinate, heading: number, loopProtector: string): void;
 
   /**
-   * Examine the LayoutPieceConnectorsInfo that was received and add any missing connectors and nodes
+   * Examine the connectors data that was received and add any missing data that we need to create this layout piece
    */
-  protected abstract addMissingConnectorsAndNodes(data: LayoutPieceConnectorsInfo): LayoutPieceConnectorsInfo;
+  static addMissingConnectorsData(connectorNames: ConnectorName[], data: LayoutPieceConnectorsData): LayoutPieceConnectorsData {
+    connectorNames.forEach(connectorName => {
+      if (!(connectorName in data)) {
+        data[connectorName] = { heading: undefined, node: undefined };
+      }
+    });
+
+    return data;
+  }
 
   /**
    * Return this layout piece's ID
@@ -109,18 +119,23 @@ export abstract class LayoutPiece {
     layoutPiecesDb.data.pieces[this.id] = this.getLayoutData();
   }
 
+  /**
+   * Connect all the nodes (that we are connected to) back to us.
+   * This method is ran during construction  of this class only.
+   */
+  protected connectNodesToUs(connectorNames: ConnectorName[]): void {
+    connectorNames.forEach(connectorName => {
+      this.connectors.getNode(connectorName).connect(this, connectorName);
+    })
+  }
+
   // Convert from degrees to radians
-  protected degreesToRadians(degrees: number): number {
+  static degreesToRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
   }
 
-  // Round a number to two decimal points
-  protected roundTo2(value: number): number {
-    return Math.round(value * 100) / 100;
-  }
-
   // Rotate a given point a number of degrees
-  protected rotatePoint(x: number, y: number, degrees: number): { x: number; y: number } {
+  static rotatePoint(x: number, y: number, degrees: number): { x: number; y: number } {
     if ((degrees % 360) == 0) {
       return {x: x, y: y};
     }
