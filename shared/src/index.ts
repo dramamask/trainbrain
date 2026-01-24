@@ -73,7 +73,6 @@ export interface UpdateNodeData {
 
 // Data structure used to add a new layout piece
 export interface AddLayoutPieceData {
-  pieceId: string;
   nodeId: string;
   pieceDefId: string;
 }

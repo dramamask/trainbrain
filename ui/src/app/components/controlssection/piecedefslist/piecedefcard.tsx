@@ -4,7 +4,7 @@ import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { addTrackPiece } from "@/app/services/api/tracklayout";
-import { getLastInsertedLayoutPieceAndNodeId } from "@/app/services/tracklayout";
+import { getLastInsertedNode } from "@/app/services/tracklayout";
 
 interface props {
   name: string;
@@ -44,15 +44,6 @@ export default function PieceDefCard({name, definition}: props) {
 // Call the API endpoint to insert the track piece into the layout.
 // The endpoint returns the new UI Layout definition. We store that in the trackLayoutStore.
 function addTrackPieceToLayout(pieceDefName:string): void {
-  // Get the selected piece (unless the layout is empty)
-  let selectedPiece = "";
-  if (trackLayoutStore.getTrackLayout().pieces.length > 0) {
-    selectedPiece = selectionStore.getSelectedLayoutPiece();
-    if (selectedPiece == "") {
-      errorStore.setError(getNoPieceSelectedMessage());
-    }
-  }
-
   // Get the selected node
   const selectedNode = selectionStore.getSelectedNode();
   if (selectedNode == "") {
@@ -63,7 +54,6 @@ function addTrackPieceToLayout(pieceDefName:string): void {
   // Assemble the data for the API call
   const data: AddLayoutPieceData = {
     nodeId: selectedNode,
-    pieceId: selectedPiece,
     pieceDefId: pieceDefName,
   }
 
@@ -73,11 +63,9 @@ function addTrackPieceToLayout(pieceDefName:string): void {
         // Store the new track layout that was returned by the API endpoint (includes the newly inserted piece)
         trackLayoutStore.setTrackLayout(layoutData);
 
-        // Select the newly inserted piece and node
-        const [pieceId, nodeId] = getLastInsertedLayoutPieceAndNodeId(layoutData);
-        console.log("Setting selected piece: ", pieceId);
+        // Select the newly inserted node
+        const nodeId = getLastInsertedNode(layoutData);
         console.log("Setting selected node: ", nodeId);
-        selectionStore.setSelectedLayoutPiece(pieceId);
         selectionStore.setSelectedNode(nodeId);
       })
       .catch((error: Error) => {

@@ -1,3 +1,4 @@
+import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
@@ -17,11 +18,15 @@ export class LayoutNode {
   protected loopProtector: string;
 
   constructor(id: string, coordinate: Coordinate | undefined, nodeFactory: NodeFactory) {
+    const span = trace.getActiveSpan();
+
     this.id = id;
     this.coordinate = coordinate;
     this.connections = [{piece: null, connectorName: undefined}, {piece: null, connectorName: undefined}];
     this.nodeFactory = nodeFactory;
     this.loopProtector = "";
+
+    span?.addEvent('New Node Created', {'_.node.id': this.getId()});
   }
 
   public getId(): string {

@@ -1,3 +1,4 @@
+import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate } from "trainbrain-shared";
 import type { Layout } from "./layout.js";
 import type { LayoutPiece } from "./layoutpiece.js";

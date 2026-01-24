@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { trace } from '@opentelemetry/api';
 import { matchedData } from 'express-validator';
 import { constants } from "http2";
 import { layout } from "../services/init.js";
@@ -25,15 +26,24 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
   const data = matchedData<AddLayoutPieceData>(req);
 
   try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'addLayoutPiece');
+    span?.setAttribute('_.request.nodeId', data.nodeId);
+    span?.setAttribute('_.request.pieceDefId', data.pieceDefId);
+
     await layout.addLayoutPiece(data);
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
+
     res.header("Content-Type", "application/json");
     res.status(status).send(JSON.stringify(uiLayout));
   } catch (error) {
-    console.error("Unknown error at the edge", error);
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
       .send("Unknown error at the edge. Check server logs.");
   }

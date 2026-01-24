@@ -1,5 +1,5 @@
-import type { AddLayoutPieceData, ConnectorName, Coordinate, TrackPieceCategory, UiLayout } from "trainbrain-shared";
-import type { LayoutPieceConnectorInfo, LayoutPieceConnectorsInfo, LayoutPieceInfo } from "./types.js";
+import { trace } from '@opentelemetry/api';
+import type { AddLayoutPieceData, ConnectorName, Coordinate, UiLayout } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 import { NodeFactory } from "./nodeFactory.js";
 import { LayoutPiece } from "./layoutpiece.js";
@@ -139,6 +139,8 @@ export class Layout {
    *                         O                                 O
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
+    const span = trace.getActiveSpan();
+
     // Note that input validation has already been done.
     const nodeToConnectTo = this.nodes.get(data.nodeId) as LayoutNode;
     const pieceDef = this.pieceDefs.getPieceDef(data.pieceDefId);
@@ -146,7 +148,7 @@ export class Layout {
     // Send error message back tot he UI
     // TODO: Add this to the validation when we are able to return validation errors in a proper format  that the UI can handle
     if (nodeToConnectTo.getNumberOfConnections() == 2) {
-      throw new Error(`We cannot connect a layout piece to this node because it is alerady connected to two layout pieces. Node ID: ${nodeToConnectTo.getId()}`);
+      throw new Error(`We cannot connect a layout piece to this node because it is already connected to two layout pieces. Node ID: ${nodeToConnectTo.getId()}`);
     }
 
     // Create the new layout piece

@@ -21,6 +21,11 @@ This project uses the lowdb npm library to treat json files as a database.
 A database is initialized once in the db.ts file. DBs are exported from the same file.
 After that reading data from a DB can be done synchronosly. Writing to a DB needs to be done asynchronously. This means that a function needs to be an "async function" for it to be able to write to a DB.
 
+## Logging/Tracing
+This app uses OTEL. We use Jaeger to visualize the spans.<br/>
+Start Jaeger on the command line from `C:\Users\m\code\jaeger` with command `./jaeger.exe`.<br/>
+Then go to [http://localhost:16686](http://localhost:16686) to open the Jaeger UI.
+
 ## Notes
 If I want to add text to the SVG layout, I need to mirror it in the component, so it
 gets mirrored back the right way by the main transform component.

@@ -1,6 +1,6 @@
+import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate, UiAttributesDataStraight } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
-import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodeFactory.js";
@@ -22,9 +22,18 @@ export class Straight extends LayoutPiece {
   protected readonly length: number;
 
   public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
+    const span = trace.getActiveSpan();
     super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory);
 
     this.length = (pieceDef.getAttributes()  as PieceDefAttributes).length;
+
+    span?.addEvent('New Piece Created', {
+      'piece.id': this.getId(),
+      'piece.category': this.pieceDef.getCategory(),
+      'piece.connector.start.node': this.connectors.getNode("start").getId(),
+      'piece.connector.end.node': this.connectors.getNode("end").getId(),
+      'piece.length': this.length,
+    });
   }
 
   public getUiAttributes(): UiAttributesDataStraight {
@@ -32,8 +41,11 @@ export class Straight extends LayoutPiece {
   }
 
   public updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void {
+    const span = trace.getActiveSpan();
+
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
+      span?.addEvent('Loop Protector Hit', { 'piece.id': this.getId() })
       return;
     }
     this.loopProtector = loopProtector;
@@ -41,9 +53,12 @@ export class Straight extends LayoutPiece {
     // Figure out which side of the piece the call is coming from
     const callingSideConnectorName = this.connectors.getConnectorName(callingNode);
     if (callingSideConnectorName === undefined) {
-      console.log(`Piece ${this.getId()}: my start connector is connected to node ${this.connectors.getNode("start").getId()}`);
-      console.log(`Piece ${this.getId()}: my end connector is connected to node ${this.connectors.getNode("end").getId()}`);
-      throw new FatalError(`Piece ${this.getId()}: we should be connected to the calling node (node ID ${callingNode.getId()})`);
+      span?.addEvent('Not connected to calling node', {
+        'piece.id': this.getId(),
+        'piece.connector.start.node': this.connectors.getNode("start").getId(),
+        'piece.connector.end.node': this.connectors.getNode("end").getId(),
+      })
+      throw new FatalError(`Not connected to the calling node`);
     }
     const oppositeSideConnectorName = callingSideConnectorName == "start" ? "end" : "start";
 

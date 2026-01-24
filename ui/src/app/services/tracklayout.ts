@@ -2,24 +2,12 @@
  * Generic functions related to the track layoug
  */
 
-import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { UiLayout } from "trainbrain-shared";
 
 /**
- * Get the IDs of the last inserted piece and node
- * @returns [lastInsertedPieceId, lastInsertedNodeId]
+ * Return the ID of the last inserted node
  */
-export function getLastInsertedLayoutPieceAndNodeId(layoutData: UiLayout): [string, string] {
-  // Get piece
-  const pieceKeys = Object.keys(layoutData.pieces)
-  let lastInsertedPieceId = pieceKeys[pieceKeys.length - 1];
-
-  if (lastInsertedPieceId == undefined) {
-    console.error("Unexpected error. this should not happen.")
-    lastInsertedPieceId = "0";
-  }
-
-  // Get node
+export function getLastInsertedNode(layoutData: UiLayout): string {
   const nodeKeys = Object.keys(layoutData.nodes)
   let lastInsertedNodeId = nodeKeys[nodeKeys.length - 1];
 
@@ -28,6 +16,6 @@ export function getLastInsertedLayoutPieceAndNodeId(layoutData: UiLayout): [stri
     lastInsertedNodeId = "0";
   }
 
-  return [lastInsertedPieceId, lastInsertedNodeId];
+  return lastInsertedNodeId;
 }
 

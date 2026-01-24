@@ -1,4 +1,5 @@
-import type { Coordinate, ConnectorName, TrackPieceCategory, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
+import { trace } from '@opentelemetry/api';
+import type { ConnectorName, TrackPieceCategory, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
 import type { NodeFactory } from "./nodeFactory.js";
 import type { PieceDef } from "./piecedef.js";
@@ -19,18 +20,7 @@ export abstract class LayoutPiece {
     this.loopProtector = "";
 
     connectorsData = LayoutPiece.addMissingConnectorsData(connectorNames, connectorsData);
-    console.log(connectorsData);
     this.connectors = new LayoutPieceConnectors(connectorsData, nodeFactory);
-
-    console.log('--- Before calling connectNodesToUs ---');
-
-    console.log(`Piece 0, "start" connector connected to node: ${this.connectors.getNode("start").getId()}`);
-    console.log(`Piece 0, "end" connector connected to node: ${this.connectors.getNode("end").getId()}`);
-    console.log(`Node 0: `, this.connectors.getNode("start"));
-    console.log(`Node 1: `, this.connectors.getNode("end"));
-
-    console.log('--- During calling connectNodesToUs ---');
-
     this.connectNodesToUs(connectorNames);
   }
 

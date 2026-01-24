@@ -1,6 +1,6 @@
 # TODO
 
-- Debug adding pieces. Debug UI side and server side.
+- Debug adding a second piece. Debug UI side and server side.
 - Convert NodeFactory to a proper Nodes class that holds the nodes map.
 - Test updating node coordiante and heading through UI.
 - Restrict access to writing to the DB from all classes except the layout class. Friendtoken?
