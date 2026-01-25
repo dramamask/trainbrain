@@ -44,8 +44,32 @@ export const store = {
     listeners.forEach((callback) => callback());
   },
 
+  /**
+   * Set the selected piece to pieceId, unless pieceId is already the selected piece, in which case we will deselect it.
+   */
+  toggleOrSetSelectedLayoutPiece(pieceId: string): void {
+    const selectedPiece = (state.selectedLayoutPiece == pieceId ? "" : pieceId);
+    const newState = { selectedLayoutPiece: selectedPiece, selectedNode: state.selectedNode };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  },
+
   setSelectedNode(nodeId: string): void {
     const newState = { selectedLayoutPiece: state.selectedLayoutPiece, selectedNode: nodeId };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  },
+
+  /**
+   * Set the selected node to nodeId, unless nodeId is already the selected node, in which case we will deselect it.
+   */
+  toggleOrSetSelectedNode(nodeId: string): void {
+    const selectedNode = (state.selectedNode == nodeId ? "" : nodeId);
+    const newState = { selectedLayoutPiece: state.selectedLayoutPiece, selectedNode: selectedNode };
     // Immutable update
     state = newState;
     // Notify React/listeners

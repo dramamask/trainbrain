@@ -9,6 +9,7 @@ const COLOR2_HIGHLIGHT = "red";
 // Track drawing
 export const STROKE_WIDTH = 80;
 export const DEADEND_INDICATOR_LENGTH = 220;
+export const MIN_BOUNDING_BOX_SIZE = 100;
 
 export const TRACK_COLOR = COLOR1;
 export const SELECTED_TRACK_COLOR = COLOR1_HIGHLIGHT;

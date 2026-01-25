@@ -34,7 +34,7 @@ export default function node({node}: props) {
         onMouseLeave={() => setIsHovered(false)}
         cx={node.coordinate.x}
         cy={node.coordinate.y}
-        r={getRadius(isNodeSelected, isHovered)}
+        r={getRadius(isHovered)}
         fill={getFillColor(inEditMode, isNodeSelected)}
       />
       <DeadEnd
@@ -46,10 +46,10 @@ export default function node({node}: props) {
   )
 }
 
-function getRadius(isNodeSelected: boolean, isHovered: boolean): number {
+function getRadius(isHovered: boolean): number {
   let radius = config.NODE_RADIUS;
 
-  if (isHovered || isNodeSelected ) {
+  if (isHovered) {
     radius *= 1.25;
   }
 

@@ -64,7 +64,7 @@ export default function TrackLayout()
 
     // Select the node if the target is a node
     if (target.classList.contains(getNodeClassName())) {
-      selectionStore.setSelectedNode(target.id);
+      selectionStore.toggleOrSetSelectedNode(target.id);
       return;
     }
 
@@ -73,7 +73,7 @@ export default function TrackLayout()
 
     // Select the track piece if the target is a track piece container
     if (group) {
-      selectionStore.setSelectedLayoutPiece(group.id);
+      selectionStore.toggleOrSetSelectedLayoutPiece(group.id);
       return;
     }
 

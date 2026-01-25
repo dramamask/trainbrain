@@ -20,8 +20,8 @@ export function getBoundingBox(pieceCoordinates: Coordinate[]): [Coordinate, Coo
   // Check to see if the bounding box is big enough in both x and y directions
   const [dx, dy] = getSpread([topLeft, bottomRight]);
 
-  const xSpreadIcrementNeeded = (dx < config.DEADEND_INDICATOR_LENGTH) ? Math.abs(config.DEADEND_INDICATOR_LENGTH - dx) : 0;
-  const ySpreadIncrementNeeded = (dy < config.DEADEND_INDICATOR_LENGTH) ? Math.abs(config.DEADEND_INDICATOR_LENGTH - dy): 0;
+  const xSpreadIcrementNeeded = (dx < config.MIN_BOUNDING_BOX_SIZE) ? Math.abs(config.MIN_BOUNDING_BOX_SIZE - dx) : 0;
+  const ySpreadIncrementNeeded = (dy < config.MIN_BOUNDING_BOX_SIZE) ? Math.abs(config.MIN_BOUNDING_BOX_SIZE - dy): 0;
 
   // Make the bounding box bigger if needed
   if (xSpreadIcrementNeeded > 0 || ySpreadIncrementNeeded > 0) {
