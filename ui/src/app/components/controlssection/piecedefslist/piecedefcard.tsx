@@ -49,10 +49,6 @@ export default function PieceDefCard({name, definition}: props) {
 function addTrackPieceToLayout(pieceDefName:string): void {
   // Get the selected node
   const selectedNode = selectionStore.getSelectedNode();
-  if (selectedNode == "") {
-    errorStore.setError(getNoNodeSelectedMessage());
-    return;
-  }
 
   // Assemble the data for the API call
   const data: AddLayoutPieceData = {
@@ -68,7 +64,6 @@ function addTrackPieceToLayout(pieceDefName:string): void {
 
         // Select the newly inserted node
         const nodeId = getLastInsertedNode(layoutData);
-        console.log("Setting selected node: ", nodeId);
         selectionStore.setSelectedNode(nodeId);
       })
       .catch((error: Error) => {

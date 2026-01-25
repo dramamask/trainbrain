@@ -153,7 +153,7 @@ export class Layout {
     // Send error message back tot he UI
     // TODO: Add this to the validation when we are able to return validation errors in a proper format  that the UI can handle
     if (nodeToConnectTo.getNumberOfConnections() == 2) {
-      throw new Error(`We cannot connect a layout piece to this node because it is already connected to two layout pieces (node ID: ${nodeToConnectTo.getId()})`);
+      throw new Error('We cannot connect a layout piece to this node. Please select a node that has only one track piece connected to it.');
     }
 
     // Create the new layout piece

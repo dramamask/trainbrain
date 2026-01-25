@@ -50,7 +50,7 @@ export function handleKeyDown(event: KeyboardEvent) {
 function handleNodeUpdate(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
   const nodeId = selectionStore.getSelectedNode();
   if (!nodeId) {
-    errorStore.setError("First select a node that you want to move or rotate.");
+    errorStore.setError("Please select a node to perform this action.");
     return;
   }
 

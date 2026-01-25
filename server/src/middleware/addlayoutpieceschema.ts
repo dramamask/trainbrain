@@ -4,7 +4,7 @@ import { layout } from '../services/init.js';
 export const addLayoutPieceSchema = [
   body('nodeId')
     .exists().withMessage("JSON parameter 'nodeId' is required")
-    .notEmpty().withMessage("JSON parameter 'nodeId' should not be empty")
+    .notEmpty().withMessage("Please select the node you want to add the track piece to")
     .isString().withMessage("JSON parameter 'nodeId' should be a string")
     .custom((id: string) => {
       const node = layout.getNode(id);
