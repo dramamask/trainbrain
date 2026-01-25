@@ -20,7 +20,7 @@ export default function Home() {
           <Grid sx={{ width: '100px'}}>
             <SideBar />
           </Grid>
-          <Grid sx={{width: '483px'}}>
+          <Grid size="auto">
             <div className={styles.trackLayoutContainer}>
               <TrackLayout />
             </div>

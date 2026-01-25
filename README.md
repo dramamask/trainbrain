@@ -26,6 +26,15 @@ This app uses OTEL. We use Jaeger to visualize the spans.<br/>
 Start Jaeger on the command line from `C:\Users\m\code\jaeger` with command `./jaeger.exe`.<br/>
 Then go to [http://localhost:16686](http://localhost:16686) to open the Jaeger UI.
 
+## Background Map Image
+The size of the background map image and the world width and height have to match. The world width and height is in millimeters. The aspect ratio of the world width and height has to match the aspect ratio of the map image.
+
+At the time of writing:
+Map image (height x width) = 1500 x 1313 (aspect ratio 1.14)
+World size (height x width) = 15240 x 13335 (aspect ratio 1.14)
+
+The map image should always be displayed in the correct aspect ratio. The CSS, or any other code, should never change the aspect ration at which the background image is displayed.
+
 ## Notes
 If I want to add text to the SVG layout, I need to mirror it in the component, so it
 gets mirrored back the right way by the main transform component.
