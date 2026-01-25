@@ -12,6 +12,7 @@ import Rectangle from "./components/rectangle";
 import ArcPath from "./components/arcpath";
 
 import styles from "./trackpiece.module.css";
+import { getLayoutNodeData } from "@/app/services/tracklayout";
 
 interface props {
   piece: UiLayoutPiece;
@@ -19,27 +20,7 @@ interface props {
 
 // Curve track piece component
 export default function Curve({piece}: props) {
-  // const pieceId = piece.id;
-  // const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
-  // let pieceFromState = trackLayoutState.trackLayout.pieces.find(piece => (piece.id == pieceId));
-  // if (pieceFromState == undefined) {
-  //   errorStore.setError("Error! Could not refresh selected layout piece. Continuing with stale layout piece.");
-  //   pieceFromState = piece;
-  // }
-
-  // const isTrackPieceSelected = useSyncExternalStore(selectionStore.subscribe, () => thisTrackPieceIsSelected(piece.id));
-  // const selectedConnector = useSyncExternalStore(selectionStore.subscribe, () => ourSelectedConnector(piece.id));
-
-  // const editModeState = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
-  // const inEditMode = editModeState.editMode;
-
-  // const [isHovered, setIsHovered] = useState(false);
-
-  const attributes = piece.attributes as UiAttributesDataCurve;
-  // const indicatorPositions = getDeadEndIndicatorPositions(attributes.coordinates.start, attributes.coordinates.end);
-  // const startIsDeadEnd = (pieceFromState.deadEnd == "start");
-  // const endIsdeadEnd = (pieceFromState.deadEnd == "end");
-
+  const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
   const isTrackPieceSelected = useSyncExternalStore(selectionStore.subscribe, () => thisTrackPieceIsSelected(piece.id));
 
   const editModeState = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
@@ -47,8 +28,9 @@ export default function Curve({piece}: props) {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const startCoordinate = trackLayoutStore.getLayoutNodeData(piece.nodeConnections["start"]).coordinate;
-  const endCoordinate = trackLayoutStore.getLayoutNodeData(piece.nodeConnections["end"]).coordinate;
+  const attributes = piece.attributes as UiAttributesDataCurve;
+  const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutState.trackLayout).coordinate;
+  const endCoordinate = getLayoutNodeData(piece.nodeConnections["end"], trackLayoutState.trackLayout).coordinate;
   const [topLeftCoordinate, bottomRightCoordinate] = getBoundingBox([startCoordinate, endCoordinate]);
 
   // Render the component

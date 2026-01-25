@@ -1,6 +1,7 @@
 "use client";
 
 import { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
+import { getLayoutNodeData } from "../tracklayout";
 
 interface State {
   trackLayout: UiLayout;
@@ -49,10 +50,6 @@ export const store = {
   },
 
   getLayoutNodeData(nodeId: string): UiLayoutNode {
-    const node = state.trackLayout.nodes.find(node => node.id == nodeId);
-    if (node == undefined) {
-      throw new Error("This function should never be called for a non-existing node");
-    }
-    return node;
+    return getLayoutNodeData(nodeId, state.trackLayout);
   },
 };

@@ -1,6 +1,5 @@
 # TODO
 
-- Test updating node coordiante and heading through UI.
 - Restrict access to writing to the DB from all classes except the layout class. Friendtoken?
 - remove now obsolote node and piece methods. and connectors and connector methods.
 - combine layout-nodes and layout-piece.json so we can have more atomic saves.

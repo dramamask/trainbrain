@@ -12,6 +12,7 @@ import Line from "./components/line";
 import Rectangle from "./components/rectangle";
 
 import styles from "./trackpiece.module.css";
+import { getLayoutNodeData } from "@/app/services/tracklayout";
 
 interface props {
   piece: UiLayoutPiece;
@@ -19,6 +20,7 @@ interface props {
 
 // Straight track piece component
 export default function Straight({piece}: props) {
+  const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
   const isTrackPieceSelected = useSyncExternalStore(selectionStore.subscribe, () => thisTrackPieceIsSelected(piece.id));
 
   const editModeState = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
@@ -26,8 +28,8 @@ export default function Straight({piece}: props) {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const startCoordinate = trackLayoutStore.getLayoutNodeData(piece.nodeConnections["start"]).coordinate;
-  const endCoordinate = trackLayoutStore.getLayoutNodeData(piece.nodeConnections["end"]).coordinate;
+  const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutState.trackLayout).coordinate;
+    const endCoordinate = getLayoutNodeData(piece.nodeConnections["end"], trackLayoutState.trackLayout).coordinate;
   const [topLeftCoordinate, bottomRightCoordinate] = getBoundingBox([startCoordinate, endCoordinate]);
 
   // Render the component

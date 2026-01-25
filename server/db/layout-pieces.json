@@ -7,11 +7,11 @@
       "pieceDefId": "LGB-300",
       "connectors": {
         "start": {
-          "heading": 15,
+          "heading": 315,
           "node": "0"
         },
         "end": {
-          "heading": 195,
+          "heading": 135,
           "node": "1"
         }
       }
@@ -20,11 +20,11 @@
       "pieceDefId": "LGB-300",
       "connectors": {
         "start": {
-          "heading": 15,
+          "heading": 315,
           "node": "1"
         },
         "end": {
-          "heading": 195,
+          "heading": 135,
           "node": "2"
         }
       }
@@ -33,11 +33,11 @@
       "pieceDefId": "LGB-600",
       "connectors": {
         "start": {
-          "heading": 15,
+          "heading": 315,
           "node": "2"
         },
         "end": {
-          "heading": 195,
+          "heading": 135,
           "node": "3"
         }
       }
@@ -46,11 +46,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 15,
+          "heading": 315,
           "node": "3"
         },
         "end": {
-          "heading": 217.5,
+          "heading": 157.5,
           "node": "4"
         }
       }
@@ -59,11 +59,11 @@
       "pieceDefId": "LGB-600",
       "connectors": {
         "start": {
-          "heading": 37.5,
+          "heading": 337.5,
           "node": "4"
         },
         "end": {
-          "heading": 217.5,
+          "heading": 157.5,
           "node": "5"
         }
       }
@@ -72,11 +72,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 37.5,
+          "heading": 337.5,
           "node": "5"
         },
         "end": {
-          "heading": 240,
+          "heading": 180,
           "node": "6"
         }
       }
@@ -85,11 +85,11 @@
       "pieceDefId": "LGB-600",
       "connectors": {
         "start": {
-          "heading": 60,
+          "heading": 0,
           "node": "6"
         },
         "end": {
-          "heading": 240,
+          "heading": 180,
           "node": "7"
         }
       }
@@ -98,11 +98,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 60,
+          "heading": 0,
           "node": "7"
         },
         "end": {
-          "heading": 262.5,
+          "heading": 202.5,
           "node": "8"
         }
       }
@@ -111,11 +111,11 @@
       "pieceDefId": "LGB-600",
       "connectors": {
         "start": {
-          "heading": 82.5,
+          "heading": 22.5,
           "node": "8"
         },
         "end": {
-          "heading": 262.5,
+          "heading": 202.5,
           "node": "9"
         }
       }
@@ -124,11 +124,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 82.5,
+          "heading": 22.5,
           "node": "9"
         },
         "end": {
-          "heading": 292.5,
+          "heading": 232.5,
           "node": "10"
         }
       }
@@ -137,11 +137,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 112.5,
+          "heading": 52.5,
           "node": "10"
         },
         "end": {
-          "heading": 322.5,
+          "heading": 262.5,
           "node": "11"
         }
       }
@@ -150,11 +150,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 142.5,
+          "heading": 82.5,
           "node": "11"
         },
         "end": {
-          "heading": 352.5,
+          "heading": 292.5,
           "node": "12"
         }
       }
@@ -163,11 +163,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 172.5,
+          "heading": 112.5,
           "node": "12"
         },
         "end": {
-          "heading": 22.5,
+          "heading": 322.5,
           "node": "13"
         }
       }
@@ -176,11 +176,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 202.5,
+          "heading": 142.5,
           "node": "13"
         },
         "end": {
-          "heading": 52.5,
+          "heading": 352.5,
           "node": "14"
         }
       }
@@ -189,11 +189,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 232.5,
+          "heading": 172.5,
           "node": "14"
         },
         "end": {
-          "heading": 82.5,
+          "heading": 22.5,
           "node": "15"
         }
       }
@@ -202,11 +202,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 262.5,
+          "heading": 202.5,
           "node": "15"
         },
         "end": {
-          "heading": 112.5,
+          "heading": 52.5,
           "node": "16"
         }
       }
@@ -215,11 +215,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 292.5,
+          "heading": 232.5,
           "node": "16"
         },
         "end": {
-          "heading": 142.5,
+          "heading": 82.5,
           "node": "17"
         }
       }
@@ -228,11 +228,11 @@
       "pieceDefId": "LGB-R1-30°",
       "connectors": {
         "start": {
-          "heading": 322.5,
+          "heading": 262.5,
           "node": "17"
         },
         "end": {
-          "heading": 172.5,
+          "heading": 112.5,
           "node": "18"
         }
       }
@@ -241,11 +241,11 @@
       "pieceDefId": "LGB-600",
       "connectors": {
         "start": {
-          "heading": 195,
+          "heading": 135,
           "node": "0"
         },
         "end": {
-          "heading": 15,
+          "heading": 315,
           "node": "19"
         }
       }
@@ -254,11 +254,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 195,
+          "heading": 135,
           "node": "19"
         },
         "end": {
-          "heading": 37.5,
+          "heading": 337.5,
           "node": "20"
         }
       }
@@ -267,11 +267,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 217.5,
+          "heading": 157.5,
           "node": "20"
         },
         "end": {
-          "heading": 60,
+          "heading": 0,
           "node": "21"
         }
       }
@@ -280,11 +280,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 240,
+          "heading": 180,
           "node": "21"
         },
         "end": {
-          "heading": 82.5,
+          "heading": 22.5,
           "node": "22"
         }
       }
@@ -293,11 +293,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 262.5,
+          "heading": 202.5,
           "node": "22"
         },
         "end": {
-          "heading": 105,
+          "heading": 45,
           "node": "23"
         }
       }
@@ -306,11 +306,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 285,
+          "heading": 225,
           "node": "23"
         },
         "end": {
-          "heading": 127.5,
+          "heading": 67.5,
           "node": "24"
         }
       }
@@ -319,11 +319,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 307.5,
+          "heading": 247.5,
           "node": "24"
         },
         "end": {
-          "heading": 150,
+          "heading": 90,
           "node": "25"
         }
       }
@@ -332,11 +332,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 330,
+          "heading": 270,
           "node": "25"
         },
         "end": {
-          "heading": 172.5,
+          "heading": 112.5,
           "node": "26"
         }
       }
@@ -345,11 +345,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 352.5,
+          "heading": 292.5,
           "node": "26"
         },
         "end": {
-          "heading": 195,
+          "heading": 135,
           "node": "27"
         }
       }
@@ -358,11 +358,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 15,
+          "heading": 315,
           "node": "27"
         },
         "end": {
-          "heading": 217.5,
+          "heading": 157.5,
           "node": "28"
         }
       }
@@ -371,11 +371,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 37.5,
+          "heading": 337.5,
           "node": "28"
         },
         "end": {
-          "heading": 240,
+          "heading": 180,
           "node": "29"
         }
       }
@@ -384,11 +384,11 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 60,
+          "heading": 0,
           "node": "29"
         },
         "end": {
-          "heading": 262.5,
+          "heading": 202.5,
           "node": "30"
         }
       }
@@ -397,11 +397,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 82.5,
+          "heading": 22.5,
           "node": "30"
         },
         "end": {
-          "heading": 277.5,
+          "heading": 217.5,
           "node": "31"
         }
       }
@@ -410,11 +410,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 97.5,
+          "heading": 37.5,
           "node": "31"
         },
         "end": {
-          "heading": 292.5,
+          "heading": 232.5,
           "node": "32"
         }
       }
@@ -423,11 +423,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 112.5,
+          "heading": 52.5,
           "node": "32"
         },
         "end": {
-          "heading": 307.5,
+          "heading": 247.5,
           "node": "33"
         }
       }
@@ -436,11 +436,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 127.5,
+          "heading": 67.5,
           "node": "33"
         },
         "end": {
-          "heading": 322.5,
+          "heading": 262.5,
           "node": "34"
         }
       }
@@ -449,11 +449,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 142.5,
+          "heading": 82.5,
           "node": "34"
         },
         "end": {
-          "heading": 337.5,
+          "heading": 277.5,
           "node": "35"
         }
       }
@@ -462,11 +462,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 157.5,
+          "heading": 97.5,
           "node": "35"
         },
         "end": {
-          "heading": 352.5,
+          "heading": 292.5,
           "node": "36"
         }
       }
@@ -475,11 +475,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 172.5,
+          "heading": 112.5,
           "node": "36"
         },
         "end": {
-          "heading": 7.5,
+          "heading": 307.5,
           "node": "37"
         }
       }
@@ -488,11 +488,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 187.5,
+          "heading": 127.5,
           "node": "37"
         },
         "end": {
-          "heading": 22.5,
+          "heading": 322.5,
           "node": "38"
         }
       }
@@ -501,11 +501,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 202.5,
+          "heading": 142.5,
           "node": "38"
         },
         "end": {
-          "heading": 37.5,
+          "heading": 337.5,
           "node": "39"
         }
       }
@@ -514,11 +514,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 217.5,
+          "heading": 157.5,
           "node": "39"
         },
         "end": {
-          "heading": 52.5,
+          "heading": 352.5,
           "node": "40"
         }
       }
@@ -527,11 +527,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 232.5,
+          "heading": 172.5,
           "node": "40"
         },
         "end": {
-          "heading": 67.5,
+          "heading": 7.5,
           "node": "41"
         }
       }
@@ -540,11 +540,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 247.5,
+          "heading": 187.5,
           "node": "41"
         },
         "end": {
-          "heading": 82.5,
+          "heading": 22.5,
           "node": "42"
         }
       }
@@ -553,11 +553,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 262.5,
+          "heading": 202.5,
           "node": "42"
         },
         "end": {
-          "heading": 97.5,
+          "heading": 37.5,
           "node": "43"
         }
       }
@@ -566,11 +566,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 277.5,
+          "heading": 217.5,
           "node": "43"
         },
         "end": {
-          "heading": 112.5,
+          "heading": 52.5,
           "node": "44"
         }
       }
@@ -579,11 +579,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 292.5,
+          "heading": 232.5,
           "node": "44"
         },
         "end": {
-          "heading": 127.5,
+          "heading": 67.5,
           "node": "45"
         }
       }
@@ -592,11 +592,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 307.5,
+          "heading": 247.5,
           "node": "45"
         },
         "end": {
-          "heading": 142.5,
+          "heading": 82.5,
           "node": "46"
         }
       }
@@ -605,11 +605,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 322.5,
+          "heading": 262.5,
           "node": "46"
         },
         "end": {
-          "heading": 157.5,
+          "heading": 97.5,
           "node": "47"
         }
       }
@@ -618,11 +618,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 337.5,
+          "heading": 277.5,
           "node": "47"
         },
         "end": {
-          "heading": 172.5,
+          "heading": 112.5,
           "node": "48"
         }
       }
@@ -631,11 +631,11 @@
       "pieceDefId": "LGB-R1-15°",
       "connectors": {
         "start": {
-          "heading": 352.5,
+          "heading": 292.5,
           "node": "48"
         },
         "end": {
-          "heading": 187.5,
+          "heading": 127.5,
           "node": "49"
         }
       }
