@@ -17,7 +17,7 @@ export interface UiAttributesDataStraight {}
 
 // Attributes for Curve type piece
 export interface UiAttributesDataCurve {
-  radius: number | null;
+  radius: number;
 }
 
 // Ui Attributes is one of these types

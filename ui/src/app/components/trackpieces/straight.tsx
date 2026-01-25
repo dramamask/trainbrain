@@ -42,13 +42,13 @@ export default function Straight({piece}: props) {
       style={ inEditMode ? { cursor: 'pointer' } : {}}
     >
       <Rectangle
-        visible={true} /* TODO: change this back to false */
+        visible={false}
         topLeft={topLeftCoordinate}
         bottomRight={bottomRightCoordinate}
       />
       <Line
         draw={true}
-        isHovered={inEditMode && isHovered && !isTrackPieceSelected}
+        isHovered={inEditMode && isHovered}
         color={getTrackPieceColor(inEditMode, isTrackPieceSelected)}
         coordinateOne={startCoordinate}
         coordinateTwo={endCoordinate}

@@ -29,8 +29,8 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 // Test route for debugging purposes
-app.get("/test", (req, res) => {
-  res.send("nothing here");
+app.get("/health", (_req: Request, res: Response) => {
+  res.send("up and running");
 })
 
 // Start the server

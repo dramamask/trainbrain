@@ -94,7 +94,7 @@ export class LayoutNode {
     }
 
     return {
-      coordinate: this.coordinate
+      coordinate: LayoutNode.round(this.coordinate),
     };
   }
 
@@ -106,7 +106,7 @@ export class LayoutNode {
 
     return {
       id: this.id,
-      coordinate: LayoutNode.roundTo2(this.coordinate),
+      coordinate: LayoutNode.round(this.coordinate),
       heading: this.getHeadingForUi(),
       deadEnd: this.isDeadEnd(),
     };
@@ -344,9 +344,10 @@ export class LayoutNode {
   }
 
   // Round a number to two decimal points
-  static roundTo2(coordiante: Coordinate): Coordinate {
-    coordiante.x = Math.round(coordiante.x * 100) / 100;
-    coordiante.y = Math.round(coordiante.y * 100) / 100;
+  static round(coordiante: Coordinate, numDecimals: number = 5): Coordinate {
+    const factor = 10 ** numDecimals; // This is how you do 10 to the x-th power
+    coordiante.x = Math.round(coordiante.x * factor) / factor;
+    coordiante.y = Math.round(coordiante.y * factor) / factor;
     return coordiante;
   }
 }
