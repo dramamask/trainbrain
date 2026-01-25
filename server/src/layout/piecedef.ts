@@ -1,10 +1,10 @@
-import { TrackPieceCategory, PieceDefData } from "trainbrain-shared";
+import { TrackPieceCategory, PieceDefDataAttributes, PieceDefData } from "trainbrain-shared";
 
 export class PieceDef {
   protected id: string;
   protected aka: string;
   protected readonly category: TrackPieceCategory;
-  protected readonly attributes: object;
+  protected readonly attributes: PieceDefDataAttributes;
 
   constructor(id: string, pieceDefData:PieceDefData) {
     this.id = id;

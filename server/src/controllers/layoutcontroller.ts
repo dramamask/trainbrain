@@ -136,7 +136,7 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
 // Returns the status code that we should use when returning the UI Layout,
 // based on the fact if there's an error message in the UI Layout message struct.
 function getHttpStatusCode(layout: UiLayout): number {
-  if (layout.messages.error != "") {
+  if (layout.error != "") {
     return constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
   }
   return constants.HTTP_STATUS_OK;

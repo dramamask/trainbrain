@@ -25,7 +25,7 @@ app.use("/", apiRoutes);
 // Global exception handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
-  res.status(err.status || 500).json({ messages: { error: "Unknown error at the edge. Check server logs." } })
+  res.status(err.status || 500).json({ error: "Unknown error at the edge. Check server logs." });
 });
 
 // Test route for debugging purposes

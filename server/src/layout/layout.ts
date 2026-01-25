@@ -38,9 +38,7 @@ export class Layout {
   // Return the layout in UiLayout format
   public getUiLayout(): UiLayout {
     return {
-      messages: {
-        error: "",
-      },
+      error: "",
       pieces: [...this.pieces.values()].map(piece => piece.getUiLayoutData()),
       nodes: this.nodeFactory.getUiLayout(),
     }

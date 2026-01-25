@@ -3,9 +3,7 @@ import { rtrim } from "../helpers";
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
 interface JsonBodyWithMessage {
-  messages: {
-    error: string
-  };
+  error: string,
 }
 
 // Get the base URL for the server
@@ -78,10 +76,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
   let errorMessage = "";
 
   try {
-    errorMessage = jsonBody.messages.error;
+    errorMessage = jsonBody.error;
   } catch(error) {
     logError(
-      "Error response received. Response body is json but has no messages.error attribute.",
+      "Error response received. Response body is json but has no error attribute.",
       error,
       jsonBody,
       response,

@@ -46,9 +46,7 @@ export interface UiLayoutNode {
 
 // The structure that the server returns from the GET layout API call
 export interface UiLayout {
-  messages: {
-    error: string;
-  };
+  error: string;
   pieces: UiLayoutPiece[];
   nodes: UiLayoutNode[];
 }
@@ -59,7 +57,6 @@ export interface SwitchAttributes {
   radius: number;
   length: number;
 }
-
 
 // Attribtues for a curve piece def
 export interface CurveAttributes {
@@ -72,11 +69,14 @@ export interface StraightAttributes {
   length: number;
 }
 
+// Attributes for a piece def
+export type PieceDefDataAttributes = StraightAttributes | CurveAttributes | SwitchAttributes;
+
 // Data structure to define a track piece definition
 export interface PieceDefData {
     category: TrackPieceCategory;
     aka: string;
-    attributes: StraightAttributes | CurveAttributes | SwitchAttributes;
+    attributes: PieceDefDataAttributes;
 }
 
 // A list of PieceDefData records
