@@ -8,8 +8,14 @@ import { AddLayoutPieceData, Coordinate, UiLayout, UpdateNodeData } from 'trainb
 // API endpoint to get the track layout
 export const getLayout = (req: Request, res: Response, next: NextFunction): void => {
   try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'getLayout');
+
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);
+
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
 
     res.header("Content-Type", "application/json");
     res.status(status).send(uiLayout);
@@ -56,6 +62,13 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
   const data = matchedData<UpdateNodeData>(req);
 
   try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'updateNode');
+    span?.setAttribute('_.request.nodeId', data.index);
+    span?.setAttribute('_.request.x', data.x);
+    span?.setAttribute('_.request.y', data.y);
+    span?.setAttribute('_.request.heading_increment', data.headingIncrement);
+
     const newCoordinate: Coordinate = {
       x: data.x,
       y: data.y,
@@ -65,6 +78,9 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);
+
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
 
     res.header("Content-Type", "application/json");
     res.status(status).send(JSON.stringify(uiLayout));

@@ -139,8 +139,6 @@ export class Layout {
    *                         O                                 O
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
-    const span = trace.getActiveSpan();
-
     // Note that input validation has already been done.
     const nodeToConnectTo = this.nodes.get(data.nodeId) as LayoutNode;
     const pieceDef = this.pieceDefs.getPieceDef(data.pieceDefId);

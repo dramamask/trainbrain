@@ -26,7 +26,7 @@ export class LayoutNode {
     this.nodeFactory = nodeFactory;
     this.loopProtector = "";
 
-    span?.addEvent('New Node Created', {'_.node.id': this.getId()});
+    span?.addEvent('new_node_created', {'this_node.id': this.getId()});
   }
 
   public getId(): string {
@@ -114,6 +114,15 @@ export class LayoutNode {
 
   // Replace our coordinate with the given coordinate
   public setCoordinate(coordinate: Coordinate): void {
+    // Tracing
+    const span = trace.getActiveSpan();
+
+    const spanInfo = this.getSpanInfo();
+    spanInfo['coordinate.x'] = coordinate.x;
+    spanInfo['coordinate.y'] = coordinate.y;
+    span?.addEvent('set_coordinate', spanInfo);
+
+    // Set coordinate
     this.coordinate = coordinate;
   }
 
@@ -124,14 +133,18 @@ export class LayoutNode {
    * @param connectorName The name of the piece's connector that is connected to this node
    */
   public connect(piece: LayoutPiece, connectorName: ConnectorName): void {
-    console.log(`Node ${this.getId()}: piece ${piece.getId()} asks us to connect to them on their connector '${connectorName}'`)
-    console.log(`- right now our connection 0 -> connected to piece ${this.connections[0].piece?.getId()} through their connector '${this.connections[0].connectorName}'`);
-    console.log(`- right now our connection 1 -> connected to piece ${this.connections[1].piece?.getId()} through their connector '${this.connections[1].connectorName}'`);
+    // Tracing
+    const span = trace.getActiveSpan();
 
+    const spanInfo = this.getSpanInfo();
+    spanInfo['piece_to_connect_to.id'] = piece.getId();
+    spanInfo['piece_to_connect_to.connector_name'] = connectorName;
+    span?.addEvent('connect_to_piece', spanInfo);
+
+    // Make connection
     let index = 0;
     for(const connection of this.connections) {
       if (connection.piece === null) {
-        console.log(`Node ${this.getId()}: I'm adding piece '${piece.getId()}' to my connection ${index}, with connectorName ${connectorName}`);
         // Connect us to the piece
         connection.piece = piece;
         connection.connectorName = connectorName;
@@ -139,6 +152,7 @@ export class LayoutNode {
       }
       index++;
     }
+
     throw new FatalError("We can not be connected to more than two pieces")
   }
 
@@ -147,8 +161,27 @@ export class LayoutNode {
    *
    * This node will remain in the same position. The given node will be deleted,
    * and the piece it is connected to will end up being connected to this node.
+   *
+   * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   * !!!!!!!!! TODO: Currently not used. I don't know if this works or not !!!!!!!!!!!
+   * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   *
    */
   public mergeWith(nodeToBeDeleted: LayoutNode): void {
+    // Trace info
+    const span = trace.getActiveSpan();
+    const spanInfo = this.getSpanInfo();
+    spanInfo['node_to_merge_with.id'] = nodeToBeDeleted.getId();
+
+    const connections = nodeToBeDeleted.getConnections();
+    connections.forEach((connection, key) => {
+      spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.piece?.getId();
+      spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.connectorName;
+    });
+
+    span?.addEvent('connect_to_piece', spanInfo);
+
+    // Check if merge can take place
     if (this.getNumberOfConnections() > 1 && nodeToBeDeleted.getNumberOfConnections() > 1) {
       throw new FatalError("Cannot connect nodes together that already have two layout pieces connected to it");
     }
@@ -180,8 +213,11 @@ export class LayoutNode {
    * @param loopProtector A string to prevent infinite loops
    */
   public updateCoordinateAndContinue(callingPiece: LayoutPiece, coordinate: Coordinate, heading: number, loopProtector: string): void {
+    const span = trace.getActiveSpan();
+
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
+      span?.addEvent('loop_protector_hit', { 'node.id': this.getId() });
       return;
     }
     this.loopProtector = loopProtector;
@@ -189,10 +225,20 @@ export class LayoutNode {
     // Set our coordinate
     this.setCoordinate(coordinate);
 
-    console.log("Node " + this.getId() + " says: my coordinate is now ", coordinate);
-
     // Tell the other connected piece to continue the update down the layout
     const oppositeSideConnection = this.getOtherConnection(callingPiece);
+
+    span?.addEvent('update_coordinate_and_continue', {
+      'this_node.id': this.getId(),
+      'calling_piece.id': callingPiece.getId(),
+      'received_coordinate.x': coordinate.x,
+      'received_coordinate.y': coordinate.y,
+      'received_heading': heading,
+      'opposite_side_connection.piece': oppositeSideConnection.piece?.getId(),
+      'opposite_side_connection.connectorName': oppositeSideConnection.connectorName,
+      'next_piece_to_call.id': oppositeSideConnection.piece?.getId(),
+    });
+
     oppositeSideConnection.piece?.updateHeadingAndContinue(this, heading, loopProtector);
   }
 
@@ -209,8 +255,15 @@ export class LayoutNode {
    * Note that this function is also expected to work if we supply null as the pieceToLookFor.
    */
   public getOtherConnection(pieceToLookFor: LayoutPiece | null): Connection {
+    // Tracing
+    const span = trace.getActiveSpan();
+    const spanInfo = this.getSpanInfo();
+    spanInfo['piece_to_look_for'] = pieceToLookFor?.getId();
+    span?.addEvent('get_other_connection', spanInfo);
+
+    // Get other connection
     for(let i = 0; i < 2; i++) {
-      if(this.connections[0].piece?.getId() == pieceToLookFor?.getId()) {
+      if(this.connections[i].piece?.getId() == pieceToLookFor?.getId()) {
         return this.connections[1-i];
       }
     }
@@ -221,6 +274,14 @@ export class LayoutNode {
    * Disconnect this node from the given LayoutPiece
    */
   protected disconnect(piece: LayoutPiece): void {
+    // Tracing
+    const span = trace.getActiveSpan();
+
+    const spanInfo = this.getSpanInfo();
+    spanInfo['piece_to_disconnect_from.id'] = piece.getId();
+    span?.addEvent('connect_to_piece', spanInfo);
+
+    // Disconnect
     for(const connection of this.connections) {
       if (connection.piece?.getId() == piece.getId()) {
         connection.piece = null;
@@ -267,6 +328,19 @@ export class LayoutNode {
     }
 
     return null;
+  }
+
+  /**
+   * Return all our info in the correct format for adding it to a span
+   */
+  protected getSpanInfo(): Record<string, any> {
+    return {
+      'this_node.id': this.getId(),
+      'this_node.connection.0.piece.id': this.connections[0].piece?.getId(),
+      'this_node.connection.0.piece.connector_name': this.connections[0].connectorName,
+      'this_node.connection.1.piece.id': this.connections[1].piece?.getId(),
+      'this_node.connection.1.piece.connector_name': this.connections[1].connectorName,
+    }
   }
 
   // Round a number to two decimal points

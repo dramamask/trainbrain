@@ -8,6 +8,9 @@ import { layoutPiecesDb } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 
+/**
+ * A piece in the layout
+ */
 export abstract class LayoutPiece {
   protected readonly id: string;
   protected readonly pieceDef: PieceDef;
@@ -108,6 +111,11 @@ export abstract class LayoutPiece {
 
   // Increment the heading of this layout piece by the given amount
   public incrementHeading(incement: number): void {
+    const span = trace.getActiveSpan();
+    span?.addEvent('increment_heading', {
+      'piece.id': this.getId(),
+    });
+
     this.connectors.incrementHeading(incement);
   }
 
@@ -121,11 +129,10 @@ export abstract class LayoutPiece {
 
   /**
    * Connect all the nodes (that we are connected to) back to us.
-   * This method is ran during construction  of this class only.
+   * This method is ran during construction of this class only.
    */
   protected connectNodesToUs(connectorNames: ConnectorName[]): void {
     connectorNames.forEach(connectorName => {
-      console.log(`Piece ${this.getId()}: asking node ${this.connectors.getNode(connectorName).getId()} to connect us`)
       this.connectors.getNode(connectorName).connect(this, connectorName);
     })
   }

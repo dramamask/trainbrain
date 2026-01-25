@@ -48,6 +48,17 @@ export class NodeFactory {
    * We will only delete a node that is not connected to anything more.
    */
   public delete(node: LayoutNode):void {
+    // Tracing
+    const span = trace.getActiveSpan();
+    const spanInfo: Record<string, any> = { 'node.id': node.getId() };
+    const connections = node.getConnections();
+    connections.forEach((connection, key) => {
+      spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.piece?.getId();
+      spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.connectorName;
+    });
+    span?.addEvent('delete_node', spanInfo);
+
+    // Delete node
     if (node.getNumberOfConnections() !== 0) {
       throw new FatalError("Cannot delete a node that is still connected to things")
     }

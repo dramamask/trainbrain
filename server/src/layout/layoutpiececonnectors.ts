@@ -4,6 +4,7 @@ import type { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodeFactory.js";
+import { trace } from "@opentelemetry/api";
 
 // TODO: Move this to train-brain-shared when we figure out how to handle module vs commonjs for train-brain-shared
 const possibleConnectorNames = ["start", "end", "diverge"];
@@ -95,7 +96,7 @@ export class LayoutPieceConnectors {
 
   // Set the heading for a specific connector
   public setHeading(name: ConnectorName, heading: number): void {
-     const connector =  this.connectors.get(name);
+    const connector =  this.connectors.get(name);
 
     if (connector == null) {
       throw new FatalError(`We don't have a connector called '${name}'`);

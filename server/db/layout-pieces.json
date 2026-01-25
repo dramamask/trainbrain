@@ -15,6 +15,19 @@
           "node": "1"
         }
       }
+    },
+    "1": {
+      "pieceDefId": "LGB-300",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "1"
+        },
+        "end": {
+          "heading": 180,
+          "node": "2"
+        }
+      }
     }
   }
 }

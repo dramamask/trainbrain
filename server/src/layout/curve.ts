@@ -1,6 +1,6 @@
+import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate, UiAttributesDataCurve } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
-import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodeFactory.js";
@@ -24,11 +24,21 @@ export class Curve extends LayoutPiece {
   protected readonly angle: number;
   protected readonly radius: number;
 
- public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
-     super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory);
+  public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
+    const span = trace.getActiveSpan();
+    super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory);
 
     this.angle = (pieceDef.getAttributes()  as PieceDefAttributes).angle;
     this.radius = (pieceDef.getAttributes()  as PieceDefAttributes).radius;
+
+    span?.addEvent('new_piece_created', {
+      'piece.id': this.getId(),
+      'piece.category': this.pieceDef.getCategory(),
+      'piece.connector.start.node': this.connectors.getNode("start").getId(),
+      'piece.connector.end.node': this.connectors.getNode("end").getId(),
+      'piece.angle': this.angle,
+      'piece.radius': this.radius,
+    });
   }
 
   public getUiAttributes(): UiAttributesDataCurve {
@@ -36,8 +46,11 @@ export class Curve extends LayoutPiece {
   }
 
   public updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void {
+    const span = trace.getActiveSpan();
+
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
+      span?.addEvent('loop_protector_hit', { 'piece.id': this.getId() });
       return;
     }
     this.loopProtector = loopProtector;
@@ -45,6 +58,12 @@ export class Curve extends LayoutPiece {
     // Figure out which side of the piece the call is coming from
     const callingSideConnectorName = this.connectors.getConnectorName(callingNode);
     if (callingSideConnectorName === undefined) {
+      span?.addEvent('not_connected_to_calling_node', {
+        'piece.id': this.getId(),
+        'callingnode.id': callingNode.getId(),
+        'piece.connector.start.node': this.connectors.getNode("start").getId(),
+        'piece.connector.end.node': this.connectors.getNode("end").getId(),
+      });
       throw new FatalError("We should be connected to the calling node");
     }
     const oppositeSideConnectorName = callingSideConnectorName == "start" ? "end" : "start";
@@ -70,20 +89,26 @@ export class Curve extends LayoutPiece {
     // Call the next node
     const oppositeSideNode = this.connectors.getNode(oppositeSideConnectorName);
     const nextPieceHeading = oppositeSideHeading + 180; // Their heading will be facing the opposite site (heading always faces into the piece)
-    oppositeSideNode.updateCoordinateAndContinue(this, oppositeSideCoordinate, nextPieceHeading, loopProtector);
-  }
 
-  /**
-   * Examine the connectors data that was received and add any missing data that we need to create this layout piece
-   */
-  protected addMissingConnectorsData(data: LayoutPieceConnectorsData): LayoutPieceConnectorsData {
-    ["start", "end"].forEach(connectorName => {
-      if (!(connectorName in data)) {
-        data[connectorName] = { heading: undefined, node: undefined };
-      }
+    span?.addEvent('update_heading_and_continue', {
+      'piece.id': this.getId(),
+      'calling_node.id': callingNode.getId(),
+      'received_heading': heading,
+      'calling_side.connector.name': callingSideConnectorName,
+      'calling_side.connector.heading': heading,
+      'opposite_side.connector.name': oppositeSideConnectorName,
+      'opposite_side.connector.heading': heading,
+      'piece.connector.start.node': this.connectors.getNode("start").getId(),
+      'piece.connector.start.heading': this.connectors.getNode("start").getId(),
+      'piece.connector.end.node': this.connectors.getNode("end").getId(),
+      'piece.connector.end.heading': this.connectors.getNode("start").getId(),
+      'next_node_to_call.id': oppositeSideNode.getId(),
+      'next_coordiante.x': oppositeSideCoordinate.x,
+      'next_coordiante.y': oppositeSideCoordinate.x,
+      'next_heading': nextPieceHeading,
     });
 
-    return data;
+    oppositeSideNode.updateCoordinateAndContinue(this, oppositeSideCoordinate, nextPieceHeading, loopProtector);
   }
 
   /**

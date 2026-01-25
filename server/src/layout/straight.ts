@@ -27,13 +27,8 @@ export class Straight extends LayoutPiece {
 
     this.length = (pieceDef.getAttributes()  as PieceDefAttributes).length;
 
-    span?.addEvent('New Piece Created', {
-      'piece.id': this.getId(),
-      'piece.category': this.pieceDef.getCategory(),
-      'piece.connector.start.node': this.connectors.getNode("start").getId(),
-      'piece.connector.end.node': this.connectors.getNode("end").getId(),
-      'piece.length': this.length,
-    });
+    const spanInfo = this.getSpanInfo();
+    span?.addEvent('new_piece_created', spanInfo);
   }
 
   public getUiAttributes(): UiAttributesDataStraight {
@@ -45,7 +40,7 @@ export class Straight extends LayoutPiece {
 
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
-      span?.addEvent('Loop Protector Hit', { 'piece.id': this.getId() })
+      span?.addEvent('loop_protector_hit', { 'piece.id': this.getId() });
       return;
     }
     this.loopProtector = loopProtector;
@@ -53,28 +48,40 @@ export class Straight extends LayoutPiece {
     // Figure out which side of the piece the call is coming from
     const callingSideConnectorName = this.connectors.getConnectorName(callingNode);
     if (callingSideConnectorName === undefined) {
-      span?.addEvent('Not connected to calling node', {
-        'piece.id': this.getId(),
-        'piece.connector.start.node': this.connectors.getNode("start").getId(),
-        'piece.connector.end.node': this.connectors.getNode("end").getId(),
-      })
+      const spanInfo = this.getSpanInfo();
+      span?.addEvent('not_connected_to_calling_node', spanInfo);
       throw new FatalError(`Not connected to the calling node`);
     }
     const oppositeSideConnectorName = callingSideConnectorName == "start" ? "end" : "start";
 
     // Update our heading
     this.connectors.setHeading(callingSideConnectorName, heading);
-    this.connectors.setHeading(oppositeSideConnectorName, heading + 180);
-
-    console.log("Piece " + this.getId() + " says: my heading is now " + heading);
+    const oppositeSideHeading = heading + 180;
+    this.connectors.setHeading(oppositeSideConnectorName, oppositeSideHeading);
 
     // Calculate the coordinate for the next node
     const nextNodeCoordinate = this.calculateCoordinate(callingNode.getCoordinate(), heading);
-    console.log("Piece " + this.getId() + " says: I've calculated the node's coordinate as: ", nextNodeCoordinate);
 
     // Call the next node
     const oppositeSideNode = this.connectors.getNode(oppositeSideConnectorName);
-    console.log("Piece " + this.getId() + " says: I'm going to call node " + oppositeSideNode.getId());
+
+    const spanInfo = this.getSpanInfo();
+    spanInfo['calling_node.id'] = callingNode.getId();
+    spanInfo['received_heading'] = heading;
+    spanInfo['calling_side.connector.name'] = callingSideConnectorName;
+    spanInfo['calling_side.connector.heading'] = heading;
+    spanInfo['opposite_side.connector.name'] = oppositeSideConnectorName;
+    spanInfo['opposite_side.connector.heading'] = heading;
+    spanInfo['piece.connector.start.node'] = this.connectors.getNode("start").getId();
+    spanInfo['piece.connector.start.heading'] = this.connectors.getNode("start").getId();
+    spanInfo['piece.connector.end.node'] = this.connectors.getNode("end").getId();
+    spanInfo['piece.connector.end.heading'] = this.connectors.getNode("start").getId();
+    spanInfo['next_node_to_call.id'] = oppositeSideNode.getId();
+    spanInfo['next_coordiante.x'] = nextNodeCoordinate.x;
+    spanInfo['next_coordiante.y'] = nextNodeCoordinate.x;
+    spanInfo['next_heading'] = heading;
+    span?.addEvent('update_heading_and_continue', spanInfo);
+
     oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, heading, loopProtector);
   }
 
@@ -90,6 +97,19 @@ export class Straight extends LayoutPiece {
     return {
       x: otherCoordinate.x + dX,
       y: otherCoordinate.y + dY,
+    }
+  }
+
+  /**
+   * Return info about this piece for the tracing span
+   */
+  protected getSpanInfo(): Record<string, any> {
+    return {
+      'this_piece.id': this.getId(),
+      'this_piece.category': this.pieceDef.getCategory(),
+      'this_piece.connector.start.node': this.connectors.getNode("start").getId(),
+      'this_piece.connector.end.node': this.connectors.getNode("end").getId(),
+      'this_piece.length': this.length,
     }
   }
 }
