@@ -11,6 +11,9 @@ export const addLayoutPieceSchema = [
       if (!node) {
         throw new Error("JSON parameter 'nodeId' does not match a node in the layout");
       }
+      if (node.getNumberOfConnections() == 2){
+        throw new Error('We cannot connect a layout piece to this node. Please select a node that has only one track piece connected to it.');
+      }
       return true;
     }),
 

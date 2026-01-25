@@ -91,24 +91,31 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
 }
 
 // // Endpoint to add a piece to the track layout
-// export const deleteLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {
-//   // matchedData only includes fields defined in the validator middleware for this route
-//   const data = matchedData(req);
+export const deleteLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData(req);
 
-//   try {
-//     await layout.deleteLayoutPiece(data.index);
+  try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'deleteLayoutPiece');
+    span?.setAttribute('_.request.pieceId', data.index);
 
-//     const uiLayout = layout.getUiLayout();
-//     const status = getHttpStatusCode(uiLayout);
+    await layout.deleteLayoutPiece(data.index);
 
-//     res.header("Content-Type", "application/json");
-//     res.status(status).send(JSON.stringify(uiLayout));
-//   } catch (error) {
-//     console.error("Unknown error at the edge", error);
-//     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-//       .send("Unknown error at the edge. Check server logs.");
-//   }
-// }
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
+
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
+
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+  } catch (error) {
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+  }
+}
 
 // TODO: rotate is the wrong word. It's flip, or change orientation or something like that.
 // // Endpoint to rotate a piece in the track layout

@@ -12,7 +12,7 @@ const router: Router = Router();
 router.get('/', layoutController.getLayout);
 router.put('/node/:index', nodeIndexSchema, UpdateNodeSchema, validate, layoutController.updateNode);
 router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
-// router.delete('/piece/:index', pieceIndexSchema, validate, layoutController.deleteLayoutPiece);
+router.delete('/piece/:index', layoutPieceIndexSchema, validate, layoutController.deleteLayoutPiece);
 // router.put('/piece/rotate/:index', pieceIndexSchema, validate, layoutController.rotateLayoutPiece);
 
 export default router;

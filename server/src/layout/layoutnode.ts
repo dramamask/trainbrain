@@ -135,6 +135,29 @@ export class LayoutNode {
   }
 
   /**
+   * Disconnect this node from the given LayoutPiece
+   */
+  public disconnect(piece: LayoutPiece): void {
+    // Tracing
+    const span = trace.getActiveSpan();
+
+    const spanInfo = this.getSpanInfo();
+    spanInfo['piece_to_disconnect_from.id'] = piece.getId();
+    span?.addEvent('connect_to_piece', spanInfo);
+
+    // Disconnect
+    for(const connection of this.connections) {
+      if (connection.piece?.getId() == piece.getId()) {
+        connection.piece = null;
+        connection.connectorName = undefined;
+        return; // Returns from the function
+      }
+    }
+
+    throw new FatalError("We were asked to disconnect from a piece that we are not connected to");
+  }
+
+  /**
    * Merge with the given node.
    *
    * This node will remain in the same position. The given node will be deleted,
@@ -246,29 +269,6 @@ export class LayoutNode {
       }
     }
     throw new FatalError("We're not connected to this piece")
-  }
-
-  /**
-   * Disconnect this node from the given LayoutPiece
-   */
-  protected disconnect(piece: LayoutPiece): void {
-    // Tracing
-    const span = trace.getActiveSpan();
-
-    const spanInfo = this.getSpanInfo();
-    spanInfo['piece_to_disconnect_from.id'] = piece.getId();
-    span?.addEvent('connect_to_piece', spanInfo);
-
-    // Disconnect
-    for(const connection of this.connections) {
-      if (connection.piece?.getId() == piece.getId()) {
-        connection.piece = null;
-        connection.connectorName = undefined;
-        return; // Returns from the function
-      }
-    }
-
-    throw new FatalError("We were asked to disconnect from a piece that we are not connected to");
   }
 
   // This node needs to be shows as having a dead-end, in the UI, if it only has one piece connected to it.

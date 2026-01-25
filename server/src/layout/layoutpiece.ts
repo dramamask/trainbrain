@@ -90,13 +90,15 @@ export abstract class LayoutPiece {
   }
 
   // Increment the heading of this layout piece by the given amount
-  public incrementHeading(incement: number): void {
+  public incrementHeading(increment: number): void {
+    // Tracing
     const span = trace.getActiveSpan();
-    span?.addEvent('increment_heading', {
-      'piece.id': this.getId(),
-    });
+    const spanInfo = this.getSpanInfo();
+    spanInfo['heading_increment'] = increment;
+    span?.addEvent('increment_heading', spanInfo);
 
-    this.connectors.incrementHeading(incement);
+    // Delete
+    this.connectors.incrementHeading(increment);
   }
 
   /**
@@ -105,6 +107,23 @@ export abstract class LayoutPiece {
    */
   public save(): void {
     saveLayoutPieceData(this.id, this.getLayoutData(), "LayoutPiece::save()");
+  }
+
+  /**
+   * Disconnect this piece from the nodes it is connected to.
+   * Disassociate all our objects so the garbage collector will clean everything up.
+   */
+  public delete(): void {
+    // Tracing
+    const span = trace.getActiveSpan();
+    span?.addEvent('delete_piece', this.getSpanInfo());
+
+    // Tell the nodes to disconnect from us
+    const nodes = this.connectors.getNodes();
+    nodes.forEach(node => node.disconnect(this));
+
+    // Tell the connectors to delete themselves
+    this.connectors.delete();
   }
 
   /**
@@ -136,5 +155,28 @@ export abstract class LayoutPiece {
     const newY = x * sin + y * cos;
 
     return { x: newX, y: newY }
+  }
+
+  /**
+   * Return all our info in the correct format for adding it to a span
+   */
+  protected getSpanInfo(): Record<string, any> {
+    const info: Record<string, any> = {};
+
+    info['this_piece.id'] = this.getId();
+    info['this_piece.category'] = this.pieceDef.getCategory();
+
+    const connectorsData = this.connectors.getConnectorsData();
+    Object.entries(connectorsData).forEach(([key, connectorData]) => {
+      info[`this_piece.connector.${key}.heading`] = connectorData.heading;
+      info[`this_piece.connector.${key}.node.id`] = connectorData.node;
+    });
+
+    const uiAttributes = this.getUiAttributes()
+    Object.entries(uiAttributes).forEach(([name, value]) => {
+      info[`this_piece.attribute.${name}`] = value;
+    })
+
+    return info;
   }
 }

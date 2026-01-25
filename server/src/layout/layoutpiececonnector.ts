@@ -78,6 +78,10 @@ export class LayoutPieceConnector {
     this.heading = this.normalizeAngle(this.heading + headingIncrement);
   }
 
+  public delete(): void {
+    // Nothing to do here
+  }
+
   // Make sure the angle is always in the 0 to 359 degree range
   protected normalizeAngle(angle: number): number {
     return (angle % 360);

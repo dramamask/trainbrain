@@ -2,8 +2,9 @@
 
 - Work on deleting a piece. Simple delete for now, where you just select the piece to delete.
 - Look into how garbage collection works. Which class objects should I decouple from each other when deleting a piece?
+- Look for orphaned nodes and delete them.
 - Draw the track pieces as actual track pieces in normal mode. With proper colors and shapes.
-- Reorganizie "shared" project folder section with different files to organize it better.
+- Auto connect two nodes if they are on the same coordinate (within x millimeters)
 - Send the PieceDefId to the UI so the UI can show it with a tooltip of something
 - Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
@@ -11,9 +12,8 @@
 - Add the world size to the layout json file.
 - Add protection so you can't move the layout outside of the world size.
 - Ability to move a track layout piece.
+- Work on indicating track pieces that are close together but are not connected.
 - Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements? We may have to change the connections model.
-- When deleting a switch the side that is connected to the "diverge" connector may become orphaned. We need to
-  test for that and refuse to delete if that's the case. We need to walk the layout to find if that track sections ends in a deadend or not.
 - Start working on an intersection piece (a cross).
 - Create API to show the trian position. How do we want to show it on the map (SVG I presume). What info do we need
   from the back-end for that (just coordinates?).
@@ -36,3 +36,4 @@
 - Add react grid (or whatever it is called) for the cards in right side "controls section"
 - Add OTEL Collector to sit in between server and Jaeger.
 - Create a pieceFactory class.
+- Reorganizie "shared" project folder section with different files to organize it better.

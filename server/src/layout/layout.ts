@@ -144,17 +144,13 @@ export class Layout {
    *        (existing piece) |                (existing piece) |
    *                         |                                 |
    *                         O                                 O
+   *
+   * Note that input validation happens in the express middleware.
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
-    // Note that input validation has already been done.
+    // Get the objects we need to act on/with
     const nodeToConnectTo = this.nodeFactory.get(data.nodeId) as LayoutNode;
     const pieceDef = this.pieceDefs.getPieceDef(data.pieceDefId);
-
-    // Send error message back tot he UI
-    // TODO: Add this to the validation when we are able to return validation errors in a proper format  that the UI can handle
-    if (nodeToConnectTo.getNumberOfConnections() == 2) {
-      throw new Error('We cannot connect a layout piece to this node. Please select a node that has only one track piece connected to it.');
-    }
 
     // Create the new layout piece
     const connectorsData: LayoutPieceConnectorsData = {
@@ -171,6 +167,44 @@ export class Layout {
 
     // Add the new piece to the layout
     this.pieces.set(newPiece.getId(), newPiece);
+
+    // Save the newly changed layout to file
+    this.save();
+  }
+
+  /**
+   * Delete a piece from the layout.
+   *
+   *    SITUATION BEFORE:        SITUATION AFTER:
+   *
+   *                    O                       O
+   *                    |                       |
+   *                    |                       |
+   *                    |                       |
+   *                    O                       O
+   *                    |
+   *  (piece to delete) |
+   *                    |
+   *                    O                       O
+   *                    |                       |
+   *                    |                       |
+   *                    |                       |
+   *                    O                       O
+   *
+   * Any orphaned nodes left over after deleting a piece will be deleted as well.
+   * Orphaned nodes are nodes with no piece connected to it.
+   * Note that input validation happens in the express middleware.
+   */
+  public async deleteLayoutPiece(pieceId: string): Promise<void> {
+    // Get the piece that needs to be deleted and tell it to delete itself
+    const pieceToDelete = this.pieces.get(pieceId) as LayoutPiece;
+    pieceToDelete.delete();
+
+    // Remove the layout piece from our list of layout piece
+    const deleted = this.pieces.delete(pieceToDelete.getId());
+    if (!deleted) {
+      throw new FatalError("Layout piece was not deleted from the Map");
+    }
 
     // Save the newly changed layout to file
     this.save();

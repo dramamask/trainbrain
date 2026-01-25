@@ -1,6 +1,6 @@
 import type { ConnectorName, NodeConnectionsData } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
-import type { LayoutNode } from "./layoutnode.js";
+import { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodefactory.js";
@@ -54,6 +54,17 @@ export class LayoutPieceConnectors {
     return this.getConnector(name).getNode();
   }
 
+  /**
+   * Return all nodes that our connectors are connected to.
+   * Remember that each connector is always connected to a node,
+   * so this method returns one node for each connector.
+   */
+  public getNodes(): LayoutNode[] {
+    const nodes: LayoutNode[] = [];
+    this.connectors.forEach(connector => nodes.push(connector.getNode()));
+    return nodes;
+  }
+
   // Return the number of connectors that we have
   public getNumConnectors(): number {
     return this.connectors.size;
@@ -92,6 +103,14 @@ export class LayoutPieceConnectors {
   // Note that this will disconnect us from whichever node we were connected to before
   public replaceNodeConnection(nodeToConnectTo: LayoutNode, connectorNameToConnectTo: ConnectorName): void {
     this.getConnector(connectorNameToConnectTo).replaceNodeConnection(nodeToConnectTo);
+  }
+
+  /**
+   * Tell our connectors to delete themselves, and then remove all references to them
+   */
+  public delete(): void {
+    this.connectors.forEach(connector => connector.delete());
+    this.connectors.clear();
   }
 
   // Set the heading for a specific connector
