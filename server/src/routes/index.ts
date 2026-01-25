@@ -5,6 +5,6 @@ import pieceDefRoutes from "./piecedefroutes.js";
 const router: Router = Router();
 
 router.use('/layout', layoutRoutes);
-router.use('/piecedef', pieceDefRoutes);
+router.use('/piecedefs', pieceDefRoutes);
 
 export default router;

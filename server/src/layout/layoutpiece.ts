@@ -4,7 +4,7 @@ import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/l
 import type { NodeFactory } from "./nodefactory.js";
 import type { PieceDef } from "./piecedef.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
-import { layoutPiecesDb } from "../services/db.js";
+import { saveLayoutPieceData } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 
@@ -71,26 +71,6 @@ export abstract class LayoutPiece {
     return this.connectors.getHeading(name)
   }
 
-  /**
-   * Return the node that is present at the given connector
-   */
-  public getNode(name: ConnectorName): LayoutNode {
-    return this.connectors.getNode(name);
-  }
-
-  /**
-   * Get the name of the connector that is connected to the given node
-   */
-  getConnectorName(node: LayoutNode): ConnectorName {
-    const name = this.connectors.getConnectorName(node);
-
-    if (name == undefined) {
-      throw new FatalError(`This layout piece is not connected to node '${node.getId()}'`);
-    }
-
-    return name;
-  }
-
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
   public getLayoutData(): LayoutPieceData {
     return {
@@ -124,7 +104,7 @@ export abstract class LayoutPiece {
    * Note that this function does not write anything to the actual DB file. Only the Layout file writes to the DB file.
    */
   public save(): void {
-    layoutPiecesDb.data.pieces[this.id] = this.getLayoutData();
+    saveLayoutPieceData(this.id, this.getLayoutData(), "LayoutPiece::save()");
   }
 
   /**

@@ -3,7 +3,7 @@ import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared"
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
 import type { NodeFactory } from "./nodefactory.js";
-import { layoutNodesDb } from "../services/db.js";
+import { saveLayoutNodeData } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 
 interface Connection {
@@ -38,28 +38,6 @@ export class LayoutNode {
       throw new FatalError("The coordinate should be known by know.");
     }
     return this.coordinate;
-  }
-
-  /**
-   * If we are connected to the given piece, return the name of their connector that we are connected to.
-   */
-  public getConnectorName(pieceToLookFor: LayoutPiece): ConnectorName | undefined {
-    for(const connection of this.connections) {
-      if (connection.piece?.getId() == pieceToLookFor.getId()) {
-        return connection.connectorName;
-      }
-    }
-    return undefined;
-  }
-
-  // Return true if this connector is connected to the specified layout piece. Otherwise return false.
-  public isConnectedtoPiece(pieceToLookFor: LayoutPiece | null): boolean {
-    for(const connection of this.connections) {
-      if (connection.piece?.getId() == pieceToLookFor?.getId()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -247,7 +225,7 @@ export class LayoutNode {
    * Note that this function does not write anything to the actual DB file. Only the Layout file writes to the DB file.
    */
   public save(): void {
-    layoutNodesDb.data.nodes[this.id] = this.getLayoutData();
+    saveLayoutNodeData(this.id, this.getLayoutData(), "LayoutNode::save()");
   }
 
   /**

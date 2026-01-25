@@ -1,7 +1,7 @@
 import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
-import { layoutNodesDb } from "../services/db.js";
+import { getLayoutNodesFromDB, persistLayoutNodes } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 
@@ -23,7 +23,7 @@ export class NodeFactory {
    */
   public init(): void {
     // Create each layout node
-    Object.entries(layoutNodesDb.data.nodes).forEach(([key, nodeData]) => {
+    Object.entries(getLayoutNodesFromDB("NodeFactory::init()")).forEach(([key, nodeData]) => {
       this.nodes.set(key, new LayoutNode(key, nodeData.coordinate, this));
     });
   }
@@ -111,7 +111,7 @@ export class NodeFactory {
       node.save();
     });
 
-    await layoutNodesDb.write();
+    await persistLayoutNodes("NodeFactory::save()");
   }
 
   /**

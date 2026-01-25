@@ -1,10 +1,10 @@
 import { trace } from '@opentelemetry/api';
 import type { AddLayoutPieceData, ConnectorName, Coordinate, UiLayout } from "trainbrain-shared";
-import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
+import type { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { NodeFactory } from "./nodefactory.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
-import { layoutPiecesDb } from "../services/db.js";
+import { getLayoutPiecesFromDB, persistLayoutPieces } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
 import { FatalError } from "../errors/FatalError.js";
@@ -29,7 +29,7 @@ export class Layout {
 
     // Create each layout piece
     // The layout piece will create connects between itself and any nodes it is connected to
-    Object.entries(layoutPiecesDb.data.pieces).forEach(([key, pieceData]) => {
+    Object.entries(getLayoutPiecesFromDB("Layout::init()")).forEach(([key, pieceData]) => {
       const pieceDef = this.pieceDefs.getPieceDef(pieceData.pieceDefId)
       this.pieces.set(key, this.createLayoutPiece(key, pieceData.connectors, pieceDef));
     });
@@ -78,7 +78,34 @@ export class Layout {
     return this.nodeFactory.getHighestNodeId();
   }
 
-  // Update a node's coordinate and/or the attached layout piece's heading
+  /**
+   * Find the layout piece with the highest numerical ID. Return the ID as a number.
+   * This method is used by the request validation code as well as this class
+   */
+  public getHighestPieceId(): number {
+    let highestId: number = -1;
+
+    this.pieces.forEach(piece => {
+      const numericalIdValue = Number(piece.getId());
+      if (numericalIdValue > highestId) {
+        highestId = numericalIdValue;
+      }
+    });
+
+    return highestId;
+  }
+
+  /**
+   * Return an instance of the PieceDefs class.
+   * Only called by the piecedef controller class
+   */
+  public getPieceDefs(): PieceDefs {
+    return this.pieceDefs;
+  }
+
+  /**
+   * Update a node's coordinate and/or the attached layout piece's heading
+   */
   public async updateNode(nodeId: string, coordinate: Coordinate, headingIncrement: number): Promise<void> {
     const node = this.nodeFactory.get(nodeId);
     if (!node) {
@@ -165,32 +192,9 @@ export class Layout {
   }
 
   /**
-   * Return the number of layout pieces in our layout
-   */
-  getNumberOfLayoutPieces(): number {
-    return this.pieces.size;
-  }
-
-  /**
-   * Find the layout piece with the highest numerical ID. Return the ID as a number.
-   */
-  public getHighestPieceId(): number {
-    let highestId: number = -1;
-
-    this.pieces.forEach(piece => {
-      const numericalIdValue = Number(piece.getId());
-      if (numericalIdValue > highestId) {
-        highestId = numericalIdValue;
-      }
-    });
-
-    return highestId;
-  }
-
-  /**
    * Get the ID that should be used for a new to-be-created layout piece
    */
-  public getNewPieceId(): string {
+  protected getNewPieceId(): string {
     return (this.getHighestPieceId() + 1).toString();
   }
 
@@ -218,6 +222,6 @@ export class Layout {
       piece.save();
     });
 
-    await layoutPiecesDb.write();
+    await persistLayoutPieces("Layout::save()");
   }
 }

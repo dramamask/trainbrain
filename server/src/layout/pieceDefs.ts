@@ -1,5 +1,8 @@
+import { PieceDefData, PieceDefDataList } from "trainbrain-shared";
+import { getPieceDefinitions } from "../controllers/piecedefcontroller.js";
+import { PieceDefinitions } from "../data_types/pieceDefintions.js";
 import { FatalError } from "../errors/FatalError.js";
-import { pieceDefintionsDb } from "../services/db.js";
+import { getPieceDefsFromDB } from "../services/db.js";
 import { PieceDef } from "./piecedef.js";
 
 /**
@@ -16,7 +19,7 @@ export class PieceDefs {
    * Create all the PieceDef objects
    */
   public init() {
-    Object.entries(pieceDefintionsDb.data.definitions).forEach(([key, def]) => {
+    Object.entries(getPieceDefsFromDB("PieceDefs::init()")).forEach(([key, def]) => {
       this.pieceDefs.set(key, new PieceDef(key, def));
     })
   }
@@ -39,5 +42,16 @@ export class PieceDefs {
    */
   public getPieceDefWithoutCheck(id: string): PieceDef | undefined {
     return this.pieceDefs.get(id);
+  }
+
+  /**
+   * Return the PieceDef data in the format that it is stored in the DB
+   */
+  public getData(): PieceDefDataList {
+    let pieceDefData: PieceDefDataList = {};
+
+    this.pieceDefs.forEach(pieceDef => pieceDefData[pieceDef.getId()] = pieceDef.getData());
+
+    return (pieceDefData);
   }
 }

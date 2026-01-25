@@ -72,7 +72,7 @@
       "pieceDefId": "LGB-R3-22.5°",
       "connectors": {
         "start": {
-          "heading": 337.5,
+          "heading": -22.5,
           "node": "5"
         },
         "end": {
@@ -637,6 +637,45 @@
         "end": {
           "heading": 127.5,
           "node": "49"
+        }
+      }
+    },
+    "49": {
+      "pieceDefId": "LGB-300",
+      "connectors": {
+        "start": {
+          "heading": 292.5,
+          "node": "18"
+        },
+        "end": {
+          "heading": 112.5,
+          "node": "50"
+        }
+      }
+    },
+    "50": {
+      "pieceDefId": "LGB-600",
+      "connectors": {
+        "start": {
+          "heading": 307.5,
+          "node": "49"
+        },
+        "end": {
+          "heading": 127.5,
+          "node": "51"
+        }
+      }
+    },
+    "51": {
+      "pieceDefId": "LGB-600",
+      "connectors": {
+        "start": {
+          "heading": 307.5,
+          "node": "51"
+        },
+        "end": {
+          "heading": 127.5,
+          "node": "52"
         }
       }
     }

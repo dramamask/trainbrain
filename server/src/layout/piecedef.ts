@@ -36,4 +36,15 @@ export class PieceDef {
   public getAttributes(): object {
     return this.attributes;
   }
+
+  /**
+   * Return this objects data in the format in which it is stored in the PieceDefs DB
+   */
+  public getData(): PieceDefData {
+    return {
+      category: this.category,
+      attributes: this.attributes,
+      description: this.description,
+    }
+  }
 }
