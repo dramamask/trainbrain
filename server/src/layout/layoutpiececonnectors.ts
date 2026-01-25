@@ -3,7 +3,7 @@ import type { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import type { LayoutNode } from "./layoutnode.js";
 import { LayoutPieceConnector } from "./layoutpiececonnector.js";
 import { FatalError } from "../errors/FatalError.js";
-import { NodeFactory } from "./nodeFactory.js";
+import { NodeFactory } from "./nodefactory.js";
 import { trace } from "@opentelemetry/api";
 
 // TODO: Move this to train-brain-shared when we figure out how to handle module vs commonjs for train-brain-shared

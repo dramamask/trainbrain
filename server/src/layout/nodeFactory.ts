@@ -1,34 +1,66 @@
 import { trace } from '@opentelemetry/api';
-import type { ConnectorName, Coordinate } from "trainbrain-shared";
-import type { Layout } from "./layout.js";
+import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
+import { layoutNodesDb } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 
+/**
+ * This class knows all nodes and is able to perform operations on them
+ */
 export class NodeFactory {
-  protected readonly layout;
+  protected readonly nodes: Map<string, LayoutNode>;
 
-  constructor(layout: Layout) {
-    this.layout = layout;
+  /**
+   * Class constructor
+   */
+  constructor() {
+    this.nodes = new Map<string, LayoutNode>();
+  }
+
+  /**
+   * Inializations, like reading nodes from the DB
+   */
+  public init(): void {
+    // Create each layout node
+    Object.entries(layoutNodesDb.data.nodes).forEach(([key, nodeData]) => {
+      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate, this));
+    });
+  }
+
+  /**
+   * Return the highest node ID currently in the layout
+   */
+  public getHighestNodeId(): number {
+    let highestId: number = -1;
+
+    this.nodes.forEach(node => {
+      const numericalIdValue = Number(node.getId());
+      if (numericalIdValue > highestId) {
+        highestId = numericalIdValue;
+      }
+    });
+
+    return highestId;
   }
 
   /**
    * Return the node with the given ID
    */
-  public getNode(id: string | undefined) : LayoutNode | undefined {
+  public get(id: string | undefined) : LayoutNode | undefined {
     if (id === undefined) {
       return undefined;
     }
-    return this.layout.getNode(id);
+    return this.nodes.get(id);
   }
 
   /**
    * Create a node and connect it to the given piece
    */
   public create(coordinate: Coordinate | undefined, piece: LayoutPiece | null, connector: ConnectorName | undefined): LayoutNode {
-    const id = (this.layout.getHighestNodeId() + 1).toString();
+    const id = (this.getHighestNodeId() + 1).toString();
     const node = new LayoutNode(id, coordinate, this);
-    this.layout.addNode(node);
+    this.nodes.set(node.getId(), node);
 
     if (!piece) {
       return node;
@@ -63,6 +95,31 @@ export class NodeFactory {
       throw new FatalError("Cannot delete a node that is still connected to things")
     }
 
-    this.layout.deleteNode(node);
+    const deleted = this.nodes.delete(node.getId());
+    if (!deleted) {
+      this.nodes.get(node.getId());
+      const warning = new Error(`Warning. Not able to delete node '${node.getId()}' from nodes Map.`)
+      span?.recordException(warning);
+    }
+  }
+
+  /**
+   * Save all layout nodes to the layout DB (and commit it to file)
+   */
+  public async save(): Promise<void> {
+     this.nodes.forEach(node => {
+      node.save();
+    });
+
+    await layoutNodesDb.write();
+  }
+
+  /**
+   * Return the layout in UiLayout format
+   */
+  public getUiLayout(): UiLayoutNode[] {
+    return (
+      [...this.nodes.values()].map(node => node.getUiLayoutData())
+    )
   }
 }

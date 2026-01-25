@@ -1,8 +1,5 @@
 # TODO
 
-- Debug the UI not showing all pieces
-- Debug adding more pieces, including curves. Debug UI side and server side.
-- Convert NodeFactory to a proper Nodes class that holds the nodes map.
 - Test updating node coordiante and heading through UI.
 - Restrict access to writing to the DB from all classes except the layout class. Friendtoken?
 - remove now obsolote node and piece methods. and connectors and connector methods.
@@ -44,3 +41,4 @@
 - Make cards collapsable where there's only a title bar visible.
 - Add react grid (or whatever it is called) for the cards in right side "controls section"
 - Add OTEL Collector to sit in between server and Jaeger.
+- Create a pieceFactory class.

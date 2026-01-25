@@ -3,7 +3,7 @@ import type { ConnectorName, Coordinate, UiAttributesDataStraight } from "trainb
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
-import { NodeFactory } from "./nodeFactory.js";
+import { NodeFactory } from "./nodefactory.js";
 import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { PieceDef } from "./piecedef.js";
 

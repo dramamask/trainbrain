@@ -1,7 +1,7 @@
 import { trace } from '@opentelemetry/api';
 import type { ConnectorName, TrackPieceCategory, UiLayoutPiece, UiAttributesData } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
-import type { NodeFactory } from "./nodeFactory.js";
+import type { NodeFactory } from "./nodefactory.js";
 import type { PieceDef } from "./piecedef.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
 import { layoutPiecesDb } from "../services/db.js";

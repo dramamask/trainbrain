@@ -2,7 +2,7 @@ import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
-import type { NodeFactory } from "./nodeFactory.js";
+import type { NodeFactory } from "./nodefactory.js";
 import { layoutNodesDb } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 

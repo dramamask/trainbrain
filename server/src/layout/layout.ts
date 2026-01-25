@@ -1,37 +1,31 @@
 import { trace } from '@opentelemetry/api';
 import type { AddLayoutPieceData, ConnectorName, Coordinate, UiLayout } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/layoutPieces.js";
-import { NodeFactory } from "./nodeFactory.js";
+import { NodeFactory } from "./nodefactory.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
-import { layoutPiecesDb, layoutNodesDb } from "../services/db.js";
+import { layoutPiecesDb } from "../services/db.js";
 import { Straight } from "./straight.js";
 import { Curve } from "./curve.js";
 import { FatalError } from "../errors/FatalError.js";
-import { PieceDefs } from "./pieceDefs.js";
+import { PieceDefs } from "./piecedefs.js";
 import { PieceDef } from "./piecedef.js";
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
   protected readonly pieces: Map<string, LayoutPiece>;
-  protected readonly nodes: Map<string, LayoutNode>;
   protected readonly pieceDefs: PieceDefs;
   protected readonly nodeFactory: NodeFactory;
 
   constructor() {
     this.pieces = new Map<string, LayoutPiece>();
-    this.nodes = new Map<string, LayoutNode>();
     this.pieceDefs = new PieceDefs();
-    this.nodeFactory = new NodeFactory(this);
+    this.nodeFactory = new NodeFactory();
   }
 
   public init() {
     this.pieceDefs.init();
-
-    // Create each layout node
-    Object.entries(layoutNodesDb.data.nodes).forEach(([key, nodeData]) => {
-      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate, this.nodeFactory));
-    });
+    this.nodeFactory.init();
 
     // Create each layout piece
     // The layout piece will create connects between itself and any nodes it is connected to
@@ -48,7 +42,7 @@ export class Layout {
         error: "",
       },
       pieces: [...this.pieces.values()].map(piece => piece.getUiLayoutData()),
-      nodes: [...this.nodes.values()].map(node => node.getUiLayoutData()),
+      nodes: this.nodeFactory.getUiLayout(),
     }
   }
 
@@ -57,7 +51,7 @@ export class Layout {
    * Only used by the request validation code
    */
   public getNode(id: string): LayoutNode | undefined {
-    return this.nodes.get(id);
+    return this.nodeFactory.get(id);
   }
 
    /**
@@ -76,29 +70,17 @@ export class Layout {
     return this.pieceDefs.getPieceDefWithoutCheck(id);
   }
 
-  /**
-   * Add a node to our list of nodes.
-   * Only used by the NodeFactory
+   /**
+   * Find the layout node with the highest numerical ID. Return the ID as a number.
+   * Only used by the request validation code
    */
-  public addNode(node: LayoutNode): void {
-    this.nodes.set(node.getId(), node);
-  }
-
-  /**
-   * Add a node to our list of nodes.
-   * Only used by the NodeFactory
-   */
-  public deleteNode(node: LayoutNode): void {
-    const deleted = this.nodes.delete(node.getId());
-
-    if (!deleted) {
-      // TODO: add a warning to the tracing span (when we have tracing)
-    }
+  public getHighestNodeId(): number {
+    return this.nodeFactory.getHighestNodeId();
   }
 
   // Update a node's coordinate and/or the attached layout piece's heading
   public async updateNode(nodeId: string, coordinate: Coordinate, headingIncrement: number): Promise<void> {
-    const node = this.nodes.get(nodeId);
+    const node = this.nodeFactory.get(nodeId);
     if (!node) {
       throw new FatalError("Cannot find node to update its coordinate");
     }
@@ -140,7 +122,7 @@ export class Layout {
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
     // Note that input validation has already been done.
-    const nodeToConnectTo = this.nodes.get(data.nodeId) as LayoutNode;
+    const nodeToConnectTo = this.nodeFactory.get(data.nodeId) as LayoutNode;
     const pieceDef = this.pieceDefs.getPieceDef(data.pieceDefId);
 
     // Send error message back tot he UI
@@ -180,22 +162,6 @@ export class Layout {
     }
 
     return otherConnection.piece.getHeading(otherConnection.connectorName) + 180;
-  }
-
-  /**
-   *  Find the layout node with the highest numerical ID. Return the ID as a number.
-   */
-  public getHighestNodeId(): number {
-    let highestId: number = -1;
-
-    this.nodes.forEach(node => {
-      const numericalIdValue = Number(node.getId());
-      if (numericalIdValue > highestId) {
-        highestId = numericalIdValue;
-      }
-    });
-
-    return highestId;
   }
 
   /**
@@ -246,15 +212,12 @@ export class Layout {
    * Save the entire layout to the DB
    */
   protected async save(): Promise<void> {
-    this.nodes.forEach(node => {
-      node.save();
-    });
+    this.nodeFactory.save();
 
     this.pieces.forEach(piece => {
       piece.save();
     });
 
-    await layoutNodesDb.write();
     await layoutPiecesDb.write();
   }
 }
