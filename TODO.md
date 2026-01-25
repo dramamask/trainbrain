@@ -1,9 +1,7 @@
 # TODO
 
-- add aka instead of decription to piece-def.
-- show piece info with more detail. show attributes.
-- all multiple piece and node selections.
 - Catch validation errors and return in proper error format that the UI knows.
+- add possibility to select multiple pieces and nodes.
 - server, catch errors at api edge and return with api retval.
 - less logic in the front end, more in the back-end related to performing operations and given user errors.
 - Coordinates should be allowed to be undefined. We could then even invalidate them when something changes.
@@ -24,6 +22,7 @@
 - Start working on an intersection piece (a cross).
 - Create API to show the trian position. How do we want to show it on the map (SVG I presume). What info do we need
   from the back-end for that (just coordinates?).
+- Use world size to set the aspect ration and size of the background image. "Reserve the space" so when we load the image container doesn't all of a sudden resize.
 - Is there a way to cache the background image in the UI so it always loads fast? Sometime it's just slow to load.
 - Change the GET layout API response to be a record with string keys instead of an array. That makes looking up specific pieces and nodes a lot easier in the UI. The current format may slow things down if we have too many pieces or nodes.
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!

@@ -1,57 +1,67 @@
 {
   "meta": {
-    "description": "Definitions of the different pieces that are allowed in the track layout."
+    "aka": "Definitions of the different pieces that are allowed in the track layout."
   },
   "definitions": {
-    "LGB-300": {
+    "LGB 1060": {
       "category": "straight",
-      "description": "LGB 10000, Piko 35208 or equivalent 300mm straight track section",
-      "attributes": {"length": 300}
-    },
-    "LGB-600": {
-      "category": "straight",
-      "description": "LGB 10600, Piko 35208, or equivalent 600mm straight track section",
+      "aka": "LGB 10600, Piko 35208",
       "attributes": {"length": 600}
     },
-    "LGB-150": {
+    "LGB 1000": {
       "category": "straight",
-      "description": "LGB 10150 or equivalent 150mm straight track section",
+      "aka": "LGB 10000, Piko 35208",
+      "attributes": {"length": 300}
+    },
+    "LGB 1015": {
+      "category": "straight",
+      "aka": "LGB 10150",
       "attributes": {"length": 150}
     },
-    "LGB-R1-30°": {
+    "LGB 1100 (R1)": {
       "category": "curve",
-      "description": "LGB 11000 (R1), Piko 35211, or equivalent 600mm radius 30° curved track section",
+      "aka": "LGB 11000, Piko 35211",
       "attributes": {"angle": 30, "radius": 600}
     },
-    "LGB-R1-15°": {
+    "LGB 1102 (R1)": {
       "category": "curve",
-      "description": "LGB 11020 (R1) or equivalent 600mm radius 15° curved track section",
+      "aka": "LGB 11020",
       "attributes": {"angle": 15, "radius": 600}
     },
-    "LGB-R3-22.5°": {
+    "LGB 1600 (R3)": {
       "category": "curve",
-      "description": "LGB 16000 (R3) or equivalent 1200mm radius 22.5° curved track section",
-      "attributes": {"angle": 22.5, "radius": 1198}
+      "aka": "LGB 16000",
+      "attributes": {"angle": 22.5, "radius": 1195}
     },
-    "LGB-R1-SL": {
+    "LGB 1200 (R1)": {
       "category": "switch",
-      "description": "LGB 12050, Piko 35220, or equivalent 600mm radius left switch",
-      "attributes": {"variant": "left", "angle": 30, "radius": 600}
+      "aka": "LGB 12000 (manual), LGB 1205 (electric), LGB 12050 (electric), Piko 35220",
+      "attributes": {"variant": "right", "length": 300, "angle": 30, "radius": 600}
     },
-    "LGB-R1-SR": {
+    "LGB 1210 (R1)": {
       "category": "switch",
-      "description": "LGB 12000, LGB 12150, Piko 35221, or equivalent 600mm radius right switch",
-      "attributes": {"variant": "right", "angle": 30, "radius": 600}
+      "aka": "LGB 12100 (manual), LGB 1215 (electric), LGB 12150 (electric), Piko 35221",
+      "attributes": {"variant": "left", "length": 300, "angle": 30, "radius": 600}
     },
-    "LGB-R3-SL": {
+    "LGB 1604 (R3)": {
       "category": "switch",
-      "description": "LGB 16050, Piko 35222 (close enough), or equivalent 1200mm radius left switch",
-      "attributes": {"variant": "left", "angle": 22.5, "radius": 1198}
+      "aka": "LGB 16040 (manual), LGB 1605 (electric), LGB 16050 (electric)",
+      "attributes": {"variant": "right", "length": 440, "angle": 22.5, "radius": 1195}
     },
-    "LGB-R3SR": {
+    "LGB 1614 (R3)": {
       "category": "switch",
-      "description": "LGB 16150, Piko 35223 (close enough), or equivalent 1200mm radius right switch",
-      "attributes": {"variant": "right", "angle": 22.5, "radius": 1198}
+      "aka": "LGB 16140 (manual), LGB 1615 (electric), LGB 16150 (electric)",
+      "attributes": {"variant": "left", "length": 440, "angle": 22.5, "radius": 1195}
+    },
+    "Piko 35223": {
+      "category": "switch",
+      "aka": "Piko 35227 (electric)",
+      "attributes": {"variant": "right", "length": 480, "angle": 22.5, "radius": 1240}
+    },
+    "Piko 35222": {
+      "category": "switch",
+      "aka": "Piko 35226 (electric)",
+      "attributes": {"variant": "left", "length": 480, "angle": 22.5, "radius": 1240}
     }
   }
 }

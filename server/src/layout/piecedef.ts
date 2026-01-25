@@ -2,7 +2,7 @@ import { TrackPieceCategory, PieceDefData } from "trainbrain-shared";
 
 export class PieceDef {
   protected id: string;
-  protected description: string;
+  protected aka: string;
   protected readonly category: TrackPieceCategory;
   protected readonly attributes: object;
 
@@ -10,7 +10,7 @@ export class PieceDef {
     this.id = id;
     this.category = pieceDefData.category;
     this.attributes = pieceDefData.attributes;
-    this.description = pieceDefData.description;
+    this.aka = pieceDefData.aka; // Also known as
   }
 
   public getId(): string {
@@ -21,12 +21,12 @@ export class PieceDef {
     this.id = value;
   }
 
-  public getDescription(): string {
-    return this.description;
+  public getAka(): string {
+    return this.aka;
   }
 
-  public setDescription(value: string): void {
-    this.description = value;
+  public setAka(value: string): void {
+    this.aka = value;
   }
 
   public getCategory(): TrackPieceCategory {
@@ -44,7 +44,7 @@ export class PieceDef {
     return {
       category: this.category,
       attributes: this.attributes,
-      description: this.description,
+      aka: this.aka,
     }
   }
 }

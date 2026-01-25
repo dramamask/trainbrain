@@ -1,5 +1,5 @@
 import { Card, CardContent, Stack } from "@mui/material";
-import { AddLayoutPieceData, PieceDefData, UiLayout } from "trainbrain-shared";
+import { AddLayoutPieceData, CurveAttributes, PieceDefData, StraightAttributes, UiLayout } from "trainbrain-shared";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
@@ -33,8 +33,11 @@ export default function PieceDefCard({name, definition}: props) {
             {definition.category}
           </div>
           <div className={controlsSectionStyles.text + " " + styles.text}>
-            {definition.description}.
-            </div>
+            { getPieceSpecificInfo(definition) }
+          </div>
+          <div className={controlsSectionStyles.grayText + " " + styles.text}>
+            Also known as: {definition.aka}.
+          </div>
         </Stack>
       </CardContent>
     </Card>
@@ -88,11 +91,20 @@ function getNoNodeSelectedMessage(): string {
   return msg;
 }
 
-// Get the message that will be displayed when no layout piece is selected
-function getNoPieceSelectedMessage(): string {
-  let msg = "Please select a track piece first (on the layout map). Then click select a node. ";
-  msg += "Then click an item in the list to insert that particular piece into the layout. "
-  msg += "The new piece will be connected to the track piece you selected, on the side of the selected node.";
+/**
+ * Return piece specific info text for the given piece
+ */
+function getPieceSpecificInfo(data: PieceDefData): string {
+  let attributes;
 
-  return msg;
+  switch(data.category.toLowerCase()) {
+    case "straight":
+      attributes = data.attributes as StraightAttributes;
+      return `Length: ${attributes.length}mm.`;
+    case "curve":
+      attributes = data.attributes as CurveAttributes;
+      return `Angle: ${attributes.angle}°, radius: ${attributes.radius}mm.`;
+  }
+
+  return "";
 }

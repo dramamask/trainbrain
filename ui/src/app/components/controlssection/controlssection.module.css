@@ -18,3 +18,8 @@
 .text {
   font-size: 0.65em;
 }
+
+.grayText {
+  color: #888888;
+  font-size: 0.65em;
+}
