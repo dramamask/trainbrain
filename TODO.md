@@ -43,4 +43,4 @@
 - Add layout map inside a MUI Card
 - Make cards collapsable where there's only a title bar visible.
 - Add react grid (or whatever it is called) for the cards in right side "controls section"
-- Add tracing with spans. Use OTEL?
+- Add OTEL Collector to sit in between server and Jaeger.
