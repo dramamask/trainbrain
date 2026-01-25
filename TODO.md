@@ -2,6 +2,7 @@
 
 - Work on deleting a piece. Simple delete for now, where you just select the piece to delete.
 - Look into how garbage collection works. Which class objects should I decouple from each other when deleting a piece?
+- Draw the track pieces as actual track pieces in normal mode. With proper colors and shapes.
 - Reorganizie "shared" project folder section with different files to organize it better.
 - Send the PieceDefId to the UI so the UI can show it with a tooltip of something
 - Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.
