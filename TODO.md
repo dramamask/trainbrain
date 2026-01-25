@@ -1,6 +1,5 @@
 # TODO
 
-- server, catch errors at api edge and return with api retval.
 - less logic in the front end, more in the back-end related to performing operations and given user errors.
 - Deselect a piece or node when you click it again if it is currently selected.
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.

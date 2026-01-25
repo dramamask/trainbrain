@@ -8,6 +8,6 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
   }
 
   return res.status(400).json({
-    error: errors.array()[0].msg,
+    error: errors.array()[0].msg
   });
 };

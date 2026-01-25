@@ -20,9 +20,9 @@ export const getLayout = (req: Request, res: Response, next: NextFunction): void
     res.header("Content-Type", "application/json");
     res.status(status).send(uiLayout);
   } catch (error) {
-    console.error("Unknown error at the edge", error);
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      .send("Unknown error at the edge. Check server logs.");
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
   }
 }
 
@@ -50,8 +50,7 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
   } catch (error) {
     const span = trace.getActiveSpan();
     span?.recordException(error as Error);
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      .send("Unknown error at the edge. Check server logs.");
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
   }
 }
 
@@ -85,9 +84,9 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
     res.header("Content-Type", "application/json");
     res.status(status).send(JSON.stringify(uiLayout));
   } catch (error) {
-    console.error("Unknown error at the edge", error);
-    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      .send("Unknown error at the edge. Check server logs.");
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
   }
 }
 
