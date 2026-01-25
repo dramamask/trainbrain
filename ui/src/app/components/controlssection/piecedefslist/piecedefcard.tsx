@@ -1,5 +1,5 @@
 import { Card, CardContent, Stack } from "@mui/material";
-import { AddLayoutPieceData, CurveAttributes, PieceDefData, StraightAttributes, UiLayout } from "trainbrain-shared";
+import { AddLayoutPieceData, CurveAttributes, PieceDefData, StraightAttributes, SwitchAttributes, UiLayout } from "trainbrain-shared";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
@@ -100,10 +100,13 @@ function getPieceSpecificInfo(data: PieceDefData): string {
   switch(data.category.toLowerCase()) {
     case "straight":
       attributes = data.attributes as StraightAttributes;
-      return `Length: ${attributes.length}mm.`;
+      return `Length: ${attributes.length }mm.`;
     case "curve":
       attributes = data.attributes as CurveAttributes;
-      return `Angle: ${attributes.angle}°, radius: ${attributes.radius}mm.`;
+      return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm.`;
+    case "switch":
+      attributes = data.attributes as SwitchAttributes;
+      return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm, length: ${attributes.length} mm`;
   }
 
   return "";

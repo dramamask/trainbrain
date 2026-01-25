@@ -53,22 +53,30 @@ export interface UiLayout {
   nodes: UiLayoutNode[];
 }
 
-// Attributes for a straight piece def
-export interface StraightAttributes {
+// Attribtues for a curve piece def
+export interface SwitchAttributes {
+  angle: number;
+  radius: number;
   length: number;
 }
+
 
 // Attribtues for a curve piece def
 export interface CurveAttributes {
   angle: number;
-  radius: NumberConstructor;
+  radius: number;
+}
+
+// Attributes for a straight piece def
+export interface StraightAttributes {
+  length: number;
 }
 
 // Data structure to define a track piece definition
 export interface PieceDefData {
     category: TrackPieceCategory;
     aka: string;
-    attributes: StraightAttributes | CurveAttributes;
+    attributes: StraightAttributes | CurveAttributes | SwitchAttributes;
 }
 
 // A list of PieceDefData records
