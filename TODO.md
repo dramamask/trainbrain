@@ -2,13 +2,12 @@
 
 - Draw the track pieces as actual track pieces in normal mode. With proper colors and shapes.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters)
-- Send the PieceDefId to the UI so the UI can show it with a tooltip of something
-- Can i do the piece delete, piece update and piece rotate logic inside the LayoutPiece itself? Seems cleaner.
+- Add the PieceDefId to the UI layout data.
+- Show piece and node ID and other info somewhere when we hover over the piece or node.
+- Remove category and attribtues from the LayoutUiData pieces data. We don't need it if we have the pieceDefId.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
-- Do not allow start position move when a piece is selected. Info message.
 - Add the world size to the layout json file.
 - Add protection so you can't move the layout outside of the world size.
-- Ability to move a track layout piece.
 - Work on indicating track pieces that are close together but are not connected.
 - Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements? We may have to change the connections model.
 - Start working on an intersection piece (a cross).
