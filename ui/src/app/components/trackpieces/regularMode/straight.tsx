@@ -37,7 +37,7 @@ export default function Straight({piece}: props) {
         coordinateOne={startCoordinate}
         coordinateTwo={endCoordinate}
       />
-       {/* Calculate the line coordinates for the rails */}
+       {/* Calculate the line coordinates for the rails. Calcualte as straight and then rotate? */}
       <Line
         draw={true}
         isHovered={false}
