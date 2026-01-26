@@ -148,7 +148,6 @@ export class Layout {
    * Note that input validation happens in the express middleware.
    */
   public async addLayoutPiece(data: AddLayoutPieceData): Promise<void> {
-    // Get the objects we need to act on/with
     const nodeToConnectTo = this.nodeFactory.get(data.nodeId) as LayoutNode;
     const pieceDef = this.pieceDefs.getPieceDef(data.pieceDefId);
 
@@ -196,15 +195,16 @@ export class Layout {
    * Note that input validation happens in the express middleware.
    */
   public async deleteLayoutPiece(pieceId: string): Promise<void> {
-    // Get the piece that needs to be deleted and tell it to delete itself
     const pieceToDelete = this.pieces.get(pieceId) as LayoutPiece;
-    pieceToDelete.delete();
 
     // Remove the layout piece from our list of layout piece
     const deleted = this.pieces.delete(pieceToDelete.getId());
     if (!deleted) {
       throw new FatalError("Layout piece was not deleted from the Map");
     }
+
+    // Tell the layout piece to delete itself
+    pieceToDelete.delete();
 
     // Save the newly changed layout to file
     this.save();

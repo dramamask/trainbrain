@@ -1,8 +1,5 @@
 # TODO
 
-- Work on deleting a piece. Simple delete for now, where you just select the piece to delete.
-- Look into how garbage collection works. Which class objects should I decouple from each other when deleting a piece?
-- Look for orphaned nodes and delete them.
 - Draw the track pieces as actual track pieces in normal mode. With proper colors and shapes.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters)
 - Send the PieceDefId to the UI so the UI can show it with a tooltip of something

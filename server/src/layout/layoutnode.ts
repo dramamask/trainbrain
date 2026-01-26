@@ -244,14 +244,6 @@ export class LayoutNode {
   }
 
   /**
-   * Save the data for this layout node to the in-memory track-layout json DB.
-   * Note that this function does not write anything to the actual DB file. Only the Layout file writes to the DB file.
-   */
-  public save(): void {
-    saveLayoutNodeData(this.id, this.getLayoutData(), "LayoutNode::save()");
-  }
-
-  /**
    * Return the other connected piece.
    * Note that this function is also expected to work if we supply null as the pieceToLookFor.
    */
@@ -306,6 +298,28 @@ export class LayoutNode {
     }
 
     return null;
+  }
+
+  /**
+   * Save the data for this layout node to the in-memory track-layout json DB.
+   * Note that this function does not write anything to the actual DB file. Only the Layout file writes to the DB file.
+   */
+  public save(): void {
+    saveLayoutNodeData(this.id, this.getLayoutData(), "LayoutNode::save()");
+  }
+
+  /**
+   * Make sure we are not connected to any objects anymore
+   */
+  public delete(): void {
+    // Tracing
+    const span = trace.getActiveSpan();
+    span?.addEvent('delete_node', this.getSpanInfo());
+
+    // Check to make sure we are not connected to anything
+    if (this.getNumberOfConnections() != 0) {
+      throw new FatalError("Can't delete ourselves. We are still connected to something.")
+    }
   }
 
   /**

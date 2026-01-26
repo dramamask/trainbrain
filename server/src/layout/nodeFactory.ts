@@ -107,10 +107,12 @@ export class NodeFactory {
    * Save all layout nodes to the layout DB (and commit it to file)
    */
   public async save(): Promise<void> {
-     this.nodes.forEach(node => {
-      node.save();
-    });
+    if (this.nodes.size === 0) {
+      throw new FatalError("How did we end up with no nodes? That's not going to be good for anybody.");
+    }
 
+    this.removeOrphanedNodes();
+    this.nodes.forEach(node => node.save());
     await persistLayoutNodes("NodeFactory::save()");
   }
 
@@ -121,5 +123,25 @@ export class NodeFactory {
     return (
       [...this.nodes.values()].map(node => node.getUiLayoutData())
     )
+  }
+
+  /**
+   * Remove nodes that have no pieces connected to them
+   * Always keep one node though, otherwise we have nothing to connect a new layout pieces to.
+   */
+  protected removeOrphanedNodes(): void {
+    if (this.nodes.size == 1) {
+      return;
+    }
+
+    this.nodes.forEach(node => {
+      if (node.getNumberOfConnections() == 0) {
+        // Remove the node from our list of nodes
+        this.nodes.delete(node.getId());
+
+        // Tell the node to delete itself
+        node.delete();
+      }
+    });
   }
 }

@@ -4,7 +4,7 @@ import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/l
 import type { NodeFactory } from "./nodefactory.js";
 import type { PieceDef } from "./piecedef.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
-import { saveLayoutPieceData } from "../services/db.js";
+import { deleteLayoutPiece, saveLayoutPieceData } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 
@@ -124,6 +124,9 @@ export abstract class LayoutPiece {
 
     // Tell the connectors to delete themselves
     this.connectors.delete();
+
+    // Delete ourselves from the DB
+    deleteLayoutPiece(this.getId(), "LayoutPiece::delete()");
   }
 
   /**

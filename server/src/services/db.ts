@@ -159,3 +159,17 @@ export function saveLayoutNodeData(id: string, data: LayoutNodeData, friendToken
   }
   throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (8)")
 }
+
+/**
+ * Remove the given layout piece from the DB (not persisted, just saved in memory)
+ *
+ * @param id ID of the layout piece to delete
+ * @param friendToken Token to ensure that only one specific class method can save layout node data to the DB
+ */
+export function deleteLayoutPiece(id: string, friendToken: string): void {
+  if (friendToken == "LayoutPiece::delete()") {
+    delete layoutPiecesDb.data.pieces[id];
+    return
+  }
+  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (9)")
+}
