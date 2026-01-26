@@ -112,6 +112,7 @@ export abstract class LayoutPiece {
   /**
    * Disconnect this piece from the nodes it is connected to.
    * Disassociate all our objects so the garbage collector will clean everything up.
+   * Remove oursleves from the DB (not persisted yet though).
    */
   public delete(): void {
     // Tracing

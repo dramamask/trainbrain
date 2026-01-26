@@ -33,7 +33,7 @@ export function handleKeyDown(event: KeyboardEvent) {
         handleNodeUpdate("x", 0, -ROTATE_INCREMENT);
         break;
       case KEYS.DeleteLayoutPiece:
-        deleteLayoutPiece(selectionStore.getSelectedLayoutPiece());
+        deleteLayoutPiece();
         selectionStore.deselectAll();
         break;
       case KEYS.DeselectLayoutElement:
@@ -84,7 +84,13 @@ function handleNodeUpdate(axis: "x" | "y", xyIncrement: number, headingIncrement
 }
 
 // Call the server API to delete a layout piece
-function deleteLayoutPiece(pieceId: string) {
+function deleteLayoutPiece() {
+  const pieceId = selectionStore.getSelectedLayoutPiece();
+  if (!pieceId) {
+    errorStore.setError("Please select a piece to perform this action.");
+    return;
+  }
+
   deleteTrackPiece(pieceId)
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);

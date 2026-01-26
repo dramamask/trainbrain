@@ -3,7 +3,7 @@ import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared"
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
 import type { NodeFactory } from "./nodefactory.js";
-import { saveLayoutNodeData } from "../services/db.js";
+import { deleteLayoutNode, saveLayoutNodeData } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 
 interface Connection {
@@ -309,7 +309,8 @@ export class LayoutNode {
   }
 
   /**
-   * Make sure we are not connected to any objects anymore
+   * Make sure we are not connected to any objects anymore,
+   * then delete ourself from the DB (not persisted yet though).
    */
   public delete(): void {
     // Tracing
@@ -320,6 +321,9 @@ export class LayoutNode {
     if (this.getNumberOfConnections() != 0) {
       throw new FatalError("Can't delete ourselves. We are still connected to something.")
     }
+
+    // Delete ourselves from the DB
+    deleteLayoutNode(this.getId(), "LayoutNode::delete()");
   }
 
   /**

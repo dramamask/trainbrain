@@ -3,32 +3,6 @@
     "description": "This file lists the track pieces that make up the train track layout. Nodes are in separate file."
   },
   "pieces": {
-    "0": {
-      "pieceDefId": "LGB 1060",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "0"
-        },
-        "end": {
-          "heading": 180,
-          "node": "1"
-        }
-      }
-    },
-    "7": {
-      "pieceDefId": "LGB 1060",
-      "connectors": {
-        "start": {
-          "heading": 180,
-          "node": "7"
-        },
-        "end": {
-          "heading": 0,
-          "node": "8"
-        }
-      }
-    },
     "8": {
       "pieceDefId": "LGB 1060",
       "connectors": {
@@ -42,19 +16,6 @@
         }
       }
     },
-    "9": {
-      "pieceDefId": "LGB 1600 (R3)",
-      "connectors": {
-        "start": {
-          "heading": 180,
-          "node": "9"
-        },
-        "end": {
-          "heading": 22.5,
-          "node": "10"
-        }
-      }
-    },
     "10": {
       "pieceDefId": "LGB 1600 (R3)",
       "connectors": {
@@ -65,19 +26,6 @@
         "end": {
           "heading": 45,
           "node": "11"
-        }
-      }
-    },
-    "11": {
-      "pieceDefId": "LGB 1600 (R3)",
-      "connectors": {
-        "start": {
-          "heading": 225,
-          "node": "11"
-        },
-        "end": {
-          "heading": 67.5,
-          "node": "12"
         }
       }
     },

@@ -3,54 +3,6 @@
     "description": "This file lists the nodes that connect the train track layout pieces. Track pieces are in separate file."
   },
   "nodes": {
-    "0": {
-      "coordinate": {
-        "x": 9947,
-        "y": 8897
-      }
-    },
-    "1": {
-      "coordinate": {
-        "x": 9947,
-        "y": 9497
-      }
-    },
-    "2": {
-      "coordinate": {
-        "x": 9947,
-        "y": 10097
-      }
-    },
-    "3": {
-      "coordinate": {
-        "x": 9947,
-        "y": 10697
-      }
-    },
-    "4": {
-      "coordinate": {
-        "x": 9947,
-        "y": 11297
-      }
-    },
-    "5": {
-      "coordinate": {
-        "x": 9947,
-        "y": 11897
-      }
-    },
-    "6": {
-      "coordinate": {
-        "x": 9947,
-        "y": 12497
-      }
-    },
-    "7": {
-      "coordinate": {
-        "x": 9947,
-        "y": 8297
-      }
-    },
     "8": {
       "coordinate": {
         "x": 9947,
@@ -85,12 +37,6 @@
       "coordinate": {
         "x": 8752,
         "y": 5902
-      }
-    },
-    "14": {
-      "coordinate": {
-        "x": 8294.6933,
-        "y": 5992.96396
       }
     }
   }
