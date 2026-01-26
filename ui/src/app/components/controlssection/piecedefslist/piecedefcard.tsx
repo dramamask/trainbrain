@@ -72,20 +72,6 @@ function addTrackPieceToLayout(pieceDefName:string): void {
       });
 }
 
-// Return the message that will be displayed when no node is selected
-function getNoNodeSelectedMessage(): string {
-  let msg = "Please select a node (on the layout map). ";
-  msg += "Then click an item in the list to insert that particular piece into the layout. "
-
-  if (trackLayoutStore.getTrackLayout().pieces.length == 0) {
-    msg += "The new piece will be connected to the selected node, pointing up.";
-  } else {
-    msg += "The new piece will be connected to the track piece you selected, on the side of the selected node.";
-  }
-
-  return msg;
-}
-
 /**
  * Return piece specific info text for the given piece
  */
