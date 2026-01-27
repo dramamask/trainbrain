@@ -77,7 +77,7 @@ export const store = {
   },
 
   deselectTrackPiece(): void {
-    const newState = { selectedLayoutPiece: "", selectedNode: "" };
+    const newState = { selectedLayoutPiece: "", selectedNode: state.selectedNode };
     // Immutable update
     state = newState;
     // Notify React/listeners

@@ -15,7 +15,7 @@ interface props {
   worldHeight: number;
 }
 
-export default function SvgRegular({worldWidth, worldHeight}: props)
+export default function SvgEditMode({worldWidth, worldHeight}: props)
 {
   // These hooks automatically subscribes and returns the latest snapshot
   const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);
@@ -36,6 +36,7 @@ export default function SvgRegular({worldWidth, worldHeight}: props)
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
         { renderPieces(trackLayoutState.trackLayout) }
         { renderNodes(trackLayoutState.trackLayout) }
+        { renderDebugContent(worldWidth, worldHeight) }
       </g>
     </svg>
   )
@@ -116,4 +117,18 @@ function renderNodes(layout: UiLayout) {
  */
 function isLayoutAvailable(layout: UiLayout) {
   return (Object.keys(layout).length != 0);
+}
+
+/**
+ * Drawing extra elements to make debugging easier
+ */
+function renderDebugContent(worldWidth: number, worldHeight: number) {
+  if (process.env.NEXT_PUBLIC_DEBUG_MODE === "true") {
+    return (
+      <g>
+        <line x1={0} y1={0} x2={worldWidth} y2={worldHeight} stroke="red" strokeWidth={20} />
+        <line x1={0} y1={worldHeight} x2={worldWidth} y2={0} stroke="red" strokeWidth={20} />
+      </g>
+    );
+  }
 }

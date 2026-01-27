@@ -65,6 +65,7 @@ function addTrackPieceToLayout(pieceDefName:string): void {
         // Select the newly inserted node
         const nodeId = getLastInsertedNode(layoutData);
         selectionStore.setSelectedNode(nodeId);
+        selectionStore.deselectTrackPiece();
       })
       .catch((error: Error) => {
         errorStore.setError(error.message);

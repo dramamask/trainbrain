@@ -20,7 +20,7 @@ export default function deadEnd({draw, coordinateOne, coordinateTwo}: connectorP
         y1={coordinateOne.y}
         x2={coordinateTwo.x}
         y2={coordinateTwo.y}
-        stroke={config.TRACK_COLOR}
+        stroke={config.RAIL_COLOR}
         strokeWidth={config.STROKE_WIDTH}
     />
   )

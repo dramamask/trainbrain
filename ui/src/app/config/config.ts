@@ -5,14 +5,18 @@
 const COLOR1 = "#FFD700";
 const COLOR1_HIGHLIGHT = "white";
 const COLOR2_HIGHLIGHT = "red";
-const COLOR3 = "#CD7F32";
+const GOLD = "#ecbf2b";
+const OAK = "#6F5339";
 
 // Track drawing
 export const STROKE_WIDTH = 80;
 export const DEADEND_INDICATOR_LENGTH = 220;
 export const MIN_BOUNDING_BOX_SIZE = 100;
 
-export const TRACK_COLOR = COLOR3;
+export const RAIL_COLOR = GOLD;
+export const RAIL_WIDTH = 7;
+export const SLEEPER_COLOR = OAK;
+export const SLEEPER_WIDTH = 12;
 export const EDIT_MODE_TRACK_COLOR = COLOR1;
 export const SELECTED_TRACK_COLOR = COLOR1_HIGHLIGHT;
 

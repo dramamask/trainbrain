@@ -61,7 +61,7 @@ export default function Curve({piece}: props) {
 }
 
 function getTrackPieceColor(inEditMode: boolean, isTrackPieceSelected: boolean): string {
-  let color = config.TRACK_COLOR;
+  let color = config.RAIL_COLOR;
 
   if (inEditMode && isTrackPieceSelected) {
     color = config.SELECTED_TRACK_COLOR;

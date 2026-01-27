@@ -1,0 +1,9 @@
+:global(.rail) {
+  stroke: var(--rail-color);
+  stroke-width: var(--rail-width);
+}
+
+:global(.sleeper) {
+  stroke: var(--sleeper-color);
+  stroke-width: var(--sleeper-width);
+}

@@ -9,7 +9,7 @@ interface connectorProps {
 
 // Render a reactangle
 export default function Rectangle({visible, topLeft, bottomRight}: connectorProps) {
-  const stroke = visible ? config.TRACK_COLOR : "none";
+  const stroke = visible ? config.RAIL_COLOR : "none";
 
   return (
     <rect

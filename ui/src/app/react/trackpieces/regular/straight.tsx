@@ -33,7 +33,7 @@ export default function Straight({piece}: props) {
       <Line
         draw={true}
         isHovered={false}
-        color={config.TRACK_COLOR}
+        color={config.RAIL_COLOR}
         coordinateOne={startCoordinate}
         coordinateTwo={endCoordinate}
       />
@@ -41,7 +41,7 @@ export default function Straight({piece}: props) {
       <Line
         draw={true}
         isHovered={false}
-        color={config.TRACK_COLOR}
+        color={config.RAIL_COLOR}
         coordinateOne={startCoordinate}
         coordinateTwo={endCoordinate}
       />
