@@ -10,7 +10,8 @@ import Node from "./trackpieces/node";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
-import { store as zoomFactorStore } from "@/app/services/stores/zoomfactor";
+import { store as scrollStore } from "@/app/services/stores/scroll";
+import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
 import { getSvgViewBox } from "../services/zoom/scrollbar/svg";
@@ -21,13 +22,10 @@ import styles from "./tracklayout.module.css";
 
 export default function TrackLayout()
 {
-  // This hook automatically subscribes and returns the latest snapshot
+  // These hooks automatically subscribes and returns the latest snapshot
   const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
-  const zoomFactorState = useSyncExternalStore(zoomFactorStore.subscribe, zoomFactorStore.getSnapshot, zoomFactorStore.getServerSnapshot);
-  const selectionState = useSyncExternalStore(selectionStore.subscribe, selectionStore.getSnapshot, selectionStore.getServerSnapshot);
-
-  const [verticalScrollPercentage, setVerticalScrollPercentag] = useState(0);
-  const [horizontalScrollPercentage, setHorizontalScrollPercentage] = useState(0);
+  const zoomState = useSyncExternalStore(zoomStore.subscribe, zoomStore.getSnapshot, zoomStore.getServerSnapshot);
+  const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);
 
   const [loading, setLoading] = useState<Boolean>(true);
 
@@ -52,11 +50,11 @@ export default function TrackLayout()
   }
 
   const handleVerticalScroll = (factor: number) => {3
-    setVerticalScrollPercentag(100 * factor);
+    scrollStore.setYScrollPos(100 * factor);
   }
 
   const handleHorizontalScroll = (factor: number) => {
-    setHorizontalScrollPercentage(100 * factor);
+    scrollStore.setXScrollPos(100 * factor);
   }
 
   const handleSvgClick = (event: React.MouseEvent<SVGSVGElement>) => {
@@ -87,13 +85,13 @@ export default function TrackLayout()
   const worldWidth = 13335; // Milimeters
 
   // Zoom as multipler. E.g. if zoom is 2 then the zoom percentage = 200%
-  const zoom = zoomFactorState.zoomFactor;
+  const zoom = zoomState.zoomFactor;
 
   // Get the css style object for the background image
-  const divStyle = getBackgroundImageStyle(horizontalScrollPercentage, verticalScrollPercentage, zoom);
+  const divStyle = getBackgroundImageStyle(scrollState.xScrollPercent, scrollState.yScrollPercent, zoom);
 
   // Get the viewBox values for the SVG component
-  const viewBox = getSvgViewBox(horizontalScrollPercentage, verticalScrollPercentage, worldWidth, worldHeight, zoom);
+  const viewBox = getSvgViewBox(scrollState.xScrollPercent, scrollState.yScrollPercent, worldWidth, worldHeight, zoom);
 
   // Render the track layout (and any error message if present)
   // Note that the coordinates represent mm in real life

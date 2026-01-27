@@ -1,9 +1,9 @@
 import { Box, Grid } from "@mui/material";
 
-import KeyboardEventHandler from "@/app/components/keyboardEventHandler";
-import SideBar from "@/app/components/sidebar/sidebar";
-import TrackLayout from "@/app/components/tracklayout";
-import ControlsSection from "@/app/components/controlssection/controlssection";
+import KeyboardEventHandler from "@/app/react/keyboardeventhandler";
+import SideBar from "@/app/react/sidebar/sidebar";
+import TrackLayout from "@/app/react/tracklayout";
+import ControlsSection from "@/app/react/controlssection/controlssection";
 
 import styles from "./page.module.css";
 

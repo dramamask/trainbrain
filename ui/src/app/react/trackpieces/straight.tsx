@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { UiLayoutPiece } from "trainbrain-shared";
 import EditModePiece from "./editMode/straight";
-import RegularModePiece from "./regularMode/straight";
+import RegularModePiece from "./regular/straight";
 import { store as editModeStore } from "@/app/services/stores/editmode";
 
 interface props {
