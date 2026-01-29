@@ -19,7 +19,8 @@ export default function Straight({piece}: props) {
   const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
 
   const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutState.trackLayout).coordinate;
-  const heading = 45;
+  const heading = piece.startHeading;
+  const symbol = getSymbol(piece.pieceDefId);
 
   // Render the component
   return (
@@ -42,4 +43,8 @@ export default function Straight({piece}: props) {
     // Then we rotate the piece the negative heading of what we want.
     // Then we move the piece half of its width over to the left so its bottom middle is on the correct x and y.
   );
+}
+
+function getSymbol(pieceDefId: string) {
+  // TODO: get the symbol. return a red cross or something when symbol is unknown. Maybe with text unknown piece type.
 }

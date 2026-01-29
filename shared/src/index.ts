@@ -13,11 +13,14 @@ export type ConnectorName = "start" | "end" | "diverge";
 export type DeadEnd = ConnectorName[];
 
 // Attributes for a Straight type piece
-export interface UiAttributesDataStraight {}
+export interface UiAttributesDataStraight {
+  length: number;
+}
 
 // Attributes for Curve type piece
 export interface UiAttributesDataCurve {
   radius: number;
+  angle: number;
 }
 
 // Ui Attributes is one of these types
@@ -32,7 +35,9 @@ export interface NodeConnectionsData {
 // Definition of the data for a layout piece, optimized for drawing in the UI
 export interface UiLayoutPiece {
   id: string;
+  pieceDefId: string;
   category: TrackPieceCategory;
+  startHeading: number;
   attributes: UiAttributesData;
   nodeConnections: NodeConnectionsData;
 };

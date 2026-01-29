@@ -84,6 +84,6 @@ export class LayoutPieceConnector {
 
   // Make sure the angle is always in the 0 to 359 degree range
   protected normalizeAngle(angle: number): number {
-    return (angle % 360);
+    return ((angle % 360) + 360) % 360;
   }
 }

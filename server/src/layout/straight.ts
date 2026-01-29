@@ -32,7 +32,9 @@ export class Straight extends LayoutPiece {
   }
 
   public getUiAttributes(): UiAttributesDataStraight {
-    return {};
+    return {
+      length: this.length,
+    };
   }
 
   public updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void {

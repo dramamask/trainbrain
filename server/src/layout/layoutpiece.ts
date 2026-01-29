@@ -83,7 +83,9 @@ export abstract class LayoutPiece {
   public getUiLayoutData(): UiLayoutPiece {
     return {
       id: this.id,
+      pieceDefId: this.pieceDef.getId(),
       category: this.pieceDef.getCategory() as TrackPieceCategory,
+      startHeading: this.connectors.getHeading("start"),
       attributes: this.getUiAttributes(),
       nodeConnections: this.connectors.getNodeConnectionsData(),
     }

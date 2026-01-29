@@ -4,7 +4,7 @@
   },
   "pieces": {
     "0": {
-      "pieceDefId": "LGB 1000",
+      "pieceDefId": "LGB 1060",
       "connectors": {
         "start": {
           "heading": 0,
@@ -13,6 +13,19 @@
         "end": {
           "heading": 180,
           "node": "1"
+        }
+      }
+    },
+    "1": {
+      "pieceDefId": "LGB 1060",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "1"
+        },
+        "end": {
+          "heading": 180,
+          "node": "2"
         }
       }
     }

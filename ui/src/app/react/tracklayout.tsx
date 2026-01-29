@@ -55,8 +55,8 @@ export default function TrackLayout()
   }
 
   // The size of the world box
-  const worldHeight = 15240; // Milimeters
-  const worldWidth = 13335; // Milimeters
+  const worldHeight = 15000; // Milimeters
+  const worldWidth = 13130; // Milimeters
 
   // Get the css style object for the background image
   const divStyle = getBackgroundImageStyle(scrollState.xScrollPercent, scrollState.yScrollPercent, zoomState.zoomFactor);

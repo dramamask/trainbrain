@@ -42,7 +42,10 @@ export class Curve extends LayoutPiece {
   }
 
   public getUiAttributes(): UiAttributesDataCurve {
-    return {radius: this.radius};
+    return {
+      angle: this.angle,
+      radius: this.radius,
+    };
   }
 
   public updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void {

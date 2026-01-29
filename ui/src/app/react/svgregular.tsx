@@ -22,7 +22,6 @@ export default function SvgRegular({worldWidth, worldHeight}: props)
 {
   // These hooks automatically subscribes and returns the latest snapshot
   const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);
-  const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
   const zoomState = useSyncExternalStore(zoomStore.subscribe, zoomStore.getSnapshot, zoomStore.getServerSnapshot);
 
   const viewBox = getSvgViewBox(scrollState.xScrollPercent, scrollState.yScrollPercent, worldWidth, worldHeight, zoomState.zoomFactor);
@@ -37,7 +36,7 @@ console.log(viewBox);
       <Defs />
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
-        <Straight piece={trackLayoutState.trackLayout.pieces[0]} />
+        { renderPieces(trackLayoutStore.getTrackLayout())}
       </g>
     </svg>
   )
