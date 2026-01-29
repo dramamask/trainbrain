@@ -1,13 +1,14 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { UiLayoutPiece } from "trainbrain-shared";
+import { UiAttributesDataStraight, UiLayoutPiece } from "trainbrain-shared";
 import { getBoundingBox } from "@/app/services/trackpiece";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import * as config from "@/app/config/config";
-import Line from "../components/line";
-import Rectangle from "../components/rectangle";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
+import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
+
+import styles from  "./trackpiece.module.css";
 
 interface props {
   piece: UiLayoutPiece;
@@ -18,33 +19,27 @@ export default function Straight({piece}: props) {
   const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
 
   const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutState.trackLayout).coordinate;
-  const endCoordinate = getLayoutNodeData(piece.nodeConnections["end"], trackLayoutState.trackLayout).coordinate;
-  const [topLeftCoordinate, bottomRightCoordinate] = getBoundingBox([startCoordinate, endCoordinate]);
+  const heading = 45;
 
   // Render the component
   return (
-    // For the group, one className is for styling, the other to help us select the track piece with the mouse
-    <g key={piece.id}>
-      <Rectangle
-        visible={false}
-        topLeft={topLeftCoordinate}
-        bottomRight={bottomRightCoordinate}
-      />
-      <Line
-        draw={true}
-        isHovered={false}
-        color={config.RAIL_COLOR}
-        coordinateOne={startCoordinate}
-        coordinateTwo={endCoordinate}
-      />
-       {/* Calculate the line coordinates for the rails. Calcualte as straight and then rotate? */}
-      <Line
-        draw={true}
-        isHovered={false}
-        color={config.RAIL_COLOR}
-        coordinateOne={startCoordinate}
-        coordinateTwo={endCoordinate}
-      />
-    </g>
+    <use
+      id={piece.id}
+      className={styles.trackpiece + " " +  getTrackPieceContainerClassName()}
+      href="#straight600" // Name of the symbol to use
+      height={600}
+      width={88}
+      style={{
+        "--rail-color": config.RAIL_COLOR,
+        "--rail-width": config.RAIL_WIDTH,
+        "--sleeper-color": config.SLEEPER_COLOR,
+        "--sleeper-width": config.SLEEPER_WIDTH,
+      } as React.CSSProperties }
+      transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-44 0)`}
+    />
+
+    // We move the piece to its start coordiante.
+    // Then we rotate the piece the negative heading of what we want.
+    // Then we move the piece half of its width over to the left so its bottom middle is on the correct x and y.
   );
 }

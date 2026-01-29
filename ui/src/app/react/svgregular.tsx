@@ -1,7 +1,6 @@
 import { useSyncExternalStore } from "react";
 import type { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
 import Curve from "./trackpieces/curve";
-import Straight from "./trackpieces/regular/straight";
 import Node from "./trackpieces/node";
 import Defs from "./trackpieces/regular/symbols/defs";
 import * as config from "@/app/config/config";
@@ -10,6 +9,7 @@ import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
+import Straight from "./trackpieces/regular/straight";
 
 import styles from  "./trackpieces/regular/trackpiece.module.css";
 
@@ -37,21 +37,7 @@ console.log(viewBox);
       <Defs />
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
-        <use
-          id="0" // The track piece ID
-          className={styles.trackpiece + " " +  getTrackPieceContainerClassName()}
-          href="#straight300" // Name of the symbol to use
-          x={0} // Bottom left corner of track piece
-          y={0} // Bottom left corner of track piece
-          width={105} // Width in mm
-          height={300} // Height in mm
-          style={{
-            "--rail-color": config.RAIL_COLOR,
-            "--rail-width": config.RAIL_WIDTH,
-            "--sleeper-color": config.SLEEPER_COLOR,
-            "--sleeper-width": config.SLEEPER_WIDTH,
-          } as React.CSSProperties }
-        />
+        <Straight piece={trackLayoutState.trackLayout.pieces[0]} />
       </g>
     </svg>
   )
