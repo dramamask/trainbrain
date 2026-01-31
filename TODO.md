@@ -1,5 +1,6 @@
 # TODO
 
+- Show x and y map pos
 - Zoom on layout map when mouse scroll is used. Make mouse pointer position the zoom focal point.
 - Start working on switches.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.

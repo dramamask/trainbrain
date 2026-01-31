@@ -8,9 +8,9 @@ import csStyles from "./controlssection.module.css";
 
 export default function KeyboardShortcuts() {
   return (
-      <Card className={styles.card}>
-        <CardContent className={styles.cardContent}>
-            <div className={styles.heading}>Keyboard Shortcuts</div>
+      <Card className={csStyles.card}>
+        <CardContent className={csStyles.cardContent}>
+            <div className={csStyles.heading}>Keyboard Shortcuts</div>
             <Grid container spacing={1}>
               <Grid size="auto">
                 <Stack>{ renderKeys() }</Stack>

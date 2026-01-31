@@ -1,5 +1,6 @@
-import { Grid } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import PieceDefs from "./piecedefslist/piecedefs";
+import Info from "./info";
 import KeyboardShortcuts from "./keyboardshortcuts";
 
 import styles from "./controlssection.module.css";
@@ -13,7 +14,10 @@ export default function ControlsSection() {
           <PieceDefs />
         </Grid>
         <Grid size="auto">
-          <KeyboardShortcuts />
+          <Stack spacing="10px">
+            <Info />
+            <KeyboardShortcuts />
+          </Stack>
         </Grid>
         <Grid size="grow">
           &nbsp;

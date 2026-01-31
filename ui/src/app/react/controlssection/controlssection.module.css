@@ -3,6 +3,22 @@
   padding: 10px;
 }
 
+.card {
+  width: fit-content;
+}
+
+.cardContent {
+  width: fit-content;
+}
+
+.heading {
+  color: #888888;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-bottom: 6px;
+}
+
 .title {
   font-size: 0.75em;
   font-weight: bold;

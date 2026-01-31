@@ -5,6 +5,7 @@ import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
+import { moveHandler } from "@/app/services/svgmousemovehandler";
 import Curve from "./curve";
 import Straight from "./straight";
 import Unknown from "./unknown";
@@ -21,13 +22,14 @@ export default function SvgRegular({worldWidth, worldHeight}: props)
   const zoomState = useSyncExternalStore(zoomStore.subscribe, zoomStore.getSnapshot, zoomStore.getServerSnapshot);
 
   const viewBox = getSvgViewBox(scrollState.xScrollPercent, scrollState.yScrollPercent, worldWidth, worldHeight, zoomState.zoomFactor);
-console.log(viewBox);
+
   return (
     <svg
       height="100%"
       width="100%"
       viewBox={viewBox}
       preserveAspectRatio="xMinYMax slice"
+      onMouseMove={moveHandler}
     >
       <Defs />
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
@@ -37,6 +39,24 @@ console.log(viewBox);
     </svg>
   )
 }
+
+function handleMouseMove(event: MouseEvent) {
+  // 1. Cast currentTarget to SVGSVGElement to access SVG methods
+  const svg = event.currentTarget as SVGSVGElement;
+
+  // 2. Create an SVG point
+  const point = svg.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+
+  // 3. Transform screen coordinates to SVG coordinates
+  // .getScreenCTM() finds the matrix transforming SVG space to screen space
+  const CTM = svg.getScreenCTM();
+  if (CTM) {
+    const svgPoint = point.matrixTransform(CTM.inverse());
+    console.log(`SVG Coords: x=${svgPoint.x}, y=${svgPoint.y}`);
+  }
+};
 
 // Render the track pieces in the layout
 function renderPieces(layout: UiLayout) {
