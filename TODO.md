@@ -1,8 +1,5 @@
 # TODO
 
-- Add piecedef category for layout piece in the UiLayoutData. Also add start heading for each piece.
-- Continue to make track pieces. Make each of the ones we have.
-- Draw the track pieces as actual track pieces in normal mode. With proper colors and shapes.
 - When deleting the last track piece, don't allow the last node to be deleted. Why is this not caught by the node factory right now? Are the nodes deleted without the knowledge of the nodeFactory? Also, node factory should not throw an error, but just silently disallow it if it's part of a piece delete.
 - Make it so we can delete with a node, because right now i cannot delete a 150 long piece because the nodes are too big and cover the piece directly. Maybe just make a temp version where we can select two nodes around a single piece only.
 - Auto add 0 node when we load the applicaiton and there is no 0 node.

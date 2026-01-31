@@ -1,13 +1,13 @@
 import { useSyncExternalStore } from "react";
 import type { UiLayout, UiLayoutPiece } from "trainbrain-shared";
-import Defs from "./trackpieces/regular/symbols/defs";
+import Defs from "./symbols/defs";
 import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
-import Curve from "./trackpieces/regular/curve";
-import Straight from "./trackpieces/regular/straight";
-import Unknown from "./trackpieces/regular/unknown";
+import Curve from "./curve";
+import Straight from "./straight";
+import Unknown from "./unknown";
 
 interface props {
   worldWidth: number;

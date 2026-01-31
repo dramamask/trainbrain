@@ -197,32 +197,6 @@
           "node": "15"
         }
       }
-    },
-    "15": {
-      "pieceDefId": "LGB 1600 (R3)",
-      "connectors": {
-        "start": {
-          "heading": 270,
-          "node": "15"
-        },
-        "end": {
-          "heading": 112.5,
-          "node": "16"
-        }
-      }
-    },
-    "16": {
-      "pieceDefId": "LGB 1600 (R3)",
-      "connectors": {
-        "start": {
-          "heading": 292.5,
-          "node": "16"
-        },
-        "end": {
-          "heading": 135,
-          "node": "17"
-        }
-      }
     }
   }
 }

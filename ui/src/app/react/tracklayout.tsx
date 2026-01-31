@@ -14,8 +14,8 @@ import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundim
 import Scrollbar from "./scrollbar";
 
 import styles from "./tracklayout.module.css";
-import SvgEditMode from "./svgeditmode";
-import SvgRegular from "./svgregular";
+import EditModeLayout from "./trackpieces/editmode/layout";
+import RegularLayout from "./trackpieces/regular/layout";
 
 export default function TrackLayout()
 {
@@ -70,8 +70,8 @@ export default function TrackLayout()
           className={styles.trackLayoutContainer}
           style={divStyle}
         >
-          { editModeState.editMode && <SvgEditMode worldWidth={worldWidth} worldHeight={worldHeight} /> }
-          { !(editModeState.editMode) && <SvgRegular worldWidth={worldWidth} worldHeight={worldHeight} /> }
+          { editModeState.editMode && <EditModeLayout worldWidth={worldWidth} worldHeight={worldHeight} /> }
+          { !(editModeState.editMode) && <RegularLayout worldWidth={worldWidth} worldHeight={worldHeight} /> }
           <Error />
         </div>
         <Scrollbar onScrollPercentage={handleHorizontalScroll} orientation="horizontal" disabled={zoomState.zoomFactor == 1}></Scrollbar>

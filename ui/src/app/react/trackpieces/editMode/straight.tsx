@@ -7,11 +7,11 @@ import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
 import * as config from "@/app/config/config";
-import Line from "../components/line";
-import Rectangle from "../components/rectangle";
+import Line from "./components/line";
+import Rectangle from "./components/rectangle";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
 
-import styles from "../trackpiece.module.css";
+import styles from "./trackpiece.module.css";
 
 interface props {
   piece: UiLayoutPiece;

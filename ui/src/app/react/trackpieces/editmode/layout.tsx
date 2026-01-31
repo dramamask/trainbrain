@@ -1,8 +1,8 @@
 import { useSyncExternalStore } from "react";
 import type { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
-import Curve from "./trackpieces/curve";
-import Straight from "./trackpieces/editMode/straight";
-import Node from "./trackpieces/node";
+import Curve from "./curve";
+import Straight from "./straight";
+import Node from "./node";
 import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as selectionStore } from "@/app/services/stores/selection";
