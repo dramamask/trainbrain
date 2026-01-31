@@ -130,11 +130,12 @@ export class NodeFactory {
    * Always keep one node though, otherwise we have nothing to connect a new layout pieces to.
    */
   protected removeOrphanedNodes(): void {
-    if (this.nodes.size == 1) {
-      return;
-    }
+    for(const [_id, node] of this.nodes) {
+      // Stop checking when we get down to the last node because we want to keep at least one node
+      if (this.nodes.size == 1) {
+        return; // Return from this function altogether
+      }
 
-    this.nodes.forEach(node => {
       if (node.getNumberOfConnections() == 0) {
         // Remove the node from our list of nodes
         this.nodes.delete(node.getId());
@@ -142,6 +143,6 @@ export class NodeFactory {
         // Tell the node to delete itself
         node.delete();
       }
-    });
+    }
   }
 }

@@ -41,7 +41,7 @@ try {
   pieceDefintionsDb = await JSONFilePreset(getDbPath("piece-definitions.json"), emptyPieceDefinitions);
   layoutPiecesDb = await JSONFilePreset(getDbPath("layout-pieces.json"), emptyLayoutPieces);
   layoutNodesDb = await JSONFilePreset(getDbPath("layout-nodes.json"), emptyLayoutNodes);
-
+  initNodes();
 } catch (error) {
   const message = "Error initializing DBs";
   console.error(message, error);
@@ -51,6 +51,15 @@ try {
 // Return the db path for a given db json file name
 function getDbPath(fileName: string): string {
   return path.resolve("db",  fileName);
+}
+
+/**
+ * Add a single node if the layout has no nodes
+ */
+function initNodes(): void {
+  if (Object.keys(layoutNodesDb.data.nodes).length == 0) {
+    layoutNodesDb.data.nodes[0] = {"coordinate": {"x": 100, "y": 100}};
+  }
 }
 
 /**

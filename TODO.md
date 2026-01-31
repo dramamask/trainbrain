@@ -1,17 +1,13 @@
 # TODO
 
-- When deleting the last track piece, don't allow the last node to be deleted. Why is this not caught by the node factory right now? Are the nodes deleted without the knowledge of the nodeFactory? Also, node factory should not throw an error, but just silently disallow it if it's part of a piece delete.
-- Make it so we can delete with a node, because right now i cannot delete a 150 long piece because the nodes are too big and cover the piece directly. Maybe just make a temp version where we can select two nodes around a single piece only.
-- Auto add 0 node when we load the applicaiton and there is no 0 node.
-- Auto connect two nodes if they are on the same coordinate (within x millimeters)
-- Add the PieceDefId to the UI layout data.
+- Zoom on layout map when mouse scroll is used. Make mouse pointer position the zoom focal point.
+- Start working on switches.
+- Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
 - Show piece and node ID and other info somewhere when we hover over the piece or node.
-- Remove category and attribtues from the LayoutUiData pieces data. We don't need it if we have the pieceDefId.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Add the world size to the layout json file.
 - Add protection so you can't move the layout outside of the world size.
 - Work on indicating track pieces that are close together but are not connected.
-- Start working on a switch. Lookup the specs online. Are there different angles? What are the measurements? We may have to change the connections model.
 - Start working on an intersection piece (a cross).
 - Create API to show the trian position. How do we want to show it on the map (SVG I presume). What info do we need
   from the back-end for that (just coordinates?).
@@ -24,10 +20,8 @@
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
   Make it configurable as pixels per millimeter or something.
-- Remove scrollbars when zoomFactor is 1.
+- Remove scrollbars when zoomFactor is 1?
 - Make the scroll bars more like oem, with arrows at the top and bottom
-- Zoom on layout map when mouse scroll is used. Make mouse pointer position the zoom focal point.
-- Expand zoom functionality to take up the entire window. Add pan controls. Add zoom controls.
 - Add layout map inside a MUI Card
 - combine layout-nodes and layout-piece.json so we can have more atomic saves.
 - Make cards collapsable where there's only a title bar visible.
@@ -35,3 +29,4 @@
 - Add OTEL Collector to sit in between server and Jaeger.
 - Create a pieceFactory class.
 - Reorganizie "shared" project folder section with different files to organize it better.
+- change edit mode pieces to be similar as regular mode with "use" and "symbol"
