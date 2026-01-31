@@ -4,7 +4,7 @@
  */
 export default function CurveR600A30() {
   return (
-    <symbol id="curveR600A30" viewBox="0 0 644 312">
+    <symbol id="curveR600A15" viewBox="0 0 644 312">
       <g
         stroke="yellow"
         strokeWidth="2"
@@ -17,12 +17,6 @@ export default function CurveR600A30() {
         <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-8.75 644 0)" />
         <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-11.25 644 0)" />
         <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-13.75 644 0)" />
-        <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-16.25 644 0)" />
-        <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-18.75 644 0)" />
-        <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-21.25 644 0)" />
-        <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-23.75 644 0)" />
-        <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-26.25 644 0)" />
-        <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-28.75 644 0)" />
 
         {/* Rails
             M = Move: x, y
@@ -35,11 +29,11 @@ export default function CurveR600A30() {
         */}
         <path
           className="rail"
-          d="M 67 0 A 579 579 0 0 0 144.6 289.5"
+          d="M 67 0 A 579 579 0 0 0 86.7 149.9"
         />
         <path
           className="rail"
-          d="M 21 0 A 621 621 0 0 0 104.2 311.5"
+          d="M 21 0 A 621 621 0 0 0 42.2 160.7"
         />
       </g>
     </symbol>

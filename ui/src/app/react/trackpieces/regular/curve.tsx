@@ -30,7 +30,7 @@ export default function Curve({piece}: props) {
       id={piece.id}
       className={styles.trackpiece + " " +  getTrackPieceContainerClassName()}
       href={getSymbol(radius, angle)}
-      height={644}
+      height={312}
       width={644}
       style={{
         "--rail-color": config.RAIL_COLOR,

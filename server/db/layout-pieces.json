@@ -28,6 +28,32 @@
           "node": "2"
         }
       }
+    },
+    "2": {
+      "pieceDefId": "LGB 1102 (R1)",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "2"
+        },
+        "end": {
+          "heading": 195,
+          "node": "3"
+        }
+      }
+    },
+    "3": {
+      "pieceDefId": "LGB 1060",
+      "connectors": {
+        "start": {
+          "heading": 15,
+          "node": "3"
+        },
+        "end": {
+          "heading": 195,
+          "node": "4"
+        }
+      }
     }
   }
 }
