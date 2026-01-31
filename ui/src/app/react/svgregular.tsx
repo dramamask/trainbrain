@@ -1,17 +1,13 @@
 import { useSyncExternalStore } from "react";
-import type { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
-import Curve from "./trackpieces/curve";
-import Node from "./trackpieces/node";
+import type { UiLayout, UiLayoutPiece } from "trainbrain-shared";
 import Defs from "./trackpieces/regular/symbols/defs";
-import * as config from "@/app/config/config";
 import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
-import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
+import Curve from "./trackpieces/regular/curve";
 import Straight from "./trackpieces/regular/straight";
-
-import styles from  "./trackpieces/regular/trackpiece.module.css";
+import Unknown from "./trackpieces/regular/unknown";
 
 interface props {
   worldWidth: number;
@@ -55,6 +51,11 @@ function renderPieces(layout: UiLayout) {
   return null;
 }
 
+// Returns true if the track layout is available
+function isLayoutAvailable(layout: UiLayout) {
+  return (Object.keys(layout).length != 0);
+}
+
 // Get the React component associated with the track piece
 function getTrackPieceComponent(piece: UiLayoutPiece) {
   switch (piece.category) {
@@ -63,26 +64,10 @@ function getTrackPieceComponent(piece: UiLayoutPiece) {
     case "curve":
       return <Curve piece={piece} key={piece.id} />;
     default:
-      return null;
+      return <Unknown piece={piece} key={piece.id} />;
   }
 }
 
-// Render the nodes in the layout
-function renderNodes(layout: UiLayout) {
-  if (isLayoutAvailable(layout)) {
-    return (
-      // Iterate over the track layout and render each piece
-      layout.nodes.map(
-        (node: UiLayoutNode) => <Node node={node} key={node.id} />
-      )
-    )
-  }
-  return null;
-}
 
-// Returns true if the track layout is available
-function isLayoutAvailable(layout: UiLayout) {
-  return (Object.keys(layout).length != 0);
-}
 
 

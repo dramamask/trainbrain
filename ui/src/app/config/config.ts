@@ -5,7 +5,7 @@
 const COLOR1 = "#FFD700";
 const COLOR1_HIGHLIGHT = "white";
 const COLOR2_HIGHLIGHT = "red";
-const GOLD = "#ecbf2b";
+const GOLD = "#FFD700";
 const OAK = "#6F5339";
 
 // Track drawing

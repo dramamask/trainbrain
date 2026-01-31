@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { UiAttributesDataStraight, UiLayoutPiece } from "trainbrain-shared";
+import { UiAttributesDataCurve, UiLayoutPiece } from "trainbrain-shared";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import * as config from "@/app/config/config";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
@@ -9,35 +9,36 @@ import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
 
 import styles from  "./trackpiece.module.css";
 
-const PIECE_WIDTH = 88;
+const PIECE_WIDTH = 800;
 
 interface props {
   piece: UiLayoutPiece;
 }
 
 // Straight track piece component
-export default function Straight({piece}: props) {
+export default function Curve({piece}: props) {
   const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
 
   const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutState.trackLayout).coordinate;
   const heading = piece.startHeading;
-  const length = (piece.attributes as UiAttributesDataStraight).length;
+  const radius = (piece.attributes as UiAttributesDataCurve).radius;
+  const angle = (piece.attributes as UiAttributesDataCurve).angle;
 
   // Render the component
   return (
     <use
       id={piece.id}
       className={styles.trackpiece + " " +  getTrackPieceContainerClassName()}
-      href={getSymbol(length)}
-      height={length}
-      width={88}
+      href={getSymbol(radius, angle)}
+      height={800}
+      width={800}
       style={{
         "--rail-color": config.RAIL_COLOR,
         "--rail-width": config.RAIL_WIDTH,
         "--sleeper-color": config.SLEEPER_COLOR,
         "--sleeper-width": config.SLEEPER_WIDTH,
       } as React.CSSProperties }
-      transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-${PIECE_WIDTH / 2} 0)`}
+      transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-690 -55)`}
     />
 
     // We move the piece to its start coordiante.
@@ -53,7 +54,6 @@ export default function Straight({piece}: props) {
  *
  * @returns symbol name
  */
-function getSymbol(length: number) {
-  return "#straight" + length
-
+function getSymbol(radius: number, angle: number) {
+  return "#curveR" + radius + "A" + angle;
 }
