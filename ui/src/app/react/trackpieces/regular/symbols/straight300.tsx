@@ -17,7 +17,7 @@ export default function Straight300() {
         <line className="sleeper" x1="0" y1="249" x2="88" y2="249" />
         <line className="sleeper" x1="0" y1="276" x2="88" y2="276" />
         <line className="rail" x1="21" y1="0" x2="21" y2="300" />
-        <line className="rail" x1="69" y1="0" x2="69" y2="300" />
+        <line className="rail" x1="67" y1="0" x2="67" y2="300" />
       </g>
     </symbol>
   )

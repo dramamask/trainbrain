@@ -9,7 +9,7 @@ import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
 
 import styles from  "./trackpiece.module.css";
 
-const PIECE_WIDTH = 800;
+const TRACK_WIDTH = 88;
 
 interface props {
   piece: UiLayoutPiece;
@@ -30,15 +30,15 @@ export default function Curve({piece}: props) {
       id={piece.id}
       className={styles.trackpiece + " " +  getTrackPieceContainerClassName()}
       href={getSymbol(radius, angle)}
-      height={800}
-      width={800}
+      height={644}
+      width={644}
       style={{
         "--rail-color": config.RAIL_COLOR,
         "--rail-width": config.RAIL_WIDTH,
         "--sleeper-color": config.SLEEPER_COLOR,
         "--sleeper-width": config.SLEEPER_WIDTH,
       } as React.CSSProperties }
-      transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-690 -55)`}
+      transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-${TRACK_WIDTH / 2} 0)`}
     />
 
     // We move the piece to its start coordiante.

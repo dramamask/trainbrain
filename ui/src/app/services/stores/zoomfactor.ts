@@ -1,6 +1,6 @@
 "use client";
 
-export const MAX_ZOOM_FACTOR: number = 10;
+export const MAX_ZOOM_FACTOR: number = 20;
 
 interface State {
   zoomFactor: number;
