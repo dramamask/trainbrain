@@ -1,11 +1,11 @@
 "use client";
 
 interface State {
-  x: number;
-  y: number;
+  x: number | undefined;
+  y: number | undefined;
 }
 
-let state: State = { x: 0, y: 0 };
+let state: State = { x: undefined, y: undefined };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -35,4 +35,25 @@ export const store = {
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
+
+  setMouseHasLeft(): void {
+    const newState = { x: undefined, y: undefined };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  }
 };
+
+/**
+ * Helper function to know if the mouse is in the viewbox, and return the mouse x and y position if it is.
+ *
+ * @param {State} state - The mousePos store state
+ */
+export function getMousePos(state: State): ({mouseInViewBox: boolean, x: number, y: number}) {
+  if (state.x == undefined || state.y == undefined) {
+    return {mouseInViewBox: false, x: 0, y: 0};
+  }
+
+  return {mouseInViewBox: true, x: state.x, y: state.y};
+}

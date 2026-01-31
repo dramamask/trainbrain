@@ -5,7 +5,7 @@ import { store as selectionStore } from "@/app/services/stores/selection";
 import * as config from "@/app/config/config";
 import { getNodeClassName } from "@/app/services/cssclassnames";
 import { degreesToRadians } from "@/app/services/math";
-import DeadEnd from "@/app/react/trackpieces/editmode/components/deadend";
+import DeadEnd from "@/app/react/tracklayout/editmode/components/deadend";
 
 import styles from "./node.module.css";
 

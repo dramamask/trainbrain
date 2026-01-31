@@ -41,19 +41,19 @@ export const store = {
   },
 
   zoomIn(): void {
-  const newState = {zoomFactor: getNextZoomFactorUp(state.zoomFactor)}
-  // Immutable update
-  state = newState;
-  // Notify React/listeners
-  listeners.forEach((callback) => callback());
+    const newState = {zoomFactor: getNextZoomFactorUp(state.zoomFactor)}
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
   },
 
   zoomOut(): void {
-  const newState = {zoomFactor: getNextZoomFactorDown(state.zoomFactor)}
-  // Immutable update
-  state = newState;
-  // Notify React/listeners
-  listeners.forEach((callback) => callback());
+    const newState = {zoomFactor: getNextZoomFactorDown(state.zoomFactor)}
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
   },
 };
 

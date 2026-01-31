@@ -13,9 +13,9 @@ import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
 import Scrollbar from "./scrollbar";
 
-import styles from "./tracklayout.module.css";
-import EditModeLayout from "./trackpieces/editmode/layout";
-import RegularLayout from "./trackpieces/regular/layout";
+import styles from "./trackmap.module.css";
+import EditModeLayout from "./tracklayout/editmode/layout";
+import RegularLayout from "./tracklayout/regular/layout";
 
 export default function TrackLayout()
 {
@@ -61,7 +61,7 @@ export default function TrackLayout()
   // Get the css style object for the background image
   const divStyle = getBackgroundImageStyle(scrollState.xScrollPercent, scrollState.yScrollPercent, zoomState.zoomFactor);
 
-  // Render the track layout (and any error message if present)
+  // Render the track map, which is the track layout with scrollbars, and the error modal window
   // Note that the coordinates represent mm in real life
   return (
     <Stack direction="row">

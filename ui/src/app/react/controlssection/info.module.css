@@ -1,3 +1,14 @@
 .card {
   width: 100%;
 }
+
+.mousePos {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  line-height: 12px;
+  padding-left: 3px;
+  white-space: pre-wrap;
+}
+
+.comma {
+  padding-right: 10px;
+}

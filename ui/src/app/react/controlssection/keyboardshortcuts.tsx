@@ -1,7 +1,7 @@
 import { JSX } from "@emotion/react/jsx-runtime";
 import { capitalCase } from "change-case";
 import { Card, CardContent, Grid, Stack } from "@mui/material";
-import { KEYS, UI_CATEGORY } from "@/app/services/keyeventhandlers/keydefinitions";
+import { KEYS, UI_CATEGORY } from "@/app/services/eventhandlers/keyeventhandlers/keydefinitions";
 
 import styles from "./keyboardshortcuts.module.css"
 import csStyles from "./controlssection.module.css";

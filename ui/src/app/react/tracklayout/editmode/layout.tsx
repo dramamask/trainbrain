@@ -9,7 +9,9 @@ import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { getNodeClassName, getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
-import { moveHandler } from "@/app/services/svgmousemovehandler";
+import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
+import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
+import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
 
 interface props {
   worldWidth: number;
@@ -33,6 +35,8 @@ export default function SvgEditMode({worldWidth, worldHeight}: props)
       preserveAspectRatio="xMinYMax slice"
       onClick={handleSvgClick}
       onMouseMove={moveHandler}
+      onMouseLeave={leaveHandler}
+      onWheel={wheelHandler}
     >
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>

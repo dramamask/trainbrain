@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 
-import * as editMode from "@/app/services/keyeventhandlers/editmode";
-import * as error from "@/app/services/keyeventhandlers/error";
-import * as zoom from "@/app/services/keyeventhandlers/zoom";
+import * as editMode from "@/app/services/eventhandlers/keyeventhandlers/editmode";
+import * as error from "@/app/services/eventhandlers/keyeventhandlers/error";
+import * as zoom from "@/app/services/eventhandlers/keyeventhandlers/zoom";
 
 export default function KeyBoardEventHandler() {
   useEffect(() => {

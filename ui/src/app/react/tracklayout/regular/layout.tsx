@@ -5,10 +5,12 @@ import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
-import { moveHandler } from "@/app/services/svgmousemovehandler";
+import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
+import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
 import Curve from "./curve";
 import Straight from "./straight";
 import Unknown from "./unknown";
+import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
 
 interface props {
   worldWidth: number;
@@ -30,6 +32,8 @@ export default function SvgRegular({worldWidth, worldHeight}: props)
       viewBox={viewBox}
       preserveAspectRatio="xMinYMax slice"
       onMouseMove={moveHandler}
+      onMouseLeave={leaveHandler}
+      onWheel={wheelHandler}
     >
       <Defs />
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}

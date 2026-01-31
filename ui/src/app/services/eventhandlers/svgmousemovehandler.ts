@@ -1,6 +1,9 @@
 import {store as mousePosStore} from "@/app/services/stores/mousepos";
 
-export const moveHandler = (e: React.MouseEvent<SVGSVGElement>) => {
+/**
+ * Mouse move handler for mouse moves inside an SVG component
+ */
+export function moveHandler(e: React.MouseEvent<SVGSVGElement>) {
   const svg = e.currentTarget;
   const point = svg.createSVGPoint();
   point.x = e.clientX;
