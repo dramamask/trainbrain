@@ -1,10 +1,10 @@
 /**
- * SVG object definition for a 600mm radius, 30° curved piece
+ * SVG object definition for a 600mm radius, 15° curved piece
  * Radius is measured through the centre of the track
  */
-export default function CurveR600A30() {
+export default function CurveR600A15() {
   return (
-    <symbol id="curveR600A15" viewBox="0 0 644 312">
+    <symbol id="curveR600A15" viewBox="0 0 644 161">
       <g
         stroke="yellow"
         strokeWidth="2"

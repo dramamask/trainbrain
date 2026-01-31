@@ -67,7 +67,3 @@ function getTrackPieceComponent(piece: UiLayoutPiece) {
       return <Unknown piece={piece} key={piece.id} />;
   }
 }
-
-
-
-
