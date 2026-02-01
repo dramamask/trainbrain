@@ -7,10 +7,12 @@ import Error from "./error";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as editModeStore } from "../services/stores/editmode";
 import { store as errorStore } from "@/app/services/stores/error";
-import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
+import { store as mousePosStore, getMousePos } from "@/app/services/stores/mousepos";
 import { store as scrollStore } from "@/app/services/stores/scroll";
+import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
-import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
+import { getBackgroundImageStyle as getBgStyleScrollbar } from "../services/zoom/scrollbar/backgroundimage";
+import { getBackgroundImageStyle as getBgStyleFocalPoint } from "../services/zoom/worldfocalpoint/backgroundimage";
 import Scrollbar from "./scrollbar";
 
 import styles from "./trackmap.module.css";
@@ -59,7 +61,15 @@ export default function TrackLayout()
   const worldWidth = 13130; // Milimeters
 
   // Get the css style object for the background image
-  const divStyle = getBackgroundImageStyle(scrollState.xScrollPercent, scrollState.yScrollPercent, zoomState.zoomFactor);
+  let divStyle = {};
+  if (zoomState.scrollWheelZoomed) {
+    const {mouseInViewBox, x, y} = getMousePos(mousePosStore.getSnapshot());
+    if (mouseInViewBox) {
+      divStyle = getBgStyleFocalPoint(x, y, worldWidth, worldHeight, zoomState.zoomFactor);
+    }
+  } else {
+    divStyle = getBgStyleScrollbar(scrollState.xScrollPercent, scrollState.yScrollPercent, zoomState.zoomFactor);
+  }
 
   // Render the track map, which is the track layout with scrollbars, and the error modal window
   // Note that the coordinates represent mm in real life

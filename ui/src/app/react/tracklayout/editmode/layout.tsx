@@ -12,7 +12,7 @@ import { getNodeClassName, getTrackPieceContainerClassName } from "@/app/service
 import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
 import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
 import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
-import { enterHandler } from "@/app/services/eventhandlers/mouseentrhandler";
+import { enterHandler } from "@/app/services/eventhandlers/mouseenterhandler";
 
 interface props {
   worldWidth: number;

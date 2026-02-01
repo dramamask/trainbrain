@@ -11,8 +11,8 @@ export function wheelHandler (e: React.WheelEvent<SVGSVGElement>) {
   const direction = e.deltaY > 0 ? DOWN : UP;
 
   if (direction == UP) {
-    zoomStore.zoomIn()
+    zoomStore.zoomIn(true);
   } else {
-    zoomStore.zoomOut()
+    zoomStore.zoomOut(true);
   }
 };

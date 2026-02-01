@@ -11,7 +11,7 @@ import Curve from "./curve";
 import Straight from "./straight";
 import Unknown from "./unknown";
 import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
-import { enterHandler } from "@/app/services/eventhandlers/mouseentrhandler";
+import { enterHandler } from "@/app/services/eventhandlers/mouseenterhandler";
 
 interface props {
   worldWidth: number;

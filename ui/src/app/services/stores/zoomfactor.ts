@@ -4,9 +4,10 @@ export const MAX_ZOOM_FACTOR: number = 20;
 
 interface State {
   zoomFactor: number;
+  scrollWheelZoomed: boolean; // True if the zoom change was triggered by the mouse scroll wheel
 }
 
-let state: State = { zoomFactor: 1 };
+let state: State = { zoomFactor: 1, scrollWheelZoomed: false };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -35,21 +36,21 @@ export const store = {
 
   setZoomFactor(value: number): void {
     // Immutable update
-    state = { zoomFactor: value };
+    state = { zoomFactor: value, scrollWheelZoomed: false };
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
 
-  zoomIn(): void {
-    const newState = {zoomFactor: getNextZoomFactorUp(state.zoomFactor)}
+  zoomIn(scrollWheelUsed: boolean = false): void {
+    const newState = {zoomFactor: getNextZoomFactorUp(state.zoomFactor), scrollWheelZoomed: scrollWheelUsed}
     // Immutable update
     state = newState;
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
 
-  zoomOut(): void {
-    const newState = {zoomFactor: getNextZoomFactorDown(state.zoomFactor)}
+  zoomOut(scrollWheelUsed: boolean = false): void {
+    const newState = {zoomFactor: getNextZoomFactorDown(state.zoomFactor), scrollWheelZoomed: scrollWheelUsed}
     // Immutable update
     state = newState;
     // Notify React/listeners
