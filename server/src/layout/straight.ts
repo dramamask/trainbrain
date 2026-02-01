@@ -6,6 +6,7 @@ import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodefactory.js";
 import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { PieceDef } from "./piecedef.js";
+import { calculateStraightCoordinate } from "../services/piece.js";
 
 // Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
@@ -62,7 +63,7 @@ export class Straight extends LayoutPiece {
     this.connectors.setHeading(oppositeSideConnectorName, oppositeSideHeading);
 
     // Calculate the coordinate for the next node
-    const nextNodeCoordinate = this.calculateCoordinate(callingNode.getCoordinate(), heading);
+    const nextNodeCoordinate = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
 
     // Call the next node
     const oppositeSideNode = this.connectors.getNode(oppositeSideConnectorName);
@@ -85,21 +86,6 @@ export class Straight extends LayoutPiece {
     span?.addEvent('update_heading_and_continue', spanInfo);
 
     oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, heading, loopProtector);
-  }
-
-  /**
-   * Calculates the coordinate and heading of one side of the track
-   * piece based on the known coordinate of the other side of the piece.
-   */
-  protected calculateCoordinate(otherCoordinate: Coordinate, heading: number): Coordinate {
-    // Calculate x and y position based on the heading of the track piece
-    const dX = this.length * Math.sin(LayoutPiece.degreesToRadians(heading));
-    const dY = this.length * Math.cos(LayoutPiece.degreesToRadians(heading));
-
-    return {
-      x: otherCoordinate.x + dX,
-      y: otherCoordinate.y + dY,
-    }
   }
 
   /**

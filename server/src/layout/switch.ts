@@ -1,27 +1,30 @@
 import { trace } from '@opentelemetry/api';
-import type { ConnectorName, Coordinate, UiAttributesDataCurve } from "trainbrain-shared";
+import type { ConnectorName, Coordinate, UiAttributesDataSwitch } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodefactory.js";
 import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { PieceDef } from "./piecedef.js";
+import { calculateStraightCoordinate } from '../services/piece.js';
 
 // Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
   angle: number;
   radius: number;
+  length: number;
 }
 
 // All connector names for this piece
-const CONNECTOR_NAMES: ConnectorName[] = ["start", "end"];
+const CONNECTOR_NAMES: ConnectorName[] = ["start", "end", "diverge"];
 
 /**
- * This is a Curved Layout piece
+ * This is a Switch Layout piece
  */
-export class Curve extends LayoutPiece {
+export class Switch extends LayoutPiece {
   protected readonly angle: number;
   protected readonly radius: number;
+  protected readonly length: number;
 
   public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
     const span = trace.getActiveSpan();
@@ -29,6 +32,7 @@ export class Curve extends LayoutPiece {
 
     this.angle = (pieceDef.getAttributes()  as PieceDefAttributes).angle;
     this.radius = (pieceDef.getAttributes()  as PieceDefAttributes).radius;
+    this.length = (pieceDef.getAttributes()  as PieceDefAttributes).length;
 
     span?.addEvent('new_piece_created', {
       'piece.id': this.getId(),
@@ -37,13 +41,15 @@ export class Curve extends LayoutPiece {
       'piece.connector.end.node': this.connectors.getNode("end").getId(),
       'piece.angle': this.angle,
       'piece.radius': this.radius,
+      'piece.length': this.length,
     });
   }
 
-  public getUiAttributes(): UiAttributesDataCurve {
+  public getUiAttributes(): UiAttributesDataSwitch {
     return {
       angle: this.angle,
       radius: this.radius,
+      length: this.length,
     };
   }
 
@@ -68,7 +74,12 @@ export class Curve extends LayoutPiece {
       });
       throw new FatalError("We should be connected to the calling node");
     }
-    const oppositeSideConnectorName = callingSideConnectorName == "start" ? "end" : "start";
+
+    // Calculate heading and coordinates of other nodes
+    if (callingSideConnectorName == "start") {
+      // Calculate the coordinate of the "end" side
+      const otherNodeCoordinate1 = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+    }
 
     // Calculate our heading and the coordinate for the next node
     let oppositeSideCoordinate: Coordinate;
@@ -111,68 +122,5 @@ export class Curve extends LayoutPiece {
     });
 
     oppositeSideNode.updateCoordinateAndContinue(this, oppositeSideCoordinate, nextPieceHeading, loopProtector);
-  }
-
-  /**
-   * Returns the end coordinate and heading of a track piece based on
-   * a known start coordinate and the current piece's definition.
-   *
-   * Note that a curve always faces right as seen from the direction going from start to end!
-   *
-   * @param startCoordinate The start coordinate of this piece
-   * @param startHeading The start heading of this piece
-   * @returns [endCoordinate, endHeading]
-   */
-  protected calculateEndCoordinate(startCoordinate: Coordinate, startHeading: number): {coordinate: Coordinate, heading: number} {
-    // Calculate x and y position based on the angle of the track piece
-    let dX = this.radius * (1 - Math.cos(LayoutPiece.degreesToRadians(this.angle)));
-    let dY = this.radius * Math.sin(LayoutPiece.degreesToRadians(this.angle));
-
-    // Rotate the track piece to fit correctly on the end of the previous piece
-    const rotated = LayoutPiece.rotatePoint(dX, dY, startHeading);
-    dX = rotated.x;
-    dY = rotated.y;
-
-    // Assign the x, y and heading based on the previous calculations
-    return ({
-      coordinate: {
-        x: startCoordinate.x + dX,
-        y: startCoordinate.y + dY,
-      },
-      heading: startHeading + this.angle + 180,
-    })
-  }
-
-  /**
-   * Returns the start coordinate and heading of a track piece based on
-   * a known end coordinate and the current piece's definition.
-   *
-   * Note that a curve always faces right as seen from the direction going from start to end!
-   *
-   * @param endCoordinate The start coordinate of this piece
-   * @param endHeading The start heading of this piece
-   * @returns [startCoordinate, startHeading]
-   */
-  protected calculateStartCoordinate(endCoordinate: Coordinate, endHeading: number): {coordinate: Coordinate, heading: number} {
-    // Calculate x and y position based on the angle of the track piece
-    let dX = this.radius * (1 - Math.cos(LayoutPiece.degreesToRadians(this.angle)));
-    let dY = this.radius * Math.sin(LayoutPiece.degreesToRadians(this.angle));
-
-    // Invert the  x-coordinate because the piece is now facing left (start and end are reversed)
-    dX = (0 - dX);
-
-    // Rotate the track piece to fit correctly on the end of the previous piece
-    const rotated = LayoutPiece.rotatePoint(dX, dY, endHeading);
-    dX = rotated.x;
-    dY = rotated.y;
-
-    // Assign the x, y and heading based on the previous calculations
-    return ({
-      coordinate: {
-        x: endCoordinate.x + dX,
-        y: endCoordinate.y + dY,
-      },
-      heading: endHeading - this.angle + 180,
-    })
   }
 }

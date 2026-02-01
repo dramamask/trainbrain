@@ -23,8 +23,15 @@ export interface UiAttributesDataCurve {
   angle: number;
 }
 
-// Ui Attributes is one of these types
-export type UiAttributesData = UiAttributesDataStraight | UiAttributesDataCurve;
+// Attributes for Switch type piece
+export interface UiAttributesDataSwitch {
+  radius: number;
+  angle: number;
+  length: number;
+}
+
+// UI Attributes is one of these types
+export type UiAttributesData = UiAttributesDataStraight | UiAttributesDataCurve | UiAttributesDataSwitch;
 
 // A list of node connection IDs for a specific layout piece
 export interface NodeConnectionsData {
