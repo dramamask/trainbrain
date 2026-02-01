@@ -12,6 +12,7 @@ import { getNodeClassName, getTrackPieceContainerClassName } from "@/app/service
 import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
 import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
 import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
+import { enterHandler } from "@/app/services/eventhandlers/mouseentrhandler";
 
 interface props {
   worldWidth: number;
@@ -36,6 +37,7 @@ export default function SvgEditMode({worldWidth, worldHeight}: props)
       onClick={handleSvgClick}
       onMouseMove={moveHandler}
       onMouseLeave={leaveHandler}
+      onMouseEnter={enterHandler}
       onWheel={wheelHandler}
     >
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}

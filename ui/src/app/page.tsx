@@ -1,6 +1,6 @@
 import { Box, Grid } from "@mui/material";
 
-import KeyboardEventHandler from "@/app/react/keyboardeventhandler";
+import GlobalEventHandlers from "@/app/react/globaleventhandlers";
 import SideBar from "@/app/react/sidebar/sidebar";
 import TrackMap from "@/app/react/trackmap";
 import ControlsSection from "@/app/react/controlssection/controlssection";
@@ -16,7 +16,7 @@ export default function Home() {
           justifyContent="flex-start"
           alignItems="stretch"
         >
-          <KeyboardEventHandler />
+          <GlobalEventHandlers />
           <Grid sx={{ width: '100px'}}>
             <SideBar />
           </Grid>

@@ -10,7 +10,9 @@ import { MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/config/config";
 import { KEYS } from "./keydefinitions";
 
 // Key Event Handler for Edit Mode
-// Note that all key event handlers need to be called from keynoardEventHandler.tsx
+//
+// ==========> All key event handlers need to be called from keyboardEventHandler.tsx <==========
+//
 export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {
     switch (event.key) {

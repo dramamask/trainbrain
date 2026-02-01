@@ -1,6 +1,7 @@
 # TODO
 
-- Display the correct mouse pos when zoomed.
+- Zoom to the mouse focal point.
+- Update the scrollbars when zooming in with the mouse wheel and using the mouse location focal point
 - Zoom on layout map when mouse scroll is used. Make mouse pointer position the zoom focal point.
 - Start working on switches.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.

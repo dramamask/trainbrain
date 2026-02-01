@@ -11,6 +11,7 @@ import Curve from "./curve";
 import Straight from "./straight";
 import Unknown from "./unknown";
 import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
+import { enterHandler } from "@/app/services/eventhandlers/mouseentrhandler";
 
 interface props {
   worldWidth: number;
@@ -33,6 +34,7 @@ export default function SvgRegular({worldWidth, worldHeight}: props)
       preserveAspectRatio="xMinYMax slice"
       onMouseMove={moveHandler}
       onMouseLeave={leaveHandler}
+      onMouseEnter={enterHandler}
       onWheel={wheelHandler}
     >
       <Defs />

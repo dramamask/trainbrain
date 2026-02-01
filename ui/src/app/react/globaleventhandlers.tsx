@@ -5,13 +5,14 @@ import { useEffect } from 'react';
 import * as editMode from "@/app/services/eventhandlers/keyeventhandlers/editmode";
 import * as error from "@/app/services/eventhandlers/keyeventhandlers/error";
 import * as zoom from "@/app/services/eventhandlers/keyeventhandlers/zoom";
+import { store as mousePosStore } from "@/app/services/stores/mousepos";
 
-export default function KeyBoardEventHandler() {
+export default function GlobalEventHandlers() {
   useEffect(() => {
+    // Keyboard event handlers
     const handleGlobalKeyDown = (event: KeyboardEvent) => {
       handleKeyDown(event)
     };
-
     window.addEventListener('keydown', handleGlobalKeyDown);
 
     // Cleanup: Remove listener when component unmounts
