@@ -88,7 +88,7 @@ function getPieceSpecificInfo(data: PieceDefData): string {
       return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm.`;
     case "switch":
       attributes = data.attributes as SwitchAttributes;
-      return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm, length: ${attributes.length} mm`;
+      return `${attributes.variant} handed, angle: ${attributes.angle}°, radius: ${attributes.radius} mm, length: ${attributes.length} mm`;
   }
 
   return "";

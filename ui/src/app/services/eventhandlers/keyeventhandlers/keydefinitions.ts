@@ -13,7 +13,7 @@ export const KEYS: KeyDefintions = {
 }
 
 export const EDIT_MODE_KEYS: KeyDefintions = {
-  DeselectLayoutElement: 'Escape',
+  DeselectLayoutPiece: 'Escape',
   DeleteLayoutPiece: 'Delete',
   RotateNodeRight: ']',
   RotateNodeLeft: '[',

@@ -1,18 +1,19 @@
 import { trace } from '@opentelemetry/api';
-import type { ConnectorName, Coordinate, UiAttributesDataSwitch } from "trainbrain-shared";
+import type { ConnectorName, Coordinate, SwitchVariant, UiAttributesDataSwitch } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 import { NodeFactory } from "./nodefactory.js";
 import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { PieceDef } from "./piecedef.js";
-import { calculateStraightCoordinate } from '../services/piece.js';
+import { calculateStraightCoordinate, calculateCurveCoordinate } from '../services/piece.js';
 
 // Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
   angle: number;
   radius: number;
   length: number;
+  variant: SwitchVariant;
 }
 
 // All connector names for this piece
@@ -25,6 +26,7 @@ export class Switch extends LayoutPiece {
   protected readonly angle: number;
   protected readonly radius: number;
   protected readonly length: number;
+  protected readonly variant: SwitchVariant;
 
   public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
     const span = trace.getActiveSpan();
@@ -33,6 +35,7 @@ export class Switch extends LayoutPiece {
     this.angle = (pieceDef.getAttributes()  as PieceDefAttributes).angle;
     this.radius = (pieceDef.getAttributes()  as PieceDefAttributes).radius;
     this.length = (pieceDef.getAttributes()  as PieceDefAttributes).length;
+    this.variant = (pieceDef.getAttributes()  as PieceDefAttributes).variant;
 
     span?.addEvent('new_piece_created', {
       'piece.id': this.getId(),
@@ -50,15 +53,14 @@ export class Switch extends LayoutPiece {
       angle: this.angle,
       radius: this.radius,
       length: this.length,
+      variant: this.variant,
     };
   }
 
   public updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void {
-    const span = trace.getActiveSpan();
-
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
-      span?.addEvent('loop_protector_hit', { 'piece.id': this.getId() });
+       trace.getActiveSpan()?.addEvent('loop_protector_hit', this.getSpanInfo());
       return;
     }
     this.loopProtector = loopProtector;
@@ -66,61 +68,80 @@ export class Switch extends LayoutPiece {
     // Figure out which side of the piece the call is coming from
     const callingSideConnectorName = this.connectors.getConnectorName(callingNode);
     if (callingSideConnectorName === undefined) {
-      span?.addEvent('not_connected_to_calling_node', {
-        'piece.id': this.getId(),
-        'callingnode.id': callingNode.getId(),
-        'piece.connector.start.node': this.connectors.getNode("start").getId(),
-        'piece.connector.end.node': this.connectors.getNode("end").getId(),
-      });
+      trace.getActiveSpan()?.addEvent('not_connected_to_calling_node', this.getSpanInfo());
       throw new FatalError("We should be connected to the calling node");
     }
 
     // Calculate heading and coordinates of other nodes
+    const coordinates: Record<ConnectorName, Coordinate> = [];
+    const headings: Record<ConnectorName, number> = [];
+    let toBeCalled: ConnectorName[] = [];
     if (callingSideConnectorName == "start") {
+      coordinates["start"] = callingNode.getCoordinate();
+      headings["start"] = heading;
+      toBeCalled = ["end", "diverge"];
       // Calculate the coordinate of the "end" side
-      const otherNodeCoordinate1 = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      endSideNodeCoordiante = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      endSideHeading = -heading;
+      // Calculate the coordinate of the "diverge" side
+      const result = calculateCurveCoordinate(
+        callingNode.getCoordinate(),
+        heading,
+        this.angle,
+        this.radius,
+        this.variant,
+      );
+      divergeSideNodeCoordinate = result.coordinate;
+      divergeSideHeading = result.heading;
     }
 
-    // Calculate our heading and the coordinate for the next node
-    let oppositeSideCoordinate: Coordinate;
-    let oppositeSideHeading : number;
+    if (callingSideConnectorName == "end") {
+      endSideNodeCoordiante = callingNode.getCoordinate();
+      endSideHeading = heading;
+      toBeCalled = ["start", "diverge"];
+      // Calculate the coordinate of the "start" side
+      startSideNodeCoordinate = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      startSideHeading = -heading;
+      // Calculate the coordinate of the "diverge" side
+      const result = calculateCurveCoordinate(
+        startSideNodeCoordinate,
+        startSideHeading,
+        this.angle,
+        this.radius,
+        this.variant,
+      );
+      divergeSideNodeCoordinate = result.coordinate;
+      divergeSideHeading = result.heading;
+    }
 
-    if (callingSideConnectorName === "start") {
-      const result = this.calculateEndCoordinate(callingNode.getCoordinate(), heading);
-      oppositeSideCoordinate = result.coordinate;
-      oppositeSideHeading = result.heading;
-    } else {
-      const result = this.calculateStartCoordinate(callingNode.getCoordinate(), heading);
-      oppositeSideCoordinate = result.coordinate;
-      oppositeSideHeading = result.heading;
+    if (callingSideConnectorName == "diverge") {
+      divergeSideNodeCoordinate = callingNode.getCoordinate();
+      divergeSideHeading = heading;
+      toBeCalled = ["start", "end"];
+      // Calculate the coordinate of the "start" side
+      const result = calculateCurveCoordinate(
+        callingNode.getCoordinate(),
+        heading,
+        this.angle,
+        this.radius,
+        this.variant == "right" ? "left" : "right",
+      );
+      startSideNodeCoordinate = result.coordinate;
+      startSideHeading = result.heading;
+      // Calculate the coordinate of the "end" side
+      endSideNodeCoordiante = calculateStraightCoordinate(startSideNodeCoordinate, this.length, heading);
+      endSideHeading = -startSideHeading;
     }
 
     // Update our heading
-    this.connectors.setHeading(callingSideConnectorName, heading);
-    this.connectors.setHeading(oppositeSideConnectorName, oppositeSideHeading);
+    this.connectors.setHeading("start", startSideHeading as number);
+    this.connectors.setHeading("end", endSideHeading as number);
+    this.connectors.setHeading("diverge", divergeSideHeading as number);
 
-    // Call the next node
-    const oppositeSideNode = this.connectors.getNode(oppositeSideConnectorName);
-    const nextPieceHeading = oppositeSideHeading + 180; // Their heading will be facing the opposite site (heading always faces into the piece)
-
-    span?.addEvent('update_heading_and_continue', {
-      'piece.id': this.getId(),
-      'calling_node.id': callingNode.getId(),
-      'received_heading': heading,
-      'calling_side.connector.name': callingSideConnectorName,
-      'calling_side.connector.heading': heading,
-      'opposite_side.connector.name': oppositeSideConnectorName,
-      'opposite_side.connector.heading': heading,
-      'piece.connector.start.node': this.connectors.getNode("start").getId(),
-      'piece.connector.start.heading': this.connectors.getNode("start").getId(),
-      'piece.connector.end.node': this.connectors.getNode("end").getId(),
-      'piece.connector.end.heading': this.connectors.getNode("start").getId(),
-      'next_node_to_call.id': oppositeSideNode.getId(),
-      'next_coordiante.x': oppositeSideCoordinate.x,
-      'next_coordiante.y': oppositeSideCoordinate.x,
-      'next_heading': nextPieceHeading,
-    });
-
-    oppositeSideNode.updateCoordinateAndContinue(this, oppositeSideCoordinate, nextPieceHeading, loopProtector);
+    // Call the nodes on the other sides
+    toBeCalled.forEach(connectorName => {
+      const node = this.connectors.getNode(connectorName);
+      node.updateCoordinateAndContinue(this, coordinates[connectorName], headings[connectorName], loopProtector);
+    })
   }
 }

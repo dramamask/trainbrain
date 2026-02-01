@@ -39,11 +39,9 @@ export class Straight extends LayoutPiece {
   }
 
   public updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void {
-    const span = trace.getActiveSpan();
-
     // Prevent infinite loops by checking the loopProtector string
     if (this.loopProtector === loopProtector) {
-      span?.addEvent('loop_protector_hit', { 'piece.id': this.getId() });
+      trace.getActiveSpan()?.addEvent('loop_protector_hit', this.getSpanInfo());
       return;
     }
     this.loopProtector = loopProtector;
@@ -51,8 +49,7 @@ export class Straight extends LayoutPiece {
     // Figure out which side of the piece the call is coming from
     const callingSideConnectorName = this.connectors.getConnectorName(callingNode);
     if (callingSideConnectorName === undefined) {
-      const spanInfo = this.getSpanInfo();
-      span?.addEvent('not_connected_to_calling_node', spanInfo);
+      trace.getActiveSpan()?.addEvent('not_connected_to_calling_node', this.getSpanInfo());
       throw new FatalError(`Not connected to the calling node`);
     }
     const oppositeSideConnectorName = callingSideConnectorName == "start" ? "end" : "start";
@@ -67,24 +64,6 @@ export class Straight extends LayoutPiece {
 
     // Call the next node
     const oppositeSideNode = this.connectors.getNode(oppositeSideConnectorName);
-
-    const spanInfo = this.getSpanInfo();
-    spanInfo['calling_node.id'] = callingNode.getId();
-    spanInfo['received_heading'] = heading;
-    spanInfo['calling_side.connector.name'] = callingSideConnectorName;
-    spanInfo['calling_side.connector.heading'] = heading;
-    spanInfo['opposite_side.connector.name'] = oppositeSideConnectorName;
-    spanInfo['opposite_side.connector.heading'] = heading;
-    spanInfo['piece.connector.start.node'] = this.connectors.getNode("start").getId();
-    spanInfo['piece.connector.start.heading'] = this.connectors.getNode("start").getId();
-    spanInfo['piece.connector.end.node'] = this.connectors.getNode("end").getId();
-    spanInfo['piece.connector.end.heading'] = this.connectors.getNode("start").getId();
-    spanInfo['next_node_to_call.id'] = oppositeSideNode.getId();
-    spanInfo['next_coordiante.x'] = nextNodeCoordinate.x;
-    spanInfo['next_coordiante.y'] = nextNodeCoordinate.x;
-    spanInfo['next_heading'] = heading;
-    span?.addEvent('update_heading_and_continue', spanInfo);
-
     oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, heading, loopProtector);
   }
 

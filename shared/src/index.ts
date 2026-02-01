@@ -9,6 +9,9 @@ export type TrackPieceCategory = "straight" | "curve" | "switch";
 // All possible connector names
 export type ConnectorName = "start" | "end" | "diverge";
 
+// All possible switch variants
+export type SwitchVariant = "left" | "right";
+
 // List of different possible values for the dead-end indicator for a UI layout piece
 export type DeadEnd = ConnectorName[];
 
@@ -28,6 +31,7 @@ export interface UiAttributesDataSwitch {
   radius: number;
   angle: number;
   length: number;
+  variant: SwitchVariant;
 }
 
 // UI Attributes is one of these types
@@ -68,6 +72,7 @@ export interface SwitchAttributes {
   angle: number;
   radius: number;
   length: number;
+  variant: SwitchVariant;
 }
 
 // Attribtues for a curve piece def

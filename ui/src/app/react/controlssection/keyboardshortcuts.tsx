@@ -14,11 +14,11 @@ export default function KeyboardShortcuts() {
             <Grid container spacing={1}>
               <Grid size="auto">
                 <Stack>
-                  <div className={styles.category}><b>ALLWAYS:</b></div>
+                  <div className={styles.category}><b>ALWAYS:</b></div>
                   { renderKeys(KEYS) }
                   <div className={csStyles.text}><b>Mouse wheel</b></div>
                   <div className={csStyles.text}><b>Ctrl Mouse wheel</b></div>
-                  <div className={styles.category}><b>ONLY IN EDITMODE:</b></div>
+                  <div className={styles.category}><b>EDITMODE:</b></div>
                   { renderKeys(EDIT_MODE_KEYS) }
                   <div className={csStyles.text}><b>Ctrl Arrow</b></div>
                 </Stack>
