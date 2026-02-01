@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import type { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
 import Curve from "./curve";
 import Straight from "./straight";
@@ -19,8 +19,23 @@ interface props {
   worldHeight: number;
 }
 
-export default function EditModeLayout({worldWidth, worldHeight}: props)
-{
+export default function EditModeLayout({worldWidth, worldHeight}: props) {
+  // Add a mouse wheel handler. We cannot use the onWheel callback for the svg element
+  // because that one doesn't allow use to properly prevent the browser default zoom action.
+  const svgRef = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const htmlElement = svgRef.current;
+    if (htmlElement) {
+      htmlElement.addEventListener('wheel', wheelHandler, { passive: false });
+    }
+
+    return () => {
+      if (htmlElement) {
+        htmlElement.removeEventListener('wheel', wheelHandler);
+      }
+    };
+  }, []);
+
   // These hooks automatically subscribes and returns the latest snapshot
   const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);
   const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
@@ -38,7 +53,6 @@ export default function EditModeLayout({worldWidth, worldHeight}: props)
       onMouseMove={moveHandler}
       onMouseLeave={leaveHandler}
       onMouseEnter={enterHandler}
-      onWheel={wheelHandler}
     >
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>

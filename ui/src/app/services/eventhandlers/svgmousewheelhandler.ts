@@ -10,31 +10,45 @@ import { getScrollBarPercentage } from "@/app/services/zoom/scrollbar/svg";
  */
 export function wheelHandler (event: WheelEvent) {
 
-  // Scroll up: zoom in
+  // Mouse wheel UP
   if (event.deltaY < 0) {
+    // CTRL pressed? Zoom in.
     if (event.ctrlKey || event.metaKey) { // The metaKey is the Apple Mac Command key
       event.preventDefault();
       zoomStore.zoomIn(true);
+      zoomToPositionByManipulatingScrollbars();
+      return;
     }
+    // CTRL not pressed? Scroll up;
+    scrollStore.yScrollStepUp();
+    return;
   }
 
-  // Scroll down: zoom out
+  // Mouse wheel DOWN
   if (event.deltaY > 0) {
+    // CTRL pressed? Zoom down.
     if (event.ctrlKey|| event.metaKey) { // The metaKey is the Apple Mac Command key {
       event.preventDefault();
       zoomStore.zoomOut(true);
+      zoomToPositionByManipulatingScrollbars();
+      return;
     }
+    // CTRL not pressed? Scroll down;
+    scrollStore.yScrollStepDown();
+    return;
   }
 
   // Scroll right: move right
   if (event.deltaX > 0) {
+    scrollStore.xScrollStepRight();
+    return;
   }
 
   // Scroll left: move left
   if (event.deltaX < 0) {
+    scrollStore.xScrollStepLeft();
+    return;
   }
-
-  zoomToPositionByManipulatingScrollbars();
 };
 
 /**

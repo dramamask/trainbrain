@@ -1,6 +1,6 @@
 "use client";
 
-const SCROLL_STEP = 10;
+const SCROLL_STEP = 2;
 
 interface State {
   xScrollPercent: number;
@@ -46,7 +46,27 @@ export const store = {
     listeners.forEach((callback) => callback());
   },
 
-  xScrollStepRight(): {
-    setXScrollPos(state.xScrollPercent += SCROLL_STEP);
+  xScrollStepRight(): void {
+    let newScrollValue = state.xScrollPercent += SCROLL_STEP;
+    newScrollValue = Math.min(100, Math.max(0, newScrollValue));
+    this.setXScrollPos(newScrollValue);
+  },
+
+  xScrollStepLeft(): void {
+    let newScrollValue = state.xScrollPercent -= SCROLL_STEP;
+    newScrollValue = Math.min(100, Math.max(0, newScrollValue));
+    this.setXScrollPos(newScrollValue);
+  },
+
+  yScrollStepUp(): void {
+    let newScrollValue = state.yScrollPercent -= SCROLL_STEP;
+    newScrollValue = Math.min(100, Math.max(0, newScrollValue));
+    this.setYScrollPos(newScrollValue);
+  },
+
+  yScrollStepDown(): void {
+    let newScrollValue = state.yScrollPercent += SCROLL_STEP;
+    newScrollValue = Math.min(100, Math.max(0, newScrollValue));
+    this.setYScrollPos(newScrollValue);
   },
 };

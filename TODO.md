@@ -1,6 +1,5 @@
 # TODO
 
-- Mouse wheel should scroll. Ctrl- mouse wheel should zoom.
 - When I move a node don't call the API until the previous API call has returned.
 - CTRL node move should move faster.
 - Work on piece flip (formarly rotate)
