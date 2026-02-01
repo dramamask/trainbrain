@@ -1,6 +1,5 @@
 # TODO
 
-- CTRL node move should move faster.
 - When I move a node don't call the API until the previous API call has returned.
 - Work on piece flip (formarly rotate)
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.

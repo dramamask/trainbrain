@@ -6,7 +6,7 @@ import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { deleteTrackPiece, rotateTrackPiece, updateNode } from "@/app/services/api/tracklayout";
-import { MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/config/config";
+import { BIG_MOVE_INCREMENT, MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/config/config";
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
 
@@ -17,19 +17,20 @@ import { getAssociatedKeyValue } from "./helpers";
 export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {
     const keyDefValue = getAssociatedKeyValue(EDIT_MODE_KEYS, event);
+    const moveIncrement = event.ctrlKey ? BIG_MOVE_INCREMENT : MOVE_INCREMENT;
 
     switch (keyDefValue) {
       case EDIT_MODE_KEYS.MoveNodeUp:
-        handleNodeUpdate("y", MOVE_INCREMENT, 0);
+        handleNodeUpdate("y", moveIncrement, 0);
         break;
       case EDIT_MODE_KEYS.MoveNodeRight:
-        handleNodeUpdate("x", MOVE_INCREMENT, 0);
+        handleNodeUpdate("x", moveIncrement, 0);
         break;
       case EDIT_MODE_KEYS.MoveNodeDown:
-        handleNodeUpdate("y", -MOVE_INCREMENT, 0);
+        handleNodeUpdate("y", -moveIncrement, 0);
         break;
       case EDIT_MODE_KEYS.MoveNodeLeft:
-        handleNodeUpdate("x", -MOVE_INCREMENT, 0);
+        handleNodeUpdate("x", -moveIncrement, 0);
         break;
       case EDIT_MODE_KEYS.RotateNodeRight:
         handleNodeUpdate("x", 0, ROTATE_INCREMENT);

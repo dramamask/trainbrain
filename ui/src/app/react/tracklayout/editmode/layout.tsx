@@ -45,6 +45,7 @@ export default function EditModeLayout({worldWidth, worldHeight}: props) {
 
   return (
     <svg
+      ref={svgRef}
       height="100%"
       width="100%"
       viewBox={viewBox}
