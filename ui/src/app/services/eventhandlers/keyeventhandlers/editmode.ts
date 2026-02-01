@@ -10,6 +10,9 @@ import { BIG_MOVE_INCREMENT, MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/conf
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
 
+// Keep track of node update API calls so we don't have multiple going at the same time
+let nodeUpdateInProgress = false;
+
 // Key Event Handler for Edit Mode
 //
 // ==========> All key event handlers need to be called from keyboardEventHandler.tsx <==========
@@ -52,7 +55,7 @@ export function handleKeyDown(event: KeyboardEvent) {
   }
 }
 
-// Call the server API to store the new start position
+// Call the server API to store the new node position
 function handleNodeUpdate(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
   const nodeId = selectionStore.getSelectedNode();
   if (!nodeId) {
@@ -64,6 +67,12 @@ function handleNodeUpdate(axis: "x" | "y", xyIncrement: number, headingIncrement
   if (!nodeData) {
     throw new Error(`Unexpected error. Node data not found for nodeId: ${nodeId}`);
   }
+
+  // Set variable to keep track of API call in progress for updating a node
+  if (nodeUpdateInProgress) {
+    return;
+  }
+  nodeUpdateInProgress = true;
 
   // Update the node coordinate
   nodeData.coordinate[axis] += xyIncrement;
@@ -79,13 +88,15 @@ function handleNodeUpdate(axis: "x" | "y", xyIncrement: number, headingIncrement
   // Call the server's API endpoint to update the node position
   updateNode(updateNodeData)
     .then((layoutData: UiLayout) => {
+      nodeUpdateInProgress = false;
       // Update our local store with the new layout data that we received back from the server
       trackLayoutStore.setTrackLayout(layoutData);
     })
     .catch((error: Error) => {
       // The server responded back with an error
+      nodeUpdateInProgress = false;
       errorStore.setError(error.message);
-      console.error("handleKeyDown().setStartPosition() error:", error);
+      console.error(error);
     });
 }
 

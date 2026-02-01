@@ -1,9 +1,8 @@
 # TODO
 
-- When I move a node don't call the API until the previous API call has returned.
+- Start working on switches.
 - Work on piece flip (formarly rotate)
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
-- Start working on switches.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Add protection so you can't move the layout outside of the world size.
 - Work on indicating track pieces that are close together but are not connected.
