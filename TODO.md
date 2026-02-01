@@ -1,6 +1,5 @@
 # TODO
 
-- Don't select text in control section if mouse drags by ut (happens sometimes when pulling scrollbar down)
 - Start working on switches.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
 - Show piece and node ID and other info somewhere when we hover over the piece or node.

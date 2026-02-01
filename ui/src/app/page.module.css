@@ -1,5 +1,6 @@
 .mainBox {
   background: linear-gradient(to bottom, aliceblue, lightblue);
+  user-select: none;
 }
 
 .logoContainer {
