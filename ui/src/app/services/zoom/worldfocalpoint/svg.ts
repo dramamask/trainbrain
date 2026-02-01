@@ -37,6 +37,28 @@ export function getSvgViewBox(
 }
 
 /**
+ * Calculate the X value for the SVG viewBox, which is the part of the world that we are rending in the SVG element.
+ *
+ * @param {number} focalPointX - The x position of the focal point of the view window
+ * @param {number} worldWidth - The width of the world box
+ * @param {number} zoomFactor - The zoom factor. A zoomfactor of 2 is 200% zoom, etc.
+ */
+export function getSvgViewBoxX( focalPointX: number, worldWidth: number, zoomFactor: number) {
+  return getSVGViewBoxPos(focalPointX, worldWidth, zoomFactor);
+}
+
+/**
+ * Calculate the Y value for the SVG viewBox, which is the part of the world that we are rending in the SVG element.
+ *
+ * @param {number} focalPointY - The y position of the focal point of the view window
+ * @param {number} worldHeight - The height of the world box
+ * @param {number} zoomFactor - The zoom factor. A zoomfactor of 2 is 200% zoom, etc.
+ */
+export function getSvgViewBoxY( focalPointY: number, worldHeight: number, zoomFactor: number) {
+  return getSVGViewBoxPos(focalPointY, worldHeight, zoomFactor);
+}
+
+/**
  * Get the value for the viewBox x or y coordinate
  *
  * @param {number} focalPointPos - The x or y position of the focal point of the view window

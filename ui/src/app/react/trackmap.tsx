@@ -14,11 +14,19 @@ import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { getBackgroundImageStyle as getBgStyleScrollbar } from "../services/zoom/scrollbar/backgroundimage";
 import { getBackgroundImageStyle as getBgStyleFocalPoint } from "../services/zoom/worldfocalpoint/backgroundimage";
 import Scrollbar from "./scrollbar";
-
-import styles from "./trackmap.module.css";
 import EditModeLayout from "./tracklayout/editmode/layout";
 import RegularLayout from "./tracklayout/regular/layout";
 
+import styles from "./trackmap.module.css";
+
+// The size of the world box
+const worldWidth = 13130; // Milimeters
+const worldHeight = 15000; // Milimeters
+
+/**
+ * The main track layout react component.
+ * This component consists of the SVG layout, the background image, the scrollbars, and the error modal window.
+ */
 export default function TrackLayout()
 {
   // These hooks automatically subscribes and returns the latest snapshot
@@ -32,7 +40,7 @@ export default function TrackLayout()
   useEffect(() => {
     getTrackLayout()
       .then((layoutData: UiLayout) => {
-        trackLayoutStore.setTrackLayout(layoutData);
+        trackLayoutStore.setTrackLayoutAndWorldSize(layoutData, worldWidth, worldHeight);
         setLoading(false);
       })
       .catch((error: Error) => {
@@ -56,20 +64,16 @@ export default function TrackLayout()
     scrollStore.setXScrollPos(100 * factor);
   }
 
-  // The size of the world box
-  const worldHeight = 15000; // Milimeters
-  const worldWidth = 13130; // Milimeters
-
   // Get the css style object for the background image
-  let divStyle = {};
-  if (zoomState.scrollWheelZoomed) {
-    const {mouseInViewBox, x, y} = getMousePos(mousePosStore.getSnapshot());
-    if (mouseInViewBox) {
-      divStyle = getBgStyleFocalPoint(x, y, worldWidth, worldHeight, zoomState.zoomFactor);
-    }
-  } else {
-    divStyle = getBgStyleScrollbar(scrollState.xScrollPercent, scrollState.yScrollPercent, zoomState.zoomFactor);
-  }
+  // let divStyle = {};
+  // if (zoomState.scrollWheelZoomed) {
+  //   const {mouseInViewBox, x, y} = getMousePos(mousePosStore.getSnapshot());
+  //   if (mouseInViewBox) {
+  //     divStyle = getBgStyleFocalPoint(x, y, worldWidth, worldHeight, zoomState.zoomFactor);
+  //   }
+  // } else {
+    const divStyle = getBgStyleScrollbar(scrollState.xScrollPercent, scrollState.yScrollPercent, zoomState.zoomFactor);
+  // }
 
   // Render the track map, which is the track layout with scrollbars, and the error modal window
   // Note that the coordinates represent mm in real life

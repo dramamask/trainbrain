@@ -1,10 +1,8 @@
 # TODO
 
-- Test to make sure that the correct background image getBackgroundImageStyle() function is used when scrolling with the wheel. We may have a race condition. Debug it.
-- Use the correct getSvgViewBox()  function inside the edit mode and regular layout react components.
 - Zoom to the mouse focal point.
 - Update the scrollbars when zooming in with the mouse wheel and using the mouse location focal point
-- Zoom on layout map when mouse scroll is used. Make mouse pointer position the zoom focal point.
+- Don't select text in control section if mouse drags by ut (happens sometimes when pulling scrollbar down)
 - Start working on switches.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
 - Show piece and node ID and other info somewhere when we hover over the piece or node.

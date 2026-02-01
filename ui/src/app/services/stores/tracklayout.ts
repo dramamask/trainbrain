@@ -5,9 +5,11 @@ import { getLayoutNodeData } from "../tracklayout";
 
 interface State {
   trackLayout: UiLayout;
+  worldWidth: number;
+  wordlHeight: number;
 }
 
-let state: State = { trackLayout: <UiLayout>{} };
+let state: State = { trackLayout: <UiLayout>{}, worldWidth: 0, wordlHeight: 0 };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -31,8 +33,17 @@ export const store = {
   },
 
   setTrackLayout(value: UiLayout): void {
+    const newState = { trackLayout: value, worldWidth: state.worldWidth, wordlHeight: state.wordlHeight };
     // Immutable update
-    state = { trackLayout: value };
+    state = newState
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
+  },
+
+  setTrackLayoutAndWorldSize(layout: UiLayout, width: number, height: number): void {
+    const newState = { trackLayout: layout, worldWidth: width, wordlHeight: height };
+    // Immutable update
+    state = newState
     // Notify React/listeners
     listeners.forEach((callback) => callback());
   },
@@ -51,5 +62,9 @@ export const store = {
 
   getLayoutNodeData(nodeId: string): UiLayoutNode {
     return getLayoutNodeData(nodeId, state.trackLayout);
+  },
+
+  getWorldSize(): {worldWidth: number, worldHeight: number} {
+    return {worldWidth: state.worldWidth, worldHeight: state.wordlHeight}
   },
 };
