@@ -5,20 +5,33 @@ import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { getSVGViewBoxPos } from "@/app/services/zoom/worldfocalpoint/svg";
 import { getScrollBarPercentage } from "@/app/services/zoom/scrollbar/svg";
 
-const UP = -1;
-const DOWN = 1;
-
 /**
  * Mouse Wheel event handler for use inside an SVG component
  */
-export function wheelHandler (e: React.WheelEvent<SVGSVGElement>) {
-  // deltaY is negative when scrolling up, positive when scrolling down
-  const direction = e.deltaY > 0 ? DOWN : UP;
+export function wheelHandler (event: WheelEvent) {
 
-  if (direction == UP) {
-    zoomStore.zoomIn(true);
-  } else {
-    zoomStore.zoomOut(true);
+  // Scroll up: zoom in
+  if (event.deltaY < 0) {
+    if (event.ctrlKey || event.metaKey) { // The metaKey is the Apple Mac Command key
+      event.preventDefault();
+      zoomStore.zoomIn(true);
+    }
+  }
+
+  // Scroll down: zoom out
+  if (event.deltaY > 0) {
+    if (event.ctrlKey|| event.metaKey) { // The metaKey is the Apple Mac Command key {
+      event.preventDefault();
+      zoomStore.zoomOut(true);
+    }
+  }
+
+  // Scroll right: move right
+  if (event.deltaX > 0) {
+  }
+
+  // Scroll left: move left
+  if (event.deltaX < 0) {
   }
 
   zoomToPositionByManipulatingScrollbars();

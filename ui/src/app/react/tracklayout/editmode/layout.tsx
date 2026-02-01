@@ -54,27 +54,27 @@ export default function EditModeLayout({worldWidth, worldHeight}: props)
  * Handle click events from inside the SVG
  */
 const handleSvgClick = (event: React.MouseEvent<SVGSVGElement>) => {
-    const target = event.target as SVGElement;
+  const target = event.target as SVGElement;
 
-    // Select the node if the target is a node
-    if (target.classList.contains(getNodeClassName())) {
-      selectionStore.toggleOrSetSelectedNode(target.id);
-      return;
-    }
-
-    // If the target is something else, find the track piece container that it is part of
-    const group = (event.target as Element).closest("." + getTrackPieceContainerClassName()) as SVGElement;
-
-    // Select the track piece if the target is a track piece container
-    if (group) {
-      selectionStore.toggleOrSetSelectedLayoutPiece(group.id);
-      return;
-    }
-
-    // Deselect everything because we clicked on something other than a node or a track piece
-    selectionStore.deselectAll();
+  // Select the node if the target is a node
+  if (target.classList.contains(getNodeClassName())) {
+    selectionStore.toggleOrSetSelectedNode(target.id);
     return;
   }
+
+  // If the target is something else, find the track piece container that it is part of
+  const group = (event.target as Element).closest("." + getTrackPieceContainerClassName()) as SVGElement;
+
+  // Select the track piece if the target is a track piece container
+  if (group) {
+    selectionStore.toggleOrSetSelectedLayoutPiece(group.id);
+    return;
+  }
+
+  // Deselect everything because we clicked on something other than a node or a track piece
+  selectionStore.deselectAll();
+  return;
+}
 
 /**
  * Render the track pieces in the layout

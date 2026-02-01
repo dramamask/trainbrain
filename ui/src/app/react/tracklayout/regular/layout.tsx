@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import type { UiLayout, UiLayoutPiece } from "trainbrain-shared";
 import Defs from "./symbols/defs";
 import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
@@ -18,8 +18,23 @@ interface props {
   worldHeight: number;
 }
 
-export default function RegularModeLayout({worldWidth, worldHeight}: props)
-{
+export default function RegularModeLayout({worldWidth, worldHeight}: props) {
+  // Add a mouse wheel handler. We cannot use the onWheel callback for the svg element
+  // because that one doesn't allow use to properly prevent the browser default zoom action.
+  const svgRef = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const htmlElement = svgRef.current;
+    if (htmlElement) {
+      htmlElement.addEventListener('wheel', wheelHandler, { passive: false });
+    }
+
+    return () => {
+      if (htmlElement) {
+        htmlElement.removeEventListener('wheel', wheelHandler);
+      }
+    };
+  }, []);
+
   // These hooks automatically subscribes and returns the latest snapshot
   const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);
   const zoomState = useSyncExternalStore(zoomStore.subscribe, zoomStore.getSnapshot, zoomStore.getServerSnapshot);
@@ -28,6 +43,7 @@ export default function RegularModeLayout({worldWidth, worldHeight}: props)
 
   return (
     <svg
+      ref={svgRef}
       height="100%"
       width="100%"
       viewBox={viewBox}
@@ -35,7 +51,6 @@ export default function RegularModeLayout({worldWidth, worldHeight}: props)
       onMouseMove={moveHandler}
       onMouseLeave={leaveHandler}
       onMouseEnter={enterHandler}
-      onWheel={wheelHandler}
     >
       <Defs />
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}

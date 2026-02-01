@@ -7,7 +7,7 @@ import { store as mousePosStore, getMousePos } from "@/app/services/stores/mouse
 import csStyles from "./controlssection.module.css";
 import styles from "./info.module.css";
 
-export default function KeyboardShortcuts() {
+export default function Info() {
   const mousePosState = useSyncExternalStore(mousePosStore.subscribe, mousePosStore.getSnapshot, mousePosStore.getServerSnapshot);
   const {mouseInViewBox, x, y} = getMousePos(mousePosState);
 

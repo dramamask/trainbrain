@@ -1,5 +1,7 @@
 "use client";
 
+const SCROLL_STEP = 10;
+
 interface State {
   xScrollPercent: number;
   yScrollPercent: number;
@@ -42,5 +44,9 @@ export const store = {
     state = newState;
     // Notify React/listeners
     listeners.forEach((callback) => callback());
+  },
+
+  xScrollStepRight(): {
+    setXScrollPos(state.xScrollPercent += SCROLL_STEP);
   },
 };
