@@ -37,18 +37,35 @@ export function getSvgViewBox(
 /**
  * Get the value for the viewBox x or y coordinate
  *
- * @param {number} focalPointPercentage - The x or y scrollbar percentage of the view window
+ * @param {number} scrollBarPercentage - The x or y scrollbar percentage of the view window
  * @param {number} worldSize - The width or height of the world box
  * @param {number} zoomFactor - The zoom factor. A zoomfactor of 2 is 200% zoom, etc.
  *
  * */
 function getSVGViewBoxPos(
-  focalPointPercentage: number,
+  scrollBarPercentage: number,
   worldSize: number,
   zoomFactor: number
 ): number {
-  // Viewbox position
-  let viewBoxPos = (focalPointPercentage * (1 - (1 / zoomFactor))) * (worldSize / 100);
+  return (scrollBarPercentage * (1 - (1 / zoomFactor))) * (worldSize / 100);
+}
 
-  return viewBoxPos;
+/**
+ * Get the scrollbar percentage value (x or y), for the given information.
+ * This formula was created from the getSVGViewBoxPos() formula, but here svgViewBoxPos is known and scrollBarPercentage is unknown.
+ *
+ * @param {number} svgViewBoxPos - SVG viewbox x or y coordinate
+ * @param {number} worldSize - The width or height of the world box
+ * @param {number} zoomFactor - The zoom factor. A zoomfactor of 2 is 200% zoom, etc.
+ */
+export function getScrollBarPercentage(
+  svgViewBoxPos: number,
+  worldSize: number,
+  zoomFactor: number
+): number {
+  if (zoomFactor <= 1) {
+    return 0;
+  }
+
+  return (100 * svgViewBoxPos * zoomFactor) / (worldSize * (zoomFactor - 1));
 }

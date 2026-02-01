@@ -1,27 +1,28 @@
-import React, { useState, useRef, useEffect, useCallback, CSSProperties } from 'react';
+import React, { useState, useRef, useEffect, useCallback, CSSProperties, useSyncExternalStore } from 'react';
+import { store as scrollStore } from "@/app/services/stores/scroll";
 
 import styles from "./scrollbar.module.css";
 
 const LIGHT_COLOR = "#f0f0f0";
 const DARK_COLOR = "#888888";
 
+const HORIZONTAL = 'horizontal';
+const VERTICAL = 'vertical';
 type Orientation = 'vertical' | 'horizontal';
 
-interface ScrollbarProps {
+interface props {
   orientation?: Orientation;
-  onScrollPercentage: (percentage: number) => void;
   disabled: boolean;
   thumbSize?: number; // Pixels
 }
 
-const StandaloneScrollbar: React.FC<ScrollbarProps> = ({
-  orientation = 'vertical',
-  onScrollPercentage,
-  disabled,
-  thumbSize = 40,
-}) => {
+/**
+ * Standalone Scrollbar React component
+ */
+export default function StandaloneScrollbar({orientation = 'vertical', disabled, thumbSize = 40}: props) {
+  const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);
+
   const [isDragging, setIsDragging] = useState(false);
-  const [percentage, setPercentage] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const isVertical = orientation === 'vertical';
 
@@ -35,9 +36,12 @@ const StandaloneScrollbar: React.FC<ScrollbarProps> = ({
 
     // Clamp 0 to 1 and update
     const newFactor = Math.max(0, Math.min(1, pos / total));
-    setPercentage(newFactor);
-    onScrollPercentage(newFactor);
-  }, [isVertical, onScrollPercentage]);
+    if (orientation == HORIZONTAL) {
+      scrollStore.setXScrollPos(newFactor * 100);
+    } else {
+      scrollStore.setYScrollPos(newFactor * 100);
+    }
+  }, [isVertical]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -63,7 +67,13 @@ const StandaloneScrollbar: React.FC<ScrollbarProps> = ({
   }, [isDragging, calculatePercentage]);
 
   // Thumb position styling
-  const thumbOffset = `calc(${percentage * 100}% - ${percentage * thumbSize}px)`;
+  let percentage;
+  if (orientation == HORIZONTAL) {
+    percentage = scrollState.xScrollPercent;
+  } else {
+    percentage = scrollState.yScrollPercent;
+  }
+  const thumbOffset = `calc(${percentage}% - ${(percentage / 100) * thumbSize}px)`;
 
   const trackStyle: CSSProperties = {
     width: isVertical ? '14px' : '100%',
@@ -98,5 +108,3 @@ const StandaloneScrollbar: React.FC<ScrollbarProps> = ({
     </div>
   );
 };
-
-export default StandaloneScrollbar;

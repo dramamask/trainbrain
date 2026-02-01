@@ -2,7 +2,8 @@ import { store as mousePosStore, getMousePos } from "@/app/services/stores/mouse
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
-import { getSvgViewBoxX, getSvgViewBoxY } from "@/app/services/zoom/worldfocalpoint/svg";
+import { getSVGViewBoxPos } from "@/app/services/zoom/worldfocalpoint/svg";
+import { getScrollBarPercentage } from "@/app/services/zoom/scrollbar/svg";
 
 const UP = -1;
 const DOWN = 1;
@@ -20,19 +21,21 @@ export function wheelHandler (e: React.WheelEvent<SVGSVGElement>) {
     zoomStore.zoomOut(true);
   }
 
-  //setScrollBarPos();
+  console.log("Wheel handler: e.deltaY is ", e.deltaY);
+
+  // TODO: move this code into a function function. Add that function to the service/zoom/scrollbar/svg file?
 
   const { mouseInViewBox, x, y } = getMousePos(mousePosStore.getSnapshot());
   const { worldWidth, worldHeight } = trackLayoutStore.getWorldSize();
 
   if (mouseInViewBox) {
-    const viewBoxX = getSvgViewBoxX(x, worldWidth, zoomStore.getZoomFactor());
-    const viewBoxY = getSvgViewBoxY(y, worldHeight, zoomStore.getZoomFactor());
-    const scrollPosX = (viewBoxX / worldWidth) * 100;
-    const scrollPosY = (viewBoxY / worldHeight) * 100;
-    console.log("scrollPosX: " + scrollPosX);
-    console.log("scrollPosY: " + scrollPosY);
+    const viewBoxX = getSVGViewBoxPos(x, worldWidth, zoomStore.getZoomFactor());
+    const viewBoxY = getSVGViewBoxPos(y, worldHeight, zoomStore.getZoomFactor());
+
+    const scrollPosX = getScrollBarPercentage(viewBoxX, worldWidth, zoomStore.getZoomFactor());
+    const scrollPosY = 100 - getScrollBarPercentage(viewBoxY, worldHeight, zoomStore.getZoomFactor());
+
     scrollStore.setXScrollPos(scrollPosX);
-    scrollStore.setXScrollPos(scrollPosY);
+    scrollStore.setYScrollPos(scrollPosY);
   }
 };
