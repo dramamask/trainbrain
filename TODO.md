@@ -1,7 +1,5 @@
 # TODO
 
-- Zoom to the mouse focal point.
-- Update the scrollbars when zooming in with the mouse wheel and using the mouse location focal point
 - Don't select text in control section if mouse drags by ut (happens sometimes when pulling scrollbar down)
 - Start working on switches.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.

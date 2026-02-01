@@ -1,4 +1,4 @@
-import {store as mousePosStore, getMousePos} from "@/app/services/stores/mousepos";
+import {store as mousePosStore} from "@/app/services/stores/mousepos";
 import {store as zoomStore} from "@/app/services/stores/zoomfactor";
 
 let ticking = false; // Used to throttle mouse pos capturing to be in line with screen render frequency

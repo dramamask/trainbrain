@@ -19,7 +19,7 @@ interface props {
   worldHeight: number;
 }
 
-export default function SvgEditMode({worldWidth, worldHeight}: props)
+export default function EditModeLayout({worldWidth, worldHeight}: props)
 {
   // These hooks automatically subscribes and returns the latest snapshot
   const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);

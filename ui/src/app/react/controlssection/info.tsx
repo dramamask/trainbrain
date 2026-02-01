@@ -10,6 +10,7 @@ import styles from "./info.module.css";
 export default function KeyboardShortcuts() {
   const mousePosState = useSyncExternalStore(mousePosStore.subscribe, mousePosStore.getSnapshot, mousePosStore.getServerSnapshot);
   const {mouseInViewBox, x, y} = getMousePos(mousePosState);
+
   let xDisplay = "";
   let yDisplay = "";
   if (mouseInViewBox) {

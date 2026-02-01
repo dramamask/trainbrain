@@ -22,6 +22,7 @@ interface props {
 export default function StandaloneScrollbar({orientation = 'vertical', disabled, thumbSize = 40}: props) {
   const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);
 
+  // Scroll calculations
   const [isDragging, setIsDragging] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const isVertical = orientation === 'vertical';
@@ -42,6 +43,17 @@ export default function StandaloneScrollbar({orientation = 'vertical', disabled,
       scrollStore.setYScrollPos(newFactor * 100);
     }
   }, [isVertical]);
+
+  // Reset scrollbar position to 0 when the map is zoomed out all the way
+  useEffect(() => {
+    if (disabled) {
+      if (orientation == HORIZONTAL) {
+        scrollStore.setXScrollPos(0);
+      } else {
+        scrollStore.setYScrollPos(0);
+      }
+    }
+  }, [disabled]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {

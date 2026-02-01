@@ -18,7 +18,7 @@ interface props {
   worldHeight: number;
 }
 
-export default function SvgRegular({worldWidth, worldHeight}: props)
+export default function RegularModeLayout({worldWidth, worldHeight}: props)
 {
   // These hooks automatically subscribes and returns the latest snapshot
   const scrollState = useSyncExternalStore(scrollStore.subscribe, scrollStore.getSnapshot, scrollStore.getServerSnapshot);

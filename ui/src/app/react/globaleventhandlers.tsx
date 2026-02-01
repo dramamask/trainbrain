@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import * as editMode from "@/app/services/eventhandlers/keyeventhandlers/editmode";
 import * as error from "@/app/services/eventhandlers/keyeventhandlers/error";
 import * as zoom from "@/app/services/eventhandlers/keyeventhandlers/zoom";
-import { store as mousePosStore } from "@/app/services/stores/mousepos";
 
 export default function GlobalEventHandlers() {
   useEffect(() => {

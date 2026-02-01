@@ -21,14 +21,18 @@ export function wheelHandler (e: React.WheelEvent<SVGSVGElement>) {
     zoomStore.zoomOut(true);
   }
 
-  console.log("Wheel handler: e.deltaY is ", e.deltaY);
+  zoomToPositionByManipulatingScrollbars();
+};
 
-  // TODO: move this code into a function function. Add that function to the service/zoom/scrollbar/svg file?
-
+/**
+ * Change the scrollbar positions so we zoom to the location where the mouse is pointing on the map
+ */
+function zoomToPositionByManipulatingScrollbars(): void {
   const { mouseInViewBox, x, y } = getMousePos(mousePosStore.getSnapshot());
-  const { worldWidth, worldHeight } = trackLayoutStore.getWorldSize();
 
   if (mouseInViewBox) {
+    const { worldWidth, worldHeight } = trackLayoutStore.getWorldSize();
+
     const viewBoxX = getSVGViewBoxPos(x, worldWidth, zoomStore.getZoomFactor());
     const viewBoxY = getSVGViewBoxPos(y, worldHeight, zoomStore.getZoomFactor());
 
@@ -38,4 +42,4 @@ export function wheelHandler (e: React.WheelEvent<SVGSVGElement>) {
     scrollStore.setXScrollPos(scrollPosX);
     scrollStore.setYScrollPos(scrollPosY);
   }
-};
+}
