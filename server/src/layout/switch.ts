@@ -45,6 +45,7 @@ export class Switch extends LayoutPiece {
       'piece.angle': this.angle,
       'piece.radius': this.radius,
       'piece.length': this.length,
+      'piece.variant': this.variant,
     });
   }
 
@@ -73,16 +74,16 @@ export class Switch extends LayoutPiece {
     }
 
     // Calculate heading and coordinates of other nodes
-    const coordinates: Record<ConnectorName, Coordinate> = [];
-    const headings: Record<ConnectorName, number> = [];
+    const coordinates: Record<string, Coordinate> = {}; // The keys are the connector names
+    const headings: Record<string, number> = {}; // The keys are the connector names
     let toBeCalled: ConnectorName[] = [];
     if (callingSideConnectorName == "start") {
       coordinates["start"] = callingNode.getCoordinate();
       headings["start"] = heading;
       toBeCalled = ["end", "diverge"];
       // Calculate the coordinate of the "end" side
-      endSideNodeCoordiante = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
-      endSideHeading = -heading;
+      coordinates["end"] = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      headings["end"] = -heading;
       // Calculate the coordinate of the "diverge" side
       const result = calculateCurveCoordinate(
         callingNode.getCoordinate(),
@@ -91,32 +92,32 @@ export class Switch extends LayoutPiece {
         this.radius,
         this.variant,
       );
-      divergeSideNodeCoordinate = result.coordinate;
-      divergeSideHeading = result.heading;
+      coordinates["diverge"] = result.coordinate;
+      headings["diverge"] = result.heading;
     }
 
     if (callingSideConnectorName == "end") {
-      endSideNodeCoordiante = callingNode.getCoordinate();
-      endSideHeading = heading;
+      coordinates["end"] = callingNode.getCoordinate();
+      headings["end"] = heading;
       toBeCalled = ["start", "diverge"];
       // Calculate the coordinate of the "start" side
-      startSideNodeCoordinate = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
-      startSideHeading = -heading;
+      coordinates["start"] = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      headings["start"] = -heading;
       // Calculate the coordinate of the "diverge" side
       const result = calculateCurveCoordinate(
-        startSideNodeCoordinate,
-        startSideHeading,
+        coordinates["start"],
+        headings["start"],
         this.angle,
         this.radius,
         this.variant,
       );
-      divergeSideNodeCoordinate = result.coordinate;
-      divergeSideHeading = result.heading;
+      coordinates["diverge"] = result.coordinate;
+      headings["diverge"] = result.heading;
     }
 
     if (callingSideConnectorName == "diverge") {
-      divergeSideNodeCoordinate = callingNode.getCoordinate();
-      divergeSideHeading = heading;
+      coordinates["diverge"] = callingNode.getCoordinate();
+      headings["diverge"] = heading;
       toBeCalled = ["start", "end"];
       // Calculate the coordinate of the "start" side
       const result = calculateCurveCoordinate(
@@ -126,17 +127,17 @@ export class Switch extends LayoutPiece {
         this.radius,
         this.variant == "right" ? "left" : "right",
       );
-      startSideNodeCoordinate = result.coordinate;
-      startSideHeading = result.heading;
+      coordinates["start"] = result.coordinate;
+      headings["start"] = result.heading;
       // Calculate the coordinate of the "end" side
-      endSideNodeCoordiante = calculateStraightCoordinate(startSideNodeCoordinate, this.length, heading);
-      endSideHeading = -startSideHeading;
+      coordinates["end"] = calculateStraightCoordinate(coordinates["start"], this.length, heading);
+      headings["end"] = -headings["start"];
     }
 
-    // Update our heading
-    this.connectors.setHeading("start", startSideHeading as number);
-    this.connectors.setHeading("end", endSideHeading as number);
-    this.connectors.setHeading("diverge", divergeSideHeading as number);
+    // Update our headings
+    Object.entries(headings).forEach(([connectorName, heading]) => {
+      this.connectors.setHeading(connectorName as ConnectorName, heading);
+    });
 
     // Call the nodes on the other sides
     toBeCalled.forEach(connectorName => {
