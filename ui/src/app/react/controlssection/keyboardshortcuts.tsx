@@ -1,7 +1,7 @@
 import { JSX } from "@emotion/react/jsx-runtime";
-import { capitalCase } from "change-case";
+import { capitalCase, sentenceCase } from "change-case";
 import { Card, CardContent, Grid, Stack } from "@mui/material";
-import { KEYS, UI_CATEGORY } from "@/app/services/eventhandlers/keyeventhandlers/keydefinitions";
+import { KEYS, EDIT_MODE_KEYS, KeyDefintions } from "@/app/services/eventhandlers/keyeventhandlers/keydefinitions";
 
 import styles from "./keyboardshortcuts.module.css"
 import csStyles from "./controlssection.module.css";
@@ -10,13 +10,29 @@ export default function KeyboardShortcuts() {
   return (
       <Card className={csStyles.card}>
         <CardContent className={csStyles.cardContent}>
-            <div className={csStyles.heading}>Keyboard Shortcuts</div>
+            <div className={csStyles.heading}>Controls Summary</div>
             <Grid container spacing={1}>
               <Grid size="auto">
-                <Stack>{ renderKeys() }</Stack>
+                <Stack>
+                  <div className={styles.category}><b>ALLWAYS:</b></div>
+                  { renderKeys(KEYS) }
+                  <div className={csStyles.text}><b>Mouse wheel</b></div>
+                  <div className={csStyles.text}><b>Ctrl Mouse wheel</b></div>
+                  <div className={styles.category}><b>ONLY IN EDITMODE:</b></div>
+                  { renderKeys(EDIT_MODE_KEYS) }
+                  <div className={csStyles.text}><b>Ctrl Arrow</b></div>
+                </Stack>
               </Grid>
               <Grid size="grow">
-                <Stack>{ renderDescriptions() }</Stack>
+                <Stack>
+                  <div className={styles.category}><b>&nbsp;</b></div>
+                  { renderDescriptions(KEYS) }
+                  <div className={csStyles.text}>Scroll track map</div>
+                  <div className={csStyles.text}>Zoom track map</div>
+                  <div className={styles.category}><b>&nbsp;</b></div>
+                  { renderDescriptions(EDIT_MODE_KEYS) }
+                  <div className={csStyles.text}>Move Node Faster</div>
+                </Stack>
               </Grid>
             </Grid>
         </CardContent>
@@ -25,15 +41,11 @@ export default function KeyboardShortcuts() {
 }
 
 // Render the list of keyboard shortcut keys
-function renderKeys(): JSX.Element[] {
+function renderKeys(keys: KeyDefintions): JSX.Element[] {
   const listItems: JSX.Element[] = [];
-
-  Object.entries(KEYS).flatMap(([key, value]) => {
-    const style = (key == UI_CATEGORY ? styles.category : csStyles.text);
-    const item = getKeyName(value) + (key == UI_CATEGORY ? ':' : '');
-
+  Object.entries(keys).flatMap(([key, value]) => {
     listItems.push(
-      <div key={key} className={style}><b>{item}</b></div>
+      <div key={key} className={csStyles.text}><b>{getKeyName(value)}</b></div>
     )
   });
 
@@ -41,15 +53,11 @@ function renderKeys(): JSX.Element[] {
 }
 
 // Render the list of descriptions for the keyboard shortcuts
-function renderDescriptions(): JSX.Element[] {
+function renderDescriptions(keys: KeyDefintions): JSX.Element[] {
   const listItems: JSX.Element[] = [];
-
-  Object.entries(KEYS).flatMap(([key, value]) => {
-    const item = (key == UI_CATEGORY ? '\u00A0' :capitalCase(key));
-    const style = (key == UI_CATEGORY ? styles.category : csStyles.text);
-
+  Object.entries(keys).flatMap(([key, value]) => {
     listItems.push(
-      <div key={key} className={style}>{item}</div>
+      <div key={key} className={csStyles.text}>{sentenceCase(key)}</div>
     )
   });
 

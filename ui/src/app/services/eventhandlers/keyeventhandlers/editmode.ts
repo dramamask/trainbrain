@@ -7,7 +7,8 @@ import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { deleteTrackPiece, rotateTrackPiece, updateNode } from "@/app/services/api/tracklayout";
 import { MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/config/config";
-import { KEYS } from "./keydefinitions";
+import { EDIT_MODE_KEYS } from "./keydefinitions";
+import { getAssociatedKeyValue } from "./helpers";
 
 // Key Event Handler for Edit Mode
 //
@@ -15,30 +16,32 @@ import { KEYS } from "./keydefinitions";
 //
 export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {
-    switch (event.key) {
-      case KEYS.MoveNodeUp:
+    const keyDefValue = getAssociatedKeyValue(EDIT_MODE_KEYS, event);
+
+    switch (keyDefValue) {
+      case EDIT_MODE_KEYS.MoveNodeUp:
         handleNodeUpdate("y", MOVE_INCREMENT, 0);
         break;
-      case KEYS.MoveNodeRight:
+      case EDIT_MODE_KEYS.MoveNodeRight:
         handleNodeUpdate("x", MOVE_INCREMENT, 0);
         break;
-      case KEYS.MoveNodeDown:
+      case EDIT_MODE_KEYS.MoveNodeDown:
         handleNodeUpdate("y", -MOVE_INCREMENT, 0);
         break;
-      case KEYS.MoveNodeLeft:
+      case EDIT_MODE_KEYS.MoveNodeLeft:
         handleNodeUpdate("x", -MOVE_INCREMENT, 0);
         break;
-      case KEYS.RotateNodeRight:
+      case EDIT_MODE_KEYS.RotateNodeRight:
         handleNodeUpdate("x", 0, ROTATE_INCREMENT);
         break;
-      case KEYS.RotateNodeLeft:
+      case EDIT_MODE_KEYS.RotateNodeLeft:
         handleNodeUpdate("x", 0, -ROTATE_INCREMENT);
         break;
-      case KEYS.DeleteLayoutPiece:
+      case EDIT_MODE_KEYS.DeleteLayoutPiece:
         deleteLayoutPiece();
         selectionStore.deselectAll();
         break;
-      case KEYS.DeselectLayoutElement:
+      case EDIT_MODE_KEYS.DeselectLayoutElement:
         selectionStore.deselectAll();
         break;
       default:

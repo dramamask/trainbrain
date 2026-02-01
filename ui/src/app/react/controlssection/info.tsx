@@ -11,8 +11,8 @@ export default function Info() {
   const mousePosState = useSyncExternalStore(mousePosStore.subscribe, mousePosStore.getSnapshot, mousePosStore.getServerSnapshot);
   const {mouseInViewBox, x, y} = getMousePos(mousePosState);
 
-  let xDisplay = "";
-  let yDisplay = "";
+  let xDisplay = "-    ";
+  let yDisplay = "-    ";
   if (mouseInViewBox) {
     xDisplay = Math.round(x).toString();
     yDisplay = Math.round(y).toString();

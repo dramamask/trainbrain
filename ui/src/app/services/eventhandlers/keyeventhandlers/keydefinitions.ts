@@ -4,19 +4,21 @@
  * This object is also used to render the keyboard shortcut UI item.
  */
 
-export const UI_CATEGORY = 'UiCategory'; // Special key for UI header only. Not a key definition.
+export type KeyDefintions =  Record<string, string | string[]>;
 
-export const KEYS = {
+export const KEYS: KeyDefintions = {
   ZoomInTrackLayout: '+',
   ZoomOutTrackLayout: '-',
   CloseErrorMessage: ['Escape', 'Enter'],
-  [UI_CATEGORY]: 'Edit Mode',
+}
+
+export const EDIT_MODE_KEYS: KeyDefintions = {
+  DeselectLayoutElement: 'Escape',
   DeleteLayoutPiece: 'Delete',
-  RotateNodeRight: 'r',
-  RotateNodeLeft: 'R',
+  RotateNodeRight: ']',
+  RotateNodeLeft: '[',
   MoveNodeUp: 'ArrowUp',
   MoveNodeDown: 'ArrowDown',
   MoveNodeLeft: 'ArrowLeft',
   MoveNodeRight: 'ArrowRight',
-  DeselectLayoutElement: 'Escape',
 }
