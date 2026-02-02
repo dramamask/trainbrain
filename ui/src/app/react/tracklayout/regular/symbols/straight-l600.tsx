@@ -1,9 +1,9 @@
 /**
  * SVG object definition for a 600mm long straight piece
  */
-export default function Straight600() {
+export default function StraightL600() {
   return (
-    <symbol id="straight600" viewBox="0 0 88 600">
+    <symbol id="straightL600" viewBox="0 0 88 600">
       <g stroke="yellow" strokeWidth="2">
         <line className="sleeper" x1="0" y1="15" x2="88" y2="15" />
         <line className="sleeper" x1="0" y1="41" x2="88" y2="41" />

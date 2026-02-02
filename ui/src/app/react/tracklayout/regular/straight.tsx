@@ -54,6 +54,6 @@ export default function Straight({piece}: props) {
  * @returns symbol name
  */
 function getSymbol(length: number) {
-  return "#straight" + length
+  return "#straightL" + length
 
 }

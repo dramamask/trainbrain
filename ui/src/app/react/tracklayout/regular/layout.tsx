@@ -9,6 +9,7 @@ import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
 import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
 import Curve from "./curve";
 import Straight from "./straight";
+import Switch from "./switch";
 import Unknown from "./unknown";
 import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
 import { enterHandler } from "@/app/services/eventhandlers/mouseenterhandler";
@@ -61,24 +62,6 @@ export default function RegularModeLayout({worldWidth, worldHeight}: props) {
   )
 }
 
-function handleMouseMove(event: MouseEvent) {
-  // 1. Cast currentTarget to SVGSVGElement to access SVG methods
-  const svg = event.currentTarget as SVGSVGElement;
-
-  // 2. Create an SVG point
-  const point = svg.createSVGPoint();
-  point.x = event.clientX;
-  point.y = event.clientY;
-
-  // 3. Transform screen coordinates to SVG coordinates
-  // .getScreenCTM() finds the matrix transforming SVG space to screen space
-  const CTM = svg.getScreenCTM();
-  if (CTM) {
-    const svgPoint = point.matrixTransform(CTM.inverse());
-    console.log(`SVG Coords: x=${svgPoint.x}, y=${svgPoint.y}`);
-  }
-};
-
 // Render the track pieces in the layout
 function renderPieces(layout: UiLayout) {
   if (isLayoutAvailable(layout)) {
@@ -104,6 +87,8 @@ function getTrackPieceComponent(piece: UiLayoutPiece) {
       return <Straight piece={piece} key={piece.id} />;
     case "curve":
       return <Curve piece={piece} key={piece.id} />;
+    case "switch":
+      return <Switch piece={piece} key={piece.id} />;
     default:
       return <Unknown piece={piece} key={piece.id} />;
   }
