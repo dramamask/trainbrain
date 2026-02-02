@@ -3,82 +3,40 @@
     "description": "This file lists the nodes that connect the train track layout pieces. Track pieces are in separate file."
   },
   "nodes": {
+    "0": {
+      "coordinate": {
+        "x": 10525,
+        "y": 1450
+      }
+    },
     "1": {
       "coordinate": {
-        "x": 9720,
-        "y": 7845
+        "x": 10525,
+        "y": 1750
       }
     },
     "2": {
       "coordinate": {
-        "x": 9720,
-        "y": 8445
+        "x": 10605.38476,
+        "y": 1750
       }
     },
     "3": {
       "coordinate": {
-        "x": 9720,
-        "y": 9045
+        "x": 10825,
+        "y": 1969.61524
       }
     },
     "4": {
       "coordinate": {
-        "x": 9800.38476,
-        "y": 9345
+        "x": 10525,
+        "y": 2050
       }
     },
     "5": {
       "coordinate": {
-        "x": 10020,
-        "y": 9564.61524
-      }
-    },
-    "6": {
-      "coordinate": {
-        "x": 10320,
-        "y": 9645
-      }
-    },
-    "7": {
-      "coordinate": {
-        "x": 10920,
-        "y": 9645
-      }
-    },
-    "8": {
-      "coordinate": {
-        "x": 11377.3067,
-        "y": 9554.03604
-      }
-    },
-    "9": {
-      "coordinate": {
-        "x": 11764.9926,
-        "y": 9294.9926
-      }
-    },
-    "10": {
-      "coordinate": {
-        "x": 12024.03604,
-        "y": 8907.3067
-      }
-    },
-    "11": {
-      "coordinate": {
-        "x": 12115,
-        "y": 8450
-      }
-    },
-    "12": {
-      "coordinate": {
-        "x": 12115,
-        "y": 8150
-      }
-    },
-    "13": {
-      "coordinate": {
-        "x": 12115,
-        "y": 7850
+        "x": 10525,
+        "y": 1150
       }
     }
   }

@@ -4,7 +4,37 @@
   },
   "pieces": {
     "0": {
-      "pieceDefId": "LGB 1060",
+      "pieceDefId": "LGB 1200 (R1)",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "0"
+        },
+        "end": {
+          "heading": 180,
+          "node": "1"
+        },
+        "diverge": {
+          "heading": 210,
+          "node": "2"
+        }
+      }
+    },
+    "1": {
+      "pieceDefId": "LGB 1100 (R1)",
+      "connectors": {
+        "start": {
+          "heading": 30,
+          "node": "2"
+        },
+        "end": {
+          "heading": 240,
+          "node": "3"
+        }
+      }
+    },
+    "2": {
+      "pieceDefId": "LGB 1000",
       "connectors": {
         "start": {
           "heading": 0,
@@ -12,150 +42,20 @@
         },
         "end": {
           "heading": 180,
-          "node": "2"
-        }
-      }
-    },
-    "1": {
-      "pieceDefId": "LGB 1060",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "2"
-        },
-        "end": {
-          "heading": 180,
-          "node": "3"
-        }
-      }
-    },
-    "2": {
-      "pieceDefId": "LGB 1100 (R1)",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "3"
-        },
-        "end": {
-          "heading": 210,
           "node": "4"
         }
       }
     },
     "3": {
-      "pieceDefId": "LGB 1100 (R1)",
-      "connectors": {
-        "start": {
-          "heading": 30,
-          "node": "4"
-        },
-        "end": {
-          "heading": 240,
-          "node": "5"
-        }
-      }
-    },
-    "4": {
-      "pieceDefId": "LGB 1100 (R1)",
-      "connectors": {
-        "start": {
-          "heading": 60,
-          "node": "5"
-        },
-        "end": {
-          "heading": 270,
-          "node": "6"
-        }
-      }
-    },
-    "5": {
-      "pieceDefId": "LGB 1060",
-      "connectors": {
-        "start": {
-          "heading": 90,
-          "node": "6"
-        },
-        "end": {
-          "heading": 270,
-          "node": "7"
-        }
-      }
-    },
-    "6": {
-      "pieceDefId": "LGB 1600 (R3)",
-      "connectors": {
-        "start": {
-          "heading": 90,
-          "node": "7"
-        },
-        "end": {
-          "heading": 292.5,
-          "node": "8"
-        }
-      }
-    },
-    "7": {
-      "pieceDefId": "LGB 1600 (R3)",
-      "connectors": {
-        "start": {
-          "heading": 112.5,
-          "node": "8"
-        },
-        "end": {
-          "heading": 315,
-          "node": "9"
-        }
-      }
-    },
-    "8": {
-      "pieceDefId": "LGB 1600 (R3)",
-      "connectors": {
-        "start": {
-          "heading": 135,
-          "node": "9"
-        },
-        "end": {
-          "heading": 337.5,
-          "node": "10"
-        }
-      }
-    },
-    "9": {
-      "pieceDefId": "LGB 1600 (R3)",
-      "connectors": {
-        "start": {
-          "heading": 157.5,
-          "node": "10"
-        },
-        "end": {
-          "heading": 0,
-          "node": "11"
-        }
-      }
-    },
-    "10": {
       "pieceDefId": "LGB 1000",
       "connectors": {
         "start": {
           "heading": 180,
-          "node": "11"
+          "node": "0"
         },
         "end": {
           "heading": 0,
-          "node": "12"
-        }
-      }
-    },
-    "11": {
-      "pieceDefId": "LGB 1000",
-      "connectors": {
-        "start": {
-          "heading": 180,
-          "node": "12"
-        },
-        "end": {
-          "heading": 0,
-          "node": "13"
+          "node": "5"
         }
       }
     }

@@ -60,11 +60,13 @@ export class Straight extends LayoutPiece {
     this.connectors.setHeading(oppositeSideConnectorName, oppositeSideHeading);
 
     // Calculate the coordinate for the next node
-    const nextNodeCoordinate = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+    const result = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+    const nextNodeCoordinate = result.coordinate;
+    const nextNodeHeading = heading; // This is a straight so the heading of the next piece is the same as our heading
 
     // Call the next node
     const oppositeSideNode = this.connectors.getNode(oppositeSideConnectorName);
-    oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, heading, loopProtector);
+    oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, nextNodeHeading, loopProtector);
   }
 
   /**

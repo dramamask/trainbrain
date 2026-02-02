@@ -77,15 +77,17 @@ export class Switch extends LayoutPiece {
     const coordinates: Record<string, Coordinate> = {}; // The keys are the connector names
     const headings: Record<string, number> = {}; // The keys are the connector names
     let toBeCalled: ConnectorName[] = [];
+    let result;
     if (callingSideConnectorName == "start") {
       coordinates["start"] = callingNode.getCoordinate();
       headings["start"] = heading;
       toBeCalled = ["end", "diverge"];
       // Calculate the coordinate of the "end" side
-      coordinates["end"] = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
-      headings["end"] = -heading;
+      result = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      coordinates["end"] = result.coordinate
+      headings["end"] = result.heading;
       // Calculate the coordinate of the "diverge" side
-      const result = calculateCurveCoordinate(
+      result = calculateCurveCoordinate(
         callingNode.getCoordinate(),
         heading,
         this.angle,
@@ -101,10 +103,11 @@ export class Switch extends LayoutPiece {
       headings["end"] = heading;
       toBeCalled = ["start", "diverge"];
       // Calculate the coordinate of the "start" side
-      coordinates["start"] = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
-      headings["start"] = -heading;
+      result = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      coordinates["start"] = result.coordinate
+      headings["start"] = result.heading;
       // Calculate the coordinate of the "diverge" side
-      const result = calculateCurveCoordinate(
+      result = calculateCurveCoordinate(
         coordinates["start"],
         headings["start"],
         this.angle,
@@ -120,7 +123,7 @@ export class Switch extends LayoutPiece {
       headings["diverge"] = heading;
       toBeCalled = ["start", "end"];
       // Calculate the coordinate of the "start" side
-      const result = calculateCurveCoordinate(
+      result = calculateCurveCoordinate(
         callingNode.getCoordinate(),
         heading,
         this.angle,
@@ -130,8 +133,9 @@ export class Switch extends LayoutPiece {
       coordinates["start"] = result.coordinate;
       headings["start"] = result.heading;
       // Calculate the coordinate of the "end" side
-      coordinates["end"] = calculateStraightCoordinate(coordinates["start"], this.length, heading);
-      headings["end"] = -headings["start"];
+      result = calculateStraightCoordinate(coordinates["start"], this.length, heading);
+      coordinates["end"] = result.coordinate
+      headings["end"] = result.heading;
     }
 
     // Update our headings

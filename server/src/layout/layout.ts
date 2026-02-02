@@ -10,6 +10,7 @@ import { Curve } from "./curve.js";
 import { FatalError } from "../errors/FatalError.js";
 import { PieceDefs } from "./piecedefs.js";
 import { PieceDef } from "./piecedef.js";
+import { Switch } from './switch.js';
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
@@ -239,6 +240,8 @@ export class Layout {
         return new Straight(id, connectorsData, pieceDef, this.nodeFactory);
       case "curve":
         return new Curve(id, connectorsData, pieceDef, this.nodeFactory);
+      case "switch":
+        return new Switch(id, connectorsData, pieceDef, this.nodeFactory);
       default:
         throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.getCategory()}`)
     }

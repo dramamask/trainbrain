@@ -1,6 +1,6 @@
 # TODO
 
-- Start working on switches.
+- Work on Switches in UI.
 - Work on piece flip (formarly rotate)
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
