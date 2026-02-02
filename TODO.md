@@ -1,14 +1,18 @@
 # TODO
 
+- Add orientation to the add piece API
+- Work on making it possible to add left or right had curve pieces.
 - Work on the left hand version of the R1 UI Switch.
 - Do the UI curve pieces (and switches) need to be that wide? Can there viewbox be smaller?
 - Do regular mode straight and curve pieces need to subscribe to the trackLayoutStore? Can't they just get the coordinates from the store?
+- Add track piece icons to the add-track-piece list. Use the same icon for every straight, curve and switch?
 - Work on piece flip (formarly rotate)
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Add protection so you can't move the layout outside of the world size.
 - Work on indicating track pieces that are close together but are not connected.
 - add possibility to select multiple pieces and nodes.
+- Selecting a dead end node and pressing delete should delete the node connected to it. That feels intuitive.
 - Either delete by selecting a track piece or delete in between two nodes. if in between two nodes then we need to update the "daisy chain" method to accept an end-at-this-node type param. Rename the function to dais-chain something and make it flexible to be able to do different things. maybe take an object as input that contains params and a command name or something.
 - Scroll the layout SVG when you click and drag (CTRL or ALT click? How does lucid chart do it?).
 - Start working on an intersection piece (a cross).

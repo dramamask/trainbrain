@@ -7,6 +7,7 @@ import { getPieceDef } from "@/app/services/api/piecedef";
 import { store as pieceDefStore } from "@/app/services/stores/piecedefs";
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as editModeStore } from "@/app/services/stores/editmode";
+import { getUiPieceDefList, PieceDefWithName } from "@/app/services/piecedef";
 import PieceDefCard from "./piecedefcard";
 
 import styles from "./piecedefs.module.css";
@@ -46,7 +47,7 @@ export default function ControlsSection() {
     <Card className={styles.card}>
       <CardContent className={styles.cardContent}>
         <Stack className={styles.stack} spacing={1}>
-          { renderPieceDefList(pieceDefStore.getPieceDefList()) }
+          { renderPieceDefList(getUiPieceDefList()) }
         </Stack>
       </CardContent>
     </Card>
@@ -54,15 +55,15 @@ export default function ControlsSection() {
 }
 
 // Render the list of piece definitions
-function renderPieceDefList(pieceDefs: PieceDefDataList) {
+function renderPieceDefList(pieceDefs: PieceDefWithName[]) {
   return (
-    Object.entries(pieceDefs).map(([key, value]) => getPieceDefComponent(key, value))
+    pieceDefs.map((data, index) => getPieceDefComponent(index, data.name, data.pieceDef))
   )
 }
 
 // Return the component that renders the particular piece definition
-function getPieceDefComponent(name: string, definition: PieceDefData) {
+function getPieceDefComponent(key: number, name: string, definition: PieceDefData) {
   return (
-    <PieceDefCard key={name} name={name} definition={definition} />
+    <PieceDefCard key={key} name={name} definition={definition} />
   )
 }
