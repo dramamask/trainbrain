@@ -34,9 +34,6 @@ export default function PieceDefCard({name, definition}: props) {
             <div className={controlsSectionStyles.title + " " + styles.title}>
               {name}
             </div>
-            <div className={controlsSectionStyles.category + " " + styles.category}>
-              {definition.category}
-            </div>
             <div className={controlsSectionStyles.text + " " + styles.text}>
               { getPieceSpecificInfo(definition) }
             </div>
