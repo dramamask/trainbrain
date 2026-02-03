@@ -4,7 +4,7 @@
 }
 
 .iconContainer {
-  border: 1px solid #aaaaaa;
+  border-right: 1px solid #cccccc;
   height: 58px;
   padding: 2px;
 }
