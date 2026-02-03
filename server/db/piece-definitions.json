@@ -21,17 +21,17 @@
     "LGB 1100 (R1)": {
       "category": "curve",
       "aka": "LGB 11000, Piko 35211",
-      "attributes": {"angle": 30, "radius": 600}
+      "attributes": {"angle": 30, "radius": 600, "orientation": "right"}
     },
     "LGB 1102 (R1)": {
       "category": "curve",
       "aka": "LGB 11020",
-      "attributes": {"angle": 15, "radius": 600}
+      "attributes": {"angle": 15, "radius": 600, "orientation": "right"}
     },
     "LGB 1600 (R3)": {
       "category": "curve",
       "aka": "LGB 16000",
-      "attributes": {"angle": 22.5, "radius": 1195}
+      "attributes": {"angle": 22.5, "radius": 1195, "orientation": "right"}
     },
     "LGB 1200 (R1)": {
       "category": "switch",

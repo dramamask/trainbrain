@@ -93,6 +93,49 @@
           "node": "13"
         }
       }
+    },
+    "11": {
+      "pieceDefId": "LGB 1200 (R1)",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "13"
+        },
+        "end": {
+          "heading": 180,
+          "node": "14"
+        },
+        "diverge": {
+          "heading": 210,
+          "node": "15"
+        }
+      }
+    },
+    "12": {
+      "pieceDefId": "LGB 1060",
+      "connectors": {
+        "start": {
+          "heading": 30,
+          "node": "15"
+        },
+        "end": {
+          "heading": 210,
+          "node": "16"
+        }
+      }
+    },
+    "13": {
+      "pieceDefId": "LGB 1060",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "14"
+        },
+        "end": {
+          "heading": 180,
+          "node": "17"
+        }
+      }
     }
   }
 }

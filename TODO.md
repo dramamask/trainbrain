@@ -1,7 +1,7 @@
 # TODO
 
-- Add orientation to the add piece API
-- Work on making it possible to add left or right had curve pieces.
+- Add more constants in the svg use definitions. Use those values everywhere that the pieces are used!
+- Add orientation to the server's add-piece API endpoint (work on making it possible to add left or right hand curve pieces)
 - Work on the left hand version of the R1 UI Switch.
 - Do the UI curve pieces (and switches) need to be that wide? Can there viewbox be smaller?
 - Do regular mode straight and curve pieces need to subscribe to the trackLayoutStore? Can't they just get the coordinates from the store?

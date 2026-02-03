@@ -5,11 +5,7 @@
 export default function CurveR600A30() {
   return (
     <symbol id="curveR600A30" viewBox="0 0 644 312">
-      <g
-        stroke="yellow"
-        strokeWidth="2"
-        fill="none"
-      >
+      <g stroke="yellow" strokeWidth="2" fill="none">
         {/* Sleepers – rotate to curve */}
         <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-1.25 644 0)" />
         <line className="sleeper" x1="0" y1="0" x2="88" y2="0" transform="rotate(-3.75 644 0)" />

@@ -12,6 +12,9 @@ export type ConnectorName = "start" | "end" | "diverge";
 // All possible switch variants
 export type SwitchVariant = "left" | "right";
 
+// All possible curve orientations (used to communicate orientation to the server when placing a new piece)
+export type CurveOrientation = "left" | "right";
+
 // List of different possible values for the dead-end indicator for a UI layout piece
 export type DeadEnd = ConnectorName[];
 
@@ -68,7 +71,7 @@ export interface UiLayout {
 }
 
 // Attribtues for a curve piece def
-export interface SwitchAttributes {
+export interface PieceDefSwitchAttributes {
   angle: number;
   radius: number;
   length: number;
@@ -76,18 +79,19 @@ export interface SwitchAttributes {
 }
 
 // Attribtues for a curve piece def
-export interface CurveAttributes {
+export interface PieceDefCurveAttributes {
   angle: number;
   radius: number;
+  orientation: CurveOrientation;
 }
 
 // Attributes for a straight piece def
-export interface StraightAttributes {
+export interface PieceDefStraightAttributes {
   length: number;
 }
 
 // Attributes for a piece def
-export type PieceDefDataAttributes = StraightAttributes | CurveAttributes | SwitchAttributes;
+export type PieceDefDataAttributes =  PieceDefStraightAttributes |  PieceDefCurveAttributes |  PieceDefSwitchAttributes;
 
 // Data structure to define a track piece definition
 export interface PieceDefData {

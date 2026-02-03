@@ -3,8 +3,15 @@
   padding: 16px !important;
 }
 
+.iconContainer {
+  border: 1px solid #aaaaaa;
+  height: 58px;
+  padding: 5px;
+}
+
 .pieceContainer {
-  width: 150px;
+  width: 200px;
+
 }
 
 .title {

@@ -1,10 +1,11 @@
 import { Card, CardContent, Stack } from "@mui/material";
-import { AddLayoutPieceData, CurveAttributes, PieceDefData, StraightAttributes, SwitchAttributes, UiLayout } from "trainbrain-shared";
+import { AddLayoutPieceData, PieceDefCurveAttributes, PieceDefData, PieceDefStraightAttributes, PieceDefSwitchAttributes, UiLayout } from "trainbrain-shared";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { addTrackPiece } from "@/app/services/api/tracklayout";
 import { getLastInsertedNode } from "@/app/services/tracklayout";
+import PieceDefIcon from "./piecedeficon";
 
 interface props {
   name: string;
@@ -25,19 +26,24 @@ export default function PieceDefCard({name, definition}: props) {
       onClick={handleClick}
     >
       <CardContent className={styles.cardContent}>
-        <Stack className={styles.pieceContainer} key={name}>
-          <div className={controlsSectionStyles.title + " " + styles.title}>
-            {name}
+        <Stack direction="row" spacing={1}>
+          <div className={styles.iconContainer}>
+            <PieceDefIcon category={definition.category} />
           </div>
-          <div className={controlsSectionStyles.category + " " + styles.category}>
-            {definition.category}
-          </div>
-          <div className={controlsSectionStyles.text + " " + styles.text}>
-            { getPieceSpecificInfo(definition) }
-          </div>
-          <div className={controlsSectionStyles.grayText + " " + styles.text}>
-            Also known as: {definition.aka}.
-          </div>
+          <Stack className={styles.pieceContainer} key={name}>
+            <div className={controlsSectionStyles.title + " " + styles.title}>
+              {name}
+            </div>
+            <div className={controlsSectionStyles.category + " " + styles.category}>
+              {definition.category}
+            </div>
+            <div className={controlsSectionStyles.text + " " + styles.text}>
+              { getPieceSpecificInfo(definition) }
+            </div>
+            <div className={controlsSectionStyles.grayText + " " + styles.text}>
+              Also known as: {definition.aka}.
+            </div>
+          </Stack>
         </Stack>
       </CardContent>
     </Card>
@@ -74,20 +80,20 @@ function addTrackPieceToLayout(pieceDefName:string): void {
 }
 
 /**
- * Return piece specific info text for the given piece
+ * Return the piece's attributes as structured text
  */
 function getPieceSpecificInfo(data: PieceDefData): string {
   let attributes;
 
   switch(data.category.toLowerCase()) {
     case "straight":
-      attributes = data.attributes as StraightAttributes;
+      attributes = data.attributes as PieceDefStraightAttributes;
       return `Length: ${attributes.length }mm.`;
     case "curve":
-      attributes = data.attributes as CurveAttributes;
-      return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm.`;
+      attributes = data.attributes as PieceDefCurveAttributes;
+      return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm, ${attributes.orientation} oriented`;
     case "switch":
-      attributes = data.attributes as SwitchAttributes;
+      attributes = data.attributes as PieceDefSwitchAttributes;
       return `${attributes.variant} handed, angle: ${attributes.angle}°, radius: ${attributes.radius} mm, length: ${attributes.length} mm`;
   }
 

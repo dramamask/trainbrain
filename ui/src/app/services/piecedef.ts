@@ -1,5 +1,7 @@
-import { PieceDefData } from "trainbrain-shared";
+import { PieceDefCurveAttributes, PieceDefData } from "trainbrain-shared";
 import { store as pieceDefStore } from "@/app/services/stores/piecedefs";
+
+const CURVE = "curve";
 
 export interface PieceDefWithName {
   name: string;
@@ -14,12 +16,25 @@ export interface PieceDefWithName {
  * different orientation.
  */
 export function getUiPieceDefList(): PieceDefWithName[] {
-  return Object.entries(pieceDefStore.getPieceDefList()).map(([name, definition]) => {
-    const data = {
+  const list: PieceDefWithName[] = [];
+
+  Object.entries(pieceDefStore.getPieceDefList()).forEach(([name, definition]) => {
+    list.push({
       name: name,
       pieceDef: definition,
+    });
+
+    // In case of a curve, add a copy of the piece def with the "left" orientation
+    if (definition.category == CURVE) {
+     const copy = structuredClone(definition)
+     const attributes = (copy.attributes as PieceDefCurveAttributes);
+     attributes.orientation = "left";
+     list.push({
+       name: name,
+       pieceDef: copy,
+     })
     }
-    return data;
-    // TODO: create extra items for the curves. Add name to category maybe?
   });
+
+  return list;
 }
