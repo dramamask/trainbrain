@@ -20,7 +20,7 @@ import controlsSectionStyles from "../controlssection.module.css";
 
 export default function PieceDefCard({pieceDefId, definition}: props) {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    addTrackPieceToLayout(pieceDefId);
+    addTrackPieceToLayout(pieceDefId, definition);
   };
 
   return (
@@ -33,7 +33,7 @@ export default function PieceDefCard({pieceDefId, definition}: props) {
           <div className={styles.iconContainer}>
             <PieceDefIcon pieceDef={definition} />
           </div>
-          <Tooltip title={"Part numbers: " + definition.partNum}>
+          <Tooltip title={definition.partNum}>
           <Stack className={styles.pieceContainer}>
             <div className={controlsSectionStyles.title + " " + styles.title}>
               {definition.category + getLgbRadius(definition)}
@@ -51,14 +51,15 @@ export default function PieceDefCard({pieceDefId, definition}: props) {
 
 // Call the API endpoint to insert the track piece into the layout.
 // The endpoint returns the new UI Layout definition. We store that in the trackLayoutStore.
-function addTrackPieceToLayout(pieceDefName:string): void {
+function addTrackPieceToLayout(pieceDefId: string, pieceDef: PieceDefData): void {
   // Get the selected node
   const selectedNode = selectionStore.getSelectedNode();
 
   // Assemble the data for the API call
   const data: AddLayoutPieceData = {
     nodeId: selectedNode,
-    pieceDefId: pieceDefName,
+    pieceDefId: pieceDefId,
+    orientation: getOrientation(pieceDef),
   }
 
   // Call the API to add the track piece
@@ -107,6 +108,16 @@ function getLgbRadius(def: PieceDefData): string {
     const curveAttr = def.attributes as PieceDefCurveAttributes;
     const lgbRadius = curveAttr.lgbRadius ?? "";
     return " " + lgbRadius;
+  }
+  return "";
+}
+
+/**
+ * Return the curve piece orientation if the piece is a curve. Otherwise just return an emptry string.
+ */
+function getOrientation(pieceDef: PieceDefData): string {
+  if (pieceDef.category == CURVE) {
+    return (pieceDef.attributes as PieceDefCurveAttributes).orientation ?? "";
   }
   return "";
 }

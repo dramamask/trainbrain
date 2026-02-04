@@ -133,6 +133,8 @@ export class Layout {
    *
    * - pieceDefId is the type of piece that we want to add.
    * - nodeId is the node that will be connected to the start-side of the new piece
+   *   (unless it is a curve type piece and orientation is et to "left", in which
+   *   case the end-side of the new piece will be connected to the node with nodeId)
    *
    *         SITUATION BEFORE:                  SITUATION AFTER:
    *
@@ -153,8 +155,9 @@ export class Layout {
     const pieceDef = this.pieceDefs.getPieceDef(data.pieceDefId);
 
     // Create the new layout piece
+    const connector = data.orientation == "left" ? "end" : "start"
     const connectorsData: LayoutPieceConnectorsData = {
-      "start" : {
+      [connector] : {
         heading: undefined, // This will be set later
         node: nodeToConnectTo.getId(),
       }

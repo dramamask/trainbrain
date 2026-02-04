@@ -28,4 +28,8 @@ export const addLayoutPieceSchema = [
       }
       return true;
     }),
+
+  body('orientation')
+    .exists().withMessage("JSON parameter 'orientation' is required")
+    .isString().withMessage("JSON parameter 'orientation' must be a string"),
 ];

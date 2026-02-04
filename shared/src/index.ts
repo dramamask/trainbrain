@@ -117,4 +117,5 @@ export interface UpdateNodeData {
 export interface AddLayoutPieceData {
   nodeId: string;
   pieceDefId: string;
+  orientation: string;
 }

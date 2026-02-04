@@ -36,6 +36,7 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
     span?.setAttribute('_.request.type', 'addLayoutPiece');
     span?.setAttribute('_.request.nodeId', data.nodeId);
     span?.setAttribute('_.request.pieceDefId', data.pieceDefId);
+    span?.setAttribute('_.request.orientation', data.orientation);
 
     await layout.addLayoutPiece(data);
 

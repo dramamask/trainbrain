@@ -31,7 +31,7 @@ export class PieceDefs {
     const pieceDef = this.pieceDefs.get(id);
 
     if (pieceDef === undefined) {
-      throw new FatalError("Someone asked me for a PieceDef I don't know. That not good. That's not good for anybody.");
+      throw new FatalError(`Someone asked me for a PieceDef I don't know. That not good. That's not good for anybody. PieceDefId: ${id}`);
     }
 
     return pieceDef;
