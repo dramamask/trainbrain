@@ -76,6 +76,7 @@ export interface PieceDefSwitchAttributes {
   radius: number;
   length: number;
   variant: SwitchVariant;
+  lgbRadius?: string;
 }
 
 // Attribtues for a curve piece def
@@ -83,6 +84,7 @@ export interface PieceDefCurveAttributes {
   angle: number;
   radius: number;
   orientation: CurveOrientation;
+  lgbRadius?: string;
 }
 
 // Attributes for a straight piece def
@@ -96,7 +98,7 @@ export type PieceDefDataAttributes =  PieceDefStraightAttributes |  PieceDefCurv
 // Data structure to define a track piece definition
 export interface PieceDefData {
     category: TrackPieceCategory;
-    aka: string;
+    partNum: string;
     attributes: PieceDefDataAttributes;
 }
 

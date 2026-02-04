@@ -1,4 +1,4 @@
-import { Card, CardContent, Stack } from "@mui/material";
+import { Card, CardContent, Stack, Tooltip } from "@mui/material";
 import { AddLayoutPieceData, PieceDefCurveAttributes, PieceDefData, PieceDefStraightAttributes, PieceDefSwitchAttributes, UiLayout } from "trainbrain-shared";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as errorStore } from "@/app/services/stores/error";
@@ -7,17 +7,20 @@ import { addTrackPiece } from "@/app/services/api/tracklayout";
 import { getLastInsertedNode } from "@/app/services/tracklayout";
 import PieceDefIcon from "./piecedeficon";
 
+const CURVE = "curve";
+const SWITCH = "switch";
+
 interface props {
-  name: string;
+  pieceDefId: string;
   definition: PieceDefData;
 }
 
 import styles from "./piecedefcard.module.css"
 import controlsSectionStyles from "../controlssection.module.css";
 
-export default function PieceDefCard({name, definition}: props) {
+export default function PieceDefCard({pieceDefId, definition}: props) {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    addTrackPieceToLayout(name);
+    addTrackPieceToLayout(pieceDefId);
   };
 
   return (
@@ -25,22 +28,21 @@ export default function PieceDefCard({name, definition}: props) {
       sx={{ flexShrink: 0} /* Do not shrink the card when the container is too small to fit all the cards*/}
       onClick={handleClick}
     >
-      <CardContent className={styles.cardContent}>
-        <Stack direction="row" spacing={1}>
+      <CardContent className={styles.cardContent} sx={{paddingLeft: '0 !important'}}>
+        <Stack direction="row" spacing={0}>
           <div className={styles.iconContainer}>
-            <PieceDefIcon category={definition.category} />
+            <PieceDefIcon pieceDef={definition} />
           </div>
-          <Stack className={styles.pieceContainer} key={name}>
+          <Tooltip title={"Part numbers: " + definition.partNum}>
+          <Stack className={styles.pieceContainer}>
             <div className={controlsSectionStyles.title + " " + styles.title}>
-              {name}
+              {definition.category + getLgbRadius(definition)}
             </div>
             <div className={controlsSectionStyles.text + " " + styles.text}>
               { getPieceSpecificInfo(definition) }
             </div>
-            <div className={controlsSectionStyles.grayText + " " + styles.text}>
-              Also known as: {definition.aka}.
-            </div>
           </Stack>
+          </Tooltip>
         </Stack>
       </CardContent>
     </Card>
@@ -88,11 +90,23 @@ function getPieceSpecificInfo(data: PieceDefData): string {
       return `Length: ${attributes.length }mm.`;
     case "curve":
       attributes = data.attributes as PieceDefCurveAttributes;
-      return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm, ${attributes.orientation} oriented`;
+      return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm`;
     case "switch":
       attributes = data.attributes as PieceDefSwitchAttributes;
-      return `${attributes.variant} handed, angle: ${attributes.angle}°, radius: ${attributes.radius} mm, length: ${attributes.length} mm`;
+      return `Angle: ${attributes.angle}°, radius: ${attributes.radius} mm, length: ${attributes.length} mm`;
   }
 
+  return "";
+}
+
+/**
+ * Return the lgbRadius value from the pieceDef attributes, if one is defined
+ */
+function getLgbRadius(def: PieceDefData): string {
+  if (def.category == CURVE || def.category == SWITCH) {
+    const curveAttr = def.attributes as PieceDefCurveAttributes;
+    const lgbRadius = curveAttr.lgbRadius ?? "";
+    return " " + lgbRadius;
+  }
   return "";
 }

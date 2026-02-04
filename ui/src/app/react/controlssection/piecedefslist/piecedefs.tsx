@@ -7,7 +7,7 @@ import { getPieceDef } from "@/app/services/api/piecedef";
 import { store as pieceDefStore } from "@/app/services/stores/piecedefs";
 import { store as errorStore } from "@/app/services/stores/error";
 import { store as editModeStore } from "@/app/services/stores/editmode";
-import { getUiPieceDefList, PieceDefWithName } from "@/app/services/piecedef";
+import { getUiPieceDefList, PieceDefWithId } from "@/app/services/piecedef";
 import PieceDefCard from "./piecedefcard";
 
 import styles from "./piecedefs.module.css";
@@ -55,15 +55,15 @@ export default function ControlsSection() {
 }
 
 // Render the list of piece definitions
-function renderPieceDefList(pieceDefs: PieceDefWithName[]) {
+function renderPieceDefList(pieceDefs: PieceDefWithId[]) {
   return (
-    pieceDefs.map((data, index) => getPieceDefComponent(index, data.name, data.pieceDef))
+    pieceDefs.map((data, index) => getPieceDefComponent(index, data.id, data.pieceDef))
   )
 }
 
 // Return the component that renders the particular piece definition
-function getPieceDefComponent(key: number, name: string, definition: PieceDefData) {
+function getPieceDefComponent(key: number, pieceDefId: string, definition: PieceDefData) {
   return (
-    <PieceDefCard key={key} name={name} definition={definition} />
+    <PieceDefCard key={key} pieceDefId={pieceDefId} definition={definition} />
   )
 }

@@ -1,8 +1,5 @@
 # TODO
 
-- work on the layout a litte more for the piece def icons. Maybe add left border line on the text side. And move the icons to the left a little.
-- Add more constants in the svg use definitions. Use those values everywhere that the pieces are used!
-- Add left oriented curve icon for left oriented curve. We don't have to list the orientation in the text anymore then.
 - Add orientation to the server's add-piece API endpoint (work on making it possible to add left or right hand curve pieces)
 - Work on the left hand version of the R1 UI Switch.
 - Do the UI curve pieces (and switches) need to be that wide? Can there viewbox be smaller?

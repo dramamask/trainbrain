@@ -3,8 +3,8 @@ import { store as pieceDefStore } from "@/app/services/stores/piecedefs";
 
 const CURVE = "curve";
 
-export interface PieceDefWithName {
-  name: string;
+export interface PieceDefWithId {
+  id: string;
   pieceDef: PieceDefData;
 }
 
@@ -15,12 +15,12 @@ export interface PieceDefWithName {
  * UI user. The extra items are copies of the same piece def, but with a
  * different orientation.
  */
-export function getUiPieceDefList(): PieceDefWithName[] {
-  const list: PieceDefWithName[] = [];
+export function getUiPieceDefList(): PieceDefWithId[] {
+  const list: PieceDefWithId[] = [];
 
-  Object.entries(pieceDefStore.getPieceDefList()).forEach(([name, definition]) => {
+  Object.entries(pieceDefStore.getPieceDefList()).forEach(([id, definition]) => {
     list.push({
-      name: name,
+      id: id,
       pieceDef: definition,
     });
 
@@ -30,7 +30,7 @@ export function getUiPieceDefList(): PieceDefWithName[] {
      const attributes = (copy.attributes as PieceDefCurveAttributes);
      attributes.orientation = "left";
      list.push({
-       name: name,
+       id: id,
        pieceDef: copy,
      })
     }

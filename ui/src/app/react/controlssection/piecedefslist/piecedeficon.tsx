@@ -1,24 +1,26 @@
-import { TrackPieceCategory } from "trainbrain-shared";
+import { PieceDefData } from "trainbrain-shared";
 import StraightL300 from "@/app/react/tracklayout/regular/symbols/straight-l300";
 import CurveR600A30 from "@/app/react/tracklayout/regular/symbols/curve-r600-a30";
 import SwitchR600A30L300 from "@/app/react/tracklayout/regular/symbols/switch-r600-a30-l300";
+import { PIECE_WIDTH as StraightWidth } from "@/app/react/tracklayout/regular/straight";
 import * as config from "@/app/config/config";
 
 const CURVE = "curve";
 const STRAIGHT = "straight";
 const SWITCH = "switch";
+const LEFT = "left";
 
 const iconWorldHeight = 320;
 const iconWorldWidth = 313;
 
 interface props {
-  category: TrackPieceCategory;
+  pieceDef: PieceDefData;
 }
 
 /**
  * Render a piece icon form the track piece def list (where user's click to add a piece to the layout)
  */
-export default function PieceDefIcon({category}: props) {
+export default function PieceDefIcon({pieceDef}: props) {
   return (
     <svg
       height="100%"
@@ -27,9 +29,9 @@ export default function PieceDefIcon({category}: props) {
       preserveAspectRatio="xMinYMax slice"
     >
       <g transform={`translate(0 ${iconWorldHeight}) scale(1 -1)`}>
-        {(category == STRAIGHT) && getStraight()}
-        {(category == CURVE) && getCurve()}
-        {(category == SWITCH) && getSwitch()}
+        {(pieceDef.category == STRAIGHT) && getStraight()}
+        {(pieceDef.category == CURVE) && getCurve(pieceDef)}
+        {(pieceDef.category == SWITCH) && getSwitch(pieceDef)}
       </g>
     </svg>
   )
@@ -51,13 +53,13 @@ function getStraight() {
           "--sleeper-color": config.SLEEPER_COLOR,
           "--sleeper-width": config.SLEEPER_WIDTH,
         } as React.CSSProperties }
-        transform={`translate(${iconWorldWidth / 2} 0) translate(-44 10)`}
+        transform={`translate(${iconWorldWidth / 2} 0) translate(-${StraightWidth / 2} 10)`}
       />
     </>
   )
 }
 
-function getCurve() {
+function getCurve(pieceDef: PieceDefData) {
   return (
     <>
       <defs>
@@ -73,13 +75,13 @@ function getCurve() {
           "--sleeper-color": config.SLEEPER_COLOR,
           "--sleeper-width": config.SLEEPER_WIDTH,
         } as React.CSSProperties }
-        transform={`translate(${iconWorldWidth / 2} 0) translate(-66 0) `}
+        transform={`translate(${iconWorldWidth / 2} 0) translate(${flip(pieceDef) ? 70 : -70} 0) ${flip(pieceDef) ? "scale(-1, 1)" : ""}`}
       />
     </>
   )
 }
 
-function getSwitch() {
+function getSwitch(pieceDef: PieceDefData) {
   return (
     <>
       <defs>
@@ -95,8 +97,24 @@ function getSwitch() {
           "--sleeper-color": config.SLEEPER_COLOR,
           "--sleeper-width": config.SLEEPER_WIDTH,
         } as React.CSSProperties }
-        transform={`translate(${iconWorldWidth / 2} 0) translate(-66 0) `}
+        transform={`translate(${iconWorldWidth / 2} 0) translate(${flip(pieceDef) ? 70 : -70} 0) ${flip(pieceDef) ? "scale(-1, 1)" : ""}`}
       />
     </>
   )
+}
+
+/**
+ * For certain pieces, return the SVG transform function to flip the piece over the vertical axis.
+ * Otherwise just return an empty string.
+ */
+function flip(pieceDef: PieceDefData): boolean {
+  if ('orientation' in pieceDef.attributes && pieceDef.attributes.orientation == LEFT) {
+    return true;
+  }
+
+  if ('variant' in pieceDef.attributes && pieceDef.attributes.variant == LEFT) {
+    return true;
+  }
+
+  return false;
 }

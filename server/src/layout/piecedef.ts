@@ -2,7 +2,7 @@ import { TrackPieceCategory, PieceDefDataAttributes, PieceDefData } from "trainb
 
 export class PieceDef {
   protected id: string;
-  protected aka: string;
+  protected partNum: string;
   protected readonly category: TrackPieceCategory;
   protected readonly attributes: PieceDefDataAttributes;
 
@@ -10,23 +10,11 @@ export class PieceDef {
     this.id = id;
     this.category = pieceDefData.category;
     this.attributes = pieceDefData.attributes;
-    this.aka = pieceDefData.aka; // Also known as
+    this.partNum = pieceDefData.partNum; // Also known as
   }
 
   public getId(): string {
     return this.id;
-  }
-
-  public setId(value: string): void {
-    this.id = value;
-  }
-
-  public getAka(): string {
-    return this.aka;
-  }
-
-  public setAka(value: string): void {
-    this.aka = value;
   }
 
   public getCategory(): TrackPieceCategory {
@@ -37,6 +25,14 @@ export class PieceDef {
     return this.attributes;
   }
 
+  public getPartNum(): string {
+    return this.partNum;
+  }
+
+  public setId(value: string): void {
+    this.id = value;
+  }
+
   /**
    * Return this objects data in the format in which it is stored in the PieceDefs DB
    */
@@ -44,7 +40,7 @@ export class PieceDef {
     return {
       category: this.category,
       attributes: this.attributes,
-      aka: this.aka,
+      partNum: this.partNum,
     }
   }
 }

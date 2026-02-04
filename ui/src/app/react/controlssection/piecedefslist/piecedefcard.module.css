@@ -4,18 +4,19 @@
 }
 
 .iconContainer {
-  border-right: 1px solid #cccccc;
   height: 58px;
-  padding: 2px;
 }
 
 .pieceContainer {
-  width: 200px;
+  border-left: 1px solid #cccccc;
+  padding-left: 10px;
+  width: 150px;
 
 }
 
 .title {
   line-height: 1.25;
+  text-transform: capitalize;
 }
 
 .category {

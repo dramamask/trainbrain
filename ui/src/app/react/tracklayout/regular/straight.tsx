@@ -9,7 +9,7 @@ import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
 
 import styles from  "./trackpiece.module.css";
 
-const PIECE_WIDTH = 88;
+export const PIECE_WIDTH = 88;
 
 interface props {
   piece: UiLayoutPiece;
@@ -30,7 +30,7 @@ export default function Straight({piece}: props) {
       className={styles.trackpiece + " " +  getTrackPieceContainerClassName()}
       href={getSymbol(length)}
       height={length}
-      width={88}
+      width={PIECE_WIDTH}
       style={{
         "--rail-color": config.RAIL_COLOR,
         "--rail-width": config.RAIL_WIDTH,
