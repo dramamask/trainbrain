@@ -1,6 +1,6 @@
 # TODO
 
-- Need to be able to add nodes in arbitrary places.
+- Add node from UI. Keyboard shorcut N.
 - Work on the left hand version of the R1 UI Switch.
 - Add measuring of distances.
 - Do the UI curve pieces (and switches) need to be that wide? Can there viewbox be smaller?
