@@ -1,6 +1,8 @@
 # TODO
 
+- Need to be able to add nodes in arbitrary places.
 - Work on the left hand version of the R1 UI Switch.
+- Add measuring of distances.
 - Do the UI curve pieces (and switches) need to be that wide? Can there viewbox be smaller?
 - Do regular mode straight and curve pieces need to subscribe to the trackLayoutStore? Can't they just get the coordinates from the store?
 - Add track piece icons to the add-track-piece list. Use the same icon for every straight, curve and switch?

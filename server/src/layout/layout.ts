@@ -103,6 +103,16 @@ export class Layout {
   }
 
   /**
+   * Add a new node to the layout at a given coordinate
+   */
+  public async addNode(coordinate: Coordinate): Promise<void> {
+    this.nodeFactory.create(coordinate, null, undefined);
+
+    // Save the newly changed layout to file
+    this.save();
+  }
+
+  /**
    * Update a node's coordinate and/or the attached layout piece's heading
    */
   public async updateNode(nodeId: string, coordinate: Coordinate, headingIncrement: number): Promise<void> {

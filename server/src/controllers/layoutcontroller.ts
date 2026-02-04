@@ -3,7 +3,7 @@ import { trace } from '@opentelemetry/api';
 import { matchedData } from 'express-validator';
 import { constants } from "http2";
 import { layout } from "../services/init.js";
-import { AddLayoutPieceData, Coordinate, UiLayout, UpdateNodeData } from 'trainbrain-shared';
+import { AddLayoutPieceData, AddNodeData, Coordinate, UiLayout, UpdateNodeData } from 'trainbrain-shared';
 
 // API endpoint to get the track layout
 export const getLayout = (req: Request, res: Response, next: NextFunction): void => {
@@ -39,6 +39,39 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
     span?.setAttribute('_.request.orientation', data.orientation);
 
     await layout.addLayoutPiece(data);
+
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
+
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
+
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+  } catch (error) {
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+  }
+}
+
+// API endpoint to add a node in an arbitrary position.
+// This is done so layout pieces can be added in new positions, not connected to other pieces (yet).
+export const addNode = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData<AddNodeData>(req);
+
+  try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'addNode');
+    span?.setAttribute('_.request.x', data.x);
+    span?.setAttribute('_.request.y', data.y);
+
+    const coordinate: Coordinate = {
+      x: data.x,
+      y: data.y,
+    };
+    await layout.addNode(coordinate);
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);

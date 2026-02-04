@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { UiAttributesDataCurve, UiLayoutPiece } from "trainbrain-shared";
+import { UiAttributesDataSwitch, UiLayoutPiece } from "trainbrain-shared";
 import { getBoundingBox, thisTrackPieceIsSelected} from "@/app/services/trackpiece";
 import * as config from "@/app/config/config";
 import { store as selectionStore } from "@/app/services/stores/selection";
@@ -9,6 +9,7 @@ import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
 import Rectangle from "./components/rectangle";
 import ArcPath from "./components/arcpath";
+import Line from "./components/line";
 
 import styles from "./trackpiece.module.css";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
@@ -18,16 +19,17 @@ interface props {
 }
 
 // Curve track piece component
-export default function Curve({piece}: props) {
+export default function Switch({piece}: props) {
   const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
   const isTrackPieceSelected = useSyncExternalStore(selectionStore.subscribe, () => thisTrackPieceIsSelected(piece.id));
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const attributes = piece.attributes as UiAttributesDataCurve;
+  const attributes = piece.attributes as UiAttributesDataSwitch;
   const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutState.trackLayout).coordinate;
   const endCoordinate = getLayoutNodeData(piece.nodeConnections["end"], trackLayoutState.trackLayout).coordinate;
-  const [topLeftCoordinate, bottomRightCoordinate] = getBoundingBox([startCoordinate, endCoordinate]);
+  const divergeCoordinate = getLayoutNodeData(piece.nodeConnections["diverge"], trackLayoutState.trackLayout).coordinate;
+  const [topLeftCoordinate, bottomRightCoordinate] = getBoundingBox([startCoordinate, divergeCoordinate]);
 
   // Render the component
   return (
@@ -37,7 +39,7 @@ export default function Curve({piece}: props) {
       key={piece.id}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{cursor: 'pointer' }}
+      style={{ cursor: 'pointer' }}
     >
       <Rectangle
         visible={false}
@@ -50,7 +52,15 @@ export default function Curve({piece}: props) {
         color={isTrackPieceSelected ? config.SELECTED_TRACK_COLOR : config.EDIT_MODE_TRACK_COLOR}
         radius={attributes.radius}
         startCoordinate={startCoordinate}
-        endCoordinate={endCoordinate}
+        endCoordinate={divergeCoordinate}
+        sweepRight={attributes.variant == "right"}
+      />
+      <Line
+        draw={true}
+        isHovered={isHovered}
+        color={isTrackPieceSelected ? config.SELECTED_TRACK_COLOR : config.EDIT_MODE_TRACK_COLOR}
+        coordinateOne={startCoordinate}
+        coordinateTwo={endCoordinate}
       />
     </g>
   );

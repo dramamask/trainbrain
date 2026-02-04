@@ -111,7 +111,6 @@ export class NodeFactory {
       throw new FatalError("How did we end up with no nodes? That's not going to be good for anybody.");
     }
 
-    this.removeOrphanedNodes();
     this.nodes.forEach(node => node.save());
     await persistLayoutNodes("NodeFactory::save()");
   }
@@ -129,7 +128,7 @@ export class NodeFactory {
    * Remove nodes that have no pieces connected to them
    * Always keep one node though, otherwise we have nothing to connect a new layout pieces to.
    */
-  protected removeOrphanedNodes(): void {
+  public removeOrphanedNodes(): void {
     for(const [_id, node] of this.nodes) {
       // Stop checking when we get down to the last node because we want to keep at least one node
       if (this.nodes.size == 1) {

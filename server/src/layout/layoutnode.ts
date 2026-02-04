@@ -35,7 +35,7 @@ export class LayoutNode {
 
   public getCoordinate(): Coordinate {
     if (this.coordinate === undefined) {
-      throw new FatalError("The coordinate should be known by know.");
+      throw new FatalError("The coordinate should be known by now.");
     }
     return this.coordinate;
   }
@@ -68,7 +68,7 @@ export class LayoutNode {
   // Get the data for this layout node, as it would be stored in the layout-nodes json DB
   public getLayoutData(): LayoutNodeData {
     if (this.coordinate === undefined) {
-      throw new FatalError("The coordinate should be known by know.");
+      throw new FatalError("The coordinate should be known by now.");
     }
 
     return {
@@ -79,7 +79,7 @@ export class LayoutNode {
   // Return our layout information in the UiLayoutNode format
   public getUiLayoutData(): UiLayoutNode {
     if (this.coordinate === undefined) {
-      throw new FatalError("The coordinate should be known by know.");
+      throw new FatalError("The coordinate should be known by now.");
     }
 
     return {

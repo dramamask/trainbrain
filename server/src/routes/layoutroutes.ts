@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { UpdateNodeSchema } from "../middleware/updatenodeschema.js";
+import { addNodeSchema } from "../middleware/addnodeschema.js";
+import { updateNodeSchema } from "../middleware/updatenodeschema.js";
 import { validate } from "../middleware/validate.js";
 import * as layoutController from "../controllers/layoutcontroller.js";
 import { addLayoutPieceSchema } from "../middleware/addlayoutpieceschema.js";
@@ -10,7 +11,8 @@ const router: Router = Router();
 
 // Map URL sub-paths to controller methods
 router.get('/', layoutController.getLayout);
-router.put('/node/:index', nodeIndexSchema, UpdateNodeSchema, validate, layoutController.updateNode);
+router.put('/node/:index', nodeIndexSchema, updateNodeSchema, validate, layoutController.updateNode);
+router.post('/node', addNodeSchema, validate, layoutController.addNode);
 router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
 router.delete('/piece/:index', layoutPieceIndexSchema, validate, layoutController.deleteLayoutPiece);
 // router.put('/piece/rotate/:index', pieceIndexSchema, validate, layoutController.rotateLayoutPiece);

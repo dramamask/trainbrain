@@ -2,6 +2,7 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import type { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
 import Curve from "./curve";
 import Straight from "./straight";
+import Switch from "./switch";
 import Node from "./node";
 import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
@@ -115,6 +116,8 @@ function getTrackPieceComponent(piece: UiLayoutPiece) {
       return <Straight piece={piece} key={piece.id} />;
     case "curve":
       return <Curve piece={piece} key={piece.id} />;
+    case "switch":
+      return <Switch piece={piece} key={piece.id} />;
     default:
       return null;
   }

@@ -74,7 +74,8 @@ function getSymbol(radius: number, angle: number): string {
  * Given a sumbol name, returns the symbol's height.
  */
 function getHeight(symbol: string): number {
-  return HEIGHT_WIDTH[symbol].height;
+  console.log(symbol);
+  return HEIGHT_WIDTH[symbol]?.height ?? 0;
 }
 
 /**
@@ -82,5 +83,5 @@ function getHeight(symbol: string): number {
  */
 
 function getWidth(symbol: string): number {
-  return HEIGHT_WIDTH[symbol].width;
+  return HEIGHT_WIDTH[symbol]?.width ?? 0;
 }

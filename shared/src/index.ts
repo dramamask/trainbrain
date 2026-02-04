@@ -105,6 +105,13 @@ export interface PieceDefData {
 // A list of PieceDefData records
 export type PieceDefDataList = Record<string, PieceDefData>;
 
+// Data structure used to add a node at a given position
+export interface AddNodeData {
+  index: string;
+  x: number;
+  y: number;
+}
+
 // Data structure used to update a node's position and/or heading of connected pieces
 export interface UpdateNodeData {
   index: string;
