@@ -1,5 +1,7 @@
 "use client";
 
+import { Coordinate } from "trainbrain-shared";
+
 interface State {
   mouseInViewBox: boolean;
   x: number | undefined;
@@ -27,6 +29,14 @@ export const store = {
   // Needed for next.js to be able to do server side rendering
   getServerSnapshot(): State {
     return state;
+  },
+
+  // Get the current mouse coordinate
+  getPos(): Coordinate | undefined {
+    if (state.x !== undefined && state.y !== undefined) {
+      return {x: state.x, y: state.y}
+    }
+    return undefined;
   },
 
   // Updates the mouse position if the mouse is in the viewbox

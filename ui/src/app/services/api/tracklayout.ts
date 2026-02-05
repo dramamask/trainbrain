@@ -1,4 +1,4 @@
-import { AddLayoutPieceData, UiLayout, UpdateNodeData } from "trainbrain-shared";
+import { AddLayoutPieceData, AddNodeData, DeleteLayoutElementData, UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { apiGet, apiCall } from "./api";
 
 // Get the track layuot structure
@@ -14,6 +14,12 @@ export async function updateNode(data: UpdateNodeData): Promise<UiLayout> {
   return retVal;
 }
 
+// Add a node to the layout
+export async function addNode(data: AddNodeData): Promise<UiLayout> {
+  const retVal = await apiCall<UiLayout>("POST", "/layout/node", data);
+  return retVal;
+}
+
 // Add a track piece to the layout
 export async function addTrackPiece(data: AddLayoutPieceData): Promise<UiLayout> {
   const retVal = await apiCall<UiLayout>("POST", "/layout/piece", data);
@@ -21,9 +27,9 @@ export async function addTrackPiece(data: AddLayoutPieceData): Promise<UiLayout>
 }
 
 // Delete a track piece from the layout
-export async function deleteTrackPiece(pieceId: string): Promise<UiLayout> {
-  const url = "/layout/piece/" + pieceId;
-  const retVal = await apiCall<UiLayout>("DELETE", url, {});
+export async function deleteLayoutElement(data: DeleteLayoutElementData): Promise<UiLayout> {
+  const url = "/layout/element";
+  const retVal = await apiCall<UiLayout>("DELETE", url, data);
   return retVal;
 }
 

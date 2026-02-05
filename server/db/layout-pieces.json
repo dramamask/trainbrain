@@ -3,32 +3,6 @@
     "description": "This file lists the track pieces that make up the train track layout. Nodes are in separate file."
   },
   "pieces": {
-    "0": {
-      "pieceDefId": "b",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "10"
-        },
-        "end": {
-          "heading": 180,
-          "node": "11"
-        }
-      }
-    },
-    "1": {
-      "pieceDefId": "b",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "11"
-        },
-        "end": {
-          "heading": 180,
-          "node": "12"
-        }
-      }
-    },
     "2": {
       "pieceDefId": "b",
       "connectors": {
@@ -85,11 +59,11 @@
       "pieceDefId": "b",
       "connectors": {
         "start": {
-          "heading": 0,
+          "heading": 180,
           "node": "17"
         },
         "end": {
-          "heading": 180,
+          "heading": 0,
           "node": "18"
         }
       }
@@ -102,7 +76,7 @@
           "node": "17"
         },
         "end": {
-          "heading": 0,
+          "heading": 150,
           "node": "19"
         },
         "diverge": {
@@ -115,11 +89,11 @@
       "pieceDefId": "b",
       "connectors": {
         "start": {
-          "heading": 180,
+          "heading": 150,
           "node": "19"
         },
         "end": {
-          "heading": 0,
+          "heading": 330,
           "node": "21"
         }
       }
@@ -128,11 +102,11 @@
       "pieceDefId": "b",
       "connectors": {
         "start": {
-          "heading": 180,
+          "heading": 150,
           "node": "21"
         },
         "end": {
-          "heading": 0,
+          "heading": 330,
           "node": "22"
         }
       }
@@ -141,11 +115,11 @@
       "pieceDefId": "b",
       "connectors": {
         "start": {
-          "heading": 180,
+          "heading": 150,
           "node": "22"
         },
         "end": {
-          "heading": 0,
+          "heading": 330,
           "node": "23"
         }
       }
@@ -173,19 +147,6 @@
         "end": {
           "heading": 0,
           "node": "25"
-        }
-      }
-    },
-    "13": {
-      "pieceDefId": "b",
-      "connectors": {
-        "start": {
-          "heading": 180,
-          "node": "25"
-        },
-        "end": {
-          "heading": 0,
-          "node": "26"
         }
       }
     }

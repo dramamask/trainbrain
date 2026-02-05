@@ -5,6 +5,7 @@ import type { LayoutNodeData } from "../data_types/layoutNodes.js";
 import type { NodeFactory } from "./nodefactory.js";
 import { deleteLayoutNode, saveLayoutNodeData } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
+import { StillConnectedError } from '../errors/StillConnectedError.js';
 
 interface Connection {
   piece: LayoutPiece | null, connectorName: ConnectorName | undefined,
@@ -57,9 +58,10 @@ export class LayoutNode {
 
   /**
    * Return the connection info for each piece that this node is connected to.
-   * Note that this is different from this connections, which always has two entries.
-   * This function only returns a Connection objects for connections that are connected
-   * to a piece. This means that this funtion may return an array of 0, 1, or 2 entries.
+   * Note that this is different from returning the member variable 'connections',
+   * which always has two entries. This function only returns a Connection objects
+   * for connections that are connected to a piece. This means that this funtion
+   * may return an array of 0, 1, or 2 entries.
    */
   public getConnections(): Connection[] {
     return this.connections.filter(connection => connection.piece !== null).map(connection => connection as Connection);
@@ -319,7 +321,7 @@ export class LayoutNode {
 
     // Check to make sure we are not connected to anything
     if (this.getNumberOfConnections() != 0) {
-      throw new FatalError("Can't delete ourselves. We are still connected to something.")
+      throw new StillConnectedError("Can't delete ourselves. We are still connected to something.")
     }
 
     // Delete ourselves from the DB

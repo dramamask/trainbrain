@@ -1,6 +1,7 @@
 # TODO
 
-- Add node from UI. Keyboard shorcut N.
+- Delete node server and UI.
+- Rotate node does weird things with switch or curve. maybe the cureve switched orientations. Look into it.
 - Work on the left hand version of the R1 UI Switch.
 - Add measuring of distances.
 - Do the UI curve pieces (and switches) need to be that wide? Can there viewbox be smaller?

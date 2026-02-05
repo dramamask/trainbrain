@@ -71,6 +71,16 @@ export abstract class LayoutPiece {
     return this.connectors.getHeading(name)
   }
 
+  /**
+   * Returns an array of nodes this piece is connected to.
+   * Remeber that each piece connector is always connected to
+   * a node. So this returns as many nodes as the piece has
+   * connectors.
+   */
+  public getConnectedNodes(): LayoutNode[] {
+    return this.connectors.getNodes();
+  }
+
   // Get the data for this layout piece, as it would be stored in the track-layout json DB
   public getLayoutData(): LayoutPieceData {
     return {

@@ -7,16 +7,17 @@
 export type KeyDefintions =  Record<string, string | string[]>;
 
 export const KEYS: KeyDefintions = {
-  ZoomInTrackLayout: '+',
-  ZoomOutTrackLayout: '-',
-  CloseErrorMessage: ['Escape', 'Enter'],
+  ZoomInLayout: '+',
+  ZoomOutLayout: '-',
+  CloseError: ['Escape', 'Enter'],
 }
 
 export const EDIT_MODE_KEYS: KeyDefintions = {
-  DeselectLayoutPiece: 'Escape',
-  DeleteLayoutPiece: 'Delete',
+  Deselect: 'Escape',
+  DeletePiece: 'Delete',
   RotateNodeRight: ']',
   RotateNodeLeft: '[',
+  AddNode: 'N',
   MoveNodeUp: 'ArrowUp',
   MoveNodeDown: 'ArrowDown',
   MoveNodeLeft: 'ArrowLeft',

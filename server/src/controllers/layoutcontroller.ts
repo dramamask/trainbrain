@@ -125,16 +125,17 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
 }
 
 // // Endpoint to add a piece to the track layout
-export const deleteLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteLayoutElement = async (req: Request, res: Response, next: NextFunction) => {
   // matchedData only includes fields defined in the validator middleware for this route
   const data = matchedData(req);
 
   try {
     const span = trace.getActiveSpan();
     span?.setAttribute('_.request.type', 'deleteLayoutPiece');
-    span?.setAttribute('_.request.pieceId', data.index);
+    span?.setAttribute('_.request.pieceId', data.pieceId);
+    span?.setAttribute('_.request.nodeId', data.nodeId);
 
-    await layout.deleteLayoutPiece(data.index);
+    await layout.deleteLayoutElement(data.pieceId);
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);

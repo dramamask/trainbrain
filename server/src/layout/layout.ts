@@ -11,6 +11,7 @@ import { FatalError } from "../errors/FatalError.js";
 import { PieceDefs } from "./piecedefs.js";
 import { PieceDef } from "./piecedef.js";
 import { Switch } from './switch.js';
+import { StillConnectedError } from '../errors/StillConnectedError.js';
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
@@ -186,30 +187,34 @@ export class Layout {
   }
 
   /**
-   * Delete a piece from the layout.
+   * Delete an element from the layout.
    *
-   *    SITUATION BEFORE:        SITUATION AFTER:
+   * This is able to delete both pieces and nodes.
    *
-   *                    O                       O
-   *                    |                       |
-   *                    |                       |
-   *                    |                       |
-   *                    O                       O
-   *                    |
-   *  (piece to delete) |
-   *                    |
-   *                    O                       O
-   *                    |                       |
-   *                    |                       |
-   *                    |                       |
-   *                    O                       O
+   * If a pieceId is sent, that piece will be deleted, plus any orphaned nodes that
+   * are left over after the piece was deleted.
    *
-   * Any orphaned nodes left over after deleting a piece will be deleted as well.
-   * Orphaned nodes are nodes with no piece connected to it.
-   * Note that input validation happens in the express middleware.
+   * If a nodeId was sent, that node will be deleted, plus any piece attached to it.
+   *
+   * If both a pieceId and a nodeId were sent, all of the actions described above
+   * will be kicked off.
    */
-  public async deleteLayoutPiece(pieceId: string): Promise<void> {
-    const pieceToDelete = this.pieces.get(pieceId) as LayoutPiece;
+  public async deleteLayoutElement(pieceId: string, nodeId: string): Promise<void> {
+    this.deleteLayoutPieceAndCo(pieceId);
+    this.deleteLayoutNodeAndCo(nodeId);
+
+    // Save the newly changed layout to file
+    this.save();
+  }
+
+  /**
+   * The piece will be deleted, plus any orphaned nodes that are left over after the piece is deleted.
+   */
+  protected deleteLayoutPieceAndCo(pieceId: string): void {
+    const pieceToDelete = this.pieces.get(pieceId);
+    if (!pieceToDelete) {
+      return;
+    }
 
     // Remove the layout piece from our list of layout piece
     const deleted = this.pieces.delete(pieceToDelete.getId());
@@ -217,11 +222,51 @@ export class Layout {
       throw new FatalError("Layout piece was not deleted from the Map");
     }
 
+    // Get the nodes attached to the piece
+    const connectedNodes = pieceToDelete.getConnectedNodes();
+
     // Tell the layout piece to delete itself
     pieceToDelete.delete();
 
-    // Save the newly changed layout to file
-    this.save();
+    // Delete the nodes that were connected to the piece, if they are orphaned
+    connectedNodes.forEach(connectedNode => {
+      try {
+        connectedNode.delete();
+      } catch (error) {
+        if (error instanceof StillConnectedError) {
+          // The node can't delete itself because it's still connected to a piece. That's fine.
+        }
+      }
+    })
+  }
+
+  /**
+   * The node will be deleted, plus any piece attached to it.
+   */
+  protected deleteLayoutNodeAndCo(nodeId: string): void {
+    let nodeToDelete = this.nodeFactory.get(nodeId);
+    if (!nodeToDelete) {
+      return;
+    }
+
+    // Delete any pieces that the node is connected to
+    const nodeConnections = nodeToDelete.getConnections();
+    nodeConnections.forEach(connection => {
+      const piece = connection.piece as LayoutPiece; // There's always a piece here
+      this.deleteLayoutPieceAndCo(piece.getId());
+    });
+
+    // Check if nodetoDelete still exists (it may already be deleted by deleteLayoutPieceAndCo() )
+    nodeToDelete = this.nodeFactory.get(nodeId);
+    if (!nodeToDelete) {
+      return; // All good. Already deleted.
+    }
+
+    // Tell nodeToDelete to delete itself
+    nodeToDelete.delete();
+
+    // Remove the layout node from the list of layout nodes
+    this.nodeFactory.delete(nodeToDelete);
   }
 
   /**

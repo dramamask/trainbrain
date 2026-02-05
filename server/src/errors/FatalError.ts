@@ -6,5 +6,8 @@ export class FatalError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "FatalError";
+
+    // Set the prototype explicitly to make 'instanceof' work correctly
+    Object.setPrototypeOf(this, FatalError.prototype);
   }
 }

@@ -1,11 +1,12 @@
 "use client"
 
-import { UiLayout, UpdateNodeData } from "trainbrain-shared";
+import { DeleteLayoutElementData, UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { store as errorStore } from '@/app/services/stores/error';
 import { store as editModeStore } from '@/app/services/stores/editmode';
+import { store as mousePosStore } from "@/app/services/stores/mousepos";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { deleteTrackPiece, rotateTrackPiece, updateNode } from "@/app/services/api/tracklayout";
+import { addNode, deleteLayoutElement, updateNode } from "@/app/services/api/tracklayout";
 import { BIG_MOVE_INCREMENT, MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/config/config";
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
@@ -21,31 +22,35 @@ export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {
     const keyDefValue = getAssociatedKeyValue(EDIT_MODE_KEYS, event);
     const moveIncrement = event.ctrlKey ? BIG_MOVE_INCREMENT : MOVE_INCREMENT;
+    console.log(keyDefValue);
 
     switch (keyDefValue) {
       case EDIT_MODE_KEYS.MoveNodeUp:
-        handleNodeUpdate("y", moveIncrement, 0);
+        handleUpdateNode("y", moveIncrement, 0);
         break;
       case EDIT_MODE_KEYS.MoveNodeRight:
-        handleNodeUpdate("x", moveIncrement, 0);
+        handleUpdateNode("x", moveIncrement, 0);
         break;
       case EDIT_MODE_KEYS.MoveNodeDown:
-        handleNodeUpdate("y", -moveIncrement, 0);
+        handleUpdateNode("y", -moveIncrement, 0);
         break;
       case EDIT_MODE_KEYS.MoveNodeLeft:
-        handleNodeUpdate("x", -moveIncrement, 0);
+        handleUpdateNode("x", -moveIncrement, 0);
         break;
       case EDIT_MODE_KEYS.RotateNodeRight:
-        handleNodeUpdate("x", 0, ROTATE_INCREMENT);
+        handleUpdateNode("x", 0, ROTATE_INCREMENT);
         break;
       case EDIT_MODE_KEYS.RotateNodeLeft:
-        handleNodeUpdate("x", 0, -ROTATE_INCREMENT);
+        handleUpdateNode("x", 0, -ROTATE_INCREMENT);
         break;
-      case EDIT_MODE_KEYS.DeleteLayoutPiece:
-        deleteLayoutPiece();
+      case EDIT_MODE_KEYS.AddNode:
+        handleAddNode();
+        break;
+      case EDIT_MODE_KEYS.DeletePiece:
+        handleDelete();
         selectionStore.deselectAll();
         break;
-      case EDIT_MODE_KEYS.DeselectLayoutElement:
+      case EDIT_MODE_KEYS.Deselect:
         selectionStore.deselectAll();
         break;
       default:
@@ -56,7 +61,7 @@ export function handleKeyDown(event: KeyboardEvent) {
 }
 
 // Call the server API to store the new node position
-function handleNodeUpdate(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
+function handleUpdateNode(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
   const nodeId = selectionStore.getSelectedNode();
   if (!nodeId) {
     errorStore.setError("Please select a node to perform this action.");
@@ -100,15 +105,15 @@ function handleNodeUpdate(axis: "x" | "y", xyIncrement: number, headingIncrement
     });
 }
 
-// Call the server API to delete a layout piece
-function deleteLayoutPiece() {
-  const pieceId = selectionStore.getSelectedLayoutPiece();
-  if (!pieceId) {
-    errorStore.setError("Please select a piece to perform this action.");
+// Call the server API to add a new node to the layout at the position where the cursor is at
+function handleAddNode() {
+  const pos = mousePosStore.getPos();
+  if (!pos) {
+    errorStore.setError("Position the mouse on the track layout to mark the position where the node should be added");
     return;
   }
 
-  deleteTrackPiece(pieceId)
+  addNode({x: pos.x, y:pos.y})
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);
     })
@@ -118,14 +123,21 @@ function deleteLayoutPiece() {
     });
 }
 
-// Call the server API to rotate a layout piece
-function rotateLayoutPiece(pieceId: string) {
-  rotateTrackPiece(pieceId)
+// Call the server API to delete a layout piece
+function handleDelete() {
+  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const nodeId = selectionStore.getSelectedNode();
+  if (!pieceId && !nodeId) {
+    errorStore.setError("Please select a node or piece to perform this action.");
+    return;
+  }
+
+  deleteLayoutElement({nodeId: nodeId, pieceId: pieceId})
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);
     })
     .catch((error: Error) => {
       errorStore.setError(error.message);
-      console.error("handleKeyDown().rotateLayoutPiece() error:", error);
+      console.error("handleKeyDown().deleteLayoutPiece() error:", error);
     });
 }

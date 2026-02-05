@@ -107,7 +107,6 @@ export type PieceDefDataList = Record<string, PieceDefData>;
 
 // Data structure used to add a node at a given position
 export interface AddNodeData {
-  index: string;
   x: number;
   y: number;
 }
@@ -125,4 +124,10 @@ export interface AddLayoutPieceData {
   nodeId: string;
   pieceDefId: string;
   orientation: string;
+}
+
+// Data structure used to delete a layout piece or node
+export interface DeleteLayoutElementData {
+ pieceId: string,
+ nodeId: string,
 }

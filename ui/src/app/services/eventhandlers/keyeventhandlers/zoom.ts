@@ -12,10 +12,10 @@ export function handleKeyDown(event: KeyboardEvent) {
   const keyDefValue = getAssociatedKeyValue(KEYS, event);
 
   switch(keyDefValue) {
-    case KEYS.ZoomInTrackLayout:
+    case KEYS.ZoomInLayout:
       zoomFactorStore.zoomIn();
       break;
-    case KEYS.ZoomOutTrackLayout:
+    case KEYS.ZoomOutLayout:
       zoomFactorStore.zoomOut();
       break;
     default:
