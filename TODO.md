@@ -1,6 +1,6 @@
 # TODO
 
-- Delete node server and UI.
+- Debug the new delete function. Nodes are not deleted around pieces. Sometimes two pieces are deleted at once. Add logging and see what happens.
 - Rotate node does weird things with switch or curve. maybe the cureve switched orientations. Look into it.
 - Work on the left hand version of the R1 UI Switch.
 - Add measuring of distances.

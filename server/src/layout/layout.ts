@@ -223,14 +223,18 @@ export class Layout {
     }
 
     // Get the nodes attached to the piece
-    const connectedNodes = pieceToDelete.getConnectedNodes();
+    const connectedNodeIds = pieceToDelete.getConnectedNodeIds();
 
     // Tell the layout piece to delete itself
     pieceToDelete.delete();
 
     // Delete the nodes that were connected to the piece, if they are orphaned
-    connectedNodes.forEach(connectedNode => {
+    connectedNodeIds.forEach(connectedNodeId => {
       try {
+        const connectedNode = this.nodeFactory.get(connectedNodeId);
+        if (!connectedNode) {
+          throw new FatalError("The node should still exist");
+        }
         connectedNode.delete();
       } catch (error) {
         if (error instanceof StillConnectedError) {

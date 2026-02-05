@@ -135,7 +135,7 @@ export const deleteLayoutElement = async (req: Request, res: Response, next: Nex
     span?.setAttribute('_.request.pieceId', data.pieceId);
     span?.setAttribute('_.request.nodeId', data.nodeId);
 
-    await layout.deleteLayoutElement(data.pieceId);
+    await layout.deleteLayoutElement(data.pieceId, data.nodeId);
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);

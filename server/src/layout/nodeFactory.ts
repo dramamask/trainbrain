@@ -78,6 +78,7 @@ export class NodeFactory {
    * Delete a node.
    *
    * We will only delete a node that is not connected to anything more.
+   * We never delete the last node left in the layout.
    */
   public delete(node: LayoutNode):void {
     // Tracing
@@ -90,9 +91,12 @@ export class NodeFactory {
     });
     span?.addEvent('delete_node', spanInfo);
 
-    // Delete node
     if (node.getNumberOfConnections() !== 0) {
       throw new FatalError("Cannot delete a node that is still connected to things")
+    }
+
+    if (this.nodes.size == 1) {
+      return; // Never delete the last node
     }
 
     const deleted = this.nodes.delete(node.getId());
