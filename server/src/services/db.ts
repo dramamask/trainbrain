@@ -191,7 +191,7 @@ export function deleteLayoutPiece(id: string, friendToken: string): void {
  * @param friendToken Token to ensure that only one specific class method can save layout node data to the DB
  */
 export function deleteLayoutNode(id: string, friendToken: string): void {
-  if (friendToken == "LayoutNode::delete()") {
+  if (friendToken == "NodeFactory::delete()") {
     delete layoutNodesDb.data.nodes[id];
     return
   }

@@ -19,10 +19,12 @@ export const getLayout = (req: Request, res: Response, next: NextFunction): void
 
     res.header("Content-Type", "application/json");
     res.status(status).send(uiLayout);
+    span?.end();
   } catch (error) {
     const span = trace.getActiveSpan();
     span?.recordException(error as Error);
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
   }
 }
 
@@ -48,10 +50,12 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
 
     res.header("Content-Type", "application/json");
     res.status(status).send(JSON.stringify(uiLayout));
+    span?.end();
   } catch (error) {
     const span = trace.getActiveSpan();
     span?.recordException(error as Error);
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
   }
 }
 
@@ -81,10 +85,12 @@ export const addNode = async (req: Request, res: Response, next: NextFunction) =
 
     res.header("Content-Type", "application/json");
     res.status(status).send(JSON.stringify(uiLayout));
+    span?.end();
   } catch (error) {
     const span = trace.getActiveSpan();
     span?.recordException(error as Error);
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
   }
 }
 
@@ -117,10 +123,12 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
 
     res.header("Content-Type", "application/json");
     res.status(status).send(JSON.stringify(uiLayout));
+    span?.end();
   } catch (error) {
     const span = trace.getActiveSpan();
     span?.recordException(error as Error);
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
   }
 }
 
@@ -131,7 +139,7 @@ export const deleteLayoutElement = async (req: Request, res: Response, next: Nex
 
   try {
     const span = trace.getActiveSpan();
-    span?.setAttribute('_.request.type', 'deleteLayoutPiece');
+    span?.setAttribute('_.request.type', 'deleteLayoutElement');
     span?.setAttribute('_.request.pieceId', data.pieceId);
     span?.setAttribute('_.request.nodeId', data.nodeId);
 
@@ -145,34 +153,14 @@ export const deleteLayoutElement = async (req: Request, res: Response, next: Nex
 
     res.header("Content-Type", "application/json");
     res.status(status).send(JSON.stringify(uiLayout));
+    span?.end();
   } catch (error) {
     const span = trace.getActiveSpan();
     span?.recordException(error as Error);
     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
   }
 }
-
-// TODO: rotate is the wrong word. It's flip, or change orientation or something like that.
-// // Endpoint to rotate a piece in the track layout
-// // Rotation logic depends on the type of track piece
-// export const rotateLayoutPiece = async (req: Request, res: Response, next: NextFunction) => {
-//   // matchedData only includes fields defined in the validator middleware for this route
-//   const data = matchedData(req);
-
-//   try {
-//     await layout.rotateLayoutPiece(data.index);
-
-//     const uiLayout = layout.getUiLayout();
-//     const status = getHttpStatusCode(uiLayout);
-
-//     res.header("Content-Type", "application/json");
-//     res.status(status).send(JSON.stringify(uiLayout));
-//   } catch (error) {
-//     console.error("Unknown error at the edge", error);
-//     res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-//       .send("Unknown error at the edge. Check server logs.");
-//   }
-// }
 
 // Returns the status code that we should use when returning the UI Layout,
 // based on the fact if there's an error message in the UI Layout message struct.

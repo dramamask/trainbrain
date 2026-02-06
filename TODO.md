@@ -1,6 +1,6 @@
 # TODO
 
-- Debug the new delete function. Nodes are not deleted around pieces. Sometimes two pieces are deleted at once. Add logging and see what happens.
+- Add an are you sure dialog when both a node and a piece are selected and delete is pressed.
 - Rotate node does weird things with switch or curve. maybe the cureve switched orientations. Look into it.
 - Work on the left hand version of the R1 UI Switch.
 - Add measuring of distances.
@@ -22,8 +22,10 @@
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.
 - Already show the background image when the layout is still loading, and the progress icon is visible. Progress icon bigger, centered and in a different color?
 - Add the world size to the layout json file.
+- Create a pieceFactory class. only a piece itself should be allowed to delete itself. Just like the node factory.
 - Show piece and node ID and other info somewhere when we hover over the piece or node.
 - Change the GET layout API response to be a record with string keys instead of an array. That makes looking up specific pieces and nodes a lot easier in the UI. The current format may slow things down if we have too many pieces or nodes.
+- Should the node factory also contain all access to the layout DB? Instead of this being in a different file?
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
   Make it configurable as pixels per millimeter or something.
@@ -35,6 +37,5 @@
 - Make cards collapsable where there's only a title bar visible.
 - Add react grid (or whatever it is called) for the cards in right side "controls section"
 - Add OTEL Collector to sit in between server and Jaeger.
-- Create a pieceFactory class.
 - Reorganizie "shared" project folder section with different files to organize it better.
 - change edit mode pieces to be similar as regular mode with "use" and "symbol"

@@ -2,12 +2,5 @@
   "meta": {
     "description": "This file lists the nodes that connect the train track layout pieces. Track pieces are in separate file."
   },
-  "nodes": {
-    "0": {
-      "coordinate": {
-        "x": 11160.76952,
-        "y": 2400
-      }
-    }
-  }
+  "nodes": {}
 }

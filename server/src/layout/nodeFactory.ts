@@ -1,7 +1,7 @@
 import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
-import { getLayoutNodesFromDB, persistLayoutNodes } from "../services/db.js";
+import { deleteLayoutNode, getLayoutNodesFromDB, persistLayoutNodes } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 
@@ -58,6 +58,12 @@ export class NodeFactory {
    * Create a node and connect it to the given piece
    */
   public create(coordinate: Coordinate | undefined, piece: LayoutPiece | null, connector: ConnectorName | undefined): LayoutNode {
+    // Tracing
+    const span = trace.getActiveSpan();
+    span?.addEvent('nodeFactory.create()',
+      {'coordinate.x': coordinate?.x, 'coordinate.y': coordinate?.y, 'piece.id': piece?.getId(), 'connector.name': connector}
+    );
+
     const id = (this.getHighestNodeId() + 1).toString();
     const node = new LayoutNode(id, coordinate, this);
     this.nodes.set(node.getId(), node);
@@ -89,32 +95,29 @@ export class NodeFactory {
       spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.piece?.getId();
       spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.connectorName;
     });
-    span?.addEvent('delete_node', spanInfo);
+    span?.addEvent('nodeFactory.delete()', spanInfo);
 
+    // Don't delete node if it is still connected to something
     if (node.getNumberOfConnections() !== 0) {
       throw new FatalError("Cannot delete a node that is still connected to things")
     }
 
-    if (this.nodes.size == 1) {
-      return; // Never delete the last node
-    }
-
+    // Delete the node from our list of node objects
     const deleted = this.nodes.delete(node.getId());
     if (!deleted) {
       this.nodes.get(node.getId());
       const warning = new Error(`Warning. Not able to delete node '${node.getId()}' from nodes Map.`)
       span?.recordException(warning);
     }
+
+    // Delete the node from the DB (in-memory only)
+    deleteLayoutNode(node.getId(), "NodeFactory::delete()");
   }
 
   /**
    * Save all layout nodes to the layout DB (and commit it to file)
    */
   public async save(): Promise<void> {
-    if (this.nodes.size === 0) {
-      throw new FatalError("How did we end up with no nodes? That's not going to be good for anybody.");
-    }
-
     this.nodes.forEach(node => node.save());
     await persistLayoutNodes("NodeFactory::save()");
   }
@@ -134,11 +137,6 @@ export class NodeFactory {
    */
   public removeOrphanedNodes(): void {
     for(const [_id, node] of this.nodes) {
-      // Stop checking when we get down to the last node because we want to keep at least one node
-      if (this.nodes.size == 1) {
-        return; // Return from this function altogether
-      }
-
       if (node.getNumberOfConnections() == 0) {
         // Remove the node from our list of nodes
         this.nodes.delete(node.getId());

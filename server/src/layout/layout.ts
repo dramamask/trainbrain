@@ -211,8 +211,11 @@ export class Layout {
    * The piece will be deleted, plus any orphaned nodes that are left over after the piece is deleted.
    */
   protected deleteLayoutPieceAndCo(pieceId: string): void {
+    const span = trace.getActiveSpan();
+
     const pieceToDelete = this.pieces.get(pieceId);
     if (!pieceToDelete) {
+      span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'description': 'no piece to delete'});
       return;
     }
 
@@ -223,9 +226,12 @@ export class Layout {
     }
 
     // Get the nodes attached to the piece
+    // Do this now because the piece will disconnect from the nodes when it deletes itself
     const connectedNodeIds = pieceToDelete.getConnectedNodeIds();
+    span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'connectedNodes.id': connectedNodeIds});
 
     // Tell the layout piece to delete itself
+    span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'description': 'telling piece to delete itself'});
     pieceToDelete.delete();
 
     // Delete the nodes that were connected to the piece, if they are orphaned
@@ -235,6 +241,7 @@ export class Layout {
         if (!connectedNode) {
           throw new FatalError("The node should still exist");
         }
+        span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'node.id': connectedNode.getId(), 'description': 'telling node to delete itself'});
         connectedNode.delete();
       } catch (error) {
         if (error instanceof StillConnectedError) {
@@ -248,29 +255,36 @@ export class Layout {
    * The node will be deleted, plus any piece attached to it.
    */
   protected deleteLayoutNodeAndCo(nodeId: string): void {
+    const span = trace.getActiveSpan();
+
     let nodeToDelete = this.nodeFactory.get(nodeId);
     if (!nodeToDelete) {
-      return;
+      span?.addEvent('layout.deleteLayoutNodeAndCo()', {'node.id': nodeId, 'description': 'no node to delete'});
+      return; // All good. Already deleted.
     }
 
     // Delete any pieces that the node is connected to
     const nodeConnections = nodeToDelete.getConnections();
     nodeConnections.forEach(connection => {
       const piece = connection.piece as LayoutPiece; // There's always a piece here
-      this.deleteLayoutPieceAndCo(piece.getId());
+      span?.addEvent('layout.deleteLayoutNodeAndCo()', {'node.id': nodeId, 'piece.id': piece.getId(), 'description': `telling piece to delete itself`});
+      const deleted = this.pieces.delete(piece.getId());
+      if (!deleted) {
+        throw new FatalError("Layout piece was not deleted from the Map");
+      }
+      piece.delete();
     });
 
     // Check if nodetoDelete still exists (it may already be deleted by deleteLayoutPieceAndCo() )
     nodeToDelete = this.nodeFactory.get(nodeId);
     if (!nodeToDelete) {
+      span?.addEvent('layout.deleteLayoutNodeAndCo()', {'node.id': nodeId, 'description': 'is already deleted'});
       return; // All good. Already deleted.
     }
 
     // Tell nodeToDelete to delete itself
+    span?.addEvent('layout.deleteLayoutNodeAndCo()', {'node.id': nodeId, 'description': 'telling node to delete itself'});
     nodeToDelete.delete();
-
-    // Remove the layout node from the list of layout nodes
-    this.nodeFactory.delete(nodeToDelete);
   }
 
   /**

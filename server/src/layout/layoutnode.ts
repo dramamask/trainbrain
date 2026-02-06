@@ -3,7 +3,7 @@ import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared"
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
 import type { NodeFactory } from "./nodefactory.js";
-import { deleteLayoutNode, saveLayoutNodeData } from "../services/db.js";
+import { saveLayoutNodeData } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 import { StillConnectedError } from '../errors/StillConnectedError.js';
 
@@ -100,7 +100,7 @@ export class LayoutNode {
     const spanInfo = this.getSpanInfo();
     spanInfo['coordinate.x'] = coordinate.x;
     spanInfo['coordinate.y'] = coordinate.y;
-    span?.addEvent('set_coordinate', spanInfo);
+    span?.addEvent('layoutNode.setCoordinate()', spanInfo);
 
     // Set coordinate
     this.coordinate = coordinate;
@@ -119,7 +119,7 @@ export class LayoutNode {
     const spanInfo = this.getSpanInfo();
     spanInfo['piece_to_connect_to.id'] = piece.getId();
     spanInfo['piece_to_connect_to.connector_name'] = connectorName;
-    span?.addEvent('connect_to_piece', spanInfo);
+    span?.addEvent('layoutNode.connect()', spanInfo);
 
     // Make connection
     let index = 0;
@@ -145,7 +145,7 @@ export class LayoutNode {
 
     const spanInfo = this.getSpanInfo();
     spanInfo['piece_to_disconnect_from.id'] = piece.getId();
-    span?.addEvent('connect_to_piece', spanInfo);
+    span?.addEvent('layoutNode.disconnect()', spanInfo);
 
     // Disconnect
     for(const connection of this.connections) {
@@ -182,7 +182,7 @@ export class LayoutNode {
       spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.connectorName;
     });
 
-    span?.addEvent('connect_to_piece', spanInfo);
+    span?.addEvent('layoutNode.mergeWith()', spanInfo);
 
     // Check if merge can take place
     if (this.getNumberOfConnections() > 1 && nodeToBeDeleted.getNumberOfConnections() > 1) {
@@ -198,8 +198,8 @@ export class LayoutNode {
       nodeToBeDeleted.disconnect(connection.piece);
     }
 
-    // Delete nodeToBeDeleted
-    this.nodeFactory.delete(nodeToBeDeleted);
+    // Tell nodeToBeDeleted to delete itself
+    nodeToBeDeleted.delete();
 
     // Make a connection between us and the piece (that nodeToBeDeleted was connected to)
     if (connection.piece !== null && connection.connectorName !== undefined) {
@@ -231,7 +231,7 @@ export class LayoutNode {
     // Tell the other connected piece to continue the update down the layout
     const oppositeSideConnection = this.getOtherConnection(callingPiece);
 
-    span?.addEvent('update_coordinate_and_continue', {
+    span?.addEvent('layoutNode.updateCoordinateAndContinue()', {
       'this_node.id': this.getId(),
       'calling_piece.id': callingPiece.getId(),
       'received_coordinate.x': coordinate.x,
@@ -254,7 +254,7 @@ export class LayoutNode {
     const span = trace.getActiveSpan();
     const spanInfo = this.getSpanInfo();
     spanInfo['piece_to_look_for'] = pieceToLookFor?.getId();
-    span?.addEvent('get_other_connection', spanInfo);
+    span?.addEvent('layoutNode.getOtherConnection()', spanInfo);
 
     // Get other connection
     for(let i = 0; i < 2; i++) {
@@ -317,15 +317,15 @@ export class LayoutNode {
   public delete(): void {
     // Tracing
     const span = trace.getActiveSpan();
-    span?.addEvent('delete_node', this.getSpanInfo());
+    span?.addEvent('layoutNode.delete()', this.getSpanInfo());
 
     // Check to make sure we are not connected to anything
     if (this.getNumberOfConnections() != 0) {
       throw new StillConnectedError("Can't delete ourselves. We are still connected to something.")
     }
 
-    // Delete ourselves from the DB
-    deleteLayoutNode(this.getId(), "LayoutNode::delete()");
+    // Tell the node factory to delete
+    this.nodeFactory.delete(this);
   }
 
   /**

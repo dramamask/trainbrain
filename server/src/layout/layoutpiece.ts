@@ -107,7 +107,7 @@ export abstract class LayoutPiece {
     const span = trace.getActiveSpan();
     const spanInfo = this.getSpanInfo();
     spanInfo['heading_increment'] = increment;
-    span?.addEvent('increment_heading', spanInfo);
+    span?.addEvent('layoutNode.incrementHeading()', spanInfo);
 
     // Delete
     this.connectors.incrementHeading(increment);
@@ -129,7 +129,7 @@ export abstract class LayoutPiece {
   public delete(): void {
     // Tracing
     const span = trace.getActiveSpan();
-    span?.addEvent('delete_piece', this.getSpanInfo());
+    span?.addEvent('layoutNode.delete()', this.getSpanInfo());
 
     // Tell the nodes to disconnect from us
     const nodes = this.connectors.getNodes();

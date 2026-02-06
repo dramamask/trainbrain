@@ -10,6 +10,7 @@ import { addNode, deleteLayoutElement, updateNode } from "@/app/services/api/tra
 import { BIG_MOVE_INCREMENT, MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/config/config";
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
+import { getLastInsertedNode } from "../../tracklayout";
 
 // Keep track of node update API calls so we don't have multiple going at the same time
 let nodeUpdateInProgress = false;
@@ -116,6 +117,10 @@ function handleAddNode() {
   addNode({x: pos.x, y:pos.y})
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);
+      // Select the newly added node
+      const nodeId = getLastInsertedNode(layoutData);
+      selectionStore.setSelectedNode(nodeId);
+      selectionStore.deselectTrackPiece();
     })
     .catch((error: Error) => {
       errorStore.setError(error.message);

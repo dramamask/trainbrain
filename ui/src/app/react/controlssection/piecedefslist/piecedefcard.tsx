@@ -68,7 +68,7 @@ function addTrackPieceToLayout(pieceDefId: string, pieceDef: PieceDefData): void
         // Store the new track layout that was returned by the API endpoint (includes the newly inserted piece)
         trackLayoutStore.setTrackLayout(layoutData);
 
-        // Select the newly inserted node
+        // Select (one of) the node(s) that was just added
         const nodeId = getLastInsertedNode(layoutData);
         selectionStore.setSelectedNode(nodeId);
         selectionStore.deselectTrackPiece();
