@@ -3,6 +3,7 @@
 - Add an are you sure dialog when both a node and a piece are selected and delete is pressed.
 - Rotate node does weird things with switch or curve. maybe the cureve switched orientations. Look into it.
 - Work on the left hand version of the R1 UI Switch.
+- Create a pieceFactory class. only a piece itself should be allowed to delete itself. Just like the node factory.
 - Add measuring of distances.
 - Do the UI curve pieces (and switches) need to be that wide? Can there viewbox be smaller?
 - Do regular mode straight and curve pieces need to subscribe to the trackLayoutStore? Can't they just get the coordinates from the store?
@@ -22,7 +23,6 @@
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.
 - Already show the background image when the layout is still loading, and the progress icon is visible. Progress icon bigger, centered and in a different color?
 - Add the world size to the layout json file.
-- Create a pieceFactory class. only a piece itself should be allowed to delete itself. Just like the node factory.
 - Show piece and node ID and other info somewhere when we hover over the piece or node.
 - Change the GET layout API response to be a record with string keys instead of an array. That makes looking up specific pieces and nodes a lot easier in the UI. The current format may slow things down if we have too many pieces or nodes.
 - Should the node factory also contain all access to the layout DB? Instead of this being in a different file?
