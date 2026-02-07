@@ -2,7 +2,7 @@ import { PieceDefData } from "trainbrain-shared";
 import StraightL300 from "@/app/react/tracklayout/regular/symbols/straight-l300";
 import CurveR600A30 from "@/app/react/tracklayout/regular/symbols/curve-r600-a30";
 import SwitchR600A30L300 from "@/app/react/tracklayout/regular/symbols/switch-r600-a30-l300";
-import { PIECE_WIDTH as StraightWidth } from "@/app/react/tracklayout/regular/straight";
+import { TRACK_WIDTH as StraightWidth } from "@/app/react/tracklayout/regular/symbols/defs";
 import * as config from "@/app/config/config";
 
 const CURVE = "curve";

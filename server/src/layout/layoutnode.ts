@@ -2,7 +2,6 @@ import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import type { LayoutPiece } from "./layoutpiece.js";
 import type { LayoutNodeData } from "../data_types/layoutNodes.js";
-import type { NodeFactory } from "./nodefactory.js";
 import { saveLayoutNodeData } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 import { StillConnectedError } from '../errors/StillConnectedError.js';
@@ -15,16 +14,14 @@ export class LayoutNode {
   protected readonly id: string;
   protected readonly connections: [Connection, Connection];
   protected coordinate: Coordinate | undefined;
-  protected readonly nodeFactory: NodeFactory;
   protected loopProtector: string;
 
-  constructor(id: string, coordinate: Coordinate | undefined, nodeFactory: NodeFactory) {
+  constructor(id: string, coordinate: Coordinate | undefined) {
     const span = trace.getActiveSpan();
 
     this.id = id;
     this.coordinate = coordinate;
     this.connections = [{piece: null, connectorName: undefined}, {piece: null, connectorName: undefined}];
-    this.nodeFactory = nodeFactory;
     this.loopProtector = "";
 
     span?.addEvent('new_node_created', {'this_node.id': this.getId()});
@@ -311,10 +308,13 @@ export class LayoutNode {
   }
 
   /**
-   * Make sure we are not connected to any objects anymore,
-   * then delete ourself from the DB (not persisted yet though).
+   * Make sure we are not connected to any objects anymore.
    */
-  public delete(): void {
+  public delete(friendToken: string): void {
+    if (friendToken != "NodeFactory::delete()") {
+      throw new FatalError("Node delete access is restricted on purpose. Please respect the rules, they are in place for a reason.")
+    }
+
     // Tracing
     const span = trace.getActiveSpan();
     span?.addEvent('layoutNode.delete()', this.getSpanInfo());
@@ -323,9 +323,6 @@ export class LayoutNode {
     if (this.getNumberOfConnections() != 0) {
       throw new StillConnectedError("Can't delete ourselves. We are still connected to something.")
     }
-
-    // Tell the node factory to delete
-    this.nodeFactory.delete(this);
   }
 
   /**

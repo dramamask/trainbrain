@@ -12,11 +12,8 @@ export function handleKeyDown(event: KeyboardEvent) {
   const keyDefValue = getAssociatedKeyValue(KEYS, event);
 
   switch(keyDefValue) {
-    case KEYS.CloseErrorMessage:
+    case KEYS.CloseError:
       errorStore.clearError();
       break;
-    default:
-      // Exit this function
-      return;
   }
 }

@@ -54,9 +54,6 @@ export function handleKeyDown(event: KeyboardEvent) {
       case EDIT_MODE_KEYS.Deselect:
         selectionStore.deselectAll();
         break;
-      default:
-        // Exit this function
-        return;
     }
   }
 }

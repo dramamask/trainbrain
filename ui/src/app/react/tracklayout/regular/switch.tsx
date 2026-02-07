@@ -5,6 +5,7 @@ import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import * as config from "@/app/config/config";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
+import { RIGHT, TRACK_WIDTH } from "./symbols/defs";
 
 import styles from  "./trackpiece.module.css";
 
@@ -17,9 +18,6 @@ const HEIGHT_WIDTH: Record<string, WidthHeight> = {
   '#switchR600A30L300': { width: 644, height: 313 },
   '#switchR1195A23L440': { width: 644, height: 500 },
 }
-
-const TRACK_WIDTH = 88;
-const RIGHT = "right";
 
 interface props {
   piece: UiLayoutPiece;

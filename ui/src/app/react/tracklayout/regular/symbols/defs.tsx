@@ -8,6 +8,9 @@ import SwitchR600A30L300 from "./switch-r600-a30-l300";
 import SwitchR1195A23L440 from "./switch-r1195-a23-l440";
 import Unknown from "./unknown";
 
+export const TRACK_WIDTH = 88;
+export const RIGHT = "right";
+
 export default function Defs() {
   return (
     <defs>

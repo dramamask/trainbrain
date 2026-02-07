@@ -2,46 +2,37 @@ import { trace } from '@opentelemetry/api';
 import type { AddLayoutPieceData, ConnectorName, Coordinate, UiLayout } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { NodeFactory } from "./nodefactory.js";
+import { PieceFactory } from "./piecefactory.js";
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
-import { getLayoutPiecesFromDB, persistLayoutPieces } from "../services/db.js";
-import { Straight } from "./straight.js";
-import { Curve } from "./curve.js";
 import { FatalError } from "../errors/FatalError.js";
 import { PieceDefs } from "./piecedefs.js";
 import { PieceDef } from "./piecedef.js";
-import { Switch } from './switch.js';
 import { StillConnectedError } from '../errors/StillConnectedError.js';
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
-  protected readonly pieces: Map<string, LayoutPiece>;
   protected readonly pieceDefs: PieceDefs;
   protected readonly nodeFactory: NodeFactory;
+  protected readonly pieceFactory: PieceFactory;
 
   constructor() {
-    this.pieces = new Map<string, LayoutPiece>();
     this.pieceDefs = new PieceDefs();
     this.nodeFactory = new NodeFactory();
+    this.pieceFactory = new PieceFactory();
   }
 
   public init() {
     this.pieceDefs.init();
     this.nodeFactory.init();
-
-    // Create each layout piece
-    // The layout piece will create connects between itself and any nodes it is connected to
-    Object.entries(getLayoutPiecesFromDB("Layout::init()")).forEach(([key, pieceData]) => {
-      const pieceDef = this.pieceDefs.getPieceDef(pieceData.pieceDefId)
-      this.pieces.set(key, this.createLayoutPiece(key, pieceData.connectors, pieceDef));
-    });
+    this.pieceFactory.init(this.pieceDefs, this.nodeFactory);
   }
 
   // Return the layout in UiLayout format
   public getUiLayout(): UiLayout {
     return {
       error: "",
-      pieces: [...this.pieces.values()].map(piece => piece.getUiLayoutData()),
+      pieces: this.pieceFactory.getUiLayout(),
       nodes: this.nodeFactory.getUiLayout(),
     }
   }
@@ -59,7 +50,7 @@ export class Layout {
    * Only used by the request validation code
    */
   public getLayoutPiece(id: string): LayoutPiece | undefined {
-    return this.pieces.get(id);
+    return this.pieceFactory.get(id);
   }
 
   /**
@@ -80,19 +71,10 @@ export class Layout {
 
   /**
    * Find the layout piece with the highest numerical ID. Return the ID as a number.
-   * This method is used by the request validation code as well as this class
+   * This method is used by the request validation code as well as this class <<<<<<<<============ move functionality to pieceFactory?????????
    */
   public getHighestPieceId(): number {
-    let highestId: number = -1;
-
-    this.pieces.forEach(piece => {
-      const numericalIdValue = Number(piece.getId());
-      if (numericalIdValue > highestId) {
-        highestId = numericalIdValue;
-      }
-    });
-
-    return highestId;
+    return this.pieceFactory.getHighestPieceId();
   }
 
   /**
@@ -107,7 +89,7 @@ export class Layout {
    * Add a new node to the layout at a given coordinate
    */
   public async addNode(coordinate: Coordinate): Promise<void> {
-    this.nodeFactory.create(coordinate, null, undefined);
+    this.nodeFactory.createNew(coordinate, null, undefined);
 
     // Save the newly changed layout to file
     this.save();
@@ -173,14 +155,11 @@ export class Layout {
         node: nodeToConnectTo.getId(),
       }
     }
-    const newPiece = this.createLayoutPiece(this.getNewPieceId(), connectorsData, pieceDef);
+    const newPiece = this.pieceFactory.createNew(connectorsData, pieceDef, this.nodeFactory);
 
-    // Update new node's coordinate
+    // Calculate the new piece and node's heading and coordinate
     const loopProtector = crypto.randomUUID();
     newPiece.updateHeadingAndContinue(nodeToConnectTo, this.getPieceHeading(newPiece, nodeToConnectTo), loopProtector);
-
-    // Add the new piece to the layout
-    this.pieces.set(newPiece.getId(), newPiece);
 
     // Save the newly changed layout to file
     this.save();
@@ -213,16 +192,10 @@ export class Layout {
   protected deleteLayoutPieceAndCo(pieceId: string): void {
     const span = trace.getActiveSpan();
 
-    const pieceToDelete = this.pieces.get(pieceId);
+    const pieceToDelete = this.pieceFactory.get(pieceId);
     if (!pieceToDelete) {
       span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'description': 'no piece to delete'});
       return;
-    }
-
-    // Remove the layout piece from our list of layout piece
-    const deleted = this.pieces.delete(pieceToDelete.getId());
-    if (!deleted) {
-      throw new FatalError("Layout piece was not deleted from the Map");
     }
 
     // Get the nodes attached to the piece
@@ -230,9 +203,9 @@ export class Layout {
     const connectedNodeIds = pieceToDelete.getConnectedNodeIds();
     span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'connectedNodes.id': connectedNodeIds});
 
-    // Tell the layout piece to delete itself
-    span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'description': 'telling piece to delete itself'});
-    pieceToDelete.delete();
+    // Delete the layout piece
+    span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'description': 'deleting the piece'});
+    this.pieceFactory.delete(pieceToDelete);
 
     // Delete the nodes that were connected to the piece, if they are orphaned
     connectedNodeIds.forEach(connectedNodeId => {
@@ -241,8 +214,8 @@ export class Layout {
         if (!connectedNode) {
           throw new FatalError("The node should still exist");
         }
-        span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'node.id': connectedNode.getId(), 'description': 'telling node to delete itself'});
-        connectedNode.delete();
+        span?.addEvent('layout.deleteLayoutPieceAndCo()', {'piece.id': pieceId, 'node.id': connectedNode.getId(), 'description': 'deleting the node'});
+        this.nodeFactory.delete(connectedNode);
       } catch (error) {
         if (error instanceof StillConnectedError) {
           // The node can't delete itself because it's still connected to a piece. That's fine.
@@ -267,12 +240,8 @@ export class Layout {
     const nodeConnections = nodeToDelete.getConnections();
     nodeConnections.forEach(connection => {
       const piece = connection.piece as LayoutPiece; // There's always a piece here
-      span?.addEvent('layout.deleteLayoutNodeAndCo()', {'node.id': nodeId, 'piece.id': piece.getId(), 'description': `telling piece to delete itself`});
-      const deleted = this.pieces.delete(piece.getId());
-      if (!deleted) {
-        throw new FatalError("Layout piece was not deleted from the Map");
-      }
-      piece.delete();
+      span?.addEvent('layout.deleteLayoutNodeAndCo()', {'node.id': nodeId, 'piece.id': piece.getId(), 'description': `deleting the piece`});
+      this.pieceFactory.delete(piece);
     });
 
     // Check if nodetoDelete still exists (it may already be deleted by deleteLayoutPieceAndCo() )
@@ -282,9 +251,9 @@ export class Layout {
       return; // All good. Already deleted.
     }
 
-    // Tell nodeToDelete to delete itself
-    span?.addEvent('layout.deleteLayoutNodeAndCo()', {'node.id': nodeId, 'description': 'telling node to delete itself'});
-    nodeToDelete.delete();
+    // Deleting the node
+    span?.addEvent('layout.deleteLayoutNodeAndCo()', {'node.id': nodeId, 'description': 'deleting the node'});
+    this.nodeFactory.delete(nodeToDelete);
   }
 
   /**
@@ -301,38 +270,10 @@ export class Layout {
   }
 
   /**
-   * Get the ID that should be used for a new to-be-created layout piece
-   */
-  protected getNewPieceId(): string {
-    return (this.getHighestPieceId() + 1).toString();
-  }
-
-  /**
-   * Create a new layout piece from the provided layout DB data for this piece
-   */
-  protected createLayoutPiece(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef): LayoutPiece {
-    switch(pieceDef.getCategory()) {
-      case "straight":
-        return new Straight(id, connectorsData, pieceDef, this.nodeFactory);
-      case "curve":
-        return new Curve(id, connectorsData, pieceDef, this.nodeFactory);
-      case "switch":
-        return new Switch(id, connectorsData, pieceDef, this.nodeFactory);
-      default:
-        throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.getCategory()}`)
-    }
-  }
-
-  /**
-   * Save the entire layout to the DB
+   * Save the entire layout to the DB (to file)
    */
   protected async save(): Promise<void> {
     this.nodeFactory.save();
-
-    this.pieces.forEach(piece => {
-      piece.save();
-    });
-
-    await persistLayoutPieces("Layout::save()");
+    this.pieceFactory.save();
   }
 }

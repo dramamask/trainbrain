@@ -39,7 +39,7 @@ export class LayoutPieceConnector {
 
     let node = nodeFactory.get(data.node);
     if (node == undefined) {
-       node = nodeFactory.create(undefined, null, undefined);
+       node = nodeFactory.createNew(undefined, null, undefined); // This happens when a new layout piece is being created
     }
     this.node = node;
   }

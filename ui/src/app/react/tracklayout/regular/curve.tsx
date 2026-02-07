@@ -1,11 +1,11 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { UiAttributesDataCurve, UiLayoutPiece } from "trainbrain-shared";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import * as config from "@/app/config/config";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
+import { TRACK_WIDTH } from "./symbols/defs";
 
 import styles from  "./trackpiece.module.css";
 
@@ -20,17 +20,13 @@ const HEIGHT_WIDTH: Record<string, WidthHeight> = {
   '#curveR1195A23': { width: 1239, height: 500 }
 }
 
-const TRACK_WIDTH = 88;
-
 interface props {
   piece: UiLayoutPiece;
 }
 
 // Straight track piece component
 export default function Curve({piece}: props) {
-  const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
-
-  const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutState.trackLayout).coordinate;
+  const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutStore.getTrackLayout()).coordinate;
   const heading = piece.startHeading;
   const radius = (piece.attributes as UiAttributesDataCurve).radius;
   const angle = (piece.attributes as UiAttributesDataCurve).angle;

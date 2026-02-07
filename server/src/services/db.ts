@@ -81,7 +81,7 @@ export async function persistPieceDefs(friendToken: string): Promise<void> {
  * @param friendToken Token to ensure that only one specific class method can persist the layout pieces
  */
 export async function persistLayoutPieces(friendToken: string): Promise<void> {
-  if (friendToken == "Layout::save()") {
+  if (friendToken == "PieceFactory::save()") {
     await layoutPiecesDb.write();
     return
   }
@@ -121,7 +121,7 @@ export function getPieceDefsFromDB(friendToken: string): PieceDefDataList {
  * @returns
  */
 export function getLayoutPiecesFromDB(friendToken: string): Record<string, LayoutPieceData> {
-  if (friendToken == "Layout::init()") {
+  if (friendToken == "PieceFactory::init()") {
     return layoutPiecesDb.data.pieces;
   }
   throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (5)")
@@ -177,7 +177,7 @@ export function saveLayoutNodeData(id: string, data: LayoutNodeData, friendToken
  * @param friendToken Token to ensure that only one specific class method can save layout piece data to the DB
  */
 export function deleteLayoutPiece(id: string, friendToken: string): void {
-  if (friendToken == "LayoutPiece::delete()") {
+  if (friendToken == "PieceFactory::delete()") {
     delete layoutPiecesDb.data.pieces[id];
     return
   }

@@ -124,9 +124,12 @@ export abstract class LayoutPiece {
   /**
    * Disconnect this piece from the nodes it is connected to.
    * Disassociate all our objects so the garbage collector will clean everything up.
-   * Remove oursleves from the DB (not persisted yet though).
    */
-  public delete(): void {
+  public delete(friendToken: string): void {
+    if (friendToken != "PieceFactory::delete()") {
+      throw new FatalError("Piece delete access is restricted on purpose. Please respect the rules, they are in place for a reason.")
+    }
+
     // Tracing
     const span = trace.getActiveSpan();
     span?.addEvent('layoutNode.delete()', this.getSpanInfo());
@@ -137,9 +140,6 @@ export abstract class LayoutPiece {
 
     // Tell the connectors to delete themselves
     this.connectors.delete();
-
-    // Delete ourselves from the DB
-    deleteLayoutPiece(this.getId(), "LayoutPiece::delete()");
   }
 
   /**

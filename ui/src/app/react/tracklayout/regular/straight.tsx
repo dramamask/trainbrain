@@ -1,15 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { UiAttributesDataStraight, UiLayoutPiece } from "trainbrain-shared";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import * as config from "@/app/config/config";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
+import { TRACK_WIDTH } from "./symbols/defs";
 
 import styles from  "./trackpiece.module.css";
-
-export const PIECE_WIDTH = 88;
 
 interface props {
   piece: UiLayoutPiece;
@@ -17,9 +15,7 @@ interface props {
 
 // Straight track piece component
 export default function Straight({piece}: props) {
-  const trackLayoutState = useSyncExternalStore(trackLayoutStore.subscribe, trackLayoutStore.getSnapshot, trackLayoutStore.getServerSnapshot);
-
-  const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutState.trackLayout).coordinate;
+  const startCoordinate = getLayoutNodeData(piece.nodeConnections["start"], trackLayoutStore.getTrackLayout()).coordinate;
   const heading = piece.startHeading;
   const length = (piece.attributes as UiAttributesDataStraight).length;
 
@@ -30,14 +26,14 @@ export default function Straight({piece}: props) {
       className={styles.trackpiece + " " +  getTrackPieceContainerClassName()}
       href={getSymbol(length)}
       height={length}
-      width={PIECE_WIDTH}
+      width={TRACK_WIDTH}
       style={{
         "--rail-color": config.RAIL_COLOR,
         "--rail-width": config.RAIL_WIDTH,
         "--sleeper-color": config.SLEEPER_COLOR,
         "--sleeper-width": config.SLEEPER_WIDTH,
       } as React.CSSProperties }
-      transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-${PIECE_WIDTH / 2} 0)`}
+      transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-${TRACK_WIDTH / 2} 0)`}
     />
 
     // We move the piece to its start coordiante.

@@ -2,5 +2,175 @@
   "meta": {
     "description": "This file lists the track pieces that make up the train track layout. Nodes are in separate file."
   },
-  "pieces": {}
+  "pieces": {
+    "0": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "0"
+        },
+        "end": {
+          "heading": 180,
+          "node": "1"
+        }
+      }
+    },
+    "1": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 180,
+          "node": "0"
+        },
+        "end": {
+          "heading": 0,
+          "node": "2"
+        }
+      }
+    },
+    "2": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 180,
+          "node": "2"
+        },
+        "end": {
+          "heading": 0,
+          "node": "3"
+        }
+      }
+    },
+    "3": {
+      "pieceDefId": "d",
+      "connectors": {
+        "end": {
+          "heading": 180,
+          "node": "3"
+        },
+        "start": {
+          "heading": 330,
+          "node": "4"
+        }
+      }
+    },
+    "4": {
+      "pieceDefId": "d",
+      "connectors": {
+        "end": {
+          "heading": 150,
+          "node": "4"
+        },
+        "start": {
+          "heading": 300,
+          "node": "5"
+        }
+      }
+    },
+    "5": {
+      "pieceDefId": "d",
+      "connectors": {
+        "end": {
+          "heading": 120,
+          "node": "5"
+        },
+        "start": {
+          "heading": 270,
+          "node": "6"
+        }
+      }
+    },
+    "6": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "6"
+        },
+        "end": {
+          "heading": 270,
+          "node": "7"
+        }
+      }
+    },
+    "7": {
+      "pieceDefId": "d",
+      "connectors": {
+        "end": {
+          "heading": 90,
+          "node": "7"
+        },
+        "start": {
+          "heading": 240,
+          "node": "8"
+        }
+      }
+    },
+    "8": {
+      "pieceDefId": "d",
+      "connectors": {
+        "end": {
+          "heading": 60,
+          "node": "8"
+        },
+        "start": {
+          "heading": 210,
+          "node": "9"
+        }
+      }
+    },
+    "9": {
+      "pieceDefId": "d",
+      "connectors": {
+        "end": {
+          "heading": 30,
+          "node": "9"
+        },
+        "start": {
+          "heading": 180,
+          "node": "10"
+        }
+      }
+    },
+    "10": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "10"
+        },
+        "end": {
+          "heading": 180,
+          "node": "11"
+        }
+      }
+    },
+    "11": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "11"
+        },
+        "end": {
+          "heading": 180,
+          "node": "12"
+        }
+      }
+    },
+    "12": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "12"
+        },
+        "end": {
+          "heading": 180,
+          "node": "13"
+        }
+      }
+    }
+  }
 }

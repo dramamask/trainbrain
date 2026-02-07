@@ -24,7 +24,7 @@ export class NodeFactory {
   public init(): void {
     // Create each layout node
     Object.entries(getLayoutNodesFromDB("NodeFactory::init()")).forEach(([key, nodeData]) => {
-      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate, this));
+      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate));
     });
   }
 
@@ -55,17 +55,18 @@ export class NodeFactory {
   }
 
   /**
-   * Create a node and connect it to the given piece
+   * Create a new layout node from scratch, using the given coordiante, and connect it to the given piece.
    */
-  public create(coordinate: Coordinate | undefined, piece: LayoutPiece | null, connector: ConnectorName | undefined): LayoutNode {
+  public createNew(coordinate: Coordinate | undefined, piece: LayoutPiece | null, connector: ConnectorName | undefined): LayoutNode {
     // Tracing
     const span = trace.getActiveSpan();
     span?.addEvent('nodeFactory.create()',
       {'coordinate.x': coordinate?.x, 'coordinate.y': coordinate?.y, 'piece.id': piece?.getId(), 'connector.name': connector}
     );
 
+    // Create node
     const id = (this.getHighestNodeId() + 1).toString();
-    const node = new LayoutNode(id, coordinate, this);
+    const node = new LayoutNode(id, coordinate);
     this.nodes.set(node.getId(), node);
 
     if (!piece) {
@@ -77,6 +78,7 @@ export class NodeFactory {
       return node;
     }
 
+    // A piece was provided to connect to, but no connector name was provided.
     throw new FatalError("We need to know the name of the connector to be able to connect to a layout piece");
   }
 
@@ -92,21 +94,19 @@ export class NodeFactory {
     const spanInfo: Record<string, any> = { 'node.id': node.getId() };
     const connections = node.getConnections();
     connections.forEach((connection, key) => {
-      spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.piece?.getId();
-      spanInfo[`node_to_merge_with.connection.${key}.piece.id`] = connection.connectorName;
+      spanInfo[`node_to_delete.connection.${key}.piece.id`] = connection.piece?.getId();
+      spanInfo[`node_to_delete.connection.${key}.piece.id`] = connection.connectorName;
     });
     span?.addEvent('nodeFactory.delete()', spanInfo);
 
-    // Don't delete node if it is still connected to something
-    if (node.getNumberOfConnections() !== 0) {
-      throw new FatalError("Cannot delete a node that is still connected to things")
-    }
+    // Tell the node to delete itself.
+    node.delete("NodeFactory::delete()");
 
     // Delete the node from our list of node objects
-    const deleted = this.nodes.delete(node.getId());
+    const nodeId = node.getId();
+    const deleted = this.nodes.delete(nodeId);
     if (!deleted) {
-      this.nodes.get(node.getId());
-      const warning = new Error(`Warning. Not able to delete node '${node.getId()}' from nodes Map.`)
+      const warning = new Error(`Warning. Not able to delete node '${nodeId}' from nodes Map.`)
       span?.recordException(warning);
     }
 
@@ -129,21 +129,5 @@ export class NodeFactory {
     return (
       [...this.nodes.values()].map(node => node.getUiLayoutData())
     )
-  }
-
-  /**
-   * Remove nodes that have no pieces connected to them
-   * Always keep one node though, otherwise we have nothing to connect a new layout pieces to.
-   */
-  public removeOrphanedNodes(): void {
-    for(const [_id, node] of this.nodes) {
-      if (node.getNumberOfConnections() == 0) {
-        // Remove the node from our list of nodes
-        this.nodes.delete(node.getId());
-
-        // Tell the node to delete itself
-        node.delete();
-      }
-    }
   }
 }
