@@ -5,6 +5,7 @@ import StraightL150 from "./straight-l150";
 import StraightL300 from "./straight-l300";
 import StraightL600 from "./straight-l600";
 import SwitchR600A30L300 from "./switch-r600-a30-l300";
+import SwitchR1195A23L440 from "./switch-r1195-a23-l440";
 import Unknown from "./unknown";
 
 export default function Defs() {
@@ -17,6 +18,7 @@ export default function Defs() {
       <StraightL300 />
       <StraightL600 />
       <SwitchR600A30L300 />
+      <SwitchR1195A23L440 />
       <Unknown />
     </defs>
   )

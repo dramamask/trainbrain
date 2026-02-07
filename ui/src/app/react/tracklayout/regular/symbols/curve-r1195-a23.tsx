@@ -4,7 +4,7 @@
  */
 export default function CurveR1195A23() {
   return (
-    <symbol id="curveR1195A23" viewBox="0 0 1239 600">
+    <symbol id="curveR1195A23" viewBox="0 0 1239 500">
       <g
         stroke="yellow"
         strokeWidth="2"
@@ -40,11 +40,11 @@ export default function CurveR1195A23() {
         */}
         <path
           className="rail"
-          d="M 67 0 A 1195 1195 0 0 0 156.3 449.3"
+          d="M 67 0 A 1195 1195 0 0 0 156.5 449.3"
         />
         <path
           className="rail"
-          d="M 21 0 A 1195 1195 0 0 0 113.5 465.4"
+          d="M 21 0 A 1195 1195 0 0 0 113.7 466.3"
         />
       </g>
     </symbol>

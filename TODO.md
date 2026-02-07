@@ -1,6 +1,5 @@
 # TODO
 
-- Work on the right hand version of the R3 UI Switch.
 - Create a pieceFactory class. only a piece itself should be allowed to delete itself. Just like the node factory.
 - Add measuring of distances.
 - Do the UI curve pieces (and switches) need to be that wide? Can there viewbox be smaller?

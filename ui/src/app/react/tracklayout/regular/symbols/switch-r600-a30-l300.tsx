@@ -1,5 +1,5 @@
 /**
- * SVG object definition for a 60mm radius, 30° switch with a 300mm long straight
+ * SVG object definition for a 600mm radius, 30° switch with a 300mm long straight
  */
 export default function SwitchR600A30L300() {
   return (

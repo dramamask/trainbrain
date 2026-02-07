@@ -17,7 +17,7 @@ interface WidthHeight {
 const HEIGHT_WIDTH: Record<string, WidthHeight> = {
   '#curveR600A15': { width: 644, height: 161 },
   '#curveR600A30': { width: 644, height: 312 },
-  '#curveR1195A23': { width: 1239, height: 600 }
+  '#curveR1195A23': { width: 1239, height: 500 }
 }
 
 const TRACK_WIDTH = 88;

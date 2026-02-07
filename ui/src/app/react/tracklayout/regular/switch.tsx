@@ -15,6 +15,7 @@ interface WidthHeight {
 
 const HEIGHT_WIDTH: Record<string, WidthHeight> = {
   '#switchR600A30L300': { width: 644, height: 313 },
+  '#switchR1195A23L440': { width: 644, height: 500 },
 }
 
 const TRACK_WIDTH = 88;
