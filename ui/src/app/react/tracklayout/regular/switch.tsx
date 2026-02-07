@@ -1,6 +1,5 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { UiAttributesDataSwitch, UiLayoutPiece } from "trainbrain-shared";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import * as config from "@/app/config/config";
@@ -19,6 +18,7 @@ const HEIGHT_WIDTH: Record<string, WidthHeight> = {
 }
 
 const TRACK_WIDTH = 88;
+const RIGHT = "right";
 
 interface props {
   piece: UiLayoutPiece;
@@ -31,6 +31,7 @@ export default function Curve({piece}: props) {
   const radius = (piece.attributes as UiAttributesDataSwitch).radius;
   const angle = (piece.attributes as UiAttributesDataSwitch).angle;
   const length = (piece.attributes as UiAttributesDataSwitch).length;
+  const variant = (piece.attributes as UiAttributesDataSwitch).variant;
   const symbol = getSymbol(radius, angle, length);
 
   // Render the component
@@ -47,7 +48,9 @@ export default function Curve({piece}: props) {
         "--sleeper-color": config.SLEEPER_COLOR,
         "--sleeper-width": config.SLEEPER_WIDTH,
       } as React.CSSProperties }
-      transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-${TRACK_WIDTH / 2} 0)`}
+      transform={
+        `translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(${flip(variant) ? "" : "-"}${TRACK_WIDTH / 2} 0) ${flip(variant) ? "scale(-1, 1)" : ""}`
+      }
     />
 
     // We move the piece to its start coordiante.
@@ -80,4 +83,14 @@ function getHeight(symbol: string): number {
 
 function getWidth(symbol: string): number {
   return HEIGHT_WIDTH[symbol]?.width ?? 0;
+}
+
+/**
+ * Return true if the switch is left-handed, and therefore needs to be flipped.
+ */
+function flip(variant:string ): boolean {
+  if (variant == RIGHT) {
+    return false;
+  }
+  return true;
 }
