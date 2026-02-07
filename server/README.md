@@ -71,3 +71,17 @@ In case of a loop we need to know when to stop. So a variable called `loopProtec
 
 ## Writing to the DB
 Writing to the DB should only be done at the end handling a request, before returning the response to the caller.
+
+## Pieces we may want to add in the future
+```json
+  "k": {
+      "category": "switch",
+      "partNum": "Piko 35223 (manual), Piko 35227 (electric)",
+      "attributes": {"variant": "right", "length": 480, "angle": 22.5, "radius": 1240}
+    },
+  "l": {
+      "category": "switch",
+      "partNum": "Piko 35222 (manual), Piko 35226 (electric)",
+      "attributes": {"variant": "left", "length": 480, "angle": 22.5, "radius": 1240}
+    }
+```

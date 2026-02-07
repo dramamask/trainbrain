@@ -52,16 +52,6 @@
       "category": "switch",
       "partNum": "LGB 1614 (manual), LGB 16140 (manual), LGB 1615 (electric), LGB 16150 (electric)",
       "attributes": {"variant": "left", "length": 440, "angle": 22.5, "radius": 1195, "lgbRadius": "R3"}
-    },
-    "k": {
-      "category": "switch",
-      "partNum": "Piko 35223 (manual), Piko 35227 (electric)",
-      "attributes": {"variant": "right", "length": 480, "angle": 22.5, "radius": 1240}
-    },
-    "l": {
-      "category": "switch",
-      "partNum": "Piko 35222 (manual), Piko 35226 (electric)",
-      "attributes": {"variant": "left", "length": 480, "angle": 22.5, "radius": 1240}
     }
   }
 }
