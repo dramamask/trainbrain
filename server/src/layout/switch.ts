@@ -146,7 +146,8 @@ export class Switch extends LayoutPiece {
     // Call the nodes on the other sides
     toBeCalled.forEach(connectorName => {
       const node = this.connectors.getNode(connectorName);
-      node.updateCoordinateAndContinue(this, coordinates[connectorName], headings[connectorName], loopProtector);
+      // Note that we add 180 degrees to the heading below because their heading will be facing the opposite site (heading always faces into the piece)
+      node.updateCoordinateAndContinue(this, coordinates[connectorName], headings[connectorName] + 180, loopProtector);
     })
   }
 }

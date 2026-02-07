@@ -2,23 +2,5 @@
   "meta": {
     "description": "This file lists the track pieces that make up the train track layout. Nodes are in separate file."
   },
-  "pieces": {
-    "0": {
-      "pieceDefId": "g",
-      "connectors": {
-        "start": {
-          "heading": 15,
-          "node": "0"
-        },
-        "end": {
-          "heading": 195,
-          "node": "1"
-        },
-        "diverge": {
-          "heading": 225,
-          "node": "2"
-        }
-      }
-    }
-  }
+  "pieces": {}
 }
