@@ -1,7 +1,8 @@
 "use client"
 
-import { DeleteLayoutElementData, UiLayout, UpdateNodeData } from "trainbrain-shared";
+import { UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { store as errorStore } from '@/app/services/stores/error';
+import { store as questionStore, YES } from "@/app/services/stores/question";
 import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as mousePosStore } from "@/app/services/stores/mousepos";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
@@ -11,6 +12,7 @@ import { BIG_MOVE_INCREMENT, MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/conf
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
 import { getLastInsertedNode } from "../../tracklayout";
+import { useSyncExternalStore } from "react";
 
 // Keep track of node update API calls so we don't have multiple going at the same time
 let nodeUpdateInProgress = false;
@@ -23,7 +25,6 @@ export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {
     const keyDefValue = getAssociatedKeyValue(EDIT_MODE_KEYS, event);
     const moveIncrement = event.ctrlKey ? BIG_MOVE_INCREMENT : MOVE_INCREMENT;
-    console.log(keyDefValue);
 
     switch (keyDefValue) {
       case EDIT_MODE_KEYS.MoveNodeUp:
@@ -49,7 +50,6 @@ export function handleKeyDown(event: KeyboardEvent) {
         break;
       case EDIT_MODE_KEYS.DeletePiece:
         handleDelete();
-        selectionStore.deselectAll();
         break;
       case EDIT_MODE_KEYS.Deselect:
         selectionStore.deselectAll();
@@ -61,7 +61,9 @@ export function handleKeyDown(event: KeyboardEvent) {
   }
 }
 
-// Call the server API to store the new node position
+/**
+ * Call the server API to store the new node position
+ */
 function handleUpdateNode(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
   const nodeId = selectionStore.getSelectedNode();
   if (!nodeId) {
@@ -106,7 +108,9 @@ function handleUpdateNode(axis: "x" | "y", xyIncrement: number, headingIncrement
     });
 }
 
-// Call the server API to add a new node to the layout at the position where the cursor is at
+/**
+ * Call the server API to add a new node to the layout at the position where the cursor is at
+ */
 function handleAddNode() {
   const pos = mousePosStore.getPos();
   if (!pos) {
@@ -128,7 +132,9 @@ function handleAddNode() {
     });
 }
 
-// Call the server API to delete a layout piece
+/**
+ * Kick-off the delete of a layout element
+ */
 function handleDelete() {
   const pieceId = selectionStore.getSelectedLayoutPiece();
   const nodeId = selectionStore.getSelectedNode();
@@ -137,6 +143,35 @@ function handleDelete() {
     return;
   }
 
+  if (pieceId && nodeId) {
+    questionStore.setQuestion("Both a node and a layout piece were selected. Are you sure you want to go ahead with the delete?");
+    questionStore.subscribe(handleMultiDeleteAnswer);
+    return;
+  }
+
+  selectionStore.deselectAll();
+  callApiToDelete(nodeId, pieceId);
+}
+
+/**
+ * Handle the answer to the question asked above
+ */
+function handleMultiDeleteAnswer() {
+  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const nodeId = selectionStore.getSelectedNode();
+
+  if (questionStore.getAnswer() == YES) {
+    selectionStore.deselectAll();
+    callApiToDelete(nodeId, pieceId);
+  }
+
+  questionStore.unsubscribe(handleMultiDeleteAnswer);
+}
+
+/**
+ * Call the server API to delete a layout piece
+ */
+function callApiToDelete(nodeId: string, pieceId: string) {
   deleteLayoutElement({nodeId: nodeId, pieceId: pieceId})
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);

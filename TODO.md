@@ -1,6 +1,5 @@
 # TODO
 
-- Add an are you sure dialog when both a node and a piece are selected and delete is pressed.
 - Rotate node does weird things with switch or curve. maybe the cureve switched orientations. Look into it.
 - Work on the left hand version of the R1 UI Switch.
 - Create a pieceFactory class. only a piece itself should be allowed to delete itself. Just like the node factory.

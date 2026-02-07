@@ -1,0 +1,31 @@
+.body {
+  background-color: white;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+  color: #444444;
+  left: 50%;
+  padding: 10px 15px 15px 15px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%); /* Shifts it back by half its own width/height */
+  width: 90%;
+  z-index: 1; /* Moves it on top of the container */
+}
+
+.closeButton {
+  color: #444444;
+  position: absolute;
+  cursor: pointer;
+  font-size: 1.8em;
+  padding: 5px;
+  right: 3px;
+  top: -9px;
+}
+
+.answer {
+  margin: 20px 20px 0 0 !important;
+}
+

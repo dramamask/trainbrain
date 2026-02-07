@@ -3,7 +3,8 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { UiLayout } from "trainbrain-shared"
 import { CircularProgress, Stack } from "@mui/material";
-import Error from "./error";
+import Error from "./dialogs/error";
+import Question from "./dialogs/question";
 import { getTrackLayout } from "@/app/services/api/tracklayout"
 import { store as editModeStore } from "../services/stores/editmode";
 import { store as errorStore } from "@/app/services/stores/error";
@@ -68,6 +69,7 @@ export default function TrackLayout()
           { editModeState.editMode && <EditModeLayout worldWidth={worldWidth} worldHeight={worldHeight} /> }
           { !(editModeState.editMode) && <RegularLayout worldWidth={worldWidth} worldHeight={worldHeight} /> }
           <Error />
+          <Question />
         </div>
         <Scrollbar orientation="horizontal" disabled={zoomState.zoomFactor == 1}></Scrollbar>
       </Stack>
