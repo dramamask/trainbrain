@@ -1,5 +1,6 @@
 # TODO
 
+- Show live distance after the first measurement line is set
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
   Make it configurable as pixels per millimeter or something.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
