@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { Card, CardContent, Stack } from "@mui/material";
 import { store as mousePosStore, getMousePos } from "@/app/services/stores/mousepos";
+import { store as measureStore } from "@/app/services/stores/measure";
 
 import csStyles from "./controlssection.module.css";
 import styles from "./info.module.css";
@@ -10,6 +11,8 @@ import styles from "./info.module.css";
 export default function Info() {
   const mousePosState = useSyncExternalStore(mousePosStore.subscribe, mousePosStore.getSnapshot, mousePosStore.getServerSnapshot);
   const {mouseInViewBox, x, y} = getMousePos(mousePosState);
+
+  const measureState = useSyncExternalStore(measureStore.subscribe, measureStore.getSnapshot, measureStore.getServerSnapshot);
 
   let xDisplay = "-    ";
   let yDisplay = "-    ";
@@ -31,6 +34,12 @@ export default function Info() {
               <div className={csStyles.text}><b>y:</b></div>
               <div className={csStyles.text + " " + styles.mousePos}>{yDisplay}</div>
             </Stack>
+            { measureState.enabled && measureState.distance &&
+              <Stack className={styles.measurementContainer}>
+                <div className={csStyles.text}><b>Measurement:</b></div>
+                <div className={csStyles.text}>{Math.round(measureState.distance)} mm / {(measureState.distance / 25.4).toFixed(1)} inches</div>
+              </Stack>
+            }
         </CardContent>
       </Card>
     )

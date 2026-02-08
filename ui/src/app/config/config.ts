@@ -5,6 +5,7 @@
 const COLOR1 = "#FFD700";
 const COLOR1_HIGHLIGHT = "white";
 const COLOR2_HIGHLIGHT = "red";
+const COLOR3 = "blue";
 const GOLD = "#FFD700";
 const OAK = "#6F5339";
 
@@ -23,6 +24,10 @@ export const SELECTED_TRACK_COLOR = COLOR1_HIGHLIGHT;
 export const NODE_RADIUS = 100;
 export const NODE_COLOR = COLOR1;
 export const SELECTED_NODE_COLOR = COLOR2_HIGHLIGHT;
+
+export const MEASURE_COLOR = COLOR3;
+export const MEASURE_STROKE_WIDTH = 20;
+export const MEASURE_LINE_HEIGHT = 200;
 
 // Increment to move the track by if moving with keyboard shortcut
 export const MOVE_INCREMENT = 15; // Millimeters

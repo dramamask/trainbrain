@@ -7,10 +7,12 @@ import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
 import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
+import { clickHandler } from "@/app/services/eventhandlers/svgmouseclickhandler";
 import Curve from "./curve";
 import Straight from "./straight";
 import Switch from "./switch";
 import Unknown from "./unknown";
+import Measure from "../measure";
 import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
 import { enterHandler } from "@/app/services/eventhandlers/mouseenterhandler";
 
@@ -49,6 +51,7 @@ export default function RegularModeLayout({worldWidth, worldHeight}: props) {
       width="100%"
       viewBox={viewBox}
       preserveAspectRatio="xMinYMax slice"
+      onClick={clickHandler}
       onMouseMove={moveHandler}
       onMouseLeave={leaveHandler}
       onMouseEnter={enterHandler}
@@ -57,6 +60,7 @@ export default function RegularModeLayout({worldWidth, worldHeight}: props) {
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
         { renderPieces(trackLayoutStore.getTrackLayout())}
+        <Measure />
       </g>
     </svg>
   )

@@ -5,7 +5,7 @@ import { Stack, Switch } from "@mui/material"
 import { store as editModeStore } from "@/app/services/stores/editmode";
 import { store as selectionModeStore } from "@/app/services/stores/selection";
 
-import styles from "./editmode.module.css";
+import styles from "./switchcontrol.module.css";
 import sidebarStyles from "./sidebar.module.css";
 
 export default function EditMode() {

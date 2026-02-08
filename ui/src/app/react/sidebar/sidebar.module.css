@@ -4,14 +4,21 @@
 }
 
 .logoContainer {
-  height: 80px;
+  height: 90px;
 }
 
 .logo {
   height: 100%;
   object-fit: contain;
-  object-position: center;
+  object-position: top;
+  padding-right: 2px;
   width: 100%;
+}
+
+.logoSpacer {
+  height: 0px;
+  padding: 0;
+  margin: 0;
 }
 
 .label {
