@@ -33,3 +33,37 @@ export const MEASURE_LINE_SIZE = 200;
 export const MOVE_INCREMENT = 15; // Millimeters
 export const BIG_MOVE_INCREMENT = 150; // Millimeters
 export const ROTATE_INCREMENT = 15; // Degrees
+
+/**
+ * Configuration definition
+ */
+const config = {
+  increments: {
+    move: 15, // millimeters
+    bigMove: 150, // millimeters
+    rotate: 15, // degrees
+  }
+}
+
+/**
+ * Returns a configuration
+ */
+function get(name: string): string | number {
+  const names = name.split(".").map(name => name.trim());
+  if (names.length > 2) {
+    throw new Error("Too many config levels. Only two depth levels possible.");
+  }
+
+  let value;
+  try {
+    // Assert the first key to get the sub-object
+    const subConfig = config[names[0] as keyof typeof config];
+
+    // Now TypeScript can correctly infer the keys available on 'subConfig'
+    value = subConfig[names[1] as keyof typeof subConfig];
+  } catch (error) {
+    throw new Error("Someone is attempting to get a non-existing configuration value");
+  }
+
+  return value;
+}
