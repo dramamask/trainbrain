@@ -11,11 +11,11 @@ import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { getNodeClassName, getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
-import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
-import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
-import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
-import { enterHandler } from "@/app/services/eventhandlers/mouseenterhandler";
-import { clickHandler as measurementClickHandler } from "@/app/services/eventhandlers/svgmouseclickhandler";
+import { moveHandler } from "@/app/services/eventhandlers/mousehandlers/svgmousemovehandler";
+import { wheelHandler } from "@/app/services/eventhandlers/mousehandlers/svgmousewheelhandler";
+import { leaveHandler } from "@/app/services/eventhandlers/mousehandlers/mouseleavehandler";
+import { enterHandler } from "@/app/services/eventhandlers/mousehandlers/mouseenterhandler";
+import { clickHandler as measurementClickHandler } from "@/app/services/eventhandlers/mousehandlers/svgmouseclickhandler";
 
 interface props {
   worldWidth: number;

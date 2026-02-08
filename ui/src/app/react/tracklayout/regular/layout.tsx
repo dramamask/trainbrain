@@ -5,16 +5,16 @@ import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
-import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
-import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
-import { clickHandler } from "@/app/services/eventhandlers/svgmouseclickhandler";
+import { moveHandler } from "@/app/services/eventhandlers/mousehandlers/svgmousemovehandler";
+import { wheelHandler } from "@/app/services/eventhandlers/mousehandlers/svgmousewheelhandler";
+import { clickHandler } from "@/app/services/eventhandlers/mousehandlers/svgmouseclickhandler";
 import Curve from "./curve";
 import Straight from "./straight";
 import Switch from "./switch";
 import Unknown from "./unknown";
 import Measure from "../measure";
-import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
-import { enterHandler } from "@/app/services/eventhandlers/mouseenterhandler";
+import { leaveHandler } from "@/app/services/eventhandlers/mousehandlers/mouseleavehandler";
+import { enterHandler } from "@/app/services/eventhandlers/mousehandlers/mouseenterhandler";
 
 interface props {
   worldWidth: number;

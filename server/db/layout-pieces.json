@@ -216,7 +216,7 @@
       }
     },
     "16": {
-      "pieceDefId": "c",
+      "pieceDefId": "b",
       "connectors": {
         "start": {
           "heading": 150,
@@ -272,32 +272,6 @@
       }
     },
     "20": {
-      "pieceDefId": "c",
-      "connectors": {
-        "start": {
-          "heading": 150,
-          "node": "22"
-        },
-        "end": {
-          "heading": 330,
-          "node": "24"
-        }
-      }
-    },
-    "21": {
-      "pieceDefId": "d",
-      "connectors": {
-        "start": {
-          "heading": 150,
-          "node": "24"
-        },
-        "end": {
-          "heading": 0,
-          "node": "25"
-        }
-      }
-    },
-    "23": {
       "pieceDefId": "a",
       "connectors": {
         "start": {
@@ -306,63 +280,46 @@
         },
         "end": {
           "heading": 0,
-          "node": "27"
+          "node": "24"
         }
       }
     },
-    "24": {
-      "pieceDefId": "h",
-      "connectors": {
-        "start": {
-          "heading": 180,
-          "node": "25"
-        },
-        "end": {
-          "heading": 0,
-          "node": "28"
-        },
-        "diverge": {
-          "heading": 330,
-          "node": "29"
-        }
-      }
-    },
-    "25": {
+    "21": {
       "pieceDefId": "a",
       "connectors": {
         "start": {
-          "heading": 180,
-          "node": "28"
-        },
-        "end": {
-          "heading": 0,
-          "node": "30"
-        }
-      }
-    },
-    "26": {
-      "pieceDefId": "c",
-      "connectors": {
-        "start": {
           "heading": 150,
-          "node": "29"
+          "node": "22"
         },
         "end": {
           "heading": 330,
-          "node": "31"
+          "node": "25"
         }
       }
     },
-    "27": {
+    "22": {
       "pieceDefId": "d",
       "connectors": {
         "start": {
           "heading": 150,
-          "node": "31"
+          "node": "25"
         },
         "end": {
           "heading": 0,
-          "node": "32"
+          "node": "26"
+        }
+      }
+    },
+    "23": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 180,
+          "node": "26"
+        },
+        "end": {
+          "heading": 0,
+          "node": "27"
         }
       }
     }

@@ -23,6 +23,7 @@ export function moveHandler(e: React.MouseEvent<SVGSVGElement>) {
     point.x = clientX;
     point.y = clientY;
 
+    // Calculate and set the mouse position
     const ctm = svg.getScreenCTM();
     if (ctm) {
       let { x, y } = point.matrixTransform(ctm.inverse());

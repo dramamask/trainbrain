@@ -1,19 +1,36 @@
+import { useEffect, useSyncExternalStore } from "react";
 import { store as measureStore } from "@/app/services/stores/measure";
-import { useSyncExternalStore } from "react";
+import { store as mousePosStore } from "@/app/services/stores/mousepos";
 import * as config from "@/app/config/config";
 import { Coordinate } from "trainbrain-shared";
 import { degreesToRadians } from "@/app/services/math";
 
+/**
+ * Render the measurement visuals
+ */
 export default function Measure() {
   const measureState = useSyncExternalStore(measureStore.subscribe, measureStore.getSnapshot, measureStore.getServerSnapshot);
-
-  if (!measureState.enabled) {
-    return false;
-  }
+  const mousePosState = useSyncExternalStore(mousePosStore.subscribe, mousePosStore.getSnapshot, mousePosStore.getServerSnapshot);
 
   const pos1 = measureState.pos1;
   const pos2 = measureState.pos2;
 
+  useEffect(() => {
+    if (measureState.enabled && pos1) {
+      // Assign the current mouse position to pos2, without locking the measurement
+      const mousePos = mousePosStore.getPos();
+      if (mousePos) {
+        measureStore.setPos2(mousePos);
+      }
+    }
+  }, [mousePosState]);
+
+  // Don't return anything is the measure state is not enabled
+  if (!measureState.enabled) {
+    return false;
+  }
+
+  // Calculate the measurement visuals UI coordinates
   let angle = degreesToRadians(0);
   if (pos1 && pos2) {
     angle = getAngle(pos1, pos2);
@@ -21,6 +38,7 @@ export default function Measure() {
   const [pos1A, pos1B] = getCoordinates(pos1, angle);
   const [pos2A, pos2B] = getCoordinates(pos2, angle);
 
+  // Return the measurement visuals
   return (
     <>
       { pos1 &&
@@ -73,19 +91,14 @@ function getAngle(pos1: Coordinate, pos2: Coordinate): number {
  * @param {number} angle - Angle between the two mearuement points, in radians.
  */
 function getCoordinates(pos: Coordinate | undefined, angle: number): Coordinate[] {
-  console.log("pos", pos);
-  console.log("angle", angle);
   if (pos == undefined) {
     // These coordinates are not used. We just need to return something.
     return [{x: 1, y: 2}, {x: 3, y: 4 }]
   }
 
   const lineAngle = degreesToRadians(90) - angle;
-  console.log("lineAngle", lineAngle);
   const deltaY = Math.sin(lineAngle) * (config.MEASURE_LINE_SIZE / 2);
-  console.log("deltaY", deltaY);
   const deltaX = deltaY / (Math.tan(lineAngle) || 1000);
-  console.log("deltaX", deltaX);
 
   return [{ x: pos.x + deltaX, y: pos.y - deltaY }, { x: pos.x - deltaX, y: pos.y + deltaY }]
 }

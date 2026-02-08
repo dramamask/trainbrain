@@ -4,12 +4,13 @@ import { Coordinate } from "trainbrain-shared";
 
 interface State {
   enabled: boolean;
+  locked: boolean; // Pos2 moves with the mouse when this is false. Pos2 does not move anymore when this is true.
   pos1: Coordinate | undefined;
   pos2: Coordinate | undefined;
   distance: number | undefined; // in mm
 }
 
-let state: State = { enabled: false, pos1: undefined, pos2: undefined, distance: undefined };
+let state: State = { enabled: false, locked: false, pos1: undefined, pos2: undefined, distance: undefined };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -39,7 +40,7 @@ export const store = {
 
   // Toggle measure mode on or off
   toggle(enabled: boolean): void {
-    const newState = { enabled: enabled, pos1: undefined, pos2: undefined, distance: undefined };
+    const newState = { enabled: enabled, locked: false, pos1: undefined, pos2: undefined, distance: undefined };
     // Immutable update
     state = newState;
     // Notify React/listeners
@@ -48,28 +49,45 @@ export const store = {
 
   // Set one of the measurement positions
   setPos(coordinate: Coordinate): void {
-    if (!state.enabled) {
+    // Return right away if measurement is not enabled or if the measurement is locked already
+    if (!state.enabled || state.locked) {
       return;
     }
 
+    // Set pos1 or pos2
     let pos1 = state.pos1;
     let pos2 = state.pos2;
     let distance = undefined;
+    let lock = false;
 
     if (state.pos1 == undefined) {
       pos1 = coordinate;
-    } else if (state.pos2 == undefined) {
+    } else {
       pos2 = coordinate;
       distance = calcDistance(pos1, pos2);
-    } else {
-      return;
+      lock = true; // Lock the measurement after pos 2 is set here
     }
-    const newState = { enabled: state.enabled, pos1: pos1, pos2: pos2, distance: distance };
+    const newState = { enabled: state.enabled, locked: lock, pos1: pos1, pos2: pos2, distance: distance };
 
     // Immutable update
     state = newState;
     // Notify React/listeners
     listeners.forEach((callback) => callback());
+  },
+
+  /**
+   * Temporarily set position 2 if the measurment is not locked yet.
+   * This function will not lock the measurement.
+   */
+  setPos2(coordinate: Coordinate): void {
+    if (!state.locked) {
+      const distance = calcDistance(state.pos1, coordinate);
+      const newState = { enabled: state.enabled, locked: state.locked, pos1: state.pos1, pos2: coordinate, distance: distance };
+      // Immutable update
+      state = newState;
+      // Notify React/listeners
+      listeners.forEach((callback) => callback());
+    }
   },
 };
 
