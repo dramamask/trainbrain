@@ -2,7 +2,6 @@
 
 - Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
   Make it configurable as pixels per millimeter or something.
-- Add measuring of distances.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Work on piece flip (formarly rotate)
 - Should the node factory also contain all access to the layout DB? Instead of this being in a different file?

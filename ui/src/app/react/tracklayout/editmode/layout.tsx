@@ -4,6 +4,7 @@ import Curve from "./curve";
 import Straight from "./straight";
 import Switch from "./switch";
 import Node from "./node";
+import Measure from "../measure";
 import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as selectionStore } from "@/app/services/stores/selection";
@@ -14,6 +15,7 @@ import { moveHandler } from "@/app/services/eventhandlers/svgmousemovehandler";
 import { wheelHandler } from "@/app/services/eventhandlers/svgmousewheelhandler";
 import { leaveHandler } from "@/app/services/eventhandlers/mouseleavehandler";
 import { enterHandler } from "@/app/services/eventhandlers/mouseenterhandler";
+import { clickHandler as measurementClickHandler } from "@/app/services/eventhandlers/svgmouseclickhandler";
 
 interface props {
   worldWidth: number;
@@ -58,6 +60,7 @@ export default function EditModeLayout({worldWidth, worldHeight}: props) {
     >
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
+        { <Measure /> }
         { renderPieces(trackLayoutState.trackLayout) }
         { renderNodes(trackLayoutState.trackLayout) }
         { renderDebugContent(worldWidth, worldHeight) }
@@ -70,6 +73,8 @@ export default function EditModeLayout({worldWidth, worldHeight}: props) {
  * Handle click events from inside the SVG
  */
 const handleSvgClick = (event: React.MouseEvent<SVGSVGElement>) => {
+  measurementClickHandler(event);
+
   const target = event.target as SVGElement;
 
   // Select the node if the target is a node
