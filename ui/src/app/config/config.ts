@@ -27,7 +27,7 @@ export const SELECTED_NODE_COLOR = COLOR2_HIGHLIGHT;
 
 export const MEASURE_COLOR = COLOR3;
 export const MEASURE_STROKE_WIDTH = 20;
-export const MEASURE_LINE_HEIGHT = 200;
+export const MEASURE_LINE_SIZE = 200;
 
 // Increment to move the track by if moving with keyboard shortcut
 export const MOVE_INCREMENT = 15; // Millimeters
