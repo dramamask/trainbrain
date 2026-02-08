@@ -12,14 +12,13 @@ import { BIG_MOVE_INCREMENT, MOVE_INCREMENT, ROTATE_INCREMENT } from "@/app/conf
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
 import { getLastInsertedNode } from "../../tracklayout";
-import { useSyncExternalStore } from "react";
 
 // Keep track of node update API calls so we don't have multiple going at the same time
 let nodeUpdateInProgress = false;
 
 // Key Event Handler for Edit Mode
 //
-// ==========> All key event handlers need to be called from keyboardEventHandler.tsx <==========
+// ==========> All key event handlers need to be called from maineventhandler.ts <==========
 //
 export function handleKeyDown(event: KeyboardEvent) {
   if (editModeStore.isEditMode()) {

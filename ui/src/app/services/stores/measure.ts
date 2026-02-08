@@ -28,17 +28,23 @@ export const store = {
     return state;
   },
 
-  // Needed for next.js to be able to do server side rendering
+  /**
+   * Needed for next.js to be able to do server side rendering
+   */
   getServerSnapshot(): State {
     return state;
   },
 
-  // Is measure mode enabled?
+  /**
+   * Is measure mode enabled?
+   */
   getEnabled(): boolean {
     return state.enabled;
   },
 
-  // Toggle measure mode on or off
+  /**
+   * Toggle measure mode on or off
+   */
   toggle(enabled: boolean): void {
     const newState = { enabled: enabled, locked: false, pos1: undefined, pos2: undefined, distance: undefined };
     // Immutable update
@@ -47,7 +53,9 @@ export const store = {
     listeners.forEach((callback) => callback());
   },
 
-  // Set one of the measurement positions
+  /**
+   * Set one of the measurement positions
+   */
   setPos(coordinate: Coordinate): void {
     // Return right away if measurement is not enabled or if the measurement is locked already
     if (!state.enabled || state.locked) {
@@ -88,6 +96,17 @@ export const store = {
       // Notify React/listeners
       listeners.forEach((callback) => callback());
     }
+  },
+
+  /**
+   * Clear the measurement. Keep the measurement enabled but clear the current measurement (reset).
+   */
+  clear(): void {
+    const newState = { enabled: state.enabled, locked: false, pos1: undefined, pos2: undefined, distance: undefined };
+    // Immutable update
+    state = newState;
+    // Notify React/listeners
+    listeners.forEach((callback) => callback());
   },
 };
 

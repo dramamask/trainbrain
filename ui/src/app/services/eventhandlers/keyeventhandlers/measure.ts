@@ -1,6 +1,6 @@
 "use client"
 
-import { store as zoomFactorStore } from '@/app/services/stores/zoomfactor';
+import { store as measurementStore } from '@/app/services/stores/measure';
 import { KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from './helpers';
 
@@ -12,11 +12,8 @@ export function handleKeyDown(event: KeyboardEvent) {
   const keyDefValue = getAssociatedKeyValue(KEYS, event);
 
   switch(keyDefValue) {
-    case KEYS.ZoomInLayout:
-      zoomFactorStore.zoomIn();
-      break;
-    case KEYS.ZoomOutLayout:
-      zoomFactorStore.zoomOut();
+    case KEYS.ResetMeasurement:
+      measurementStore.clear();
       break;
   }
 }

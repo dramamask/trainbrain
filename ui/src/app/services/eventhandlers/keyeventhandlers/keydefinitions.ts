@@ -10,16 +10,17 @@ export const KEYS: KeyDefintions = {
   ZoomInLayout: '+',
   ZoomOutLayout: '-',
   CloseError: ['Escape', 'Enter'],
+  ResetMeasurement: 'M',
 }
 
 export const EDIT_MODE_KEYS: KeyDefintions = {
-  Deselect: 'Escape',
-  DeletePiece: 'Delete',
-  RotateNodeRight: ']',
-  RotateNodeLeft: '[',
-  AddNode: 'N',
   MoveNodeUp: 'ArrowUp',
   MoveNodeDown: 'ArrowDown',
   MoveNodeLeft: 'ArrowLeft',
   MoveNodeRight: 'ArrowRight',
+  DeletePiece: 'Delete',
+  Deselect: 'Escape',
+  AddNode: 'N',
+  RotateNodeRight: ']',
+  RotateNodeLeft: '[',
 }

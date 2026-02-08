@@ -6,7 +6,7 @@ import { getAssociatedKeyValue } from './helpers';
 
 // Key Event Handler that acts when an error is present.
 //
-// ==========> All key event handlers need to be called from keyboardEventHandler.tsx <==========
+// ==========> All key event handlers need to be called from maineventhandler.ts <==========
 //
 export function handleKeyDown(event: KeyboardEvent) {
   const keyDefValue = getAssociatedKeyValue(KEYS, event);

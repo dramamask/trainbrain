@@ -37,10 +37,23 @@ export default function Info() {
             { measureState.enabled && measureState.distance &&
               <Stack className={styles.measurementContainer}>
                 <div className={csStyles.text}><b>Measurement:</b></div>
-                <div className={csStyles.text}>{Math.round(measureState.distance)} mm / {(measureState.distance / 25.4).toFixed(1)} inches</div>
+                <div className={csStyles.text}>{Math.round(measureState.distance)} mm / { getFeetAndInches(measureState.distance) }</div>
               </Stack>
             }
         </CardContent>
       </Card>
     )
+}
+
+function getFeetAndInches(mm: number): string {
+  const inch = 25.4;
+  if (mm < 12 * inch) {
+    return `${(mm / inch).toFixed(1)} inches`;
+  }
+
+  const feet = Math.floor(mm / (12 * inch));
+  const leftOver = mm - (feet * 12 * inch);
+  const inches = Math.round(leftOver / inch);
+
+  return `${feet} feet ${inches} inches`
 }

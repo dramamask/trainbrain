@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
-
-import * as editMode from "@/app/services/eventhandlers/keyeventhandlers/editmode";
-import * as error from "@/app/services/eventhandlers/keyeventhandlers/error";
-import * as zoom from "@/app/services/eventhandlers/keyeventhandlers/zoom";
+import { handleKeyDown } from '../services/eventhandlers/keyeventhandlers/maineventhandler';
 
 export default function GlobalEventHandlers() {
   useEffect(() => {
@@ -22,13 +19,3 @@ export default function GlobalEventHandlers() {
 
   return null;
 };
-
-// Function that passes the key-down event along to individual key event handlers
-// Note that this function follows the command pattern. Each individual key event
-// handler checks for themselves to see if they should handle the event or not.
-// Each key event handler in app/services/keyeventhandlers should be called here.
-function handleKeyDown(event: KeyboardEvent) {
-  editMode.handleKeyDown(event);
-  error.handleKeyDown(event);
-  zoom.handleKeyDown(event);
-}
