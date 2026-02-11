@@ -71,7 +71,7 @@ export class Layout {
 
   /**
    * Find the layout piece with the highest numerical ID. Return the ID as a number.
-   * This method is used by the request validation code as well as this class <<<<<<<<============ move functionality to pieceFactory?????????
+   * Only used by the request validation code
    */
   public getHighestPieceId(): number {
     return this.pieceFactory.getHighestPieceId();
@@ -93,6 +93,18 @@ export class Layout {
 
     // Save the newly changed layout to file
     this.save();
+  }
+
+  /**
+   * Move a layout piece. We do this by updating the node that is connected to the start connector of the piece.
+   */
+  public async movePiece(pieceId: string, xIncrement: number, yIncrement: number): Promise<void> {
+    const piece = this.pieceFactory.get(pieceId);
+    const nodeIds = piece?.getConnectedNodeIds() as string[];
+    const coordiante = this.nodeFactory.get(nodeIds[0])?.getCoordinate() as Coordinate;
+    coordiante.x += xIncrement;
+    coordiante.y += yIncrement;
+    this.updateNode(nodeIds[0], coordiante, 0);
   }
 
   /**

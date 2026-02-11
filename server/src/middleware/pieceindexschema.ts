@@ -1,7 +1,7 @@
 import { param } from 'express-validator';
 import { layout } from '../services/init.js';
 
-export const nodeIndexSchema = [
+export const pieceIndexSchema = [
   param('index')
   .exists({checkFalsy: true}).withMessage('Index is required')
   .isString().withMessage('Index must be a string')
@@ -15,9 +15,9 @@ export const nodeIndexSchema = [
     return true;
   })
   .custom((id: string) => {
-    const highestIdAllowed = layout.getHighestNodeId();
+    const highestIdAllowed = layout.getHighestPieceId();
     if (Number(id) > highestIdAllowed) {
-      throw new Error("Index does not match a Node ID in the layout")
+      throw new Error("Index does not match a Piece in the layout")
     }
     return true;
   }),

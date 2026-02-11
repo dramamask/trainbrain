@@ -1,20 +1,20 @@
 "use client"
 
-import { UiLayout, UpdateNodeData } from "trainbrain-shared";
+import { MovePieceData, UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { store as errorStore } from '@/app/services/stores/error';
 import { store as questionStore, YES } from "@/app/services/stores/question";
 import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as mousePosStore } from "@/app/services/stores/mousepos";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { addNode, deleteLayoutElement, updateNode } from "@/app/services/api/tracklayout";
+import { addNode, deleteLayoutElement, movePiece, updateNode } from "@/app/services/api/tracklayout";
 import { get } from "@/app/config/config";
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
 import { getLastInsertedNode } from "../../tracklayout";
 
 // Keep track of node update API calls so we don't have multiple going at the same time
-let nodeUpdateInProgress = false;
+let moveOrRotateInProgress = false;
 
 // Key Event Handler for Edit Mode
 //
@@ -27,16 +27,16 @@ export function handleKeyDown(event: KeyboardEvent) {
 
     switch (keyDefValue) {
       case EDIT_MODE_KEYS.MoveNodeUp:
-        handleUpdateNode("y", moveIncrement, 0);
+        handleMoveLayoutElement("y", moveIncrement);
         break;
       case EDIT_MODE_KEYS.MoveNodeRight:
-        handleUpdateNode("x", moveIncrement, 0);
+        handleMoveLayoutElement("x", moveIncrement);
         break;
       case EDIT_MODE_KEYS.MoveNodeDown:
-        handleUpdateNode("y", -moveIncrement, 0);
+        handleMoveLayoutElement("y", -moveIncrement);
         break;
       case EDIT_MODE_KEYS.MoveNodeLeft:
-        handleUpdateNode("x", -moveIncrement, 0);
+        handleMoveLayoutElement("x", -moveIncrement);
         break;
       case EDIT_MODE_KEYS.RotateNodeRight:
         handleUpdateNode("x", 0, get("increment.rotate") as number);
@@ -58,10 +58,72 @@ export function handleKeyDown(event: KeyboardEvent) {
 }
 
 /**
- * Call the server API to store the new node position
+ *
+ */
+function handleMoveLayoutElement(axis: "x" | "y", xyIncrement: number): void {
+  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const nodeId = selectionStore.getSelectedNode();
+  if (nodeId && pieceId) {
+    errorStore.setError("Please select a layout node or a layout piece, not both.");
+    return;
+  }
+
+  if (nodeId) {
+    return handleUpdateNode(axis, xyIncrement, 0);
+  }
+
+  if (!pieceId) {
+    errorStore.setError("Please select a layout node or a layout piece to perform this action.");
+    return;
+  }
+
+  // Set variable to keep track of API call in progress for updating a node
+  if (moveOrRotateInProgress) {
+    return;
+  }
+  moveOrRotateInProgress = true;
+
+  // Assemble the API data
+  let yIncrement = 0;
+  let xIncrement = 0;
+  if (axis == "x") {
+    xIncrement = xyIncrement;
+  } else {
+    yIncrement = xyIncrement;
+  }
+  const movePieceData: MovePieceData = {
+    index: pieceId,
+    xIncrement: xIncrement,
+    yIncrement: yIncrement,
+  }
+
+  // Call the server's API endpoint to move the layout piece
+  movePiece(movePieceData)
+    .then((layoutData: UiLayout) => {
+      moveOrRotateInProgress = false;
+      // Update our local store with the new layout data that we received back from the server
+      trackLayoutStore.setTrackLayout(layoutData);
+    })
+    .catch((error: Error) => {
+      // The server responded back with an error
+      moveOrRotateInProgress = false;
+      errorStore.setError(error.message);
+      console.error(error);
+    });
+}
+
+/**
+ * Call the server API to store update
  */
 function handleUpdateNode(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
+  const pieceId = selectionStore.getSelectedLayoutPiece();
   const nodeId = selectionStore.getSelectedNode();
+  console.log("pieceId", pieceId);
+  console.log("nodeId", nodeId);
+  if (nodeId != "" && pieceId != "") {
+    errorStore.setError("Please select a layout node or a layout piece, not both.");
+    return;
+  }
   if (!nodeId) {
     errorStore.setError("Please select a node to perform this action.");
     return;
@@ -73,10 +135,10 @@ function handleUpdateNode(axis: "x" | "y", xyIncrement: number, headingIncrement
   }
 
   // Set variable to keep track of API call in progress for updating a node
-  if (nodeUpdateInProgress) {
+  if (moveOrRotateInProgress) {
     return;
   }
-  nodeUpdateInProgress = true;
+  moveOrRotateInProgress = true;
 
   // Update the node coordinate
   nodeData.coordinate[axis] += xyIncrement;
@@ -92,13 +154,13 @@ function handleUpdateNode(axis: "x" | "y", xyIncrement: number, headingIncrement
   // Call the server's API endpoint to update the node position
   updateNode(updateNodeData)
     .then((layoutData: UiLayout) => {
-      nodeUpdateInProgress = false;
+      moveOrRotateInProgress = false;
       // Update our local store with the new layout data that we received back from the server
       trackLayoutStore.setTrackLayout(layoutData);
     })
     .catch((error: Error) => {
       // The server responded back with an error
-      nodeUpdateInProgress = false;
+      moveOrRotateInProgress = false;
       errorStore.setError(error.message);
       console.error(error);
     });

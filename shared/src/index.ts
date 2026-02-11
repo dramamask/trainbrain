@@ -119,6 +119,13 @@ export interface UpdateNodeData {
   headingIncrement: number;
 }
 
+// Data structure used to update a pieces's position
+export interface MovePieceData {
+  index: string;
+  xIncrement: number;
+  yIncrement: number;
+}
+
 // Data structure used to add a new layout piece
 export interface AddLayoutPieceData {
   nodeId: string;

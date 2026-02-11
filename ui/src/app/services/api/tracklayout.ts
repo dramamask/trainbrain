@@ -1,4 +1,4 @@
-import { AddLayoutPieceData, AddNodeData, DeleteLayoutElementData, UiLayout, UpdateNodeData } from "trainbrain-shared";
+import { AddLayoutPieceData, AddNodeData, DeleteLayoutElementData, MovePieceData, UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { apiGet, apiCall } from "./api";
 
 // Get the track layuot structure
@@ -8,7 +8,7 @@ export async function getTrackLayout(): Promise<UiLayout> {
 }
 
 // Update the position and/or heading of a layout node.
-// Note that this will also update the position and heading of all connected track pieces.
+// Note that this will also update the position and heading of all connected layout nodes and pieces.
 export async function updateNode(data: UpdateNodeData): Promise<UiLayout> {
   const retVal = await apiCall<UiLayout>("PUT", `/layout/node/${data.index}`, data);
   return retVal;
@@ -17,6 +17,13 @@ export async function updateNode(data: UpdateNodeData): Promise<UiLayout> {
 // Add a node to the layout
 export async function addNode(data: AddNodeData): Promise<UiLayout> {
   const retVal = await apiCall<UiLayout>("POST", "/layout/node", data);
+  return retVal;
+}
+
+// Update the position of a layout piece.
+// Note that this will also update the position of all connected alyout nodes and pieces.
+export async function movePiece(data: MovePieceData): Promise<UiLayout> {
+  const retVal = await apiCall<UiLayout>("PUT", `/layout/piece/${data.index}`, data);
   return retVal;
 }
 
@@ -33,9 +40,9 @@ export async function deleteLayoutElement(data: DeleteLayoutElementData): Promis
   return retVal;
 }
 
-// Delete a track piece from the layout
-export async function rotateTrackPiece(pieceId: string): Promise<UiLayout> {
-  const url = "/layout/piece/rotate/" + pieceId;
+// Flip a track piece in the layout
+export async function flipTrackPiece(pieceId: string): Promise<UiLayout> {
+  const url = "/layout/piece/flip/" + pieceId;
   const retVal = await apiCall<UiLayout>("PUT", url, {});
   return retVal;
 }

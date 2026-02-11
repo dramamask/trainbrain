@@ -1,15 +1,11 @@
 import { body } from 'express-validator';
 
-export const updateNodeSchema = [
-  body('x')
+export const moveLayoutPieceSchema = [
+  body('xIncrement')
   .notEmpty().withMessage("JSON parameter 'x' is required")
   .isNumeric().withMessage("JSON parameter 'x' should be a number"),
 
-  body('y')
+  body('yIncrement')
   .notEmpty().withMessage("JSON parameter 'y' is required")
   .isNumeric().withMessage("JSON parameter 'y' should be a number"),
-
-  body('headingIncrement')
-  .notEmpty().withMessage("JSON parameter 'headingIncrement' is required")
-  .isNumeric().withMessage("JSON parameter 'headingIncrement' should be a number"),
 ];

@@ -3,7 +3,7 @@ import { trace } from '@opentelemetry/api';
 import { matchedData } from 'express-validator';
 import { constants } from "http2";
 import { layout } from "../services/init.js";
-import { AddLayoutPieceData, AddNodeData, Coordinate, UiLayout, UpdateNodeData } from 'trainbrain-shared';
+import { AddLayoutPieceData, AddNodeData, Coordinate, MovePieceData, UiLayout, UpdateNodeData } from 'trainbrain-shared';
 
 // API endpoint to get the track layout
 export const getLayout = (req: Request, res: Response, next: NextFunction): void => {
@@ -94,8 +94,7 @@ export const addNode = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 
-// API endpoint to change the position of a node and/or the heading the piecces connected to the node
-// This is used to move or rotate a node and everything that is connected to it
+// API endpoint to move or rotate a node and everything that is connected to it
 export const updateNode = async (req: Request, res: Response, next: NextFunction) => {
   // matchedData only includes fields defined in the validator middleware for this route
   const data = matchedData<UpdateNodeData>(req);
@@ -114,6 +113,37 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
     };
     const headingIncrement = data.headingIncrement;
     await layout.updateNode(data.index, newCoordinate, headingIncrement);
+
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
+
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
+
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+    span?.end();
+  } catch (error) {
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
+  }
+}
+
+// API endpoint to move a piece and everything that is connected to it
+export const movePiece = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData<MovePieceData>(req);
+
+  try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'updateNode');
+    span?.setAttribute('_.request.nodeId', data.index);
+    span?.setAttribute('_.request.x', data.xIncrement);
+    span?.setAttribute('_.request.y', data.yIncrement);
+
+    await layout.movePiece(data.index, data.xIncrement, data.yIncrement);
 
     const uiLayout = layout.getUiLayout();
     const status = getHttpStatusCode(uiLayout);

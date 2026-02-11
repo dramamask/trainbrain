@@ -11,7 +11,7 @@ const OAK = "#6F5339";
  * Configuration definitions
  */
 const config = {
-  increments: {
+  increment: {
     move: 15, // millimeters
     bigMove: 150, // millimeters
     rotate: 15, // degrees
@@ -56,7 +56,7 @@ export function get(name: string): string | number {
     // Now TypeScript can correctly infer the keys available on 'subConfig'
     value = subConfig[names[1] as keyof typeof subConfig];
   } catch (error) {
-    throw new Error("Someone is attempting to get a non-existing configuration value");
+    throw new Error(`Someone is attempting to get a non-existing configuration value (${name})`);
   }
 
   return value;
