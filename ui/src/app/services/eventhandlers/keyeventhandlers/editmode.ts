@@ -7,7 +7,7 @@ import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as mousePosStore } from "@/app/services/stores/mousepos";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { addNode, deleteLayoutElement, movePiece, updateNode } from "@/app/services/api/tracklayout";
+import { addNode, deleteLayoutElement, disconnectNode, movePiece, updateNode } from "@/app/services/api/tracklayout";
 import { get } from "@/app/config/config";
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
@@ -52,6 +52,9 @@ export function handleKeyDown(event: KeyboardEvent) {
         break;
       case EDIT_MODE_KEYS.Deselect:
         selectionStore.deselectAll();
+        break;
+      case EDIT_MODE_KEYS.DisconnectPieces:
+        handleDisconnect();
         break;
     }
   }
@@ -186,7 +189,7 @@ function handleAddNode() {
     })
     .catch((error: Error) => {
       errorStore.setError(error.message);
-      console.error("handleKeyDown().deleteLayoutPiece() error:", error);
+      console.error(error);
     });
 }
 
@@ -236,6 +239,29 @@ function callApiToDelete(nodeId: string, pieceId: string) {
     })
     .catch((error: Error) => {
       errorStore.setError(error.message);
-      console.error("handleKeyDown().deleteLayoutPiece() error:", error);
+      console.error(error);
+    });
+}
+
+/**
+ * Handle disconnecting two pieces at a given node
+ */
+function handleDisconnect() {
+  const pieceId = selectionStore.getSelectedLayoutPiece();
+  if (pieceId) {
+    errorStore.setError("Only select a layout node, not a layout piece, to perform this function.");
+    return;
+  }
+
+  const nodeId = selectionStore.getSelectedNode();
+
+  disconnectNode(nodeId)
+    .then((layoutData: UiLayout) => {
+      trackLayoutStore.setTrackLayout(layoutData);
+      selectionStore.deselectNode();
+    })
+    .catch((error: Error) => {
+      errorStore.setError(error.message);
+      console.error(error);
     });
 }

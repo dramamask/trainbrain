@@ -178,6 +178,30 @@ export class Layout {
   }
 
   /**
+   * Disconnect the pieces that are connected to the node.
+   *
+   *    SITUATION BEFORE:              SITUATION AFTER:
+   *
+   *                   O                             O
+   *                   |                             |
+   *                   |                             |
+   *                   |                             |
+   *  (selected node)  O             (selected node) OO (a new node, in the same position as the selected node)
+   *                   |                             |
+   *                   |                             |
+   *                   |                             |
+   *                   O                             O
+   */
+  public async disconnectPiecesAtNode(nodeId: string): Promise<void> {
+    const node = this.nodeFactory.get(nodeId);
+    if (node?.getNumberOfConnections() as number < 2) {
+      throw new Error("Nothing to do here. Disconnect only does something when a two pieces are connected to a node");
+    }
+
+    // TODO: perform this action
+  }
+
+  /**
    * Delete an element from the layout.
    *
    * This is able to delete both pieces and nodes.

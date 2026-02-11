@@ -15,6 +15,7 @@ const router: Router = Router();
 router.get('/', layoutController.getLayout);
 router.post('/node', addNodeSchema, validate, layoutController.addNode);
 router.put('/node/:index', nodeIndexSchema, updateNodeSchema, validate, layoutController.updateNode);
+router.put('/node/disconnect/:index', nodeIndexSchema, validate, layoutController.disconnectPiecesAtNode);
 router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
 router.put('/piece/:index', pieceIndexSchema, moveLayoutPieceSchema, validate, layoutController.movePiece);
 router.delete('/element', deleteLayoutElementSchema, validate, layoutController.deleteLayoutElement);

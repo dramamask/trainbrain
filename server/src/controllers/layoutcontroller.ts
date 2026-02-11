@@ -131,6 +131,35 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
   }
 }
 
+// API endpoint to move or rotate a node and everything that is connected to it
+export const disconnectPiecesAtNode = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData<{index: string}>(req);
+
+  try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'updateNode');
+    span?.setAttribute('_.request.nodeId', data.index);
+
+    await layout.disconnectPiecesAtNode(data.index);
+
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
+
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
+
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+    span?.end();
+  } catch (error) {
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
+  }
+}
+
 // API endpoint to move a piece and everything that is connected to it
 export const movePiece = async (req: Request, res: Response, next: NextFunction) => {
   // matchedData only includes fields defined in the validator middleware for this route
@@ -139,7 +168,7 @@ export const movePiece = async (req: Request, res: Response, next: NextFunction)
   try {
     const span = trace.getActiveSpan();
     span?.setAttribute('_.request.type', 'updateNode');
-    span?.setAttribute('_.request.nodeId', data.index);
+    span?.setAttribute('_.request.pieceId', data.index);
     span?.setAttribute('_.request.x', data.xIncrement);
     span?.setAttribute('_.request.y', data.yIncrement);
 

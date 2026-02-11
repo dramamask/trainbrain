@@ -7,7 +7,7 @@ export const nodeIndexSchema = [
   .isString().withMessage('Index must be a string')
   .custom((id: string) => {
     if(isNaN(Number(id))) {
-      throw new Error("Index should be a string representation of a numeric value");
+      throw new Error("Please select a node to perform this action");
     }
     if(Number(id) < 0) {
       throw new Error("Index should be a string representation of a numeric value greater than or equal to zero")

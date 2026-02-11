@@ -1,6 +1,8 @@
 # TODO
 
-- Work on disconnecting two pieces at a node.
+- Work on disconnecting two pieces at a node - server API.
+- Get rid of selected node and piece error checking in the edit mode keybaord handler, unless absolutely necessary.
+
 - Work on piece flip (formarly rotate)
 - Work on moving pieces by selecting two nodes and connection them together (c of connect?). add possibility to select multiple pieces and nodes.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
