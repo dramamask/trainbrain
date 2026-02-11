@@ -2,12 +2,12 @@
 
 import { UiAttributesDataSwitch, UiLayoutPiece } from "trainbrain-shared";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
-import * as config from "@/app/config/config";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
 import { RIGHT, TRACK_WIDTH } from "./symbols/defs";
 
 import styles from  "./trackpiece.module.css";
+import { getTrackPieceStyle } from "./trackpiece";
 
 interface WidthHeight {
   width: number;
@@ -41,12 +41,7 @@ export default function Curve({piece}: props) {
       href={symbol}
       height={getHeight(symbol)}
       width={getWidth(symbol)}
-      style={{
-        "--rail-color": config.RAIL_COLOR,
-        "--rail-width": config.RAIL_WIDTH,
-        "--sleeper-color": config.SLEEPER_COLOR,
-        "--sleeper-width": config.SLEEPER_WIDTH,
-      } as React.CSSProperties }
+      style={getTrackPieceStyle()}
       transform={
         `translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(${flip(variant) ? "" : "-"}${TRACK_WIDTH / 2} 0) ${flip(variant) ? "scale(-1, 1)" : ""}`
       }

@@ -1,5 +1,5 @@
 import { Coordinate } from "trainbrain-shared";
-import * as config from "@/app/config/config";
+import { get } from "@/app/config/config";
 
 interface connectorProps {
   visible: boolean; // Whether the shape is drawn as visible or invisible
@@ -9,7 +9,7 @@ interface connectorProps {
 
 // Render a reactangle
 export default function Rectangle({visible, topLeft, bottomRight}: connectorProps) {
-  const stroke = visible ? config.RAIL_COLOR : "none";
+  const stroke = visible ? get("rail.color") as string : "none";
 
   return (
     <rect
@@ -18,7 +18,7 @@ export default function Rectangle({visible, topLeft, bottomRight}: connectorProp
       width={Math.abs(topLeft.x - bottomRight.x)}
       height={Math.abs(topLeft.y - bottomRight.y)}
       stroke={stroke}
-      strokeWidth={config.STROKE_WIDTH}
+      strokeWidth={get("editMode.strokeWidth")}
       fill="none"
     />
   )

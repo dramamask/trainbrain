@@ -1,10 +1,7 @@
 # TODO
 
-- Refactor the config into a function. Change everyone that uses the config.
-- Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
-  Make it configurable as pixels per millimeter or something.
-- Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Work on piece flip (formarly rotate)
+- Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Should the node factory also contain all access to the layout DB? Instead of this being in a different file?
 - Work on moving pieces by selecting two nodes and connection them together (c of connect?). add possibility to select multiple pieces and nodes.
 - Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
@@ -13,6 +10,8 @@
 - Either delete by selecting a track piece or delete in between two nodes. if in between two nodes then we need to update the "daisy chain" method to accept an end-at-this-node type param. Rename the function to dais-chain something and make it flexible to be able to do different things. maybe take an object as input that contains params and a command name or something.
 - Scroll the layout SVG when you click and drag (CTRL or ALT click? How does lucid chart do it?).
 - Add the world size to the layout json file.
+- Make the stroke width, indicator length, and start pos indicator radius dependant on the world size. Auto resize.
+  Make it configurable as pixels per millimeter or something.
 - Start working on an intersection piece (a cross).
 - Create API to show the trian position. How do we want to show it on the map (SVG I presume). What info do we need
   from the back-end for that (just coordinates?).

@@ -1,7 +1,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { store as measureStore } from "@/app/services/stores/measure";
 import { store as mousePosStore } from "@/app/services/stores/mousepos";
-import * as config from "@/app/config/config";
+import { get } from "@/app/config/config";
 import { Coordinate } from "trainbrain-shared";
 import { degreesToRadians } from "@/app/services/math";
 
@@ -38,6 +38,9 @@ export default function Measure() {
   const [pos1A, pos1B] = getCoordinates(pos1, angle);
   const [pos2A, pos2B] = getCoordinates(pos2, angle);
 
+  const color = get("measure.color") as string;
+  const strokeWidth = get("measure.strokeWidth");
+
   // Return the measurement visuals
   return (
     <>
@@ -47,8 +50,8 @@ export default function Measure() {
             y1={pos1A.y}
             x2={pos1B.x}
             y2={pos1B.y}
-            stroke={config.MEASURE_COLOR}
-            strokeWidth={config.MEASURE_STROKE_WIDTH}
+            stroke={color}
+            strokeWidth={strokeWidth}
         />
       }
       { pos2 &&
@@ -57,8 +60,8 @@ export default function Measure() {
             y1={pos2A.y}
             x2={pos2B.x}
             y2={pos2B.y}
-            stroke={config.MEASURE_COLOR}
-            strokeWidth={config.MEASURE_STROKE_WIDTH}
+            stroke={color}
+            strokeWidth={strokeWidth}
         />
       }
       { pos1 && pos2 &&
@@ -67,8 +70,8 @@ export default function Measure() {
             y1={pos1.y}
             x2={pos2.x}
             y2={pos2.y}
-            stroke={config.MEASURE_COLOR}
-            strokeWidth={config.MEASURE_STROKE_WIDTH}
+            stroke={color}
+            strokeWidth={strokeWidth}
         />
       }
     </>
@@ -96,8 +99,9 @@ function getCoordinates(pos: Coordinate | undefined, angle: number): Coordinate[
     return [{x: 1, y: 2}, {x: 3, y: 4 }]
   }
 
+  const lineSize = get("measure.lineSize") as number;
   const lineAngle = degreesToRadians(90) - angle;
-  const deltaY = Math.sin(lineAngle) * (config.MEASURE_LINE_SIZE / 2);
+  const deltaY = Math.sin(lineAngle) * (lineSize / 2);
   const deltaX = deltaY / (Math.tan(lineAngle) || 1000);
 
   return [{ x: pos.x + deltaX, y: pos.y - deltaY }, { x: pos.x - deltaX, y: pos.y + deltaY }]

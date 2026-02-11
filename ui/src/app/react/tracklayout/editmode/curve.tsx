@@ -3,7 +3,7 @@
 import { useState, useSyncExternalStore } from "react";
 import { UiAttributesDataCurve, UiLayoutPiece } from "trainbrain-shared";
 import { getBoundingBox, thisTrackPieceIsSelected} from "@/app/services/trackpiece";
-import * as config from "@/app/config/config";
+import { get } from "@/app/config/config";
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
@@ -47,7 +47,7 @@ export default function Curve({piece}: props) {
       <ArcPath
         draw={true}
         isHovered={isHovered}
-        color={isTrackPieceSelected ? config.SELECTED_TRACK_COLOR : config.EDIT_MODE_TRACK_COLOR}
+        color={ (isTrackPieceSelected ? get("editMode.selectedTrackColor") : get("editMode.trackColor")) as string }
         radius={attributes.radius}
         startCoordinate={startCoordinate}
         endCoordinate={endCoordinate}

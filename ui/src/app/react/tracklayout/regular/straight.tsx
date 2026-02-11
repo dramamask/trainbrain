@@ -2,10 +2,10 @@
 
 import { UiAttributesDataStraight, UiLayoutPiece } from "trainbrain-shared";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
-import * as config from "@/app/config/config";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
 import { TRACK_WIDTH } from "./symbols/defs";
+import { getTrackPieceStyle } from "./trackpiece";
 
 import styles from  "./trackpiece.module.css";
 
@@ -27,12 +27,7 @@ export default function Straight({piece}: props) {
       href={getSymbol(length)}
       height={length}
       width={TRACK_WIDTH}
-      style={{
-        "--rail-color": config.RAIL_COLOR,
-        "--rail-width": config.RAIL_WIDTH,
-        "--sleeper-color": config.SLEEPER_COLOR,
-        "--sleeper-width": config.SLEEPER_WIDTH,
-      } as React.CSSProperties }
+      style={getTrackPieceStyle()}
       transform={`translate(${startCoordinate.x} ${startCoordinate.y}) rotate(-${heading}) translate(-${TRACK_WIDTH / 2} 0)`}
     />
 

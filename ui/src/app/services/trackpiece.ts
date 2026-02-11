@@ -3,8 +3,9 @@
  */
 
 import { Coordinate } from "trainbrain-shared";
-import * as config from "@/app/config/config";
 import { store as selectionStore } from "@/app/services/stores/selection";
+
+const MIN_BOUNDING_BOX_SIZE = 100; // mm
 
 /**
  * Return the bounding box coordinates for the given track piece coordinates
@@ -20,8 +21,8 @@ export function getBoundingBox(pieceCoordinates: Coordinate[]): [Coordinate, Coo
   // Check to see if the bounding box is big enough in both x and y directions
   const [dx, dy] = getSpread([topLeft, bottomRight]);
 
-  const xSpreadIcrementNeeded = (dx < config.MIN_BOUNDING_BOX_SIZE) ? Math.abs(config.MIN_BOUNDING_BOX_SIZE - dx) : 0;
-  const ySpreadIncrementNeeded = (dy < config.MIN_BOUNDING_BOX_SIZE) ? Math.abs(config.MIN_BOUNDING_BOX_SIZE - dy): 0;
+  const xSpreadIcrementNeeded = (dx < MIN_BOUNDING_BOX_SIZE) ? Math.abs(MIN_BOUNDING_BOX_SIZE - dx) : 0;
+  const ySpreadIncrementNeeded = (dy < MIN_BOUNDING_BOX_SIZE) ? Math.abs(MIN_BOUNDING_BOX_SIZE - dy): 0;
 
   // Make the bounding box bigger if needed
   if (xSpreadIcrementNeeded > 0 || ySpreadIncrementNeeded > 0) {

@@ -6,7 +6,7 @@ import { getBoundingBox, thisTrackPieceIsSelected} from "@/app/services/trackpie
 import { store as selectionStore } from "@/app/services/stores/selection";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { getTrackPieceContainerClassName } from "@/app/services/cssclassnames";
-import * as config from "@/app/config/config";
+import { get } from "@/app/config/config";
 import Line from "./components/line";
 import Rectangle from "./components/rectangle";
 import { getLayoutNodeData } from "@/app/services/tracklayout";
@@ -47,7 +47,7 @@ export default function Straight({piece}: props) {
       <Line
         draw={true}
         isHovered={isHovered}
-        color={isTrackPieceSelected ? config.SELECTED_TRACK_COLOR : config.EDIT_MODE_TRACK_COLOR}
+        color={ (isTrackPieceSelected ? get("editMode.selectedTrackColor") : get("editMode.trackColor")) as string }
         coordinateOne={startCoordinate}
         coordinateTwo={endCoordinate}
       />

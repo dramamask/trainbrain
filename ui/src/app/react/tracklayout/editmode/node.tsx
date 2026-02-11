@@ -1,11 +1,8 @@
 import { useState, useSyncExternalStore } from 'react';
-import { Coordinate, UiLayoutNode } from "trainbrain-shared";
-import { store as editModeStore } from "@/app/services/stores/editmode";
+import { UiLayoutNode } from "trainbrain-shared";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import * as config from "@/app/config/config";
+import { get } from "@/app/config/config";
 import { getNodeClassName } from "@/app/services/cssclassnames";
-import { degreesToRadians } from "@/app/services/math";
-import DeadEnd from "@/app/react/tracklayout/editmode/components/deadend";
 
 import styles from "./node.module.css";
 
@@ -18,12 +15,7 @@ interface props {
 export default function node({node}: props) {
   const isNodeSelected = useSyncExternalStore(selectionStore.subscribe, () => (selectionStore.getSelectedNode() == node.id));
 
-  const editModeState = useSyncExternalStore(editModeStore.subscribe, editModeStore.getSnapshot, editModeStore.getServerSnapshot);
-  const inEditMode = editModeState.editMode;
-
   const [isHovered, setIsHovered] = useState(false);
-
-  const indicatorCoordinates = getDeadEndIndicatorPosition(node.coordinate, node.heading ?? 0);
 
   return (
     <g>
@@ -35,19 +27,14 @@ export default function node({node}: props) {
         cx={node.coordinate.x}
         cy={node.coordinate.y}
         r={getRadius(isHovered)}
-        fill={getFillColor(inEditMode, isNodeSelected)}
-      />
-      <DeadEnd
-        draw={!inEditMode && node.deadEnd}
-        coordinateOne={indicatorCoordinates.one}
-        coordinateTwo={indicatorCoordinates.two}
+        fill={getFillColor(isNodeSelected)}
       />
     </g>
   )
 }
 
 function getRadius(isHovered: boolean): number {
-  let radius = config.NODE_RADIUS;
+  let radius = get("editMode.nodeRadius") as number;
 
   if (isHovered) {
     radius *= 1.25;
@@ -56,30 +43,9 @@ function getRadius(isHovered: boolean): number {
   return radius;
 }
 
-function getFillColor(inEditMode: boolean, isNodeSelected: boolean): string {
-  if (!inEditMode) {
-    return "none";
-  }
-
+function getFillColor(isNodeSelected: boolean): string {
   if (isNodeSelected) {
-    return config.SELECTED_TRACK_COLOR;
+    return get("editMode.selectedNodeColor") as string;
   }
-
-  return config.NODE_COLOR;
-}
-
-// Get the positions for the indicators at the start and end of a track piece
-function getDeadEndIndicatorPosition(coordinate: Coordinate, heading: number): LineCoordinate
-{
-  const indicatorHalfLength = config.DEADEND_INDICATOR_LENGTH / 2;
-
-  const headingRad = degreesToRadians(heading);
-
-  const dx = indicatorHalfLength * Math.cos(headingRad);
-  const dy = indicatorHalfLength * Math.sin(headingRad);
-
-  return {
-    one: {x: coordinate.x - dx, y: coordinate.y + dy},
-    two: {x: coordinate.x + dx, y: coordinate.y - dy},
-  };
+  return get("editMode.nodeColor") as string;
 }

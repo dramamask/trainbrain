@@ -1,5 +1,5 @@
 import { Coordinate } from "trainbrain-shared";
-import * as config from "@/app/config/config";
+import { get } from "@/app/config/config";
 
 interface connectorProps {
   draw: boolean; // True if we need to draw the component. Make it invisible if false.
@@ -30,8 +30,8 @@ export default function line({draw, isHovered, color, coordinateOne, coordinateT
 // The stroke is wider if the piece is hovered over
 function getStrokeWidth(isHovered: boolean): number {
   if (isHovered) {
-    return (2 * config.STROKE_WIDTH);
+    return (2 * (get("editMode.strokeWidth") as number));
   }
 
-  return config.STROKE_WIDTH;
+  return get("editMode.strokeWidth") as number;
 }

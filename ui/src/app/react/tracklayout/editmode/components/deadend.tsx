@@ -1,5 +1,5 @@
 import { Coordinate } from "trainbrain-shared";
-import * as config from "@/app/config/config";
+import { get } from "@/app/config/config";
 
 interface connectorProps {
   draw: boolean; // Whether or not to draw the component
@@ -20,8 +20,8 @@ export default function deadEnd({draw, coordinateOne, coordinateTwo}: connectorP
         y1={coordinateOne.y}
         x2={coordinateTwo.x}
         y2={coordinateTwo.y}
-        stroke={config.RAIL_COLOR}
-        strokeWidth={config.STROKE_WIDTH}
+        stroke={get("rail.color") as string}
+        strokeWidth={get("editMode.strokeWidth")}
     />
   )
 }
