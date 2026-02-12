@@ -8,6 +8,7 @@ import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
 import { PieceDefs } from "./piecedefs.js";
 import { PieceDef } from "./piecedef.js";
+import { SpatialGrid } from "./spatialgrid.js";
 import { StillConnectedError } from '../errors/StillConnectedError.js';
 
 // The Layout class contains all LayoutPiece objects
@@ -15,11 +16,13 @@ export class Layout {
   protected readonly pieceDefs: PieceDefs;
   protected readonly nodeFactory: NodeFactory;
   protected readonly pieceFactory: PieceFactory;
+  protected readonly spatialGrid: SpatialGrid<LayoutNode>;
 
   constructor() {
     this.pieceDefs = new PieceDefs();
     this.nodeFactory = new NodeFactory();
     this.pieceFactory = new PieceFactory();
+    this.spatialGrid = new SpatialGrid<LayoutNode>(node => node.getCoordinate());
   }
 
   public init() {

@@ -1,5 +1,9 @@
 # TODO
 
+- Add the spatial map integration inside the node factory class. Move it out of the layout class.
+- Implement the spatial grid in the code:
+// Finding nearby:
+const nearbyNodes = grid.findNearby(150, 200); // Returns MyNode[]
 - Color nodes red if they are within a certain distance of each other.
 - Work on moving pieces by selecting two nodes and connection them together (c for connect?). add possibility to select multiple pieces and nodes.
 - Work on piece flip. For now the flipped piece will be disconnected from its nodes.
