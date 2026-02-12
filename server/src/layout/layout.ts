@@ -198,7 +198,23 @@ export class Layout {
       throw new Error("Nothing to do here. Disconnect only does something when a two pieces are connected to a node");
     }
 
-    // TODO: perform this action
+    // Get one of the pieces that the node is connected to
+    const piece0 = node?.getConnections()[0].piece as LayoutPiece;
+    const piece0connectorName = node?.getConnections()[0].connectorName as ConnectorName;
+
+    // Disconnect the node from that piece
+    node?.disconnect(piece0);
+
+    // Create a new node with the same coordinate as the existing node
+    const newNode = this.nodeFactory.createNew(node?.getCoordinate(), null, undefined);
+
+    // Tell the node it is connected to the piece
+    newNode.connect(piece0, piece0connectorName);
+
+    // Connect the piece to the new node
+    piece0.replaceNodeConnection(newNode, piece0connectorName);
+
+    // No need to re-calculate positions or headings because no piece were moved.
   }
 
   /**

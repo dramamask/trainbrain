@@ -20,7 +20,16 @@ interface PieceDefAttributes {
 const CONNECTOR_NAMES: ConnectorName[] = ["start", "end", "diverge"];
 
 /**
- * This is a Switch Layout piece
+ * This is a Switch Layout piece.
+ *
+ * Layout of a right-handed switch piece:
+ *
+ * (end connector) o  o (diverge connector)
+ *                 | /
+ *                 |/
+ *                 |
+ *                 o (start connector)
+ *
  */
 export class Switch extends LayoutPiece {
   protected readonly angle: number;
@@ -83,13 +92,13 @@ export class Switch extends LayoutPiece {
       headings["start"] = heading;
       toBeCalled = ["end", "diverge"];
       // Calculate the coordinate of the "end" side
-      result = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      result = calculateStraightCoordinate(coordinates["start"], this.length, headings["start"]);
       coordinates["end"] = result.coordinate
       headings["end"] = result.heading;
       // Calculate the coordinate of the "diverge" side
       result = calculateCurveCoordinate(
-        callingNode.getCoordinate(),
-        heading,
+        coordinates["start"],
+        headings["start"],
         this.angle,
         this.radius,
         this.variant,
@@ -103,7 +112,7 @@ export class Switch extends LayoutPiece {
       headings["end"] = heading;
       toBeCalled = ["start", "diverge"];
       // Calculate the coordinate of the "start" side
-      result = calculateStraightCoordinate(callingNode.getCoordinate(), this.length, heading);
+      result = calculateStraightCoordinate(coordinates["end"], this.length, headings["end"]);
       coordinates["start"] = result.coordinate
       headings["start"] = result.heading;
       // Calculate the coordinate of the "diverge" side
@@ -124,8 +133,8 @@ export class Switch extends LayoutPiece {
       toBeCalled = ["start", "end"];
       // Calculate the coordinate of the "start" side
       result = calculateCurveCoordinate(
-        callingNode.getCoordinate(),
-        heading,
+        coordinates["diverge"],
+        headings["diverge"],
         this.angle,
         this.radius,
         this.variant == "right" ? "left" : "right",
@@ -133,7 +142,7 @@ export class Switch extends LayoutPiece {
       coordinates["start"] = result.coordinate;
       headings["start"] = result.heading;
       // Calculate the coordinate of the "end" side
-      result = calculateStraightCoordinate(coordinates["start"], this.length, heading);
+      result = calculateStraightCoordinate(coordinates["start"], this.length, headings["start"]);
       coordinates["end"] = result.coordinate
       headings["end"] = result.heading;
     }

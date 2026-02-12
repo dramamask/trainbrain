@@ -107,10 +107,16 @@ export abstract class LayoutPiece {
     const span = trace.getActiveSpan();
     const spanInfo = this.getSpanInfo();
     spanInfo['heading_increment'] = increment;
-    span?.addEvent('layoutNode.incrementHeading()', spanInfo);
+    span?.addEvent('layoutPiece.incrementHeading()', spanInfo);
 
     // Delete
     this.connectors.incrementHeading(increment);
+  }
+
+  // Connect a given node to the specified connector
+  // Note that this will disconnect us from whichever node we were connected to before
+  public replaceNodeConnection(nodeToConnectTo: LayoutNode, connectorNameToConnectTo: ConnectorName): void {
+    this.connectors.replaceNodeConnection(nodeToConnectTo, connectorNameToConnectTo);
   }
 
   /**
@@ -132,7 +138,7 @@ export abstract class LayoutPiece {
 
     // Tracing
     const span = trace.getActiveSpan();
-    span?.addEvent('layoutNode.delete()', this.getSpanInfo());
+    span?.addEvent('layoutPiece.delete()', this.getSpanInfo());
 
     // Tell the nodes to disconnect from us
     const nodes = this.connectors.getNodes();
