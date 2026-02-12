@@ -121,8 +121,7 @@ function handleMoveLayoutElement(axis: "x" | "y", xyIncrement: number): void {
 function handleUpdateNode(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
   const pieceId = selectionStore.getSelectedLayoutPiece();
   const nodeId = selectionStore.getSelectedNode();
-  console.log("pieceId", pieceId);
-  console.log("nodeId", nodeId);
+
   if (nodeId != "" && pieceId != "") {
     errorStore.setError("Please select a layout node or a layout piece, not both.");
     return;
@@ -199,10 +198,6 @@ function handleAddNode() {
 function handleDelete() {
   const pieceId = selectionStore.getSelectedLayoutPiece();
   const nodeId = selectionStore.getSelectedNode();
-  if (!pieceId && !nodeId) {
-    errorStore.setError("Please select a node or piece to perform this action.");
-    return;
-  }
 
   if (pieceId && nodeId) {
     questionStore.setQuestion("Both a node and a layout piece were selected. Are you sure you want to go ahead with the delete?");

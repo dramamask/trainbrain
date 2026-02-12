@@ -4,7 +4,7 @@ import { layout } from '../services/init.js';
 // Validation schema for routes that take a coordiante as a JSON body parameter
 export const deleteLayoutElementSchema = [
   body('pieceId')
-    .optional({checkFalsy: true})
+    .if(id => id != "") // Stop validation here if the string is an empty string
     .isString().withMessage("Parameter 'pieceId' must be a string")
     .custom((id: string) => {
       if(isNaN(Number(id))) {
@@ -15,6 +15,7 @@ export const deleteLayoutElementSchema = [
       }
       return true;
     })
+    .isString().withMessage("Parameter 'pieceId' must be a string")
     .custom((id: string) => {
       const piece = layout.getLayoutPiece(id);
       if (!piece) {
@@ -24,7 +25,13 @@ export const deleteLayoutElementSchema = [
     }),
 
   body('nodeId')
-    .optional({checkFalsy: true})
+    .custom((id: string, { req }) => {
+      if (!req.body.pieceId && !id) {
+        throw new Error("Please select a layout node and/or a layout piece to delete");
+      }
+      return true;
+    })
+    .if(id => id != "") // Stop validation here if the string is an empty string
     .isString().withMessage("Parameter 'nodeId' must be a string")
     .custom((id: string) => {
       if(isNaN(Number(id))) {

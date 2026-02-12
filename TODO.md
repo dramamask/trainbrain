@@ -1,11 +1,9 @@
 # TODO
 
-- Work on disconnecting two pieces at a node - server API.
-- Get rid of selected node and piece error checking in the edit mode keybaord handler, unless absolutely necessary.
-
-- Work on piece flip (formarly rotate)
-- Work on moving pieces by selecting two nodes and connection them together (c of connect?). add possibility to select multiple pieces and nodes.
-- Auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
+- Color nodes red if they are within a certain distance of each other.
+- Work on moving pieces by selecting two nodes and connection them together (c for connect?). add possibility to select multiple pieces and nodes.
+- Work on piece flip. For now the flipped piece will be disconnected from its nodes.
+- After a flip, auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Should the node factory also contain all access to the layout DB? Instead of this being in a different file?
 - Add protection so you can't move the layout outside of the world size.
