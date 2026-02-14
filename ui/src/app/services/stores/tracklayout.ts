@@ -2,6 +2,7 @@
 
 import { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
 import { getLayoutNodeData } from "../tracklayout";
+import { store as nearbyNodeStore } from "./hasnearbynode";
 
 interface State {
   trackLayout: UiLayout;
@@ -38,6 +39,8 @@ export const store = {
     state = newState
     // Notify React/listeners
     listeners.forEach((callback) => callback());
+
+    setNearbyNodes(value.nodes);
   },
 
   setTrackLayoutAndWorldSize(layout: UiLayout, width: number, height: number): void {
@@ -68,3 +71,11 @@ export const store = {
     return {worldWidth: state.worldWidth, worldHeight: state.wordlHeight}
   },
 };
+
+/**
+ * Tell the nearby Node store which nodes are nearby other nodes, so that it can update its state and notify its listeners.
+ */
+function setNearbyNodes(nodes: UiLayoutNode[]): void {
+  const nearbyNodeIds = nodes.filter(node => node.hasNearbyNode).map(node => node.id);
+  nearbyNodeStore.setNearbyNodes(nearbyNodeIds);
+}
