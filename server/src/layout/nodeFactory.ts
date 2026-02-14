@@ -128,8 +128,9 @@ export class NodeFactory {
       const nodesFound = this.spatialGrid.findNearby(node);
       const nodesToBeMarked = this.getNodesNotConnectedToSamePiece(node, nodesFound);
       if (nodesToBeMarked.length !== 0) {
-        console.log("Nearby node: " + node.getId());
-        node.setHasNearbyNode();
+        node.setHasNearbyNode(true);
+      } else {
+        node.setHasNearbyNode(false);
       }
     })
   }

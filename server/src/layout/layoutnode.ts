@@ -110,8 +110,8 @@ export class LayoutNode {
    * Mark this node as having a nearby node. This is used for UI purposes,
    * to know when to show the warning about nodes being close together.
    */
-  public setHasNearbyNode(): void {
-    this.nearbyNode = true;
+  public setHasNearbyNode(state: boolean): void {
+    this.nearbyNode = state;
   }
 
   /**
