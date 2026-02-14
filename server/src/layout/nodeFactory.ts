@@ -3,6 +3,7 @@ import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared"
 import type { LayoutPiece } from "./layoutpiece.js";
 import { deleteLayoutNode, getLayoutNodesFromDB, persistLayoutNodes } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
+import { SpatialGrid } from "./spatialgrid.js";
 import { FatalError } from "../errors/FatalError.js";
 
 /**
@@ -10,12 +11,14 @@ import { FatalError } from "../errors/FatalError.js";
  */
 export class NodeFactory {
   protected readonly nodes: Map<string, LayoutNode>;
+  protected readonly spatialGrid: SpatialGrid<LayoutNode>;
 
   /**
    * Class constructor
    */
   constructor() {
     this.nodes = new Map<string, LayoutNode>();
+    this.spatialGrid = new SpatialGrid<LayoutNode>(node => node.getCoordinate());
   }
 
   /**
@@ -115,9 +118,32 @@ export class NodeFactory {
   }
 
   /**
+   * Mark nodes that are within 10mm of another node
+   */
+  protected markNearbyNodes(): void {
+    this.spatialGrid.addItems(this.nodes);
+
+    this.nodes.forEach(node => {
+      const nodeFounds = this.spatialGrid.findNearby(node);
+      const nodesToBeMarked = getNodesNotConnectedToSamePiece(node, nodesFound);
+      nodesToBeMarked.forEach(nodeToBeMarked => {
+        console.log(nodeToBeMarked);
+      })
+    })
+  }
+
+  /**
+   * Return the entries from the nodes array that are not connected to the same layout piece as node
+   */
+  protected getNodesNotConnectedToSamePiece(node: Node, nodes: Node[]): Node[] {
+    const piece
+  }
+
+  /**
    * Save all layout nodes to the layout DB (and commit it to file)
    */
   public async save(): Promise<void> {
+    this.markNearbyNodes();
     this.nodes.forEach(node => node.save());
     await persistLayoutNodes("NodeFactory::save()");
   }

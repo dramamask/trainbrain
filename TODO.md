@@ -1,6 +1,5 @@
 # TODO
 
-- Add the spatial map integration inside the node factory class. Move it out of the layout class.
 - Implement the spatial grid in the code:
 // Finding nearby:
 const nearbyNodes = grid.findNearby(150, 200); // Returns MyNode[]

@@ -14,6 +14,7 @@ export class LayoutNode {
   protected readonly id: string;
   protected readonly connections: [Connection, Connection];
   protected coordinate: Coordinate | undefined;
+  protected nearbyNode: boolean; // This node has another node so close by that it may overlap with that node on the UI.
   protected loopProtector: string;
 
   constructor(id: string, coordinate: Coordinate | undefined) {
@@ -22,6 +23,7 @@ export class LayoutNode {
     this.id = id;
     this.coordinate = coordinate;
     this.connections = [{piece: null, connectorName: undefined}, {piece: null, connectorName: undefined}];
+    this.nearbyNode = false;
     this.loopProtector = "";
 
     span?.addEvent('new_node_created', {'this_node.id': this.getId()});
