@@ -88,6 +88,7 @@ export class LayoutNode {
       coordinate: LayoutNode.round(this.coordinate),
       heading: this.getHeadingForUi(),
       deadEnd: this.isDeadEnd(),
+      hasNearbyNode: this.nearbyNode,
     };
   }
 
@@ -103,6 +104,14 @@ export class LayoutNode {
 
     // Set coordinate
     this.coordinate = coordinate;
+  }
+
+  /**
+   * Mark this node as having a nearby node. This is used for UI purposes,
+   * to know when to show the warning about nodes being close together.
+   */
+  public setHasNearbyNode(): void {
+    this.nearbyNode = true;
   }
 
   /**

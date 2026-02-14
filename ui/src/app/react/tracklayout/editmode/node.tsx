@@ -1,6 +1,7 @@
 import { useState, useSyncExternalStore } from 'react';
 import { UiLayoutNode } from "trainbrain-shared";
 import { store as selectionStore } from "@/app/services/stores/selection";
+import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { get } from "@/app/config/config";
 import { getNodeClassName } from "@/app/services/cssclassnames";
 
@@ -14,6 +15,7 @@ interface props {
 // is able to connect to another track piece.
 export default function node({node}: props) {
   const isNodeSelected = useSyncExternalStore(selectionStore.subscribe, () => (selectionStore.getSelectedNode() == node.id));
+  const hasNearbyNode = useSyncExternalStore(trackLayoutStore.subscribe, () => (trackLayoutStore.getLayoutNodeData(node.id)?.hasNearbyNode ?? false));
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -27,7 +29,7 @@ export default function node({node}: props) {
         cx={node.coordinate.x}
         cy={node.coordinate.y}
         r={getRadius(isHovered)}
-        fill={getFillColor(isNodeSelected)}
+        fill={getFillColor(isNodeSelected, hasNearbyNode)}
       />
     </g>
   )
@@ -43,9 +45,14 @@ function getRadius(isHovered: boolean): number {
   return radius;
 }
 
-function getFillColor(isNodeSelected: boolean): string {
+function getFillColor(isNodeSelected: boolean, isNearbyNode: boolean): string {
   if (isNodeSelected) {
     return get("editMode.selectedNodeColor") as string;
   }
+
+  if (isNearbyNode) {
+    return get("editMode.nearbyNodeColor") as string;
+  }
+
   return get("editMode.nodeColor") as string;
 }

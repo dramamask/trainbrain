@@ -4,6 +4,7 @@
 const COLOR1 = "#FFD700";
 const COLOR1_HIGHLIGHT = "white";
 const COLOR2 = "blue";
+const COLOR3 = "red";
 const GOLD = "#FFD700";
 const OAK = "#6F5339";
 
@@ -33,6 +34,7 @@ const config = {
     nodeRadius: 100, // mm
     nodeColor: COLOR1,
     selectedNodeColor: COLOR1_HIGHLIGHT,
+    nearbyNodeColor: COLOR3,
     selectedTrackColor: COLOR1_HIGHLIGHT,
     trackColor: COLOR1, // mm
     strokeWidth: 80, // mm

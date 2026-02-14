@@ -127,9 +127,10 @@ export class NodeFactory {
     this.nodes.forEach(node => {
       const nodesFound = this.spatialGrid.findNearby(node);
       const nodesToBeMarked = this.getNodesNotConnectedToSamePiece(node, nodesFound);
-      nodesToBeMarked.forEach(nodeToBeMarked => {
-        console.log(nodeToBeMarked);
-      })
+      if (nodesToBeMarked.length !== 0) {
+        console.log("Nearby node: " + node.getId());
+        node.setHasNearbyNode();
+      }
     })
   }
 
@@ -154,7 +155,7 @@ export class NodeFactory {
         pieces2.add(connection.piece as LayoutPiece)
       });
 
-      if (pieces1.isDisjointFrom(pieces2)) {
+      if (pieces1.isDisjointFrom(pieces2)) { // isDisjointFrom is a method on Set from ES2024 onwards
         notConnected.push(node);
       }
     });
@@ -166,7 +167,6 @@ export class NodeFactory {
    * Save all layout nodes to the layout DB (and commit it to file)
    */
   public async save(): Promise<void> {
-    this.markNearbyNodes();
     this.nodes.forEach(node => node.save());
     await persistLayoutNodes("NodeFactory::save()");
   }
@@ -175,6 +175,7 @@ export class NodeFactory {
    * Return the layout in UiLayout format
    */
   public getUiLayout(): UiLayoutNode[] {
+    this.markNearbyNodes();
     return (
       [...this.nodes.values()].map(node => node.getUiLayoutData())
     )

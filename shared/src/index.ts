@@ -61,6 +61,7 @@ export interface UiLayoutNode {
   coordinate: Coordinate;
   heading: number | null; // The heading of the piece that is connected to this node, or null if no piece is connected to this node
   deadEnd: boolean; // This node is a dead-end, i.e. it is not connected to a layout piece on one side
+  hasNearbyNode: boolean; // This node has a nearby node, which means that there is another node within a certain distance of this node. This is used to show a warning in the UI about nodes being close together.
 }
 
 // The structure that the server returns from the GET layout API call
