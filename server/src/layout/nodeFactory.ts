@@ -1,10 +1,11 @@
 import { trace } from '@opentelemetry/api';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
-import type { LayoutPiece } from "./layoutpiece.js";
+import { LayoutPiece } from "./layoutpiece.js";
 import { deleteLayoutNode, getLayoutNodesFromDB, persistLayoutNodes } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { SpatialGrid } from "./spatialgrid.js";
 import { FatalError } from "../errors/FatalError.js";
+import { Layout } from './layout.js';
 
 /**
  * This class knows all nodes and is able to perform operations on them
@@ -124,8 +125,8 @@ export class NodeFactory {
     this.spatialGrid.addItems(this.nodes);
 
     this.nodes.forEach(node => {
-      const nodeFounds = this.spatialGrid.findNearby(node);
-      const nodesToBeMarked = getNodesNotConnectedToSamePiece(node, nodesFound);
+      const nodesFound = this.spatialGrid.findNearby(node);
+      const nodesToBeMarked = this.getNodesNotConnectedToSamePiece(node, nodesFound);
       nodesToBeMarked.forEach(nodeToBeMarked => {
         console.log(nodeToBeMarked);
       })
@@ -135,8 +136,30 @@ export class NodeFactory {
   /**
    * Return the entries from the nodes array that are not connected to the same layout piece as node
    */
-  protected getNodesNotConnectedToSamePiece(node: Node, nodes: Node[]): Node[] {
-    const piece
+  protected getNodesNotConnectedToSamePiece(node: LayoutNode, nodes: LayoutNode[]): LayoutNode[] {
+    const notConnected: LayoutNode[] = [];
+
+    // Collect all pieces that node is connected to
+    const connections = node.getConnections();
+    const pieces1 = new Set<LayoutPiece>;
+    connections.forEach(connection => {
+      pieces1.add(connection.piece as LayoutPiece)
+    });
+
+    nodes.forEach(node => {
+      // Collect all the piecs that the item from nodes is connected to
+      const pieces2= new Set<LayoutPiece>;
+      const connections = node.getConnections();
+      connections.forEach(connection => {
+        pieces2.add(connection.piece as LayoutPiece)
+      });
+
+      if (pieces1.isDisjointFrom(pieces2)) {
+        notConnected.push(node);
+      }
+    });
+
+    return notConnected;
   }
 
   /**
