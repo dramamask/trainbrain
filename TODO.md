@@ -1,12 +1,8 @@
 # TODO
 
-- Add node function to mark a node.
-- Add marked node to the UI layout json
-- Color marked nodes differently in the UI
-- Color nodes red if they are within a certain distance of each other.
-- Work on moving pieces by selecting two nodes and connection them together (c for connect?). add possibility to select multiple pieces and nodes.
-- Work on piece flip. For now the flipped piece will be disconnected from its nodes.
+- Work on piece flip. Piece flip only works if the piece is connected to one other piece only.
 - After a flip, auto connect two nodes if they are on the same coordinate (within x millimeters), and they are nodes that have room for connections.
+- Work on moving pieces by selecting two nodes and connection them together (c for connect?). add possibility to select multiple pieces and nodes.
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Should the node factory also contain all access to the layout DB? Instead of this being in a different file?
 - Add protection so you can't move the layout outside of the world size.
