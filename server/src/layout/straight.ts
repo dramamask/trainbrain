@@ -69,16 +69,8 @@ export class Straight extends LayoutPiece {
     oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, nextNodeHeading, loopProtector);
   }
 
-  /**
-   * Return info about this piece for the tracing span
-   */
-  protected getSpanInfo(): Record<string, any> {
-    return {
-      'this_piece.id': this.getId(),
-      'this_piece.category': this.pieceDef.getCategory(),
-      'this_piece.connector.start.node': this.connectors.getNode("start").getId(),
-      'this_piece.connector.end.node': this.connectors.getNode("end").getId(),
-      'this_piece.length': this.length,
-    }
+  public flip(): void {
+    // Nothing to do here since a straight piece looks the same when flipped.
+    return;
   }
 }

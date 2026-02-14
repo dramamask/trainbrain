@@ -46,8 +46,8 @@ export async function deleteLayoutElement(data: DeleteLayoutElementData): Promis
   return retVal;
 }
 
-// Flip a track piece in the layout
-export async function flipTrackPiece(pieceId: string): Promise<UiLayout> {
+// Flip a piece in the layout
+export async function flipPiece(pieceId: string): Promise<UiLayout> {
   const url = "/layout/piece/flip/" + pieceId;
   const retVal = await apiCall<UiLayout>("PUT", url, {});
   return retVal;

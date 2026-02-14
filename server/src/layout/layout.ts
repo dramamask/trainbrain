@@ -218,6 +218,32 @@ export class Layout {
   }
 
   /**
+   * Flip a layout piece. Only works for a piece that is connected to one other piece.
+   * Each flip will connect the existing piece to the next node of the piece that is
+   * being flipped.
+   *
+   *    SITUATION BEFORE:              SITUATION AFTER:
+   *
+   *                   O                             O  O
+   *                   |                             | /
+   *                  /|                             |/
+   *                 / |                             |
+   *                O  O                             O
+   *                   |                             |
+   *                   |                             |
+   *                   |                             |
+   *                   O                             O
+   */
+  public async flipPiece(pieceId: string): Promise<void> {
+    this.pieceFactory.get(pieceId)?.flip();
+
+    // TODO: update coordinates.
+
+    // Save the newly changed layout to file
+    this.save();
+  }
+
+  /**
    * Delete an element from the layout.
    *
    * This is able to delete both pieces and nodes.

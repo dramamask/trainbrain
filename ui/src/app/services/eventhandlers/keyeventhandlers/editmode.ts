@@ -7,7 +7,7 @@ import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as mousePosStore } from "@/app/services/stores/mousepos";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { addNode, deleteLayoutElement, disconnectNode, movePiece, updateNode } from "@/app/services/api/tracklayout";
+import { addNode, deleteLayoutElement, disconnectNode, flipPiece, movePiece, updateNode } from "@/app/services/api/tracklayout";
 import { get } from "@/app/config/config";
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
@@ -49,6 +49,9 @@ export function handleKeyDown(event: KeyboardEvent) {
         break;
       case EDIT_MODE_KEYS.DeletePiece:
         handleDelete();
+        break;
+      case EDIT_MODE_KEYS.FlipPiece:
+        handleFlip();
         break;
       case EDIT_MODE_KEYS.Deselect:
         selectionStore.deselectAll();
@@ -251,6 +254,31 @@ function handleDisconnect() {
   const nodeId = selectionStore.getSelectedNode();
 
   disconnectNode(nodeId)
+    .then((layoutData: UiLayout) => {
+      trackLayoutStore.setTrackLayout(layoutData);
+      selectionStore.deselectNode();
+    })
+    .catch((error: Error) => {
+      errorStore.setError(error.message);
+      console.error(error);
+    });
+}
+
+/**
+ * Handle flipping a piece. Flipping only works for pieces that are
+ * connected to only one other piece. Checking that prerequisite is done
+ * in the server API and an error is thrown if the piece cannot be flipped.
+ */
+function handleFlip() {
+  const nodeId = selectionStore.getSelectedNode();
+  if (nodeId) {
+    errorStore.setError("Only select a layout piece, not a layout node, to perform this function.");
+    return;
+  }
+
+  const pieceId = selectionStore.getSelectedLayoutPiece();
+
+ flipPiece(pieceId)
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);
       selectionStore.deselectNode();

@@ -191,6 +191,35 @@ export const movePiece = async (req: Request, res: Response, next: NextFunction)
   }
 }
 
+// API endpoint to move a flip a piece that is only connected to one other piece.
+export const flipPiece = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData<{index: string}>(req);
+
+  try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'flipPiece');
+    span?.setAttribute('_.request.pieceId', data.index);
+
+    await layout.flipPiece(data.index);
+
+    const uiLayout = layout.getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
+
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
+
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+    span?.end();
+  } catch (error) {
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
+  }
+}
+
 // // Endpoint to add a piece to the track layout
 export const deleteLayoutElement = async (req: Request, res: Response, next: NextFunction) => {
   // matchedData only includes fields defined in the validator middleware for this route

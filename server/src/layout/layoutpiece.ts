@@ -45,6 +45,15 @@ export abstract class LayoutPiece {
   public abstract updateHeadingAndContinue(callingNode: LayoutNode, heading: number, loopProtector: string): void;
 
   /**
+   * Flip the layout piece. The exact implementation depends on the piece,
+   * but it means to rotate the piece so the next connector clockwise will
+   * become connected to the piece that this piece is connected to.
+   *
+   * @returns {void}
+   */
+  public abstract flip(): void;
+
+  /**
    * Examine the connectors data that was received and add any missing data that we need to create this layout piece
    */
   static addMissingConnectorsData(connectorNames: ConnectorName[], data: LayoutPieceConnectorsData): LayoutPieceConnectorsData {
@@ -73,12 +82,27 @@ export abstract class LayoutPiece {
 
   /**
    * Returns an array of nodes this piece is connected to.
-   * Remeber that each piece connector is always connected to
+   * Remember that each piece connector is always connected to
    * a node. So this returns as many nodes as the piece has
    * connectors.
    */
   public getConnectedNodeIds(): string[] {
     return this.connectors.getNodes().map(node => node.getId());
+  }
+
+  /**
+   * Return the number of pieces that are connected to this piece
+   * (through the nodes that we are connected to).
+   */
+  public getNumberOfConnectedPieces(): number {
+    const nodes = this.connectors.getNodes();
+    let numberOfConnectedPieces = 0;
+    nodes.forEach(node => {
+      if (node.getNumberOfConnections() > 1) {
+       numberOfConnectedPieces++;
+      }
+    });
+    return numberOfConnectedPieces;
   }
 
   // Get the data for this layout piece, as it would be stored in the track-layout json DB

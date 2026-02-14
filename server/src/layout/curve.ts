@@ -91,4 +91,8 @@ export class Curve extends LayoutPiece {
     const nextPieceHeading = oppositeSideHeading + 180; // Their heading will be facing the opposite site (heading always faces into the piece)
     oppositeSideNode.updateCoordinateAndContinue(this, oppositeSideCoordinate, nextPieceHeading, loopProtector);
   }
+
+  public flip(): void {
+
+  }
 }
