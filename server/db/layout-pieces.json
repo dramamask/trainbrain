@@ -159,19 +159,6 @@
         }
       }
     },
-    "12": {
-      "pieceDefId": "a",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "12"
-        },
-        "end": {
-          "heading": 180,
-          "node": "13"
-        }
-      }
-    },
     "13": {
       "pieceDefId": "b",
       "connectors": {
@@ -324,15 +311,19 @@
       }
     },
     "24": {
-      "pieceDefId": "d",
+      "pieceDefId": "i",
       "connectors": {
         "start": {
-          "heading": 150,
+          "heading": 157.5,
           "node": "29"
         },
         "end": {
+          "heading": 337.5,
+          "node": "30"
+        },
+        "diverge": {
           "heading": 0,
-          "node": "13"
+          "node": "12"
         }
       }
     },
@@ -340,37 +331,24 @@
       "pieceDefId": "b",
       "connectors": {
         "start": {
-          "heading": 330,
-          "node": "29"
+          "heading": 157.5,
+          "node": "30"
         },
         "end": {
-          "heading": 150,
-          "node": "30"
+          "heading": 337.5,
+          "node": "31"
         }
       }
     },
     "26": {
-      "pieceDefId": "d",
-      "connectors": {
-        "start": {
-          "heading": 120,
-          "node": "31"
-        },
-        "end": {
-          "heading": 330,
-          "node": "30"
-        }
-      }
-    },
-    "27": {
       "pieceDefId": "b",
       "connectors": {
         "start": {
-          "heading": 300,
-          "node": "31"
+          "heading": 337.5,
+          "node": "29"
         },
         "end": {
-          "heading": 120,
+          "heading": 157.5,
           "node": "32"
         }
       }

@@ -96,7 +96,8 @@ export class Curve extends LayoutPiece {
   public flip(): LayoutNode {
     const span = trace.getActiveSpan();
 
-    // Figure out which node is the "base node" that is connected to the other piece
+    // Figure out which node is the "base node" (that is connected to the other piece),
+    // and which node is the "other node" (that will be end up being connected to the pre-flip base connector)
     let baseConnector: LayoutPieceConnector | undefined = undefined;
     let otherConnector: LayoutPieceConnector | undefined = undefined;
     this.connectors.getConnectors().forEach(connector => {

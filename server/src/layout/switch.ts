@@ -7,6 +7,7 @@ import { NodeFactory } from "./nodefactory.js";
 import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { PieceDef } from "./piecedef.js";
 import { calculateStraightCoordinate, calculateCurveCoordinate } from '../services/piece.js';
+import { LayoutPieceConnector } from './layoutpiececonnector.js';
 
 // Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
@@ -161,7 +162,57 @@ export class Switch extends LayoutPiece {
   }
 
   public flip(): LayoutNode {
-    // TODO
-    return this.connectors.getNode("start");
-  }
+      const span = trace.getActiveSpan();
+
+      // Figure out which node is the "base node" (that is connected to the other piece)
+      let baseConnector: LayoutPieceConnector | undefined = undefined;
+      this.connectors.getConnectors().forEach(connector => {
+        if (connector.getNode().getNumberOfConnections() == 2) {
+          baseConnector = connector;
+        }
+      });
+
+      if (!baseConnector) {
+        throw new Error("No base connector found. Something fishy is going on.");
+      }
+
+      const baseNode = (baseConnector as LayoutPieceConnector).getNode();
+      const preFlipBaseConnectorName = (baseConnector as LayoutPieceConnector).getName();
+
+      // Figure out which node is the "other node" (that will be end up being connected to the pre-flip base connector)
+      let preFlipOtherConnectorName: ConnectorName;
+      switch(preFlipBaseConnectorName) {
+        case "start":
+          preFlipOtherConnectorName = "diverge";
+          break;
+        case "diverge":
+          preFlipOtherConnectorName = "end";
+          break;
+        case "end":
+          preFlipOtherConnectorName = "start";
+          break;
+      }
+
+      const otherNode = this.connectors.getNode(preFlipOtherConnectorName);
+
+      span?.addEvent('curve.flip()', {
+        'piece.id': this.getId(),
+        'base_node.id': baseNode.getId(),
+        'base_node.num_connections': baseNode.getNumberOfConnections(),
+        'other_node.id': otherNode.getId(),
+        'other_node.num_connections': otherNode.getNumberOfConnections(),
+        'pre_flip.base_connector.name': preFlipBaseConnectorName,
+        'pre_flip.other_connector.name':preFlipOtherConnectorName,
+      });
+
+      // Flip the piece
+      baseNode.disconnect(this);
+      otherNode.disconnect(this);
+      baseNode.connect(this, preFlipOtherConnectorName);
+      otherNode.connect(this, preFlipBaseConnectorName);
+      this.connectors.replaceNodeConnection(otherNode, preFlipBaseConnectorName);
+      this.connectors.replaceNodeConnection(baseNode, preFlipOtherConnectorName);
+
+      return baseNode;
+    }
 }
