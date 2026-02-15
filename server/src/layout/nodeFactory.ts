@@ -124,13 +124,22 @@ export class NodeFactory {
    * @param maxDistance - The maximum distance between the given node and the nearby nodes, in millimeters
    */
   public getNearbyNodes(node: LayoutNode, maxDistance: number): LayoutNode[] {
+    const span = trace.getActiveSpan();
+
     const nodesToReturn: LayoutNode[] = [];
 
     this.spatialGrid.addItems(this.nodes);
     const nearbyNodes = this.spatialGrid.findNearby(node);
+
+    span?.addEvent('nodeFactory.getNearbyNodes()', {
+      'node.id': node.getId(),
+      'maxDistance': maxDistance,
+      'nearbyNodes': nearbyNodes.map(node => node.getId()),
+    });
+
     nearbyNodes.forEach(nearbyNode => {
       const distance = this.calculateDistance(node, nearbyNode);
-      if (distance > maxDistance) {
+      if (distance <= maxDistance) {
         nodesToReturn.push(nearbyNode);
       }
     });

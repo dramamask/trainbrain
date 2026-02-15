@@ -234,6 +234,7 @@ export class Layout {
     const connectorNameToReconnect = nearbyNode.getConnections()[0].connectorName as ConnectorName;
     const pieceToReconnect = nearbyNode.getConnections()[0].piece as LayoutPiece;
 
+    nearbyNode.disconnect(pieceToReconnect);
     pieceToReconnect.replaceNodeConnection(selectedNode, connectorNameToReconnect);
     selectedNode.connect(pieceToReconnect, connectorNameToReconnect);
 
