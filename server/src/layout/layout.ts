@@ -34,6 +34,7 @@ export class Layout {
       error: "",
       pieces: this.pieceFactory.getUiLayout(),
       nodes: this.nodeFactory.getUiLayout(),
+      piecesUsed: this.getPiecesUsed(),
     }
   }
 
