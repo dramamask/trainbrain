@@ -1,6 +1,8 @@
 # TODO
 
-- Work on moving pieces by selecting two nodes and connection them together (c for connect?).
+- Work on connecting nodes that are in exactly the same spot (c of connect)
+- Add ability to save and load layouts.
+- Work on connecting nodes that are not perfectly on top of each other
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Should the node factory also contain all access to the layout DB? Instead of this being in a different file?
 - Add protection so you can't move the layout outside of the world size.
