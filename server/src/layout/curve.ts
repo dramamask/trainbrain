@@ -7,6 +7,7 @@ import { NodeFactory } from "./nodefactory.js";
 import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { PieceDef } from "./piecedef.js";
 import { calculateCurveLeftCoordinate, calculateCurveRightCoordinate} from "../services/piece.js";
+import { LayoutPieceConnector } from './layoutpiececonnector.js';
 
 // Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
@@ -93,6 +94,24 @@ export class Curve extends LayoutPiece {
   }
 
   public flip(): void {
+    let baseConnector: LayoutPieceConnector | undefined = undefined;
+    let otherConnector: LayoutPieceConnector | undefined = undefined;
+    this.connectors.getConnectors().forEach(connector => {
+      if (connector.getNode().getNumberOfConnections() == 2) {
+        baseConnector = connector;
+      }
+      if (connector.getNode().getNumberOfConnections() == 1) {
+        otherConnector = connector;
+      }
+    });
+
+    if (!baseConnector || !otherConnector) {
+      throw new Error("Preconditions for flip have not been met");
+    }
+
+    // Get the other piece that the base node is connected to
+    const otherPiece = baseConnector.getNode().getOtherConnection(this);
+
 
   }
 }

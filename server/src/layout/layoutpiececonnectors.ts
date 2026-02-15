@@ -54,6 +54,11 @@ export class LayoutPieceConnectors {
     return this.getConnector(name).getNode();
   }
 
+  // Return a copy of the connectors
+  public getConnectors(): Map<ConnectorName, LayoutPieceConnector> {
+    return new Map(this.connectors);
+  }
+
   /**
    * Return all nodes that our connectors are connected to.
    * Remember that each connector is always connected to a node,

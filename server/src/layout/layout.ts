@@ -219,8 +219,8 @@ export class Layout {
 
   /**
    * Flip a layout piece. Only works for a piece that is connected to one other piece.
-   * Each flip will connect the existing piece to the next node of the piece that is
-   * being flipped.
+   * Each flip will connect the existing piece to the next (clockwise) connector of the
+   * piece that is being flipped.
    *
    *    SITUATION BEFORE:              SITUATION AFTER:
    *
