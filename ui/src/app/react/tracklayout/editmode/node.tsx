@@ -15,7 +15,9 @@ interface props {
 // is able to connect to another track piece.
 export default function node({node}: props) {
   const isNodeSelected = useSyncExternalStore(selectionStore.subscribe, () => (selectionStore.getSelectedNode() == node.id));
-  const hasNearbyNode = useSyncExternalStore(nearbyNodeStore.subscribe, () => (nearbyNodeStore.hasNearbyNode(node.id)));
+  const nowHasNearbyNode = useSyncExternalStore(nearbyNodeStore.subscribe, () => (nearbyNodeStore.hasNearbyNode(node.id)));
+
+  const hasNearbyNode = nowHasNearbyNode || node.hasNearbyNode;
 
   const [isHovered, setIsHovered] = useState(false);
 
