@@ -61,7 +61,7 @@ function getBottomRightCoordinate(coordinates: Coordinate[]): Coordinate {
 
 // Check if this track piece is selected
 export function thisTrackPieceIsSelected(pieceId: string): boolean {
-  return (selectionStore.getSelectedLayoutPiece() == pieceId);
+  return (selectionStore.getSelectedPiece() == pieceId);
 }
 
 // Get the spread of both the x and y valus in all the given coordinates

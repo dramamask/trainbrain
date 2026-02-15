@@ -7,11 +7,19 @@ import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as mousePosStore } from "@/app/services/stores/mousepos";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
-import { addNode, deleteLayoutElement, disconnectNode, flipPiece, movePiece, updateNode } from "@/app/services/api/tracklayout";
 import { get } from "@/app/config/config";
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
 import { getLastInsertedNode } from "../../tracklayout";
+import {
+  addNode,
+  connectPiecesAtNode,
+  deleteLayoutElement,
+  disconnectPiecesAtNode,
+  flipPiece,
+  movePiece,
+  updateNode
+} from "@/app/services/api/tracklayout";
 
 // Keep track of node update API calls so we don't have multiple going at the same time
 let moveOrRotateInProgress = false;
@@ -47,6 +55,9 @@ export function handleKeyDown(event: KeyboardEvent) {
       case EDIT_MODE_KEYS.AddNode:
         handleAddNode();
         break;
+      case EDIT_MODE_KEYS.ConnectNodes:
+        handleConnect();
+        break;
       case EDIT_MODE_KEYS.DeletePiece:
         handleDelete();
         break;
@@ -67,7 +78,7 @@ export function handleKeyDown(event: KeyboardEvent) {
  *
  */
 function handleMoveLayoutElement(axis: "x" | "y", xyIncrement: number): void {
-  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const pieceId = selectionStore.getSelectedPiece();
   const nodeId = selectionStore.getSelectedNode();
   if (nodeId && pieceId) {
     errorStore.setError("Please select a layout node or a layout piece, not both.");
@@ -122,7 +133,7 @@ function handleMoveLayoutElement(axis: "x" | "y", xyIncrement: number): void {
  * Call the server API to store update
  */
 function handleUpdateNode(axis: "x" | "y", xyIncrement: number, headingIncrement: number): void {
-  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const pieceId = selectionStore.getSelectedPiece();
   const nodeId = selectionStore.getSelectedNode();
 
   if (nodeId != "" && pieceId != "") {
@@ -199,7 +210,7 @@ function handleAddNode() {
  * Kick-off the delete of a layout element
  */
 function handleDelete() {
-  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const pieceId = selectionStore.getSelectedPiece();
   const nodeId = selectionStore.getSelectedNode();
 
   if (pieceId && nodeId) {
@@ -216,7 +227,7 @@ function handleDelete() {
  * Handle the answer to the question asked above
  */
 function handleMultiDeleteAnswer() {
-  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const pieceId = selectionStore.getSelectedPiece();
   const nodeId = selectionStore.getSelectedNode();
 
   if (questionStore.getAnswer() == YES) {
@@ -245,7 +256,7 @@ function callApiToDelete(nodeId: string, pieceId: string) {
  * Handle disconnecting two pieces at a given node
  */
 function handleDisconnect() {
-  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const pieceId = selectionStore.getSelectedPiece();
   if (pieceId) {
     errorStore.setError("Only select a layout node, not a layout piece, to perform this function.");
     return;
@@ -253,7 +264,7 @@ function handleDisconnect() {
 
   const nodeId = selectionStore.getSelectedNode();
 
-  disconnectNode(nodeId)
+  disconnectPiecesAtNode(nodeId)
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);
       selectionStore.deselectNode();
@@ -276,9 +287,32 @@ function handleFlip() {
     return;
   }
 
-  const pieceId = selectionStore.getSelectedLayoutPiece();
+  const pieceId = selectionStore.getSelectedPiece();
 
  flipPiece(pieceId)
+    .then((layoutData: UiLayout) => {
+      trackLayoutStore.setTrackLayout(layoutData);
+      selectionStore.deselectNode();
+    })
+    .catch((error: Error) => {
+      errorStore.setError(error.message);
+      console.error(error);
+    });
+}
+
+/**
+ * Handle connecting two pieces together at the given node.
+ */
+function handleConnect() {
+  const pieceId = selectionStore.getSelectedPiece();
+  if (pieceId) {
+    errorStore.setError("Only select a layout node, not a layout piece, to perform this function.");
+    return;
+  }
+
+  const nodeId = selectionStore.getSelectedNode();
+
+ connectPiecesAtNode(nodeId)
     .then((layoutData: UiLayout) => {
       trackLayoutStore.setTrackLayout(layoutData);
       selectionStore.deselectNode();

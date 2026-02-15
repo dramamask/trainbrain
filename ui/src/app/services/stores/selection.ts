@@ -28,7 +28,7 @@ export const store = {
     return state;
   },
 
-  getSelectedLayoutPiece(): string {
+  getSelectedPiece(): string {
     return state.selectedLayoutPiece;
   },
 

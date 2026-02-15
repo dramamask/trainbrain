@@ -20,8 +20,15 @@ export async function addNode(data: AddNodeData): Promise<UiLayout> {
   return retVal;
 }
 
-// Disconnect the two pieces connected to this node, returns an error if the node does not have two pieces connected to it.
-export async function disconnectNode(nodeId: string): Promise<UiLayout> {
+// Connect two pieces together at the given node
+export async function connectPiecesAtNode(nodeId: string): Promise<UiLayout> {
+  const url = "/layout/node/connect/" + nodeId;
+  const retVal = await apiCall<UiLayout>("PUT", url, {});
+  return retVal;
+}
+
+// Disconnect the two pieces connected to this node
+export async function disconnectPiecesAtNode(nodeId: string): Promise<UiLayout> {
   const retVal = await apiCall<UiLayout>("PUT", `/layout/node/disconnect/${nodeId}`, {});
   return retVal;
 }

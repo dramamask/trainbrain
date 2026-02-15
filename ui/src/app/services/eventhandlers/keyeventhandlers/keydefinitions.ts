@@ -20,6 +20,7 @@ export const EDIT_MODE_KEYS: KeyDefintions = {
   MoveNodeRight: 'ArrowRight',
   DeletePiece: 'Delete',
   Deselect: 'Escape',
+  ConnectPieces: 'C',
   DisconnectPieces: 'D',
   FlipPiece: 'F'  ,
   AddNode: 'N',

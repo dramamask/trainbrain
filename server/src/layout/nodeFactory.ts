@@ -119,6 +119,26 @@ export class NodeFactory {
   }
 
   /**
+   * Find nodes within the given distance of the given node.
+   * @param node - The node for which to find nearby nodes
+   * @param maxDistance - The maximum distance between the given node and the nearby nodes, in millimeters
+   */
+  public getNearbyNodes(node: LayoutNode, maxDistance: number): LayoutNode[] {
+    const nodesToReturn: LayoutNode[] = [];
+
+    this.spatialGrid.addItems(this.nodes);
+    const nearbyNodes = this.spatialGrid.findNearby(node);
+    nearbyNodes.forEach(nearbyNode => {
+      const distance = this.calculateDistance(node, nearbyNode);
+      if (distance > maxDistance) {
+        nodesToReturn.push(nearbyNode);
+      }
+    });
+
+    return nodesToReturn;
+  }
+
+  /**
    * Mark nodes that are within 10mm of another node
    */
   protected markNearbyNodes(): void {
@@ -162,6 +182,15 @@ export class NodeFactory {
     });
 
     return notConnected;
+  }
+
+  /**
+   * Calculate the distance between two nodes
+   */
+  protected calculateDistance(node1: LayoutNode, node2: LayoutNode): number {
+    const coord1 = node1.getCoordinate();
+    const coord2 = node2.getCoordinate();
+    return Math.sqrt(Math.pow(coord1.x - coord2.x, 2) + Math.pow(coord1.y - coord2.y, 2));
   }
 
   /**

@@ -178,6 +178,78 @@ export class Layout {
   }
 
   /**
+   * Connect two pieces togeter at the given node. This means we have to merge two nodes together that are
+   * at the exact same position.
+   *
+   *   SITUATION BEFORE:              SITUATION AFTER:
+   *
+   *                  O                             O
+   *                  |                             |
+   *                  |                             |
+   *                  |                             |
+   *  (selected node) OO (neaby node)               O (selected node)
+   *                  |                             |
+   *                  |                             |
+   *                  |                             |
+   *                  O                             O
+   *
+   */
+  public async connectPiecesAtNode(nodeId: string): Promise<void> {
+    // Find the nearby node
+    const selectedNode = this.nodeFactory.get(nodeId) as LayoutNode;
+    const nearbyNodes = this.nodeFactory.getNearbyNodes(selectedNode, 1); // Get nodes within 1mm
+    if (nearbyNodes.length == 0) {
+      throw new Error("There are no nearby nodes to connect to. Please move the pieces so that two nodes are at the same position, and try again.");
+    }
+    if (nearbyNodes.length > 1) {
+      throw new Error("There are multiple nodes at this position. Please move the pieces so that only two nodes are at the same position, and try again.");
+    }
+    const nearbyNode = nearbyNodes[0];
+
+    // The selected node has no pieces connected to it. Just delete it.
+    if (selectedNode.getNumberOfConnections() == 0) {
+      this.nodeFactory.delete(selectedNode);
+      this.save();
+      return;
+    }
+
+    // The nearby node has no pieces connected to it. Just delete it.
+    if (nearbyNode.getNumberOfConnections() == 0) {
+      this.nodeFactory.delete(nearbyNode);
+      this.save();
+      return;
+    }
+
+    // Make sure each node has no more than one piece connected to it
+    if ((selectedNode.getNumberOfConnections() as number) > 1 || (nearbyNode.getNumberOfConnections() as number) > 1) {
+      throw new Error("We cannot connect these pieces together, they are already connected to other pieces.");
+    }
+
+    // Get the piece and connectorName that selectedNode is connected to.
+    // We'll use this information to calculate headings and coordinates after we connect the pieces together.
+    const pieceThatDoesntMove = selectedNode.getConnections()[0].piece as LayoutPiece;
+    const connectorThatDoesntMove = selectedNode.getConnections()[0].connectorName as ConnectorName;
+
+    // Remove all connections to and from nearbyNode and replace them with connections to selectedNode
+    const connectorNameToReconnect = nearbyNode.getConnections()[0].connectorName as ConnectorName;
+    const pieceToReconnect = nearbyNode.getConnections()[0].piece as LayoutPiece;
+
+    pieceToReconnect.replaceNodeConnection(selectedNode, connectorNameToReconnect);
+    selectedNode.connect(pieceToReconnect, connectorNameToReconnect);
+
+    // Delete nearbyNode since it is now orphaned
+    this.nodeFactory.delete(nearbyNode);
+
+    // Calculate new coordinates and headings in the direction towards the now-deleted nearby node
+    const loopProtector = crypto.randomUUID();
+    const heading = pieceThatDoesntMove.getHeading(connectorThatDoesntMove) + 180;
+    selectedNode.updateCoordinateAndContinue(pieceThatDoesntMove, selectedNode.getCoordinate(), heading, loopProtector);
+
+    // Save the newly changed layout to file
+    this.save();
+  }
+
+  /**
    * Disconnect the pieces that are connected to the node.
    *
    *    SITUATION BEFORE:              SITUATION AFTER:
@@ -215,6 +287,9 @@ export class Layout {
     piece0.replaceNodeConnection(newNode, piece0connectorName);
 
     // No need to re-calculate positions or headings because no piece were moved.
+
+    // Save the newly changed layout to file
+    this.save();
   }
 
   /**
