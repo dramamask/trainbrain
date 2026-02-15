@@ -69,6 +69,9 @@ export interface UiLayout {
   error: string;
   pieces: UiLayoutPiece[];
   nodes: UiLayoutNode[];
+  piecesUsed: {
+    [key: string]: number; // Variable length list of PieceDef IDs a key and number of pieces of that kind as value
+  }
 }
 
 // Attribtues for a curve piece def
