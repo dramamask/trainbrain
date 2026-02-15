@@ -105,7 +105,8 @@ export class LayoutPieceConnectors {
   }
 
   // Connect a given node to the specified connector
-  // Note that this will disconnect us from whichever node we were connected to before
+  // Note that this will disconnect us from whichever node
+  // we were connected to before at the specified connector.
   public replaceNodeConnection(nodeToConnectTo: LayoutNode, connectorNameToConnectTo: ConnectorName): void {
     this.getConnector(connectorNameToConnectTo).replaceNodeConnection(nodeToConnectTo);
   }

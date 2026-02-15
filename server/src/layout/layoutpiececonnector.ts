@@ -56,7 +56,7 @@ export class LayoutPieceConnector {
     return this.node;
   }
 
-  public getName(): string {
+  public getName(): ConnectorName {
     return this.name;
   }
 

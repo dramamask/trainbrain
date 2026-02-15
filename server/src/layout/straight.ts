@@ -28,8 +28,13 @@ export class Straight extends LayoutPiece {
 
     this.length = (pieceDef.getAttributes()  as PieceDefAttributes).length;
 
-    const spanInfo = this.getSpanInfo();
-    span?.addEvent('new_piece_created', spanInfo);
+    span?.addEvent('new_piece_created', {
+      'this_piece.id': id,
+      'this_piece.category': this.pieceDef.getCategory(),
+      'this_piece.connector.start.node.id': this.connectors.getNode("start").getId(),
+      'this_piece.connector.end.node.id': this.connectors.getNode("end").getId(),
+      'this_piece.length': this.length
+    });
   }
 
   public getUiAttributes(): UiAttributesDataStraight {

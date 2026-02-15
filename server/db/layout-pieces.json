@@ -322,6 +322,58 @@
           "node": "27"
         }
       }
+    },
+    "24": {
+      "pieceDefId": "d",
+      "connectors": {
+        "start": {
+          "heading": 150,
+          "node": "29"
+        },
+        "end": {
+          "heading": 0,
+          "node": "13"
+        }
+      }
+    },
+    "25": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 330,
+          "node": "29"
+        },
+        "end": {
+          "heading": 150,
+          "node": "30"
+        }
+      }
+    },
+    "26": {
+      "pieceDefId": "d",
+      "connectors": {
+        "start": {
+          "heading": 120,
+          "node": "31"
+        },
+        "end": {
+          "heading": 330,
+          "node": "30"
+        }
+      }
+    },
+    "27": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 300,
+          "node": "31"
+        },
+        "end": {
+          "heading": 120,
+          "node": "32"
+        }
+      }
     }
   }
 }

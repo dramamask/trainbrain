@@ -140,6 +140,12 @@ export abstract class LayoutPiece {
   // Connect a given node to the specified connector
   // Note that this will disconnect us from whichever node we were connected to before
   public replaceNodeConnection(nodeToConnectTo: LayoutNode, connectorNameToConnectTo: ConnectorName): void {
+    const span = trace.getActiveSpan();
+    span?.addEvent('layoutPiece.replaceNodeConnection()', {
+      ...this.getSpanInfo(),
+      'node_to_connect_to.id': nodeToConnectTo.getId(),
+      'connector_name_to_connect_to': connectorNameToConnectTo,
+    });
     this.connectors.replaceNodeConnection(nodeToConnectTo, connectorNameToConnectTo);
   }
 

@@ -94,6 +94,8 @@ export class Curve extends LayoutPiece {
   }
 
   public flip(): LayoutNode {
+    const span = trace.getActiveSpan();
+
     // Figure out which node is the "base node" that is connected to the other piece
     let baseConnector: LayoutPieceConnector | undefined = undefined;
     let otherConnector: LayoutPieceConnector | undefined = undefined;
@@ -110,20 +112,29 @@ export class Curve extends LayoutPiece {
       throw new Error("Preconditions for flip have not been met");
     }
 
-    baseConnector = baseConnector as LayoutPieceConnector;
-    otherConnector = otherConnector as LayoutPieceConnector;
+    const baseNode = (baseConnector as LayoutPieceConnector).getNode();
+    const preFlipBaseConnectorName = (baseConnector as LayoutPieceConnector).getName();
+    const otherNode = (otherConnector as LayoutPieceConnector).getNode();
+    const preFlipOtherConnectorName = (otherConnector as LayoutPieceConnector).getName();
 
-    // Get the other piece that the base node is connected to
-    const otherPiece = baseConnector.getNode().getOtherConnection(this).piece;
-    if (!otherPiece) {
-      throw new Error("This should have returned a piece");
-    }
+    span?.addEvent('curve.flip()', {
+      'piece.id': this.getId(),
+      'base_node.id': baseNode.getId(),
+      'base_node.num_connections': baseNode.getNumberOfConnections(),
+      'other_node.id': otherNode.getId(),
+      'other_node.num_connections': otherNode.getNumberOfConnections(),
+      'pre_flip.base_connector.name': preFlipBaseConnectorName,
+      'pre_flip.other_connector.name':preFlipOtherConnectorName,
+    });
 
     // Flip the piece
-    baseConnector.getNode().disconnect(this);
-    otherConnector.getNode().connect(otherPiece, otherConnector.getName() as ConnectorName);
-    otherPiece.replaceNodeConnection(otherConnector.getNode(), otherConnector.getName() as ConnectorName);
+    baseNode.disconnect(this);
+    otherNode.disconnect(this);
+    baseNode.connect(this, preFlipOtherConnectorName);
+    otherNode.connect(this, preFlipBaseConnectorName);
+    this.connectors.replaceNodeConnection(otherNode, preFlipBaseConnectorName);
+    this.connectors.replaceNodeConnection(baseNode, preFlipOtherConnectorName);
 
-    return baseConnector.getNode();
+    return baseNode;
   }
 }
