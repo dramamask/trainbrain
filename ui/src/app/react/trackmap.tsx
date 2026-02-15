@@ -19,8 +19,8 @@ import RegularLayout from "./tracklayout/regular/layout";
 import styles from "./trackmap.module.css";
 
 // The size of the world box
-const worldWidth = 13130; // Milimeters
-const worldHeight = 15000; // Milimeters
+const worldWidth = 15545; // Milimeters
+const worldHeight = 15240; // Milimeters
 
 /**
  * The main track layout react component.
