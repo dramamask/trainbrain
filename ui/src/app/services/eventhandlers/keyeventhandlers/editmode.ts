@@ -55,7 +55,7 @@ export function handleKeyDown(event: KeyboardEvent) {
       case EDIT_MODE_KEYS.AddNode:
         handleAddNode();
         break;
-      case EDIT_MODE_KEYS.ConnectNodes:
+      case EDIT_MODE_KEYS.ConnectPieces:
         handleConnect();
         break;
       case EDIT_MODE_KEYS.DeletePiece:
