@@ -159,4 +159,9 @@ export class Switch extends LayoutPiece {
       node.updateCoordinateAndContinue(this, coordinates[connectorName], headings[connectorName] + 180, loopProtector);
     })
   }
+
+  public flip(): LayoutNode {
+    // TODO
+    return this.connectors.getNode("start");
+  }
 }

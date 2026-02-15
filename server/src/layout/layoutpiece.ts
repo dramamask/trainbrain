@@ -49,9 +49,9 @@ export abstract class LayoutPiece {
    * but it means to rotate the piece so the next connector clockwise will
    * become connected to the piece that this piece is connected to.
    *
-   * @returns {void}
+   * @returns {LayoutNode} The "base node", or the node that stayed in the same position during the flip.
    */
-  public abstract flip(): void;
+  public abstract flip(): LayoutNode;
 
   /**
    * Examine the connectors data that was received and add any missing data that we need to create this layout piece

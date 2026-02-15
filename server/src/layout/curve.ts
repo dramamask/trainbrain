@@ -93,7 +93,8 @@ export class Curve extends LayoutPiece {
     oppositeSideNode.updateCoordinateAndContinue(this, oppositeSideCoordinate, nextPieceHeading, loopProtector);
   }
 
-  public flip(): void {
+  public flip(): LayoutNode {
+    // Figure out which node is the "base node" that is connected to the other piece
     let baseConnector: LayoutPieceConnector | undefined = undefined;
     let otherConnector: LayoutPieceConnector | undefined = undefined;
     this.connectors.getConnectors().forEach(connector => {
@@ -109,9 +110,20 @@ export class Curve extends LayoutPiece {
       throw new Error("Preconditions for flip have not been met");
     }
 
+    baseConnector = baseConnector as LayoutPieceConnector;
+    otherConnector = otherConnector as LayoutPieceConnector;
+
     // Get the other piece that the base node is connected to
-    const otherPiece = baseConnector.getNode().getOtherConnection(this);
+    const otherPiece = baseConnector.getNode().getOtherConnection(this).piece;
+    if (!otherPiece) {
+      throw new Error("This should have returned a piece");
+    }
 
+    // Flip the piece
+    baseConnector.getNode().disconnect(this);
+    otherConnector.getNode().connect(otherPiece, otherConnector.getName() as ConnectorName);
+    otherPiece.replaceNodeConnection(otherConnector.getNode(), otherConnector.getName() as ConnectorName);
 
+    return baseConnector.getNode();
   }
 }

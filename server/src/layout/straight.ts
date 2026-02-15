@@ -69,8 +69,8 @@ export class Straight extends LayoutPiece {
     oppositeSideNode.updateCoordinateAndContinue(this, nextNodeCoordinate, nextNodeHeading, loopProtector);
   }
 
-  public flip(): void {
-    // Nothing to do here since a straight piece looks the same when flipped.
-    return;
+  public flip(): LayoutNode {
+    // We don't do anything because a straight piece looks the same when flipped.
+    return this.connectors.getNode("start");
   }
 }

@@ -220,24 +220,32 @@ export class Layout {
   /**
    * Flip a layout piece. Only works for a piece that is connected to one other piece.
    * Each flip will connect the existing piece to the next (clockwise) connector of the
-   * piece that is being flipped.
+   * piece that is being flipped. The "base node" will stay in place, the other nodes
+   * will the moved around.
    *
-   *    SITUATION BEFORE:              SITUATION AFTER:
+   *   SITUATION BEFORE:             SITUATION AFTER:
    *
-   *                   O                             O  O
-   *                   |                             | /
-   *                  /|                             |/
-   *                 / |                             |
-   *                O  O                             O
-   *                   |                             |
-   *                   |                             |
-   *                   |                             |
-   *                   O                             O
+   *                   O                         O  O
+   *                   |                         | /
+   *                  /|                         |/
+   *                 / |                         |
+   *                O  O  <-- ("base node") -->  O
+   *                   |                         |
+   *                   |                         |
+   *                   |                         |
+   *                   O                         O
    */
   public async flipPiece(pieceId: string): Promise<void> {
-    this.pieceFactory.get(pieceId)?.flip();
+    // Flip the piece
+    const pieceToFlip = this.pieceFactory.get(pieceId) as LayoutPiece;
+    const baseNode = pieceToFlip.flip();
 
-    // TODO: update coordinates.
+    // Calculate the flipped piece/nodes headings/coordinates
+    const loopProtector = crypto.randomUUID();
+    const callingPiece = baseNode.getOtherConnection(pieceToFlip).piece as LayoutPiece;
+    const callingConnector = baseNode.getOtherConnection(pieceToFlip).connectorName as ConnectorName;
+    const heading = callingPiece.getHeading(callingConnector) + 180;
+    baseNode?.updateCoordinateAndContinue(callingPiece, baseNode.getCoordinate(), heading, loopProtector);
 
     // Save the newly changed layout to file
     this.save();
