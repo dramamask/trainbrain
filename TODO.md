@@ -1,7 +1,5 @@
 # TODO
 
-- Work on connecting nodes that are in exactly the same spot (c of connect)
-- Handle scenario where one node only has one piece connected to it. Handle for both nodes.
 - Add ability to save and load layouts.
 - Work on connecting nodes that are not perfectly on top of each other
 - Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).

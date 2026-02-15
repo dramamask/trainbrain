@@ -401,7 +401,7 @@
         },
         "end": {
           "heading": 180,
-          "node": "34"
+          "node": "43"
         }
       }
     },
@@ -453,7 +453,7 @@
         },
         "end": {
           "heading": 90,
-          "node": "38"
+          "node": "44"
         }
       }
     },
@@ -462,7 +462,7 @@
       "connectors": {
         "start": {
           "heading": 270,
-          "node": "38"
+          "node": "44"
         },
         "end": {
           "heading": 90,
@@ -501,7 +501,7 @@
       "connectors": {
         "start": {
           "heading": 0,
-          "node": "42"
+          "node": "43"
         },
         "end": {
           "heading": 210,
