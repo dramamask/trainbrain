@@ -1,4 +1,4 @@
-import { TrackPieceCategory, PieceDefDataAttributes, PieceDefData } from "trainbrain-shared";
+import { TrackPieceCategory, PieceDefDataAttributes, PieceDefData, PieceDefStraightAttributes } from "trainbrain-shared";
 
 export class PieceDef {
   protected id: string;

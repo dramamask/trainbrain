@@ -159,7 +159,7 @@
       "connectors": {
         "start": {
           "heading": 180,
-          "node": "16"
+          "node": "43"
         },
         "end": {
           "heading": 0,
@@ -340,19 +340,6 @@
         }
       }
     },
-    "26": {
-      "pieceDefId": "a",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "29"
-        },
-        "end": {
-          "heading": 180,
-          "node": "30"
-        }
-      }
-    },
     "27": {
       "pieceDefId": "a",
       "connectors": {
@@ -392,25 +379,12 @@
         }
       }
     },
-    "30": {
-      "pieceDefId": "b",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "16"
-        },
-        "end": {
-          "heading": 180,
-          "node": "43"
-        }
-      }
-    },
     "31": {
       "pieceDefId": "d",
       "connectors": {
         "end": {
           "heading": 0,
-          "node": "30"
+          "node": "45"
         },
         "start": {
           "heading": 150,
@@ -506,6 +480,19 @@
         "end": {
           "heading": 210,
           "node": "41"
+        }
+      }
+    },
+    "39": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "29"
+        },
+        "end": {
+          "heading": 180,
+          "node": "45"
         }
       }
     }

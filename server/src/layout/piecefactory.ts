@@ -64,6 +64,13 @@ export class PieceFactory {
   }
 
   /**
+   * Return the map of all layout pieces
+   */
+  public getPieces(): Map<string, LayoutPiece> {
+    return this.pieces;
+  }
+
+  /**
    * Return the layout in UiLayout format
    */
   public getUiLayout(): UiLayoutPiece[] {

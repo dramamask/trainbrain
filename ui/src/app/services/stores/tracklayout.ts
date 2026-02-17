@@ -1,6 +1,6 @@
 "use client";
 
-import { UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
+import { PiecesUsedData, UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
 import { getLayoutNodeData } from "../tracklayout";
 import { store as nearbyNodeStore } from "./hasnearbynode";
 
@@ -70,6 +70,10 @@ export const store = {
   getWorldSize(): {worldWidth: number, worldHeight: number} {
     return {worldWidth: state.worldWidth, worldHeight: state.wordlHeight}
   },
+
+  getPiecesUsed(): PiecesUsedData {
+    return state.trackLayout.piecesUsed;
+  }
 };
 
 /**

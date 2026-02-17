@@ -64,14 +64,19 @@ export interface UiLayoutNode {
   hasNearbyNode: boolean; // This node has a nearby node, which means that there is another node within a certain distance of this node. This is used to show a warning in the UI about nodes being close together.
 }
 
+export interface PiecesUsedData {
+  pieces: {
+    [key: string]: number; // Variable length list of PieceDef IDs a key and number of pieces of that kind as value
+  }
+  straightLength: number; // Total length of straight pieces in the layout in millimeters
+}
+
 // The structure that the server returns from the GET layout API call
 export interface UiLayout {
   error: string;
   pieces: UiLayoutPiece[];
   nodes: UiLayoutNode[];
-  piecesUsed: {
-    [key: string]: number; // Variable length list of PieceDef IDs a key and number of pieces of that kind as value
-  }
+  piecesUsed: PiecesUsedData;
 }
 
 // Attribtues for a curve piece def

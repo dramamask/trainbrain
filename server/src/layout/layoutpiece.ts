@@ -81,6 +81,13 @@ export abstract class LayoutPiece {
   }
 
   /**
+   * Return the PieceDef object for this layout piece
+   */
+  public getPieceDef(): PieceDef {
+    return this.pieceDef;
+  }
+
+  /**
    * Returns an array of nodes this piece is connected to.
    * Remember that each piece connector is always connected to
    * a node. So this returns as many nodes as the piece has

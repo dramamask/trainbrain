@@ -1,6 +1,4 @@
-import { PieceDefData, PieceDefDataList } from "trainbrain-shared";
-import { getPieceDefinitions } from "../controllers/piecedefcontroller.js";
-import { PieceDefinitions } from "../data_types/pieceDefintions.js";
+import { PieceDefDataList } from "trainbrain-shared";
 import { FatalError } from "../errors/FatalError.js";
 import { getPieceDefsFromDB } from "../services/db.js";
 import { PieceDef } from "./piecedef.js";

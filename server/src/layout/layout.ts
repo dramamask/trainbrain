@@ -1,5 +1,4 @@
 import { trace } from '@opentelemetry/api';
-import type { AddLayoutPieceData, ConnectorName, Coordinate, UiLayout } from "trainbrain-shared";
 import type { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { NodeFactory } from "./nodefactory.js";
 import { PieceFactory } from "./piecefactory.js";
@@ -9,6 +8,15 @@ import { FatalError } from "../errors/FatalError.js";
 import { PieceDefs } from "./piecedefs.js";
 import { PieceDef } from "./piecedef.js";
 import { StillConnectedError } from '../errors/StillConnectedError.js';
+import { sortRecordByValueDescending } from '../services/helpers.js';
+import type {
+  AddLayoutPieceData,
+  ConnectorName,
+  Coordinate,
+  PieceDefStraightAttributes,
+  PiecesUsedData,
+  UiLayout
+} from "trainbrain-shared";
 
 // The Layout class contains all LayoutPiece objects
 export class Layout {
@@ -430,6 +438,33 @@ export class Layout {
     }
 
     return otherConnection.piece.getHeading(otherConnection.connectorName) + 180;
+  }
+
+  /**
+   * Return an object that shows the pieces that are used in the layout, and how many of each piece.
+   * We also return the total length of straight pieces and the total length of the layout;
+   */
+  protected getPiecesUsed(): PiecesUsedData  {
+    const piecesUsed: {
+      pieces: Record<string, number>;
+      straightLength: number;
+    } = {
+      pieces: {},
+      straightLength: 0,
+    };
+
+    this.pieceFactory.getPieces().forEach(piece => {
+      const pieceDefId = piece.getPieceDef().getId();
+      piecesUsed.pieces[pieceDefId] = (piecesUsed.pieces[pieceDefId] || 0) + 1;
+
+      if (piece.getPieceDef().getCategory() == "straight") {
+        piecesUsed.straightLength += (piece.getPieceDef().getAttributes() as PieceDefStraightAttributes).length;
+      }
+
+    });
+
+    piecesUsed.pieces = sortRecordByValueDescending(piecesUsed.pieces);
+    return piecesUsed;
   }
 
   /**
