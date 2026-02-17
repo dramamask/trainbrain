@@ -17,7 +17,7 @@ export default function Home() {
           alignItems="stretch"
         >
           <GlobalEventHandlers />
-          <Grid sx={{ width: '100px'}}>
+          <Grid>
             <SideBar />
           </Grid>
           <Grid size="auto">
@@ -25,7 +25,7 @@ export default function Home() {
               <TrackMap />
             </div>
           </Grid>
-          <Grid size="grow">
+          <Grid size="auto">
             <ControlsSection />
           </Grid>
         </Grid>

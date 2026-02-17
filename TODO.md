@@ -1,6 +1,5 @@
 # TODO
 
-- Make a place in the UI where it shows all the different pieces that we need and how many of each (add to end of layout api).
 - Ability to identify which pieces are what in the layout. Maybe make the UI where it shows which pieces are which selectable and then it shows in the layout which pieces are the ones of the selected type?
 - Add ability to save and load layouts.
 - Should the node factory also contain all access to the layout DB? Instead of this being in a different file?

@@ -17,12 +17,12 @@ export default function ControlsSection() {
         <Grid size="auto">
           <Stack spacing="10px">
             <Info />
-            <KeyboardShortcuts />
+            <PiecesUsed />
           </Stack>
         </Grid>
         <Grid size="auto">
           <Stack spacing="10px">
-            <PiecesUsed />
+            <KeyboardShortcuts />
           </Stack>
         </Grid>
         <Grid size="grow">
