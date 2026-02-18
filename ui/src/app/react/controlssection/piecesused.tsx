@@ -69,9 +69,12 @@ function renderTotalStraightLength(trackLayout: UiLayout): JSX.Element | null {
     return null;
   }
 
+  const straightLength = trackLayout.piecesUsed.straightLength / 300;
+  const formattedLength = Number.isInteger(straightLength) ? straightLength.toFixed(0) : straightLength.toFixed(1);
+
   return (
     <div className={csStyles.text + " " + styles.total}>
-      A total of {(trackLayout.piecesUsed.straightLength / 300).toFixed(1)} lengths of 300mm straights.
+      A total of {formattedLength} lengths of 300mm straights.
     </div>
   )
 }

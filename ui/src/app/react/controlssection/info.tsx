@@ -37,7 +37,13 @@ export default function Info() {
             { measureState.enabled && measureState.distance &&
               <Stack className={styles.measurementContainer}>
                 <div className={csStyles.text}><b>Measurement:</b></div>
-                <div className={csStyles.text}>{Math.round(measureState.distance)} mm / { getFeetAndInches(measureState.distance) }</div>
+                <div className={csStyles.text}>
+                  <Stack>
+                    <div>{ Math.round(measureState.distance) } mm</div>
+                    <div>{ Math.round(measureState.distance / 25.4) } inches</div>
+                    <div>{ getFeetAndInches(measureState.distance) }</div>
+                  </Stack>
+                </div>
               </Stack>
             }
         </CardContent>

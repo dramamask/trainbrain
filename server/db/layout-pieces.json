@@ -258,7 +258,7 @@
         },
         "end": {
           "heading": 270,
-          "node": "23"
+          "node": "46"
         }
       }
     },
@@ -267,7 +267,7 @@
       "connectors": {
         "end": {
           "heading": 90,
-          "node": "23"
+          "node": "48"
         },
         "start": {
           "heading": 240,
@@ -414,7 +414,7 @@
         },
         "start": {
           "heading": 90,
-          "node": "37"
+          "node": "47"
         }
       }
     },
@@ -493,6 +493,71 @@
         "end": {
           "heading": 180,
           "node": "45"
+        }
+      }
+    },
+    "40": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "46"
+        },
+        "end": {
+          "heading": 270,
+          "node": "48"
+        }
+      }
+    },
+    "41": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "37"
+        },
+        "end": {
+          "heading": 270,
+          "node": "47"
+        }
+      }
+    },
+    "42": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "33"
+        },
+        "end": {
+          "heading": 270,
+          "node": "49"
+        }
+      }
+    },
+    "43": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "32"
+        },
+        "end": {
+          "heading": 270,
+          "node": "50"
+        }
+      }
+    },
+    "44": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "31"
+        },
+        "end": {
+          "heading": 270,
+          "node": "51"
         }
       }
     }
