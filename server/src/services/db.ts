@@ -38,9 +38,9 @@ let layoutPiecesDb: Low<Pieces>;
 let layoutNodesDb: Low<Nodes>;
 
 try {
-  pieceDefintionsDb = await JSONFilePreset(getDbPath("piece-definitions.json"), emptyPieceDefinitions);
-  layoutPiecesDb = await JSONFilePreset(getDbPath("layout-pieces.json"), emptyLayoutPieces);
-  layoutNodesDb = await JSONFilePreset(getDbPath("layout-nodes.json"), emptyLayoutNodes);
+  pieceDefintionsDb = await JSONFilePreset(getDbPath("definitions/pieces.json"), emptyPieceDefinitions);
+  layoutPiecesDb = await JSONFilePreset(getDbPath("pieces/layout.json"), emptyLayoutPieces);
+  layoutNodesDb = await JSONFilePreset(getDbPath("nodes/layout.json"), emptyLayoutNodes);
   await initNodes();
 } catch (error) {
   const message = "Error initializing DBs";
@@ -50,7 +50,7 @@ try {
 
 // Return the db path for a given db json file name
 function getDbPath(fileName: string): string {
-  return path.resolve("db",  fileName);
+  return path.resolve("db", fileName);
 }
 
 /**

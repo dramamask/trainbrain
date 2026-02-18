@@ -54,7 +54,7 @@ function renderPiecesUsed(trackLayout: UiLayout, pieceDefs: PieceDefDataList): J
       return (
         <Grid container spacing={1} key={pieceDefId}>
           <Grid className={csStyles.text} size={10}><b>{getPieceName(pieceDefId, pieceDefs)}</b></Grid>
-            <Grid className={csStyles.text} size={2} sx={{ textAlign: 'right' }}>{numOf}</Grid>
+          <Grid className={csStyles.text} size={2} sx={{ textAlign: 'right' }}>{numOf}</Grid>
         </Grid>
       )
     })

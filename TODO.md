@@ -1,6 +1,5 @@
 # TODO
 
-- Ability to identify which pieces are what in the layout. Maybe make the UI where it shows which pieces are which selectable and then it shows in the layout which pieces are the ones of the selected type?
 - Add ability to save and load layouts.
 - Should the node factory also contain all access to the layout DB? Instead of this being in a different file?
 - Add protection so you can't move the layout outside of the world size.
@@ -15,12 +14,12 @@
   from the back-end for that (just coordinates?).
 - Can we do certain operations in an atomic way? If we are going to take in concurrent API requests we should be able to temporarily disable any new incoming requests while we update the layout. We should be able to request a lock, waiting till other operations are finished, make the changes, then release the lock.
 - Already show the background image when the layout is still loading, and the progress icon is visible. Progress icon bigger, centered and in a different color?
+- Ability to identify which pieces are what in the layout. Maybe make the UI where it shows which pieces are which selectable and then it shows in the layout which pieces are the ones of the selected type?
 - Show piece and node ID and other info somewhere when we hover over the piece or node.
 - Change the GET layout API response to be a record with string keys instead of an array. That makes looking up specific pieces and nodes a lot easier in the UI. The current format may slow things down if we have too many pieces or nodes.
 - Figure out which project can take commonjs and which can take esm. How can I switch them all to esm? How to have the shared library be esm as well. --> I think they are all ESM except for the UI. How to swap? --> From AI: "You can force the entire project to be treated as ESM by adding "type": "module" to your package.json." --> Try it!
 - Make the scroll bars more like oem, with arrows at the top and bottom
 - Add layout map inside a MUI Card
-- combine layout-nodes and layout-piece.json so we can have more atomic saves.
 - Use world size to set the aspect ration and size of the background image. "Reserve the space" so when we load the image container doesn't all of a sudden resize.
 - Make cards collapsable where there's only a title bar visible.
 - Add react grid (or whatever it is called) for the cards in right side "controls section"
