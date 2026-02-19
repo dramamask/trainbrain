@@ -4,7 +4,7 @@ import pieceDefRoutes from "./piecedefroutes.js";
 
 const router: Router = Router();
 
-router.use('/layouts', layoutCollectionRoutes);
+//router.use('/layouts', layoutCollectionRoutes);
 router.use('/layout', layoutRoutes);
 router.use('/piecedefs', pieceDefRoutes);
 

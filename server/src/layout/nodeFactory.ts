@@ -1,23 +1,37 @@
 import { trace } from '@opentelemetry/api';
+import { Low } from 'lowdb';
+import { JSONFilePreset } from 'lowdb/node';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
 import { deleteLayoutNode, getLayoutNodesFromDB, persistLayoutNodes } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { SpatialGrid } from "./spatialgrid.js";
 import { FatalError } from "../errors/FatalError.js";
+import { getDbPath } from '../services/db.js';
 import { Layout } from './layout.js';
+import { LayoutNodeData, Nodes } from '../data_types/layoutNodes.js';
+
+/**
+ * DB init
+ */
+const emptyLayoutNodes: Nodes = { nodes: {} };
+let layoutNodesDb: Low<Nodes>;
 
 /**
  * This class knows all nodes and is able to perform operations on them
  */
 export class NodeFactory {
+  protected readonly dbFileName: string;
   protected readonly nodes: Map<string, LayoutNode>;
   protected readonly spatialGrid: SpatialGrid<LayoutNode>;
+  protected readonly db: Low<Nodes>;
 
   /**
    * Class constructor
    */
-  constructor() {
+  constructor(dbFileName: string) {
+    this.dbFileName = dbFileName;
+    this.db =
     this.nodes = new Map<string, LayoutNode>();
     this.spatialGrid = new SpatialGrid<LayoutNode>(node => node.getCoordinate());
   }
@@ -26,8 +40,9 @@ export class NodeFactory {
    * Inializations, like reading nodes from the DB
    */
   public init(): void {
+    this.initDb();
     // Create each layout node
-    Object.entries(getLayoutNodesFromDB("NodeFactory::init()")).forEach(([key, nodeData]) => {
+    Object.entries(this.db.data.nodes.forEach(([key, nodeData]) => {
       this.nodes.set(key, new LayoutNode(key, nodeData.coordinate));
     });
   }
@@ -145,6 +160,19 @@ export class NodeFactory {
     });
 
     return nodesToReturn;
+  }
+
+  /**
+   * Initialize the nodes DB
+   */
+  protected async initDb(): Promise<void> {
+    try {
+      layoutNodesDb = await JSONFilePreset(getDbPath(`nodes/${this.dbFileName}.json`), emptyLayoutNodes);
+    } catch (error) {
+      const message = "Error initializing Nodes DB";
+      console.error(message, error);
+      throw new FatalError(message);
+    }
   }
 
   /**

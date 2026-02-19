@@ -49,7 +49,7 @@ try {
 }
 
 // Return the db path for a given db json file name
-function getDbPath(fileName: string): string {
+export function getDbPath(fileName: string): string {
   return path.resolve("db", fileName);
 }
 

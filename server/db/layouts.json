@@ -1,3 +1,13 @@
 {
-  "layouts": ["empty", "layout"]
+  "defaultLayout": "2",
+  "layouts": {
+    "1": {
+      "name": "empty",
+      "filePrefix": "empty"
+    },
+    "2": {
+      "name": "test",
+      "filePrefix": "layout"
+    }
+  }
 }

@@ -24,10 +24,10 @@ export class Layout {
   protected readonly nodeFactory: NodeFactory;
   protected readonly pieceFactory: PieceFactory;
 
-  constructor() {
+  constructor(dbFileName: string) {
     this.pieceDefs = new PieceDefs();
-    this.nodeFactory = new NodeFactory();
-    this.pieceFactory = new PieceFactory();
+    this.nodeFactory = new NodeFactory(dbFileName);
+    this.pieceFactory = new PieceFactory(dbFileName);
   }
 
   public init() {
