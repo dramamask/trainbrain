@@ -19,6 +19,10 @@ export const store = {
     return () => listeners.delete(callback);
   },
 
+  unsubscribe(callback: Listener): boolean {
+    return listeners.delete(callback);
+  },
+
   getSnapshot(): State {
     return state;
   },

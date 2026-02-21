@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import { Card, CardContent, Stack } from "@mui/material";
 import { store as mousePosStore, getMousePos } from "@/app/services/stores/mousepos";
 import { store as measureStore } from "@/app/services/stores/measure";
+import { store as selectedStore} from "@/app/services/stores/selection";
 
 import csStyles from "./controlssection.module.css";
 import styles from "./info.module.css";
@@ -13,6 +14,8 @@ export default function Info() {
   const {mouseInViewBox, x, y} = getMousePos(mousePosState);
 
   const measureState = useSyncExternalStore(measureStore.subscribe, measureStore.getSnapshot, measureStore.getServerSnapshot);
+
+  const selectedState = useSyncExternalStore(selectedStore.subscribe, selectedStore.getSnapshot, selectedStore.getServerSnapshot);
 
   let xDisplay = "-    ";
   let yDisplay = "-    ";
@@ -35,7 +38,7 @@ export default function Info() {
               <div className={csStyles.text + " " + styles.mousePos}>{yDisplay}</div>
             </Stack>
             { measureState.enabled && measureState.distance &&
-              <Stack className={styles.measurementContainer}>
+              <Stack className={styles.infoContainer}>
                 <div className={csStyles.text}><b>Measurement:</b></div>
                 <div className={csStyles.text}>
                   <Stack>
@@ -44,6 +47,18 @@ export default function Info() {
                     <div>{ getFeetAndInches(measureState.distance) }</div>
                   </Stack>
                 </div>
+              </Stack>
+            }
+            { selectedState.selectedNode &&
+              <Stack className={styles.infoContainer} direction="row">
+                <div className={csStyles.text}><b>Selected Node:</b>&nbsp;</div>
+                <div className={csStyles.text}>{ selectedState.selectedNode }</div>
+              </Stack>
+            }
+            { selectedState.selectedLayoutPiece &&
+              <Stack className={styles.infoContainer} direction="row">
+                <div className={csStyles.text}><b>Selected Piece: </b>&nbsp;</div>
+                <div className={csStyles.text}>{ selectedState.selectedLayoutPiece }</div>
               </Stack>
             }
         </CardContent>

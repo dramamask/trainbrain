@@ -388,20 +388,7 @@
         },
         "start": {
           "heading": 30,
-          "node": "41"
-        }
-      }
-    },
-    "38": {
-      "pieceDefId": "d",
-      "connectors": {
-        "start": {
-          "heading": 0,
-          "node": "43"
-        },
-        "end": {
-          "heading": 210,
-          "node": "41"
+          "node": "72"
         }
       }
     },
@@ -558,6 +545,114 @@
         "end": {
           "heading": 270,
           "node": "70"
+        }
+      }
+    },
+    "61": {
+      "pieceDefId": "g",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "43"
+        },
+        "end": {
+          "heading": 180,
+          "node": "71"
+        },
+        "diverge": {
+          "heading": 210,
+          "node": "72"
+        }
+      }
+    },
+    "62": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "71"
+        },
+        "end": {
+          "heading": 180,
+          "node": "73"
+        }
+      }
+    },
+    "63": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "73"
+        },
+        "end": {
+          "heading": 180,
+          "node": "74"
+        }
+      }
+    },
+    "66": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 0,
+          "node": "77"
+        },
+        "end": {
+          "heading": 180,
+          "node": "78"
+        }
+      }
+    },
+    "67": {
+      "pieceDefId": "f",
+      "connectors": {
+        "end": {
+          "heading": 180,
+          "node": "77"
+        },
+        "start": {
+          "heading": 337.5,
+          "node": "79"
+        }
+      }
+    },
+    "68": {
+      "pieceDefId": "f",
+      "connectors": {
+        "end": {
+          "heading": 157.5,
+          "node": "79"
+        },
+        "start": {
+          "heading": 315,
+          "node": "80"
+        }
+      }
+    },
+    "69": {
+      "pieceDefId": "f",
+      "connectors": {
+        "start": {
+          "heading": 135,
+          "node": "80"
+        },
+        "end": {
+          "heading": 337.5,
+          "node": "81"
+        }
+      }
+    },
+    "70": {
+      "pieceDefId": "f",
+      "connectors": {
+        "start": {
+          "heading": 157.5,
+          "node": "81"
+        },
+        "end": {
+          "heading": 0,
+          "node": "82"
         }
       }
     }

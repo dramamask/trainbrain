@@ -5,6 +5,7 @@ import Straight from "./straight";
 import Switch from "./switch";
 import Node from "./node";
 import Measure from "../measure";
+import MergeNodes from "../mergenodes";
 import { getSvgViewBox } from "@/app/services/zoom/scrollbar/svg";
 import { store as scrollStore } from "@/app/services/stores/scroll";
 import { store as selectionStore } from "@/app/services/stores/selection";
@@ -61,6 +62,7 @@ export default function EditModeLayout({worldWidth, worldHeight}: props) {
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
         { <Measure /> }
+        { <MergeNodes />}
         { renderPieces(trackLayoutState.trackLayout) }
         { renderNodes(trackLayoutState.trackLayout) }
         { renderDebugContent(worldWidth, worldHeight) }

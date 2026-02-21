@@ -7,6 +7,7 @@ import { store as editModeStore } from '@/app/services/stores/editmode';
 import { store as mousePosStore } from "@/app/services/stores/mousepos";
 import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as selectionStore } from "@/app/services/stores/selection";
+import { store as mergeNodesStore } from "@/app/services/stores/mergenodesstore"
 import { get } from "@/app/config/config";
 import { EDIT_MODE_KEYS } from "./keydefinitions";
 import { getAssociatedKeyValue } from "./helpers";
@@ -63,6 +64,9 @@ export function handleKeyDown(event: KeyboardEvent) {
         break;
       case EDIT_MODE_KEYS.FlipPiece:
         handleFlip();
+        break;
+      case EDIT_MODE_KEYS.MergeNodes:
+        handleMergeNodes();
         break;
       case EDIT_MODE_KEYS.Deselect:
         selectionStore.deselectAll();
@@ -321,4 +325,34 @@ function handleConnect() {
       errorStore.setError(error.message);
       console.error(error);
     });
+}
+
+/**
+ * Handle merging of nodes.
+ * When the shortcut key is pressed we store the selected node,
+ * and we subscribe selection store.
+ * If a merge node is already in progress we cancel the merge.
+ */
+function handleMergeNodes() {
+  // End the merge nodes process if a merge was already in progress
+  if (mergeNodesStore.getMergingInProgress()) {
+    mergeNodesStore.clear();
+    selectionStore.unsubscribe(handleMergingNodes);
+    return;
+  }
+
+  // Start the merge nodes process
+  mergeNodesStore.setNode(selectionStore.getSelectedNode())
+  selectionStore.subscribe(handleMergingNodes);
+}
+
+/**
+ * The merge nodes process is underway. This function gets called
+ * when the second node is selected.
+ */
+function handleMergingNodes() {
+  // TODO: call the server API with the two node IDs
+
+  mergeNodesStore.clear();
+  selectionStore.unsubscribe(handleMergingNodes);
 }
