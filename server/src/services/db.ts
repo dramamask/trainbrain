@@ -6,7 +6,6 @@ import path from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFilePreset } from 'lowdb/node';
 import { LayoutPieceData, Pieces } from '../data_types/layoutPieces.js';
-import { LayoutNodeData, Nodes } from '../data_types/layoutNodes.js';
 import { PieceDefinitions } from '../data_types/pieceDefintions.js';
 import { FatalError } from '../errors/FatalError.js';
 import { PieceDefDataList } from 'trainbrain-shared';
@@ -21,27 +20,13 @@ const emptyLayoutPieces: Pieces = {
   pieces: {}
 };
 
-const emptyLayoutNodes: Nodes = {
-  nodes: {
-    "0": {
-      coordinate: {
-        x: 0,
-        y: 0,
-      }
-    }
-  }
-};
-
 // Initialize the databases once
 let pieceDefintionsDb: Low<PieceDefinitions>;
 let layoutPiecesDb: Low<Pieces>;
-let layoutNodesDb: Low<Nodes>;
 
 try {
   pieceDefintionsDb = await JSONFilePreset(getDbPath("definitions/pieces.json"), emptyPieceDefinitions);
   layoutPiecesDb = await JSONFilePreset(getDbPath("pieces/layout.json"), emptyLayoutPieces);
-  layoutNodesDb = await JSONFilePreset(getDbPath("nodes/layout.json"), emptyLayoutNodes);
-  await initNodes();
 } catch (error) {
   const message = "Error initializing DBs";
   console.error(message, error);
@@ -51,16 +36,6 @@ try {
 // Return the db path for a given db json file name
 export function getDbPath(fileName: string): string {
   return path.resolve("db", fileName);
-}
-
-/**
- * Add a single node if the layout has no nodes
- */
-async function initNodes(): Promise<void> {
-  if (Object.keys(layoutNodesDb.data.nodes).length == 0) {
-    layoutNodesDb.data.nodes[0] = {"coordinate": {"x": 100, "y": 100}};
-    await layoutNodesDb.write();
-  }
 }
 
 /**
@@ -86,19 +61,6 @@ export async function persistLayoutPieces(friendToken: string): Promise<void> {
     return
   }
   throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (2)")
-}
-
-/**
- * Write the piece defintions to the DB file
- *
- * @param friendToken Token to ensure that only one specific class method can persist the layout nodes
- */
-export async function persistLayoutNodes(friendToken: string): Promise<void> {
-  if (friendToken == "NodeFactory::save()") {
-    await layoutNodesDb.write();
-    return
-  }
-  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (3)")
 }
 
 /**
@@ -128,19 +90,6 @@ export function getLayoutPiecesFromDB(friendToken: string): Record<string, Layou
 }
 
 /**
- * Return the layout nodes data from the DB
- *
- * @param friendToken Token to ensure that only one specific class method can access the layout nodes DB content directly
- * @returns
- */
-export function getLayoutNodesFromDB(friendToken: string): Record<string, LayoutNodeData> {
-  if (friendToken == "NodeFactory::init()") {
-    return layoutNodesDb.data.nodes;
-  }
-  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (6)")
-}
-
-/**
  * Save the data for a single layout piece to the DB (not persisted, just saved in memory)
  *
  * @param id ID of the layout piece
@@ -156,21 +105,6 @@ export function saveLayoutPieceData(id: string, data: LayoutPieceData, friendTok
 }
 
 /**
- * Save the data for a single layout node to the DB (not persisted, just saved in memory)
- *
- * @param id ID of the layout node
- * @param data Data for the layout node
- * @param friendToken Token to ensure that only one specific class method can save layout node data to the DB
- */
-export function saveLayoutNodeData(id: string, data: LayoutNodeData, friendToken: string): void {
-  if (friendToken == "LayoutNode::save()") {
-    layoutNodesDb.data.nodes[id] = data;
-    return
-  }
-  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (8)")
-}
-
-/**
  * Remove the given layout piece from the DB (not persisted, just saved in memory)
  *
  * @param id ID of the layout piece to delete
@@ -182,18 +116,4 @@ export function deleteLayoutPiece(id: string, friendToken: string): void {
     return
   }
   throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (9)")
-}
-
-/**
- * Remove the given layout node from the DB (not persisted, just saved in memory)
- *
- * @param id ID of the layout node to delete
- * @param friendToken Token to ensure that only one specific class method can save layout node data to the DB
- */
-export function deleteLayoutNode(id: string, friendToken: string): void {
-  if (friendToken == "NodeFactory::delete()") {
-    delete layoutNodesDb.data.nodes[id];
-    return
-  }
-  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (10)")
 }

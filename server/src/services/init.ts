@@ -1,10 +1,10 @@
-import { Layout } from "../layout/layout.js";
+import { Layouts } from "../layout/layouts.js";
 
-export let layout: Layout;
+export let layouts: Layouts;
 
 try {
-  layout = new Layout();
-  layout.init();
+  layouts = new Layouts();
+  layouts.init();
 } catch(error) {
   console.error("Error message:\n--------------\n" + getErrorMessage(error) + "\n\n");
   console.error("Error details:\n--------------\n", error)

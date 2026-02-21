@@ -1,21 +1,18 @@
 import { trace } from '@opentelemetry/api';
-import { Low } from 'lowdb';
+import { Low, Memory } from 'lowdb';
 import { JSONFilePreset } from 'lowdb/node';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
 import { LayoutPiece } from "./layoutpiece.js";
-import { deleteLayoutNode, getLayoutNodesFromDB, persistLayoutNodes } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { SpatialGrid } from "./spatialgrid.js";
 import { FatalError } from "../errors/FatalError.js";
 import { getDbPath } from '../services/db.js';
-import { Layout } from './layout.js';
 import { LayoutNodeData, Nodes } from '../data_types/layoutNodes.js';
 
 /**
  * DB init
  */
 const emptyLayoutNodes: Nodes = { nodes: {} };
-let layoutNodesDb: Low<Nodes>;
 
 /**
  * This class knows all nodes and is able to perform operations on them
@@ -24,14 +21,14 @@ export class NodeFactory {
   protected readonly dbFileName: string;
   protected readonly nodes: Map<string, LayoutNode>;
   protected readonly spatialGrid: SpatialGrid<LayoutNode>;
-  protected readonly db: Low<Nodes>;
+  protected db: Low<Nodes>;
 
   /**
    * Class constructor
    */
   constructor(dbFileName: string) {
     this.dbFileName = dbFileName;
-    this.db =
+    this.db = new Low(new Memory(), emptyLayoutNodes);
     this.nodes = new Map<string, LayoutNode>();
     this.spatialGrid = new SpatialGrid<LayoutNode>(node => node.getCoordinate());
   }
@@ -42,8 +39,8 @@ export class NodeFactory {
   public init(): void {
     this.initDb();
     // Create each layout node
-    Object.entries(this.db.data.nodes.forEach(([key, nodeData]) => {
-      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate));
+    Object.entries(this.db.data.nodes).forEach(([key, nodeData]) => {
+      this.nodes.set(key, new LayoutNode(key, nodeData.coordinate, this));
     });
   }
 
@@ -85,7 +82,7 @@ export class NodeFactory {
 
     // Create node
     const id = (this.getHighestNodeId() + 1).toString();
-    const node = new LayoutNode(id, coordinate);
+    const node = new LayoutNode(id, coordinate, this);
     this.nodes.set(node.getId(), node);
 
     if (!piece) {
@@ -130,7 +127,7 @@ export class NodeFactory {
     }
 
     // Delete the node from the DB (in-memory only)
-    deleteLayoutNode(node.getId(), "NodeFactory::delete()");
+    delete this.db.data.nodes[node.getId()];
   }
 
   /**
@@ -163,11 +160,26 @@ export class NodeFactory {
   }
 
   /**
+   * Save the data for a single layout node to the DB (not persisted, just saved in memory)
+   *
+   * @param id ID of the layout node
+   * @param data Data for the layout node
+   * @param friendToken Token to ensure that only one specific class method can save layout node data to the DB
+   */
+  public saveNode(id: string, data: LayoutNodeData, friendToken: string): void {
+    if (friendToken == "LayoutNode::save()") {
+      this.db.data.nodes[id] = data;
+      return
+    }
+    throw new FatalError("DB access to save a node is restricted on purpose. Please respect the rules, they are in place for a reason")
+  }
+
+  /**
    * Initialize the nodes DB
    */
   protected async initDb(): Promise<void> {
     try {
-      layoutNodesDb = await JSONFilePreset(getDbPath(`nodes/${this.dbFileName}.json`), emptyLayoutNodes);
+      this.db = await JSONFilePreset(getDbPath(`nodes/${this.dbFileName}.json`), emptyLayoutNodes);
     } catch (error) {
       const message = "Error initializing Nodes DB";
       console.error(message, error);
@@ -235,7 +247,7 @@ export class NodeFactory {
    */
   public async save(): Promise<void> {
     this.nodes.forEach(node => node.save());
-    await persistLayoutNodes("NodeFactory::save()");
+    await this.db.write();
   }
 
   /**

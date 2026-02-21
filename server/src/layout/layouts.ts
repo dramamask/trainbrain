@@ -10,13 +10,13 @@ interface LayoutDefData {
   dbFilename: string;
 }
 interface LayoutsData {
-  defaultLayout: string;
+  activeLayout: string;
   layouts: Record<string, LayoutDefData>;
 }
 
 // Default/empty data structure for the layouts json db
 const emptyLayouts: LayoutsData = {
-  defaultLayout: "1",
+  activeLayout: "1",
   layouts: {"1": {name: "empty", dbFilename: "empty"}}
 }
 
@@ -38,9 +38,16 @@ export class Layouts {
   protected readonly activeLayout: Layout;
 
   constructor() {
-    const layoutId = layoutsDb.data.defaultLayout;
-    const dbFilename = layoutsDb.data.layouts[layoutId].dbFilename;
-    this.activeLayout = new Layout(dbFilename);
+    const layoutId = layoutsDb.data.activeLayout;
+    const layoutsDbFilename = layoutsDb.data.layouts[layoutId].dbFilename;
+    this.activeLayout = new Layout(layoutsDbFilename);
+  }
+
+  /**
+   * Initializations
+   */
+  public init() {
+    this.activeLayout.init();
   }
 
   /**

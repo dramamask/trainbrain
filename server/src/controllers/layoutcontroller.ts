@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { trace } from '@opentelemetry/api';
 import { matchedData } from 'express-validator';
 import { constants } from "http2";
-import { layout } from "../services/init.js";
+import { layouts } from "../services/init.js";
 import { AddLayoutPieceData, AddNodeData, Coordinate, MovePieceData, UiLayout, UpdateNodeData } from 'trainbrain-shared';
 
 // API endpoint to get the track layout
@@ -11,7 +11,7 @@ export const getLayout = (req: Request, res: Response, next: NextFunction): void
     const span = trace.getActiveSpan();
     span?.setAttribute('_.request.type', 'getLayout');
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
@@ -40,9 +40,9 @@ export const addLayoutPiece = async (req: Request, res: Response, next: NextFunc
     span?.setAttribute('_.request.pieceDefId', data.pieceDefId);
     span?.setAttribute('_.request.orientation', data.orientation);
 
-    await layout.addLayoutPiece(data);
+    await layouts.getActiveLayout().addLayoutPiece(data);
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
@@ -75,9 +75,9 @@ export const addNode = async (req: Request, res: Response, next: NextFunction) =
       x: data.x,
       y: data.y,
     };
-    await layout.addNode(coordinate);
+    await layouts.getActiveLayout().addNode(coordinate);
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
@@ -112,9 +112,9 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
       y: data.y,
     };
     const headingIncrement = data.headingIncrement;
-    await layout.updateNode(data.index, newCoordinate, headingIncrement);
+    await layouts.getActiveLayout().updateNode(data.index, newCoordinate, headingIncrement);
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
@@ -141,9 +141,9 @@ export const connectPiecesAtNode = async (req: Request, res: Response, next: Nex
     span?.setAttribute('_.request.type', 'connectPiecesAtNode');
     span?.setAttribute('_.request.nodeId', data.index);
 
-    await layout.connectPiecesAtNode(data.index);
+    await layouts.getActiveLayout().connectPiecesAtNode(data.index);
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
@@ -170,9 +170,9 @@ export const disconnectPiecesAtNode = async (req: Request, res: Response, next: 
     span?.setAttribute('_.request.type', 'disconnectPiecesAtNode');
     span?.setAttribute('_.request.nodeId', data.index);
 
-    await layout.disconnectPiecesAtNode(data.index);
+    await layouts.getActiveLayout().disconnectPiecesAtNode(data.index);
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
@@ -201,9 +201,9 @@ export const movePiece = async (req: Request, res: Response, next: NextFunction)
     span?.setAttribute('_.request.x', data.xIncrement);
     span?.setAttribute('_.request.y', data.yIncrement);
 
-    await layout.movePiece(data.index, data.xIncrement, data.yIncrement);
+    await layouts.getActiveLayout().movePiece(data.index, data.xIncrement, data.yIncrement);
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
@@ -230,9 +230,9 @@ export const flipPiece = async (req: Request, res: Response, next: NextFunction)
     span?.setAttribute('_.request.type', 'flipPiece');
     span?.setAttribute('_.request.pieceId', data.index);
 
-    await layout.flipPiece(data.index);
+    await layouts.getActiveLayout().flipPiece(data.index);
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
@@ -260,9 +260,9 @@ export const deleteLayoutElement = async (req: Request, res: Response, next: Nex
     span?.setAttribute('_.request.pieceId', data.pieceId);
     span?.setAttribute('_.request.nodeId', data.nodeId);
 
-    await layout.deleteLayoutElement(data.pieceId, data.nodeId);
+    await layouts.getActiveLayout().deleteLayoutElement(data.pieceId, data.nodeId);
 
-    const uiLayout = layout.getUiLayout();
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);
 
     span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);

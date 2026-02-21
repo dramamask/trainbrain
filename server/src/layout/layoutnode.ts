@@ -5,6 +5,7 @@ import type { LayoutNodeData } from "../data_types/layoutNodes.js";
 import { saveLayoutNodeData } from "../services/db.js";
 import { FatalError } from "../errors/FatalError.js";
 import { StillConnectedError } from '../errors/StillConnectedError.js';
+import type { NodeFactory } from './nodefactory.js';
 
 interface Connection {
   piece: LayoutPiece | null, connectorName: ConnectorName | undefined,
@@ -13,15 +14,17 @@ interface Connection {
 export class LayoutNode {
   protected readonly id: string;
   protected readonly connections: [Connection, Connection];
+  protected readonly nodeFactory: NodeFactory;
   protected coordinate: Coordinate | undefined;
   protected nearbyNode: boolean; // This node has another node so close by that it may overlap with that node on the UI.
   protected loopProtector: string;
 
-  constructor(id: string, coordinate: Coordinate | undefined) {
+  constructor(id: string, coordinate: Coordinate | undefined, nodeFactory: NodeFactory) {
     const span = trace.getActiveSpan();
 
     this.id = id;
     this.coordinate = coordinate;
+    this.nodeFactory = nodeFactory;
     this.connections = [{piece: null, connectorName: undefined}, {piece: null, connectorName: undefined}];
     this.nearbyNode = false;
     this.loopProtector = "";
@@ -315,7 +318,7 @@ export class LayoutNode {
    * Note that this function does not write anything to the actual DB file. Only the Layout file writes to the DB file.
    */
   public save(): void {
-    saveLayoutNodeData(this.id, this.getLayoutData(), "LayoutNode::save()");
+    this.nodeFactory.saveNode(this.id, this.getLayoutData(), "LayoutNode::save()");
   }
 
   /**
