@@ -4,7 +4,6 @@
 
 .trackLayoutContainer {
   height: calc(100% - 14px);
-  background-image: url("/world-images/backyard.jpg");
   background-repeat: no-repeat;
   position: relative;
 }

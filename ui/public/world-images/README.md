@@ -1,0 +1,1 @@
+These are the images that are displayed as background images on the layouts. These images are referred to in the layouts json DB file.

@@ -58,7 +58,7 @@ function zoomToPositionByManipulatingScrollbars(): void {
   const { mouseInViewBox, x, y } = getMousePos(mousePosStore.getSnapshot());
 
   if (mouseInViewBox) {
-    const { worldWidth, worldHeight } = trackLayoutStore.getWorldSize();
+    const { width: worldWidth, height: worldHeight } = trackLayoutStore.getWorldSize();
 
     const viewBoxX = getSVGViewBoxPos(x, worldWidth, zoomStore.getZoomFactor());
     const viewBoxY = getSVGViewBoxPos(y, worldHeight, zoomStore.getZoomFactor());

@@ -1,7 +1,5 @@
 # TODO
 
-- Add world size to the layouts DB
-- Add background image file name to the layouts DB
 - Add ability to save and load layouts.
 - Add protection so you can't move the layout outside of the world size.
 - Work on connecting nodes that are not perfectly on top of each other

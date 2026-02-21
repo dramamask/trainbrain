@@ -18,10 +18,6 @@ import RegularLayout from "./tracklayout/regular/tracklayout";
 
 import styles from "./trackmap.module.css";
 
-// The size of the world box
-const worldWidth = 15545; // Milimeters
-const worldHeight = 15240; // Milimeters
-
 /**
  * The main track layout react component.
  * This component consists of the SVG layout, the background image, the scrollbars, and the error modal window.
@@ -39,7 +35,7 @@ export default function TrackLayout()
   useEffect(() => {
     getTrackLayout()
       .then((layoutData: UiLayout) => {
-        trackLayoutStore.setTrackLayoutAndWorldSize(layoutData, worldWidth, worldHeight);
+        trackLayoutStore.setTrackLayoutAndWorldData(layoutData);
         setLoading(false);
       })
       .catch((error: Error) => {
@@ -55,10 +51,14 @@ export default function TrackLayout()
     )
   }
 
-  const divStyle = getBackgroundImageStyle(scrollState.xScrollPercent, scrollState.yScrollPercent, zoomState.zoomFactor);
+  // Calculate the background image style from the scroll and zoom situation
+  let divStyle = getBackgroundImageStyle(scrollState.xScrollPercent, scrollState.yScrollPercent, zoomState.zoomFactor);
+  // Get the background image from the layout definition
+  Object.assign(divStyle,  { backgroundImage: `url("/world-images/${trackLayoutStore.getWorldImage()}")` } );
 
   // Render the track map, which is the track layout with scrollbars, and the error modal window
   // Note that the coordinates represent mm in real life
+  const { width: worldWidth, height: worldHeight } = trackLayoutStore.getWorldSize();
   return (
     <Stack direction="row">
       <Stack>

@@ -71,9 +71,16 @@ export interface PiecesUsedData {
   straightLength: number; // Total length of straight pieces in the layout in millimeters
 }
 
+export interface WorldData {
+  width: number,
+  height: number,
+  image: string
+}
+
 // The structure that the server returns from the GET layout API call
 export interface UiLayout {
   error: string;
+  world: WorldData;
   pieces: UiLayoutPiece[];
   nodes: UiLayoutNode[];
   piecesUsed: PiecesUsedData;

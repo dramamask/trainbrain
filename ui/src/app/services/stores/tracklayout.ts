@@ -1,16 +1,14 @@
 "use client";
 
-import { PiecesUsedData, UiLayout, UiLayoutNode, UiLayoutPiece } from "trainbrain-shared";
+import { PiecesUsedData, UiLayout, UiLayoutNode, UiLayoutPiece, WorldData } from "trainbrain-shared";
 import { getLayoutNodeData } from "../tracklayout";
 import { store as nearbyNodeStore } from "./hasnearbynode";
 
 interface State {
   trackLayout: UiLayout;
-  worldWidth: number;
-  wordlHeight: number;
 }
 
-let state: State = { trackLayout: <UiLayout>{}, worldWidth: 0, wordlHeight: 0 };
+let state: State = { trackLayout: <UiLayout>{} };
 
 // Define a type for the callback function
 type Listener = () => void;
@@ -34,7 +32,7 @@ export const store = {
   },
 
   setTrackLayout(value: UiLayout): void {
-    const newState = { trackLayout: value, worldWidth: state.worldWidth, wordlHeight: state.wordlHeight };
+    const newState = { trackLayout: value };
     // Immutable update
     state = newState
     // Notify React/listeners
@@ -43,8 +41,8 @@ export const store = {
     setNearbyNodes(value.nodes);
   },
 
-  setTrackLayoutAndWorldSize(layout: UiLayout, width: number, height: number): void {
-    const newState = { trackLayout: layout, worldWidth: width, wordlHeight: height };
+  setTrackLayoutAndWorldData(layout: UiLayout): void {
+    const newState = { trackLayout: layout, world: layout.world };
     // Immutable update
     state = newState
     // Notify React/listeners
@@ -67,8 +65,12 @@ export const store = {
     return getLayoutNodeData(nodeId, state.trackLayout);
   },
 
-  getWorldSize(): {worldWidth: number, worldHeight: number} {
-    return {worldWidth: state.worldWidth, worldHeight: state.wordlHeight}
+  getWorldSize(): {width: number, height: number} {
+    return { width: state.trackLayout.world.width, height: state.trackLayout.world.height }
+  },
+
+  getWorldImage(): string {
+    return state.trackLayout.world.image;
   },
 
   getPiecesUsed(): PiecesUsedData {

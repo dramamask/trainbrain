@@ -9,6 +9,7 @@ import { PieceDefs } from "./piecedefs.js";
 import { PieceDef } from "./piecedef.js";
 import { StillConnectedError } from '../errors/StillConnectedError.js';
 import { sortRecordByValueDescending } from '../services/helpers.js';
+import type { LayoutDefData } from '../data_types/layouts.js';
 import type {
   AddLayoutPieceData,
   ConnectorName,
@@ -23,13 +24,16 @@ export class Layout {
   protected readonly pieceDefs: PieceDefs;
   protected readonly nodeFactory: NodeFactory;
   protected readonly pieceFactory: PieceFactory;
+  protected layoutDefinition: LayoutDefData;
 
-  constructor(dbFileName: string) {
+  constructor(layoutDefinition: LayoutDefData) {
     this.pieceDefs = new PieceDefs();
-    this.nodeFactory = new NodeFactory(dbFileName);
-    this.pieceFactory = new PieceFactory(dbFileName);
+    this.nodeFactory = new NodeFactory(layoutDefinition.dbFileName);
+    this.pieceFactory = new PieceFactory(layoutDefinition.dbFileName);
+    this.layoutDefinition = layoutDefinition;
   }
 
+  // Initialize the class
   public async init() {
     await this.pieceDefs.init();
     await this.nodeFactory.init();
@@ -40,6 +44,7 @@ export class Layout {
   public getUiLayout(): UiLayout {
     return {
       error: "",
+      world: this.layoutDefinition.world,
       pieces: this.pieceFactory.getUiLayout(),
       nodes: this.nodeFactory.getUiLayout(),
       piecesUsed: this.getPiecesUsed(),

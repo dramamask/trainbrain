@@ -3,23 +3,24 @@ import { JSONFilePreset } from 'lowdb/node';
 import { FatalError } from '../errors/FatalError.js';
 import { getDbPath } from '../services/db.js';
 import { Layout } from "../layout/layout.js";
+import type { LayoutDefData, LayoutsData } from '../data_types/layouts.js';
 
 const DB_FILE_NAME = "layouts";
-
-// Define the structure of the Layout DB json file
-interface LayoutDefData {
-  name: string;
-  dbFilename: string;
-}
-interface LayoutsData {
-  activeLayout: string;
-  layouts: Record<string, LayoutDefData>;
-}
 
 // Default/empty data structure for the layouts json db
 const emptyLayouts: LayoutsData = {
   activeLayout: "1",
-  layouts: {"1": {name: "empty", dbFilename: "empty"}}
+  layouts: {
+    "1": {
+      name: "empty",
+      dbFilename: "empty",
+      world: {
+        width: 15545,
+        height: 15240,
+        image: "backyard.jpg"
+      }
+    }
+  }
 }
 
 /**
@@ -43,8 +44,8 @@ export class Layouts {
     await this.initDb();
 
     const activeLayoutId = this.db.data.activeLayout;
-    const activeLayoutDbFilename = this.db.data.layouts[activeLayoutId].dbFilename;
-    this.activeLayout = new Layout(activeLayoutDbFilename);
+    const activeLayoutDefinition = this.db.data.layouts[activeLayoutId];
+    this.activeLayout = new Layout(activeLayoutDefinition);
 
     await this.activeLayout.init();
   }

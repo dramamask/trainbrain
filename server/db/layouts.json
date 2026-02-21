@@ -3,7 +3,7 @@
   "layouts": {
     "1": {
       "name": "empty",
-      "dbFilename": "empty",
+      "dbFileName": "empty",
       "world": {
         "width": 15545,
         "height": 15240,
@@ -12,7 +12,7 @@
     },
     "2": {
       "name": "test",
-      "dbFilename": "layout",
+      "dbFileName": "layout",
       "world": {
         "width": 15545,
         "height": 15240,
