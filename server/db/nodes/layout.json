@@ -3,18 +3,6 @@
     "description": "This file lists the nodes that connect the train track layout pieces. Track pieces are in separate file."
   },
   "nodes": {
-    "0": {
-      "coordinate": {
-        "x": 11695,
-        "y": 2170
-      }
-    },
-    "2": {
-      "coordinate": {
-        "x": 11695,
-        "y": 1570
-      }
-    },
     "3": {
       "coordinate": {
         "x": 11695,
@@ -55,12 +43,6 @@
       "coordinate": {
         "x": 11995,
         "y": 1950.38476
-      }
-    },
-    "11": {
-      "coordinate": {
-        "x": 12295,
-        "y": 1870
       }
     },
     "13": {
@@ -243,64 +225,52 @@
         "y": 2170
       }
     },
-    "51": {
-      "coordinate": {
-        "x": 12595,
-        "y": 1870
-      }
-    },
-    "52": {
-      "coordinate": {
-        "x": 12895,
-        "y": 1789.61524
-      }
-    },
-    "53": {
-      "coordinate": {
-        "x": 13114.61524,
-        "y": 1570
-      }
-    },
-    "54": {
-      "coordinate": {
-        "x": 13195,
-        "y": 1270
-      }
-    },
-    "55": {
-      "coordinate": {
-        "x": 13195,
-        "y": 970
-      }
-    },
-    "56": {
-      "coordinate": {
-        "x": 13114.61524,
-        "y": 670
-      }
-    },
-    "58": {
-      "coordinate": {
-        "x": 12595,
-        "y": 370
-      }
-    },
-    "59": {
-      "coordinate": {
-        "x": 12895,
-        "y": 370
-      }
-    },
-    "60": {
-      "coordinate": {
-        "x": 12895,
-        "y": 450.38476
-      }
-    },
     "61": {
       "coordinate": {
         "x": 13495,
         "y": 370
+      }
+    },
+    "64": {
+      "coordinate": {
+        "x": 12295,
+        "y": 1870
+      }
+    },
+    "65": {
+      "coordinate": {
+        "x": 11695,
+        "y": 1570
+      }
+    },
+    "66": {
+      "coordinate": {
+        "x": 11695,
+        "y": 2170
+      }
+    },
+    "67": {
+      "coordinate": {
+        "x": 12895,
+        "y": 370
+      }
+    },
+    "68": {
+      "coordinate": {
+        "x": 12895,
+        "y": 1870
+      }
+    },
+    "69": {
+      "coordinate": {
+        "x": 13495,
+        "y": 1870
+      }
+    },
+    "70": {
+      "coordinate": {
+        "x": 14095,
+        "y": 1870
       }
     }
   }

@@ -3,32 +3,6 @@
     "description": "This file lists the track pieces that make up the train track layout. Nodes are in separate file."
   },
   "pieces": {
-    "1": {
-      "pieceDefId": "a",
-      "connectors": {
-        "start": {
-          "heading": 180,
-          "node": "0"
-        },
-        "end": {
-          "heading": 0,
-          "node": "2"
-        }
-      }
-    },
-    "2": {
-      "pieceDefId": "a",
-      "connectors": {
-        "start": {
-          "heading": 180,
-          "node": "2"
-        },
-        "end": {
-          "heading": 0,
-          "node": "3"
-        }
-      }
-    },
     "3": {
       "pieceDefId": "d",
       "connectors": {
@@ -77,7 +51,7 @@
         },
         "end": {
           "heading": 0,
-          "node": "0"
+          "node": "66"
         },
         "diverge": {
           "heading": 330,
@@ -107,7 +81,7 @@
         },
         "start": {
           "heading": 270,
-          "node": "11"
+          "node": "64"
         }
       }
     },
@@ -496,99 +470,47 @@
         }
       }
     },
-    "44": {
-      "pieceDefId": "b",
+    "53": {
+      "pieceDefId": "a",
       "connectors": {
         "start": {
           "heading": 90,
-          "node": "11"
+          "node": "67"
         },
         "end": {
           "heading": 270,
-          "node": "51"
+          "node": "61"
         }
       }
     },
-    "45": {
-      "pieceDefId": "d",
+    "55": {
+      "pieceDefId": "a",
       "connectors": {
         "start": {
-          "heading": 90,
-          "node": "51"
-        },
-        "end": {
-          "heading": 300,
-          "node": "52"
-        }
-      }
-    },
-    "46": {
-      "pieceDefId": "d",
-      "connectors": {
-        "start": {
-          "heading": 120,
-          "node": "52"
-        },
-        "end": {
-          "heading": 330,
-          "node": "53"
-        }
-      }
-    },
-    "47": {
-      "pieceDefId": "d",
-      "connectors": {
-        "start": {
-          "heading": 150,
-          "node": "53"
-        },
-        "end": {
           "heading": 0,
-          "node": "54"
+          "node": "3"
+        },
+        "end": {
+          "heading": 180,
+          "node": "65"
         }
       }
     },
-    "48": {
-      "pieceDefId": "b",
+    "56": {
+      "pieceDefId": "a",
       "connectors": {
         "start": {
-          "heading": 180,
-          "node": "54"
-        },
-        "end": {
           "heading": 0,
-          "node": "55"
-        }
-      }
-    },
-    "49": {
-      "pieceDefId": "d",
-      "connectors": {
-        "start": {
+          "node": "65"
+        },
+        "end": {
           "heading": 180,
-          "node": "55"
-        },
-        "end": {
-          "heading": 30,
-          "node": "56"
+          "node": "66"
         }
       }
     },
-    "50": {
-      "pieceDefId": "d",
-      "connectors": {
-        "start": {
-          "heading": 210,
-          "node": "56"
-        },
-        "end": {
-          "heading": 60,
-          "node": "60"
-        }
-      }
-    },
-    "51": {
-      "pieceDefId": "b",
+    "57": {
+      "pieceDefId": "a",
       "connectors": {
         "start": {
           "heading": 90,
@@ -596,37 +518,46 @@
         },
         "end": {
           "heading": 270,
-          "node": "58"
+          "node": "67"
         }
       }
     },
-    "52": {
-      "pieceDefId": "h",
-      "connectors": {
-        "start": {
-          "heading": 90,
-          "node": "58"
-        },
-        "end": {
-          "heading": 270,
-          "node": "59"
-        },
-        "diverge": {
-          "heading": 240,
-          "node": "60"
-        }
-      }
-    },
-    "53": {
+    "58": {
       "pieceDefId": "a",
       "connectors": {
         "start": {
           "heading": 90,
-          "node": "59"
+          "node": "64"
         },
         "end": {
           "heading": 270,
-          "node": "61"
+          "node": "68"
+        }
+      }
+    },
+    "59": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "68"
+        },
+        "end": {
+          "heading": 270,
+          "node": "69"
+        }
+      }
+    },
+    "60": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "69"
+        },
+        "end": {
+          "heading": 270,
+          "node": "70"
         }
       }
     }

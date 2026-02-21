@@ -3,11 +3,21 @@
   "layouts": {
     "1": {
       "name": "empty",
-      "dbFilename": "empty"
+      "dbFilename": "empty",
+      "world": {
+        "width": 15545,
+        "height": 15240,
+        "image": "backyard.jpg"
+      }
     },
     "2": {
       "name": "test",
-      "dbFilename": "layout"
+      "dbFilename": "layout",
+      "world": {
+        "width": 15545,
+        "height": 15240,
+        "image": "backyard.jpg"
+      }
     }
   }
 }
