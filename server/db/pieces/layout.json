@@ -68,19 +68,6 @@
         }
       }
     },
-    "6": {
-      "pieceDefId": "a",
-      "connectors": {
-        "start": {
-          "heading": 90,
-          "node": "6"
-        },
-        "end": {
-          "heading": 270,
-          "node": "7"
-        }
-      }
-    },
     "7": {
       "pieceDefId": "h",
       "connectors": {
@@ -121,19 +108,6 @@
         "start": {
           "heading": 270,
           "node": "11"
-        }
-      }
-    },
-    "10": {
-      "pieceDefId": "a",
-      "connectors": {
-        "start": {
-          "heading": 90,
-          "node": "11"
-        },
-        "end": {
-          "heading": 270,
-          "node": "12"
         }
       }
     },
@@ -249,19 +223,6 @@
         }
       }
     },
-    "19": {
-      "pieceDefId": "a",
-      "connectors": {
-        "start": {
-          "heading": 90,
-          "node": "7"
-        },
-        "end": {
-          "heading": 270,
-          "node": "46"
-        }
-      }
-    },
     "20": {
       "pieceDefId": "d",
       "connectors": {
@@ -337,19 +298,6 @@
         "end": {
           "heading": 180,
           "node": "29"
-        }
-      }
-    },
-    "27": {
-      "pieceDefId": "a",
-      "connectors": {
-        "start": {
-          "heading": 90,
-          "node": "12"
-        },
-        "end": {
-          "heading": 270,
-          "node": "31"
         }
       }
     },
@@ -501,7 +449,7 @@
       "connectors": {
         "start": {
           "heading": 90,
-          "node": "46"
+          "node": "61"
         },
         "end": {
           "heading": 270,
@@ -549,15 +497,136 @@
       }
     },
     "44": {
-      "pieceDefId": "a",
+      "pieceDefId": "b",
       "connectors": {
         "start": {
           "heading": 90,
-          "node": "31"
+          "node": "11"
         },
         "end": {
           "heading": 270,
           "node": "51"
+        }
+      }
+    },
+    "45": {
+      "pieceDefId": "d",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "51"
+        },
+        "end": {
+          "heading": 300,
+          "node": "52"
+        }
+      }
+    },
+    "46": {
+      "pieceDefId": "d",
+      "connectors": {
+        "start": {
+          "heading": 120,
+          "node": "52"
+        },
+        "end": {
+          "heading": 330,
+          "node": "53"
+        }
+      }
+    },
+    "47": {
+      "pieceDefId": "d",
+      "connectors": {
+        "start": {
+          "heading": 150,
+          "node": "53"
+        },
+        "end": {
+          "heading": 0,
+          "node": "54"
+        }
+      }
+    },
+    "48": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 180,
+          "node": "54"
+        },
+        "end": {
+          "heading": 0,
+          "node": "55"
+        }
+      }
+    },
+    "49": {
+      "pieceDefId": "d",
+      "connectors": {
+        "start": {
+          "heading": 180,
+          "node": "55"
+        },
+        "end": {
+          "heading": 30,
+          "node": "56"
+        }
+      }
+    },
+    "50": {
+      "pieceDefId": "d",
+      "connectors": {
+        "start": {
+          "heading": 210,
+          "node": "56"
+        },
+        "end": {
+          "heading": 60,
+          "node": "60"
+        }
+      }
+    },
+    "51": {
+      "pieceDefId": "b",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "6"
+        },
+        "end": {
+          "heading": 270,
+          "node": "58"
+        }
+      }
+    },
+    "52": {
+      "pieceDefId": "h",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "58"
+        },
+        "end": {
+          "heading": 270,
+          "node": "59"
+        },
+        "diverge": {
+          "heading": 240,
+          "node": "60"
+        }
+      }
+    },
+    "53": {
+      "pieceDefId": "a",
+      "connectors": {
+        "start": {
+          "heading": 90,
+          "node": "59"
+        },
+        "end": {
+          "heading": 270,
+          "node": "61"
         }
       }
     }

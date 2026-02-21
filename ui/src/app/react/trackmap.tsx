@@ -13,8 +13,8 @@ import { store as trackLayoutStore } from "@/app/services/stores/tracklayout";
 import { store as zoomStore } from "@/app/services/stores/zoomfactor";
 import { getBackgroundImageStyle } from "../services/zoom/scrollbar/backgroundimage";
 import Scrollbar from "./scrollbar";
-import EditModeLayout from "./tracklayout/editmode/layout";
-import RegularLayout from "./tracklayout/regular/layout";
+import EditModeLayout from "./tracklayout/editmode/tracklayout";
+import RegularLayout from "./tracklayout/regular/tracklayout";
 
 import styles from "./trackmap.module.css";
 
