@@ -7,6 +7,7 @@ import { NodeFactory } from "./nodefactory.js";
 import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { PieceDef } from "./piecedef.js";
 import { calculateStraightCoordinate } from "../services/piece.js";
+import type { PieceFactory } from './piecefactory.js';
 
 // Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
@@ -22,9 +23,9 @@ const CONNECTOR_NAMES: ConnectorName[] = ["start", "end"];
 export class Straight extends LayoutPiece {
   protected readonly length: number;
 
-  public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
+  public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory, pieceFactory: PieceFactory) {
     const span = trace.getActiveSpan();
-    super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory);
+    super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory, pieceFactory);
 
     this.length = (pieceDef.getAttributes()  as PieceDefAttributes).length;
 

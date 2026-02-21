@@ -5,7 +5,6 @@
 import path from 'node:path';
 import { Low } from 'lowdb';
 import { JSONFilePreset } from 'lowdb/node';
-import { LayoutPieceData, Pieces } from '../data_types/layoutPieces.js';
 import { PieceDefinitions } from '../data_types/pieceDefintions.js';
 import { FatalError } from '../errors/FatalError.js';
 import { PieceDefDataList } from 'trainbrain-shared';
@@ -15,18 +14,11 @@ const emptyPieceDefinitions: PieceDefinitions = {
   definitions: {},
 }
 
-// Default/empty data structure for the track layout json db
-const emptyLayoutPieces: Pieces = {
-  pieces: {}
-};
-
 // Initialize the databases once
 let pieceDefintionsDb: Low<PieceDefinitions>;
-let layoutPiecesDb: Low<Pieces>;
 
 try {
   pieceDefintionsDb = await JSONFilePreset(getDbPath("definitions/pieces.json"), emptyPieceDefinitions);
-  layoutPiecesDb = await JSONFilePreset(getDbPath("pieces/layout.json"), emptyLayoutPieces);
 } catch (error) {
   const message = "Error initializing DBs";
   console.error(message, error);
@@ -51,19 +43,6 @@ export async function persistPieceDefs(friendToken: string): Promise<void> {
 }
 
 /**
- * Write the piece defintions to the DB file
- *
- * @param friendToken Token to ensure that only one specific class method can persist the layout pieces
- */
-export async function persistLayoutPieces(friendToken: string): Promise<void> {
-  if (friendToken == "PieceFactory::save()") {
-    await layoutPiecesDb.write();
-    return
-  }
-  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (2)")
-}
-
-/**
  * Return the piece definitions from the DB
  *
  * @param friendToken Token to ensure that only one specific class method can access the piece definitions DB content directly
@@ -74,46 +53,4 @@ export function getPieceDefsFromDB(friendToken: string): PieceDefDataList {
     return pieceDefintionsDb.data.definitions;
   }
   throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (4)")
-}
-
-/**
- * Return the layout pieces data from the DB
- *
- * @param friendToken Token to ensure that only one specific class method can access the layout pieces DB content directly
- * @returns
- */
-export function getLayoutPiecesFromDB(friendToken: string): Record<string, LayoutPieceData> {
-  if (friendToken == "PieceFactory::init()") {
-    return layoutPiecesDb.data.pieces;
-  }
-  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (5)")
-}
-
-/**
- * Save the data for a single layout piece to the DB (not persisted, just saved in memory)
- *
- * @param id ID of the layout piece
- * @param data Data for the layout piece
- * @param friendToken Token to ensure that only one specific class method can save layout piece data to the DB
- */
-export function saveLayoutPieceData(id: string, data: LayoutPieceData, friendToken: string): void {
-  if (friendToken == "LayoutPiece::save()") {
-    layoutPiecesDb.data.pieces[id] = data;
-    return
-  }
-  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (7)")
-}
-
-/**
- * Remove the given layout piece from the DB (not persisted, just saved in memory)
- *
- * @param id ID of the layout piece to delete
- * @param friendToken Token to ensure that only one specific class method can save layout piece data to the DB
- */
-export function deleteLayoutPiece(id: string, friendToken: string): void {
-  if (friendToken == "PieceFactory::delete()") {
-    delete layoutPiecesDb.data.pieces[id];
-    return
-  }
-  throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (9)")
 }

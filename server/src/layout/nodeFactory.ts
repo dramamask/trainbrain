@@ -2,11 +2,11 @@ import { trace } from '@opentelemetry/api';
 import { Low, Memory } from 'lowdb';
 import { JSONFilePreset } from 'lowdb/node';
 import type { ConnectorName, Coordinate, UiLayoutNode } from "trainbrain-shared";
+import { getDbPath } from '../services/db.js';
 import { LayoutPiece } from "./layoutpiece.js";
 import { LayoutNode } from "./layoutnode.js";
 import { SpatialGrid } from "./spatialgrid.js";
 import { FatalError } from "../errors/FatalError.js";
-import { getDbPath } from '../services/db.js';
 import { LayoutNodeData, Nodes } from '../data_types/layoutNodes.js';
 
 /**

@@ -4,9 +4,9 @@ import type { LayoutPieceConnectorsData, LayoutPieceData } from "../data_types/l
 import type { NodeFactory } from "./nodefactory.js";
 import type { PieceDef } from "./piecedef.js";
 import { LayoutPieceConnectors } from "./layoutpiececonnectors.js";
-import { deleteLayoutPiece, saveLayoutPieceData } from "../services/db.js";
 import { LayoutNode } from "./layoutnode.js";
 import { FatalError } from "../errors/FatalError.js";
+import type { PieceFactory } from './piecefactory.js';
 
 /**
  * A piece in the layout
@@ -15,12 +15,14 @@ export abstract class LayoutPiece {
   protected readonly id: string;
   protected readonly pieceDef: PieceDef;
   protected readonly connectors: LayoutPieceConnectors;
+  protected readonly pieceFactory: PieceFactory;
   protected loopProtector: string;
 
-  protected constructor(id: string, connectorsData: LayoutPieceConnectorsData, connectorNames: ConnectorName[], pieceDef: PieceDef, nodeFactory: NodeFactory) {
+  protected constructor(id: string, connectorsData: LayoutPieceConnectorsData, connectorNames: ConnectorName[], pieceDef: PieceDef, nodeFactory: NodeFactory, pieceFactory: PieceFactory) {
     this.id = id;
     this.pieceDef = pieceDef;
     this.loopProtector = "";
+    this.pieceFactory = pieceFactory;
 
     connectorsData = LayoutPiece.addMissingConnectorsData(connectorNames, connectorsData);
     this.connectors = new LayoutPieceConnectors(connectorsData, nodeFactory);
@@ -161,7 +163,7 @@ export abstract class LayoutPiece {
    * Note that this function does not write anything to the actual DB file. Only the Layout file writes to the DB file.
    */
   public save(): void {
-    saveLayoutPieceData(this.id, this.getLayoutData(), "LayoutPiece::save()");
+    this.pieceFactory.savePiece(this.id, this.getLayoutData(), "LayoutPiece::save()");
   }
 
   /**

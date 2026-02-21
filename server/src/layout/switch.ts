@@ -8,6 +8,7 @@ import { LayoutPieceConnectorsData } from "../data_types/layoutPieces.js";
 import { PieceDef } from "./piecedef.js";
 import { calculateStraightCoordinate, calculateCurveCoordinate } from '../services/piece.js';
 import { LayoutPieceConnector } from './layoutpiececonnector.js';
+import type { PieceFactory } from './piecefactory.js';
 
 // Attributes stored in the piece defintion for this specific layout piece type
 interface PieceDefAttributes {
@@ -38,9 +39,9 @@ export class Switch extends LayoutPiece {
   protected readonly length: number;
   protected readonly variant: SwitchVariant;
 
-  public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory) {
+  public constructor(id: string, connectorsData: LayoutPieceConnectorsData, pieceDef: PieceDef, nodeFactory: NodeFactory, pieceFactory: PieceFactory) {
     const span = trace.getActiveSpan();
-    super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory);
+    super(id, connectorsData, CONNECTOR_NAMES, pieceDef, nodeFactory, pieceFactory);
 
     this.angle = (pieceDef.getAttributes()  as PieceDefAttributes).angle;
     this.radius = (pieceDef.getAttributes()  as PieceDefAttributes).radius;

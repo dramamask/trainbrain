@@ -1,6 +1,8 @@
 import { trace } from '@opentelemetry/api';
+import { Low, Memory } from 'lowdb';
+import { JSONFilePreset } from 'lowdb/node';
 import type { UiLayoutPiece } from "trainbrain-shared";
-import { deleteLayoutPiece, getLayoutPiecesFromDB, persistLayoutPieces } from "../services/db.js";
+import { getDbPath } from '../services/db.js';
 import { NodeFactory } from './nodefactory.js';
 import { LayoutPiece } from "./layoutpiece.js";
 import { FatalError } from "../errors/FatalError.js";
@@ -10,17 +12,27 @@ import { Straight } from "./straight.js";
 import { Switch } from './switch.js';
 import { LayoutPieceConnectorsData } from '../data_types/layoutPieces.js';
 import { PieceDef } from './piecedef.js';
+import { LayoutPieceData, Pieces } from '../data_types/layoutPieces.js';
+
+/**
+ * DB init
+ */
+const emptyLayoutPieces: Pieces = { pieces: {} };
 
 /**
  * This class knows all layout pieces and is able to perform operations on them
  */
 export class PieceFactory {
+  protected readonly dbFileName: string;
   protected readonly pieces: Map<string, LayoutPiece>;
+  protected db: Low<Pieces>;
 
   /**
    * Class constructor
    */
-  constructor() {
+  constructor(dbFileName: string) {
+    this.dbFileName = dbFileName;
+    this.db = new Low(new Memory(), emptyLayoutPieces);
     this.pieces = new Map<string, LayoutPiece>();
   }
 
@@ -28,9 +40,10 @@ export class PieceFactory {
    * Inializations, like reading nodes from the DB
    */
   public init(pieceDefs: PieceDefs, nodeFactory: NodeFactory): void {
+    this.initDb();
     // Create each layout piece
     // The layout piece will create connections between itself and any nodes it is connected to
-    Object.entries(getLayoutPiecesFromDB("PieceFactory::init()")).forEach(([key, pieceData]) => {
+    Object.entries(this.db.data.pieces).forEach(([key, pieceData]) => {
       const pieceDef = pieceDefs.getPieceDef(pieceData.pieceDefId)
       this.create(key, pieceData.connectors, pieceDef, nodeFactory);
     });
@@ -87,13 +100,13 @@ export class PieceFactory {
 
     switch(pieceDef.getCategory()) {
       case "straight":
-        piece = new Straight(id, connectorsData, pieceDef, nodeFactory);
+        piece = new Straight(id, connectorsData, pieceDef, nodeFactory, this);
         break;
       case "curve":
-        piece = new Curve(id, connectorsData, pieceDef, nodeFactory);
+        piece = new Curve(id, connectorsData, pieceDef, nodeFactory, this);
         break;
       case "switch":
-        piece = new Switch(id, connectorsData, pieceDef, nodeFactory);
+        piece = new Switch(id, connectorsData, pieceDef, nodeFactory, this);
         break;
       default:
         throw new FatalError(`Undefined piece category in track-layout db: ${pieceDef.getCategory()}`)
@@ -136,15 +149,44 @@ export class PieceFactory {
     }
 
     // Delete the node from the DB (in-memory only)
-    deleteLayoutPiece(piece.getId(), "PieceFactory::delete()");
+    delete this.db.data.pieces[piece.getId()];
   }
+
+  /**
+   * Save the data for a single layout piece to the DB (not persisted, just saved in memory)
+   *
+   * @param id ID of the layout piece
+   * @param data Data for the layout piece
+   * @param friendToken Token to ensure that only one specific class method can save layout piece data to the DB
+   */
+  public savePiece(id: string, data: LayoutPieceData, friendToken: string): void {
+    if (friendToken == "LayoutPiece::save()") {
+      this.db.data.pieces[id] = data;
+      return
+    }
+    throw new FatalError("DB access is restricted on purpose. Please respect the rules, they are in place for a reason. (7)")
+  }
+
 
   /**
    * Save all layout pieces to the layout DB (and commit it to file)
    */
   public async save(): Promise<void> {
     this.pieces.forEach(piece => piece.save());
-    await persistLayoutPieces("PieceFactory::save()");
+    await this.db.write();
+  }
+
+  /**
+   * Initialize the nodes DB
+   */
+  protected async initDb(): Promise<void> {
+    try {
+      this.db = await JSONFilePreset(getDbPath(`nodes/${this.dbFileName}.json`), emptyLayoutPieces);
+    } catch (error) {
+      const message = "Error initializing Pieces DB";
+      console.error(message, error);
+      throw new FatalError(message);
+    }
   }
 
   /**
