@@ -14,7 +14,7 @@
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "change-case": "^5.4.4",
-    "next": "16.0.10",
+    "next": "^16.1.6",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "trainbrain-shared": "file:../shared"
@@ -24,8 +24,9 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.0.10",
+    "baseline-browser-mapping": "^2.10.0",
+    "eslint": "^10.0.1",
+    "eslint-config-next": "^0.2.4",
     "typescript": "^5"
   }
 }
