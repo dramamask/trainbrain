@@ -3,11 +3,11 @@
   "layouts": {
     "1": {
       "name": "empty",
-      "filePrefix": "empty"
+      "dbFilename": "empty"
     },
     "2": {
       "name": "test",
-      "filePrefix": "layout"
+      "dbFilename": "layout"
     }
   }
 }
