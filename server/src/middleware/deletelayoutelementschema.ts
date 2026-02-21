@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import { layout } from '../services/init.js';
+import { layouts } from '../services/init.js';
 
 // Validation schema for routes that take a coordiante as a JSON body parameter
 export const deleteLayoutElementSchema = [
@@ -17,7 +17,7 @@ export const deleteLayoutElementSchema = [
     })
     .isString().withMessage("Parameter 'pieceId' must be a string")
     .custom((id: string) => {
-      const piece = layout.getLayoutPiece(id);
+      const piece = layouts.getActiveLayout().getLayoutPiece(id);
       if (!piece) {
         throw new Error("Parameter 'pieceId' does not match a Piece in the layout")
       }
@@ -43,7 +43,7 @@ export const deleteLayoutElementSchema = [
       return true;
     })
     .custom((id: string) => {
-      const node = layout.getNode(id);
+      const node = layouts.getActiveLayout().getNode(id);
       if (!node) {
         throw new Error("Parameter 'nodeId' does not match a Node in the layout")
       }

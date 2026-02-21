@@ -1,5 +1,5 @@
 import { param } from 'express-validator';
-import { layout } from '../services/init.js';
+import { layouts } from '../services/init.js';
 
 export const nodeIndexSchema = [
   param('index')
@@ -15,7 +15,7 @@ export const nodeIndexSchema = [
     return true;
   })
   .custom((id: string) => {
-    const highestIdAllowed = layout.getHighestNodeId();
+    const highestIdAllowed = layouts.getActiveLayout().getHighestNodeId();
     if (Number(id) > highestIdAllowed) {
       throw new Error("Index does not match a Node ID in the layout")
     }

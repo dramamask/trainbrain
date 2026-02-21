@@ -4,7 +4,7 @@ export let layouts: Layouts;
 
 try {
   layouts = new Layouts();
-  layouts.init();
+  await layouts.init();
 } catch(error) {
   console.error("Error message:\n--------------\n" + getErrorMessage(error) + "\n\n");
   console.error("Error details:\n--------------\n", error)

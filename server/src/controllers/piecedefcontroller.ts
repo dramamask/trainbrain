@@ -1,7 +1,7 @@
 import { trace } from '@opentelemetry/api';
 import { Request, Response, NextFunction } from 'express';
 import { constants } from "http2";
-import { layout } from "../services/init.js";
+import { layouts } from "../services/init.js";
 
 // Endpoint to get the track piece definitions
 export const getPieceDefinitions = (_req: Request, res: Response, _next: NextFunction): void => {
@@ -9,7 +9,7 @@ export const getPieceDefinitions = (_req: Request, res: Response, _next: NextFun
     const span = trace.getActiveSpan();
     span?.setAttribute('_.request.type', 'getPieceDefinitions');
 
-    const data = layout.getPieceDefs().getData();
+    const data = layouts.getActiveLayout().getPieceDefs().getData();
 
     span?.setAttribute('_.response.numPieceDefs', Object.keys(data).length);
 

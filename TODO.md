@@ -1,7 +1,8 @@
 # TODO
 
 - Add ability to save and load layouts.
-- Should the node factory also contain all access to the layout DB? Instead of this being in a different file?
+- Add world size to the layouts DB
+- Add background image file name to the layouts DB
 - Add protection so you can't move the layout outside of the world size.
 - Work on connecting nodes that are not perfectly on top of each other
 - Either delete by selecting a track piece or delete in between two nodes. if in between two nodes then we need to update the "daisy chain" method to accept an end-at-this-node type param. Rename the function to dais-chain something and make it flexible to be able to do different things. maybe take an object as input that contains params and a command name or something.

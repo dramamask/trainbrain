@@ -9,9 +9,7 @@ import { SpatialGrid } from "./spatialgrid.js";
 import { FatalError } from "../errors/FatalError.js";
 import { LayoutNodeData, Nodes } from '../data_types/layoutNodes.js';
 
-/**
- * DB init
- */
+// Definition for DB
 const emptyLayoutNodes: Nodes = { nodes: {} };
 
 /**
@@ -36,8 +34,8 @@ export class NodeFactory {
   /**
    * Inializations, like reading nodes from the DB
    */
-  public init(): void {
-    this.initDb();
+  public async init(): Promise<void> {
+    await this.initDb();
     // Create each layout node
     Object.entries(this.db.data.nodes).forEach(([key, nodeData]) => {
       this.nodes.set(key, new LayoutNode(key, nodeData.coordinate, this));

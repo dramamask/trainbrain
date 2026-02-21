@@ -30,10 +30,10 @@ export class Layout {
     this.pieceFactory = new PieceFactory(dbFileName);
   }
 
-  public init() {
-    this.pieceDefs.init();
-    this.nodeFactory.init();
-    this.pieceFactory.init(this.pieceDefs, this.nodeFactory);
+  public async init() {
+    await this.pieceDefs.init();
+    await this.nodeFactory.init();
+    await this.pieceFactory.init(this.pieceDefs, this.nodeFactory);
   }
 
   // Return the layout in UiLayout format

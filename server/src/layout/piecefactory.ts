@@ -14,9 +14,7 @@ import { LayoutPieceConnectorsData } from '../data_types/layoutPieces.js';
 import { PieceDef } from './piecedef.js';
 import { LayoutPieceData, Pieces } from '../data_types/layoutPieces.js';
 
-/**
- * DB init
- */
+// Definition for DB
 const emptyLayoutPieces: Pieces = { pieces: {} };
 
 /**
@@ -39,8 +37,8 @@ export class PieceFactory {
   /**
    * Inializations, like reading nodes from the DB
    */
-  public init(pieceDefs: PieceDefs, nodeFactory: NodeFactory): void {
-    this.initDb();
+  public async init(pieceDefs: PieceDefs, nodeFactory: NodeFactory): Promise<void> {
+    await this.initDb();
     // Create each layout piece
     // The layout piece will create connections between itself and any nodes it is connected to
     Object.entries(this.db.data.pieces).forEach(([key, pieceData]) => {
@@ -181,7 +179,7 @@ export class PieceFactory {
    */
   protected async initDb(): Promise<void> {
     try {
-      this.db = await JSONFilePreset(getDbPath(`nodes/${this.dbFileName}.json`), emptyLayoutPieces);
+      this.db = await JSONFilePreset(getDbPath(`pieces/${this.dbFileName}.json`), emptyLayoutPieces);
     } catch (error) {
       const message = "Error initializing Pieces DB";
       console.error(message, error);
