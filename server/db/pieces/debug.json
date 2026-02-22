@@ -3,29 +3,29 @@
     "description": "This file lists the track pieces that make up the train track layout. Nodes are in separate file."
   },
   "pieces": {
-    "62": {
+    "0": {
       "pieceDefId": "a",
       "connectors": {
         "start": {
           "heading": 0,
-          "node": "71"
+          "node": "0"
         },
         "end": {
           "heading": 180,
-          "node": "75"
+          "node": "3"
         }
       }
     },
-    "63": {
+    "1": {
       "pieceDefId": "a",
       "connectors": {
         "start": {
           "heading": 0,
-          "node": "73"
+          "node": "1"
         },
         "end": {
           "heading": 180,
-          "node": "74"
+          "node": "2"
         }
       }
     }

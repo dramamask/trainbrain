@@ -1,6 +1,8 @@
 # TODO
 
-- Fix bug when disconnecting (node seems to stay connected to the piece?)
+- Fix bug when disconnecting (node seems to stay connected to the piece?) -> The new node is somehow locked to the same memory location as the previous node. --> Bug happens when we move the upper piece. Not when we move any other pieces.
+
+- Zoom with mouse wheel doesn't work right when switching layouts. the target area doesn't work right. Fix it.
 - M is already used for reset measurement. shouldn't use it for merge nodes as well!
 - Either delete by selecting a track piece or delete in between two nodes. if in between two nodes then we need to update the "daisy chain" method to accept an end-at-this-node type param. Rename the function to dais-chain something and make it flexible to be able to do different things. maybe take an object as input that contains params and a command name or something.
 - Add protection so you can't move the layout outside of the world size.
