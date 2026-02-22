@@ -35,7 +35,7 @@ export class Layouts {
   constructor() {
     this.dbFileName = DB_FILE_NAME;
     this.db = new Low(new Memory(), emptyLayouts);
-    this.activeLayout = undefined;
+    this.activeLayout = undefined; // The active layout object
   }
 
   /**
