@@ -1,6 +1,5 @@
 # TODO
 
-- Work on connecting nodes that are not perfectly on top of each other (merge nodes)
 - Add ability to save and load layouts.
 - Add protection so you can't move the layout outside of the world size.
 - Either delete by selecting a track piece or delete in between two nodes. if in between two nodes then we need to update the "daisy chain" method to accept an end-at-this-node type param. Rename the function to dais-chain something and make it flexible to be able to do different things. maybe take an object as input that contains params and a command name or something.
