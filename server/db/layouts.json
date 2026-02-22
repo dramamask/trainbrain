@@ -1,7 +1,16 @@
 {
-  "activeLayout": "2",
+  "activeLayout": "3",
   "layouts": {
     "1": {
+      "name": "debug",
+      "dbFileName": "debug",
+      "world": {
+        "width": 15545,
+        "height": 15240,
+        "image": "backyard.jpg"
+      }
+    },
+    "2": {
       "name": "empty",
       "dbFileName": "empty",
       "world": {
@@ -10,7 +19,7 @@
         "image": "backyard.jpg"
       }
     },
-    "2": {
+    "3": {
       "name": "full layout",
       "dbFileName": "layout",
       "world": {
