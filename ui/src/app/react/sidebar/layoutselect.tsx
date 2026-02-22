@@ -25,7 +25,7 @@ export default function LayoutSelect() {
     getLayouts()
       .then((layoutNames: LayoutNamesData) => {
         setLayoutNames(layoutNames);
-        setActiveLayout(layoutNames.activeLayout)
+        setActiveLayout(layoutNames.layouts[layoutNames.activeLayout])
         setLoading(false);
       })
       .catch((error: Error) => {
@@ -49,7 +49,7 @@ export default function LayoutSelect() {
 
   return (
     <FormControl variant="standard">
-      <div className={sideBarStyles.label}>Layouts</div>
+      <div className={sideBarStyles.label}>Layout</div>
       <Select
         value={activeLayout}
         onChange={handleChange}
@@ -65,7 +65,7 @@ export default function LayoutSelect() {
 function renderItems(layoutNames: LayoutNamesData): JSX.Element[] {
   const listItems: JSX.Element[] = [];
 
-  Object.entries(layoutNames).forEach(([id, name]) => {
+  Object.entries(layoutNames.layouts).forEach(([id, name]) => {
     listItems.push(
       <MenuItem key={id} value={name} sx={{ fontSize: fontSize}}>
         {name}
