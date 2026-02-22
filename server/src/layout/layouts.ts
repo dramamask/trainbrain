@@ -51,10 +51,14 @@ export class Layouts {
   }
 
   /**
-   * Return an array of the layout names
+   * Return a kay-value list of layout IDs and names
    */
-  public getLayoutNames(): string[] {
-    return Object.values(this.db.data.layouts).map(layoutDef => layoutDef.name);
+  public getLayoutNames(): Record<string,string> {
+    const names: Record<string,string> = {};
+    Object.entries(this.db.data.layouts).forEach(([id, layoutDef]) => {
+      names[id] = layoutDef.name;
+    });
+    return names;
   }
 
   /**
