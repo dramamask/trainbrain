@@ -1,7 +1,6 @@
 import { body } from 'express-validator';
 import { layouts } from '../services/init.js';
 
-// Validation schema for routes that take a coordiante as a JSON body parameter
 export const deleteLayoutElementSchema = [
   body('pieceId')
     .if(id => id != "") // Stop validation here if the string is an empty string

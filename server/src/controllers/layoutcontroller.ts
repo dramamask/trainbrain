@@ -3,7 +3,15 @@ import { trace } from '@opentelemetry/api';
 import { matchedData } from 'express-validator';
 import { constants } from "http2";
 import { layouts } from "../services/init.js";
-import { AddLayoutPieceData, AddNodeData, Coordinate, MovePieceData, UiLayout, UpdateNodeData } from 'trainbrain-shared';
+import {
+  AddLayoutPieceData,
+  AddNodeData,
+  Coordinate,
+  MergeNodesData,
+  MovePieceData,
+  UiLayout,
+  UpdateNodeData
+} from 'trainbrain-shared';
 
 // API endpoint to get the track layout
 export const getLayout = (req: Request, res: Response, next: NextFunction): void => {
@@ -113,6 +121,36 @@ export const updateNode = async (req: Request, res: Response, next: NextFunction
     };
     const headingIncrement = data.headingIncrement;
     await layouts.getActiveLayout().updateNode(data.index, newCoordinate, headingIncrement);
+
+    const uiLayout = layouts.getActiveLayout().getUiLayout();
+    const status = getHttpStatusCode(uiLayout);
+
+    span?.setAttribute('_.response.numNodes', uiLayout.nodes.length);
+    span?.setAttribute('_.response.numPieces', uiLayout.pieces.length);
+
+    res.header("Content-Type", "application/json");
+    res.status(status).send(JSON.stringify(uiLayout));
+    span?.end();
+  } catch (error) {
+    const span = trace.getActiveSpan();
+    span?.recordException(error as Error);
+    res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({error: (error as Error).message});
+    span?.end();
+  }
+}
+
+// API endpoint to merge two nodes together
+export const mergeNodes = async (req: Request, res: Response, next: NextFunction) => {
+  // matchedData only includes fields defined in the validator middleware for this route
+  const data = matchedData<MergeNodesData>(req);
+
+  try {
+    const span = trace.getActiveSpan();
+    span?.setAttribute('_.request.type', 'mergeNodes');
+    span?.setAttribute('_.request.nodeThatWillMoveId', data.nodeThatWillMoveId);
+    span?.setAttribute('_.request.nodeThatWillNotMoveId', data.nodeThatWillNotMoveId);
+
+    await layouts.getActiveLayout().mergeNodes(data.nodeThatWillMoveId, data.nodeThatWillNotMoveId);
 
     const uiLayout = layouts.getActiveLayout().getUiLayout();
     const status = getHttpStatusCode(uiLayout);

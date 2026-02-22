@@ -154,3 +154,9 @@ export interface DeleteLayoutElementData {
  pieceId: string,
  nodeId: string,
 }
+
+// Data structure used to merge two nodes together
+export interface MergeNodesData {
+  nodeThatWillMoveId: string,
+  nodeThatWillNotMoveId: string,
+}

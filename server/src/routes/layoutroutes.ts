@@ -9,6 +9,7 @@ import { deleteLayoutElementSchema } from "../middleware/deletelayoutelementsche
 import { moveLayoutPieceSchema } from "../middleware/movelayoutpieceschema.js";
 import { flipLayoutPieceSchema } from "../middleware/fliplayoutpieceschema.js";
 import { pieceIndexSchema } from "../middleware/pieceindexschema.js";
+import { mergeNodesSchema } from "../middleware/mergenodesschema.js";
 
 const router: Router = Router();
 
@@ -18,6 +19,7 @@ router.post('/node', addNodeSchema, validate, layoutController.addNode);
 router.put('/node/:index', nodeIndexSchema, updateNodeSchema, validate, layoutController.updateNode);
 router.put('/node/connect/:index', nodeIndexSchema, validate, layoutController.connectPiecesAtNode);
 router.put('/node/disconnect/:index', nodeIndexSchema, validate, layoutController.disconnectPiecesAtNode);
+router.put('/nodes/disconnect', mergeNodesSchema, validate, layoutController.mergeNodes);
 router.post('/piece', addLayoutPieceSchema, validate, layoutController.addLayoutPiece);
 router.put('/piece/:index', pieceIndexSchema, moveLayoutPieceSchema, validate, layoutController.movePiece);
 router.put('/piece/flip/:index', pieceIndexSchema, flipLayoutPieceSchema,validate, layoutController.flipPiece);

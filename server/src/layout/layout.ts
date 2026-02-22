@@ -308,6 +308,68 @@ export class Layout {
   }
 
   /**
+   * Merge two nodes together.
+   * The node with ID nodeThatWillMoveId will dissapear. Everything connected to that node will be
+   * connected to, and moved towards, the node with ID nodeThatWillNotMoveId.
+   *
+   *           SITUATION BEFORE:        SITUATION AFTER:
+   *
+   *                          O
+   *   (piece that will move) |
+   *                          |                    O
+   *    (node that will move) O                    | (piece that moved)
+   *                                               |
+   *  (node that will not move) O                  O (node that will not move)
+   *                            |                  |
+   * (piece that will not move) |                  | (piece that did not move)
+   *                            O                  O
+   *
+   * So, nodeThatWillMoveId will not actually move, but everything connected to it will move.
+   */
+  public async mergeNodes(nodeThatWillMoveId: string, nodeThatWillNotMoveId: string): Promise<void> {
+    const nodeThatWillMove = this.nodeFactory.get(nodeThatWillMoveId) as LayoutNode;
+    const nodeThatWillNotMove = this.nodeFactory.get(nodeThatWillNotMoveId) as LayoutNode;
+
+    // The nodethatWillMove has no pieces connected to it. Just delete it.
+    if (nodeThatWillMove.getNumberOfConnections() == 0) {
+      this.nodeFactory.delete(nodeThatWillMove);
+      this.save();
+      return;
+    }
+
+    // Make sure each node has no more than one piece connected to it
+    if ((nodeThatWillMove.getNumberOfConnections() as number) > 1 ||
+        (nodeThatWillNotMove.getNumberOfConnections() as number) > 1)
+    {
+      throw new Error("We cannot connect these nodes together. One or both of them are connected to more than one piece.");
+    }
+
+    // Get the piece and connectorName that nodeThatWillNotMove is connected to.
+    // We'll use this information to calculate headings and coordinates after we connect the pieces together.
+    const pieceThatDoesntMove = nodeThatWillNotMove.getConnections()[0].piece as LayoutPiece;
+    const connectorThatDoesntMove = nodeThatWillNotMove.getConnections()[0].connectorName as ConnectorName;
+
+    // Remove all connections to and from nodeThatWillMove and replace them with connections to nodeThatWillNotMove
+    const connectorNameToReconnect = nodeThatWillMove.getConnections()[0].connectorName as ConnectorName;
+    const pieceToReconnect = nodeThatWillMove.getConnections()[0].piece as LayoutPiece;
+
+    nodeThatWillMove.disconnect(pieceToReconnect);
+    pieceToReconnect.replaceNodeConnection(nodeThatWillNotMove, connectorNameToReconnect);
+    nodeThatWillNotMove.connect(pieceToReconnect, connectorNameToReconnect);
+
+    // Delete nodeThatWillMove since it is now orphaned
+    this.nodeFactory.delete(nodeThatWillMove);
+
+    // Calculate new coordinates and headings in the direction towards the now-deleted nodeThatWillMove
+    const loopProtector = crypto.randomUUID();
+    const heading = pieceThatDoesntMove.getHeading(connectorThatDoesntMove) + 180;
+    nodeThatWillNotMove.updateCoordinateAndContinue(pieceThatDoesntMove, nodeThatWillNotMove.getCoordinate(), heading, loopProtector);
+
+    // Save the newly changed layout to file
+    this.save();
+  }
+
+  /**
    * Flip a layout piece. Only works for a piece that is connected to one other piece.
    * Each flip will connect the existing piece to the next (clockwise) connector of the
    * piece that is being flipped. The "base node" will stay in place, the other nodes
