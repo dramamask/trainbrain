@@ -18,6 +18,7 @@ import {
   deleteLayoutElement,
   disconnectPiecesAtNode,
   flipPiece,
+  mergeNodes,
   movePiece,
   updateNode
 } from "@/app/services/api/tracklayout";
@@ -368,7 +369,22 @@ function handleMergingNodes() {
     return;
   }
 
-  // TODO: call the server API with the two node IDs
+  // Prepare the data for the API call
+  const data = {
+    nodeThatWillMoveId: mergeNodesStore.getNodeThatWillMove() as string,
+    nodeThatWillNotMoveId: selectionStore.getSelectedNode(),
+  }
+
+  // Call the server API to merge the two nodes
+  mergeNodes(data)
+    .then((layoutData: UiLayout) => {
+      trackLayoutStore.setTrackLayout(layoutData);
+    })
+    .catch((error: Error) => {
+      errorStore.setError(error.message);
+      console.error(error);
+    });
+
 
   mergeNodesStore.clear();
   selectionStore.unsubscribe(handleMergingNodes);

@@ -1,5 +1,13 @@
-import { AddLayoutPieceData, AddNodeData, DeleteLayoutElementData, MovePieceData, UiLayout, UpdateNodeData } from "trainbrain-shared";
 import { apiGet, apiCall } from "./api";
+import {
+  AddLayoutPieceData,
+  AddNodeData,
+  DeleteLayoutElementData,
+  MergeNodesData,
+  MovePieceData,
+  UiLayout,
+  UpdateNodeData
+} from "trainbrain-shared";
 
 // Get the track layuot structure
 export async function getTrackLayout(): Promise<UiLayout> {
@@ -17,6 +25,12 @@ export async function updateNode(data: UpdateNodeData): Promise<UiLayout> {
 // Add a node to the layout
 export async function addNode(data: AddNodeData): Promise<UiLayout> {
   const retVal = await apiCall<UiLayout>("POST", "/layout/node", data);
+  return retVal;
+}
+
+// Merge two layout nodes, moving one of them towards the other
+export async function mergeNodes(data: MergeNodesData): Promise<UiLayout> {
+  const retVal = await apiCall<UiLayout>("PUT", "/layout/nodes/merge", data);
   return retVal;
 }
 
