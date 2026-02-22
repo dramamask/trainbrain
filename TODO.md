@@ -2,6 +2,7 @@
 
 - Add ability to switch layouts.
 - Fix bug when disconnecting (node seems to stay connected to the piece?)
+- M is already used for reset measurement. shouldn't use it for merge nodes as well!
 - Add protection so you can't move the layout outside of the world size.
 - Either delete by selecting a track piece or delete in between two nodes. if in between two nodes then we need to update the "daisy chain" method to accept an end-at-this-node type param. Rename the function to dais-chain something and make it flexible to be able to do different things. maybe take an object as input that contains params and a command name or something.
 - Scroll the layout SVG when you click and drag (CTRL or ALT click? How does lucid chart do it?).

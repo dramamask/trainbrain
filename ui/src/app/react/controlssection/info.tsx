@@ -9,6 +9,11 @@ import { store as selectedStore} from "@/app/services/stores/selection";
 import csStyles from "./controlssection.module.css";
 import styles from "./info.module.css";
 
+const INCH = 25.4; // millimeters
+
+/**
+ * React component for the Info panel
+ */
 export default function Info() {
   const mousePosState = useSyncExternalStore(mousePosStore.subscribe, mousePosStore.getSnapshot, mousePosStore.getServerSnapshot);
   const {mouseInViewBox, x, y} = getMousePos(mousePosState);
@@ -43,7 +48,7 @@ export default function Info() {
                 <div className={csStyles.text}>
                   <Stack>
                     <div>{ Math.round(measureState.distance) } mm</div>
-                    <div>{ Math.round(measureState.distance / 25.4) } inches</div>
+                    <div>{ getInches(measureState.distance) }</div>
                     <div>{ getFeetAndInches(measureState.distance) }</div>
                   </Stack>
                 </div>
@@ -66,15 +71,36 @@ export default function Info() {
     )
 }
 
-function getFeetAndInches(mm: number): string {
-  const inch = 25.4;
-  if (mm < 12 * inch) {
-    return `${(mm / inch).toFixed(1)} inches`;
+function getInches(mm: number): string {
+  const inches = (mm / INCH);
+
+  if (inches <= 12) {
+    return `${inches.toFixed(1)} inches`;
   }
 
-  const feet = Math.floor(mm / (12 * inch));
-  const leftOver = mm - (feet * 12 * inch);
-  const inches = Math.round(leftOver / inch);
+  return (Math.round(inches).toString() + " inches");
+}
 
-  return `${feet} feet ${inches} inches`
+function getFeetAndInches(mm: number): string {
+  const feet = Math.floor(mm / (12 * INCH));
+
+  if (feet < 1) {
+    return "";
+  }
+
+  const leftOver = mm - (feet * 12 * INCH);
+  const inches = Math.round(leftOver / INCH);
+
+  let footName = "feet";
+  let inchName = "inches";
+
+  if (feet <= 1) {
+    footName = "foot";
+  }
+
+  if (inches <= 1) {
+    inchName = "inch";
+  }
+
+  return `${feet} ${footName} ${inches} ${inchName}`
 }
