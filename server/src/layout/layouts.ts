@@ -1,9 +1,10 @@
 import { Low, Memory } from 'lowdb';
 import { JSONFilePreset } from 'lowdb/node';
+import { LayoutNamesData } from 'trainbrain-shared';
 import { FatalError } from '../errors/FatalError.js';
 import { getDbPath } from '../services/db.js';
 import { Layout } from "../layout/layout.js";
-import type { LayoutDefData, LayoutsData } from '../data_types/layouts.js';
+import type { LayoutsData } from '../data_types/layouts.js';
 
 const DB_FILE_NAME = "layouts";
 
@@ -13,7 +14,7 @@ const emptyLayouts: LayoutsData = {
   layouts: {
     "1": {
       name: "empty",
-      dbFilename: "empty",
+      dbFileName: "empty",
       world: {
         width: 15545,
         height: 15240,
@@ -51,13 +52,15 @@ export class Layouts {
   }
 
   /**
-   * Return a kay-value list of layout IDs and names
+   * Return info about the available layout names and the active layout
    */
-  public getLayoutNames(): Record<string,string> {
-    const names: Record<string,string> = {};
+  public getLayoutNamesData(): LayoutNamesData {
+    const names: LayoutNamesData = { activeLayout: this.db.data.activeLayout, layouts: {} };
+
     Object.entries(this.db.data.layouts).forEach(([id, layoutDef]) => {
-      names[id] = layoutDef.name;
+      names.layouts[id] = layoutDef.name;
     });
+
     return names;
   }
 

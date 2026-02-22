@@ -1,5 +1,6 @@
 import { Stack } from "@mui/material"
 import EditMode from "./editmode";
+import LayoutSelect from "./layoutselect";
 import Measure from "./measure";
 import ZoomControl from "./zoomcontrol";
 
@@ -15,6 +16,7 @@ export default function SideBar() {
       <ZoomControl />
       <EditMode />
       <Measure />
+      <LayoutSelect />
     </Stack>
   )
 }

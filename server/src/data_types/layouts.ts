@@ -7,7 +7,7 @@ export interface LayoutDefData {
   world: WorldData;
 }
 
-// Content of the layouts json DB file
+// Data about the different layouts that exist
 export interface LayoutsData {
   activeLayout: string;
   layouts: Record<string, LayoutDefData>;

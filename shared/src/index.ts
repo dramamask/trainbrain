@@ -160,3 +160,10 @@ export interface MergeNodesData {
   nodeThatWillMoveId: string,
   nodeThatWillNotMoveId: string,
 }
+
+
+// Data about the different layouts that exist
+export interface LayoutNamesData {
+  activeLayout: string;
+  layouts: Record<string, string>;
+}

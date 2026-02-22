@@ -11,7 +11,7 @@
       }
     },
     "2": {
-      "name": "test",
+      "name": "full layout",
       "dbFileName": "layout",
       "world": {
         "width": 15545,
