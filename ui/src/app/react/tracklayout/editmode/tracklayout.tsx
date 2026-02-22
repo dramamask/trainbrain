@@ -62,9 +62,9 @@ export default function EditModeLayout({worldWidth, worldHeight}: props) {
       {/* Rotate things so the coordinate system is right, with the bottom left being 0,0 */}
       <g transform={`translate(0 ${worldHeight}) scale(1 -1)`}>
         { <Measure /> }
-        { <MergeNodes />}
         { renderPieces(trackLayoutState.trackLayout) }
         { renderNodes(trackLayoutState.trackLayout) }
+        { <MergeNodes />}
         { renderDebugContent(worldWidth, worldHeight) }
       </g>
     </svg>

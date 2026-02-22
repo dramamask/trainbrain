@@ -25,7 +25,7 @@ const config = {
     color: OAK,
     width: 12, // mm
   },
-  measure: {
+  auxiliary: {
     color: COLOR2,
     strokeWidth: 20, // mm
     lineSize: 200, // mm

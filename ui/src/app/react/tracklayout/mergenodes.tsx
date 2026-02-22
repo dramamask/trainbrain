@@ -7,7 +7,8 @@ import { Coordinate } from "trainbrain-shared";
 import { degreesToRadians } from "@/app/services/math";
 
 /**
- * Render the measurement visuals
+ * Shen the merge-nodes process is active, render an arrow that starts at the
+ * node, that is to be merged and moved, and ends at the current mouse position.
  */
 export default function MergeNodes() {
   const mergeNodesState = useSyncExternalStore(
@@ -22,30 +23,43 @@ export default function MergeNodes() {
   );
 
   const nodeId = mergeNodesState.nodeThatWillMove;
-  let nodePos = {x: 0, y: 0};
-  if (nodeId) {
-    nodePos = layoutStore.getLayoutNodeData(nodeId).coordinate;
-    getAngle(nodePos, {x: mousePosState.x || 0, y: mousePosState.y || 0});
+
+  if (!nodeId) {
+    return false;
   }
 
-  getArrowCoordinates();
+  const nodePos = layoutStore.getLayoutNodeData(nodeId).coordinate;
+  const arrowCoordinates = getArrowCoordinates(nodePos.x, nodePos.y, mousePosState.x, mousePosState.y);
+  const color = get("auxiliary.color") as string;
+  const strokeWidth = get("auxiliary.strokeWidth");
 
-  const color = get("measure.color") as string;
-  const strokeWidth = get("measure.strokeWidth");
-
-  // Return the measurement visuals
+  // Return the arrow that points from the selected node to the mouse position
   return (
     <>
-      { nodeId &&
-        <line
-            x1={nodePos.x}
-            y1={nodePos.y}
-            x2={mousePosState.x}
-            y2={mousePosState.y}
-            stroke={color}
-            strokeWidth={strokeWidth}
-        />
-      }
+      <line
+          x1={nodePos.x}
+          y1={nodePos.y}
+          x2={arrowCoordinates.tip.x}
+          y2={arrowCoordinates.tip.y}
+          stroke={color}
+          strokeWidth={strokeWidth}
+      />
+      <line
+          x1={arrowCoordinates.left.x}
+          y1={arrowCoordinates.left.y}
+          x2={arrowCoordinates.tip.x}
+          y2={arrowCoordinates.tip.y}
+          stroke={color}
+          strokeWidth={strokeWidth}
+      />
+      <line
+          x1={arrowCoordinates.right.x}
+          y1={arrowCoordinates.right.y}
+          x2={arrowCoordinates.tip.x}
+          y2={arrowCoordinates.tip.y}
+          stroke={color}
+          strokeWidth={strokeWidth}
+      />
     </>
   )
 }
@@ -61,20 +75,68 @@ function getAngle(pos1: Coordinate, pos2: Coordinate): number {
 }
 
 /**
- * Get the line coordiantes based on the given angle
- * @param {Coordinate} pos - Position of one of the measurement points
- * @param {number} angle - Angle between the two mearuement points, in radians.
+ * Get the coordiantes of the arrow.
+ *
+ *      (tip) O
+ *           /|\
+ *          / | \
+ *         /  |  \
+ * (left) O   |   O (right)
+ *            |
+ *            |
+ *            |
+ *            |
+ *            O (node position)
  */
-function getArrowCoordinates(pos: Coordinate | undefined, angle: number): Coordinate[] {
-  if (pos == undefined) {
-    // These coordinates are not used. We just need to return something.
-    return [{x: 1, y: 2}, {x: 3, y: 4 }]
+function getArrowCoordinates(
+  nodeX: number,
+  nodeY: number,
+  mouseX: number | undefined,
+  mouseY: number | undefined
+): {left: Coordinate, right: Coordinate, tip: Coordinate} {
+  if (mouseX == undefined || mouseY == undefined) {
+    return { left: { x: nodeX, y: nodeY }, right: { x: nodeX, y: nodeY }, tip: { x: nodeX, y: nodeY } }
   }
 
-  const lineSize = get("measure.lineSize") as number;
-  const lineAngle = degreesToRadians(90) - angle;
-  const deltaY = Math.sin(lineAngle) * (lineSize / 2);
-  const deltaX = deltaY / (Math.tan(lineAngle) || 1000);
+  // Define the shape of the arrow
+  const lineSize = 150; // mm
+  const arrowAngle = 30; // degrees
+  const distanceFromMousePos = 25; // mm
 
-  return [{ x: pos.x + deltaX, y: pos.y - deltaY }, { x: pos.x - deltaX, y: pos.y + deltaY }]
+  // Calculate the angle between the node and mousePos coordinates
+  const lineAngle = getAngle({ x: nodeX, y: nodeY }, { x: mouseX, y: mouseY });
+
+  // The middle coordinate of the arrow should be a little bit away from the mouse pos,
+  // so arrow doesn't interfere with selecting a node.
+  const tipDeltaY = Math.sin(lineAngle) * distanceFromMousePos;
+  const tipDeltaX = tipDeltaY / (Math.tan(lineAngle) || 1000);
+
+  // Calculations for the left leg coordinate of the arrow
+  const leftLegAngle = degreesToRadians(arrowAngle) - lineAngle;
+  const leftDeltaY = Math.sin(leftLegAngle) * lineSize;
+  const leftDeltaX = leftDeltaY / (Math.tan(leftLegAngle) || 1000);
+
+  // Calculations for the right leg coordinate of the arrow
+  const rightLegAngle = degreesToRadians(180) - degreesToRadians(arrowAngle) - lineAngle;
+  const rightDeltaY = Math.sin(rightLegAngle) * lineSize;
+  const rightDeltaX = rightDeltaY / (Math.tan(rightLegAngle) || 1000);
+
+  // Define the coordinates
+  let left;
+  let right;
+  let tip;
+
+  if (mouseX > nodeX) {
+    tip = {x: mouseX - tipDeltaX, y: mouseY - tipDeltaY};
+    left = { x: tip.x - leftDeltaX, y: tip.y + leftDeltaY };
+    right = { x: tip.x + rightDeltaX, y: tip.y - rightDeltaY };
+
+  } else {
+    tip = {x: mouseX + tipDeltaX, y: mouseY + tipDeltaY};
+    left = { x: tip.x + leftDeltaX, y: tip.y - leftDeltaY };
+    right = { x: tip.x - rightDeltaX, y: tip.y + rightDeltaY };
+  }
+
+  // Return the coordinates
+  return { left, right, tip: tip }
 }

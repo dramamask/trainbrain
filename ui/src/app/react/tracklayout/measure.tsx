@@ -38,8 +38,8 @@ export default function Measure() {
   const [pos1A, pos1B] = getCoordinates(pos1, angle);
   const [pos2A, pos2B] = getCoordinates(pos2, angle);
 
-  const color = get("measure.color") as string;
-  const strokeWidth = get("measure.strokeWidth");
+  const color = get("auxiliary.color") as string;
+  const strokeWidth = get("auxiliary.strokeWidth");
 
   // Return the measurement visuals
   return (
@@ -99,7 +99,7 @@ function getCoordinates(pos: Coordinate | undefined, angle: number): Coordinate[
     return [{x: 1, y: 2}, {x: 3, y: 4 }]
   }
 
-  const lineSize = get("measure.lineSize") as number;
+  const lineSize = get("auxiliary.lineSize") as number;
   const lineAngle = degreesToRadians(90) - angle;
   const deltaY = Math.sin(lineAngle) * (lineSize / 2);
   const deltaX = deltaY / (Math.tan(lineAngle) || 1000);

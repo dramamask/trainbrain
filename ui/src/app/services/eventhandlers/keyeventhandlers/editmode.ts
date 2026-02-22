@@ -341,6 +341,16 @@ function handleMergeNodes() {
     return;
   }
 
+  if (selectionStore.getSelectedPiece()) {
+    errorStore.setError("Select a node only, not a piece to start the merge-nodes process.");
+    return;
+  }
+
+  if (!selectionStore.getSelectedNode()) {
+    errorStore.setError("Select the node that needs to be merged (and moved) first, then press the key to start the merge-nodes process.");
+    return;
+  }
+
   // Start the merge nodes process
   mergeNodesStore.setNode(selectionStore.getSelectedNode())
   selectionStore.subscribe(handleMergingNodes);
@@ -351,6 +361,13 @@ function handleMergeNodes() {
  * when the second node is selected.
  */
 function handleMergingNodes() {
+  // End the merge node process if the node was unselected
+  if (!selectionStore.getSelectedNode()) {
+    mergeNodesStore.clear();
+    selectionStore.unsubscribe(handleMergingNodes);
+    return;
+  }
+
   // TODO: call the server API with the two node IDs
 
   mergeNodesStore.clear();
