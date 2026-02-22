@@ -4,7 +4,7 @@ import { LayoutNamesData } from 'trainbrain-shared';
 import { FatalError } from '../errors/FatalError.js';
 import { getDbPath } from '../services/db.js';
 import { Layout } from "../layout/layout.js";
-import type { LayoutsData } from '../data_types/layouts.js';
+import type { LayoutDefData, LayoutsData } from '../data_types/layouts.js';
 
 const DB_FILE_NAME = "layouts";
 
@@ -73,6 +73,26 @@ export class Layouts {
     }
 
     throw new FatalError("We should have an active layout")
+  }
+
+  /**
+   * Return definition data for a given layout
+   */
+  public getLayoutData(id: string): LayoutDefData {
+    return this.db.data.layouts[id];
+  }
+
+  /**
+   * Set the active layout
+   */
+  public async setActiveLayout(id: string): Promise<void> {
+    this.db.data.activeLayout = id;
+    this.db.write();
+
+    const activeLayoutDefinition = this.db.data.layouts[id];
+    this.activeLayout = new Layout(activeLayoutDefinition);
+
+    await this.activeLayout.init();
   }
 
   /**

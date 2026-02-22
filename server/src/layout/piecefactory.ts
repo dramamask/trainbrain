@@ -48,23 +48,6 @@ export class PieceFactory {
   }
 
   /**
-   * Find the layout piece with the highest numerical ID. Return the ID as a number.
-   * This method is used by the request validation code as well as this class
-   */
-  public getHighestPieceId(): number {
-    let highestId: number = -1;
-
-    this.pieces.forEach(piece => {
-      const numericalIdValue = Number(piece.getId());
-      if (numericalIdValue > highestId) {
-        highestId = numericalIdValue;
-      }
-    });
-
-    return highestId;
-  }
-
-  /**
    * Return the piece with the given ID
    */
   public get(id: string | undefined) : LayoutPiece | undefined {
@@ -172,6 +155,23 @@ export class PieceFactory {
   public async save(): Promise<void> {
     this.pieces.forEach(piece => piece.save());
     await this.db.write();
+  }
+
+  /**
+   * Find the layout piece with the highest numerical ID. Return the ID as a number.
+   * This method is used by the request validation code as well as this class
+   */
+  protected getHighestPieceId(): number {
+    let highestId: number = -1;
+
+    this.pieces.forEach(piece => {
+      const numericalIdValue = Number(piece.getId());
+      if (numericalIdValue > highestId) {
+        highestId = numericalIdValue;
+      }
+    });
+
+    return highestId;
   }
 
   /**

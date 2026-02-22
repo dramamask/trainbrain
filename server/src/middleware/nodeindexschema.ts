@@ -15,8 +15,8 @@ export const nodeIndexSchema = [
     return true;
   })
   .custom((id: string) => {
-    const highestIdAllowed = layouts.getActiveLayout().getHighestNodeId();
-    if (Number(id) > highestIdAllowed) {
+    const node = layouts.getActiveLayout().getNode(id);
+    if (!node) {
       throw new Error("Index does not match a Node ID in the layout")
     }
     return true;

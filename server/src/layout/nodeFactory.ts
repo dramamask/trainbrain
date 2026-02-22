@@ -43,22 +43,6 @@ export class NodeFactory {
   }
 
   /**
-   * Return the highest node ID currently in the layout
-   */
-  public getHighestNodeId(): number {
-    let highestId: number = -1;
-
-    this.nodes.forEach(node => {
-      const numericalIdValue = Number(node.getId());
-      if (numericalIdValue > highestId) {
-        highestId = numericalIdValue;
-      }
-    });
-
-    return highestId;
-  }
-
-  /**
    * Return the node with the given ID
    */
   public get(id: string | undefined) : LayoutNode | undefined {
@@ -170,6 +154,22 @@ export class NodeFactory {
       return
     }
     throw new FatalError("DB access to save a node is restricted on purpose. Please respect the rules, they are in place for a reason")
+  }
+
+  /**
+   * Return the highest node ID currently in the layout
+   */
+  protected getHighestNodeId(): number {
+    let highestId: number = -1;
+
+    this.nodes.forEach(node => {
+      const numericalIdValue = Number(node.getId());
+      if (numericalIdValue > highestId) {
+        highestId = numericalIdValue;
+      }
+    });
+
+    return highestId;
   }
 
   /**

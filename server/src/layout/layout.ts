@@ -75,22 +75,6 @@ export class Layout {
     return this.pieceDefs.getPieceDefWithoutCheck(id);
   }
 
-   /**
-   * Find the layout node with the highest numerical ID. Return the ID as a number.
-   * Only used by the request validation code
-   */
-  public getHighestNodeId(): number {
-    return this.nodeFactory.getHighestNodeId();
-  }
-
-  /**
-   * Find the layout piece with the highest numerical ID. Return the ID as a number.
-   * Only used by the request validation code
-   */
-  public getHighestPieceId(): number {
-    return this.pieceFactory.getHighestPieceId();
-  }
-
   /**
    * Return an instance of the PieceDefs class.
    * Only called by the piecedef controller class

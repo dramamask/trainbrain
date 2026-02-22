@@ -15,8 +15,8 @@ export const pieceIndexSchema = [
     return true;
   })
   .custom((id: string) => {
-    const highestIdAllowed = layouts.getActiveLayout().getHighestPieceId();
-    if (Number(id) > highestIdAllowed) {
+    const piece = layouts.getActiveLayout().getLayoutPiece(id);
+    if (!piece) {
       throw new Error("Index does not match a Piece in the layout")
     }
     return true;

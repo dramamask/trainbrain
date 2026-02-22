@@ -6,5 +6,6 @@ const router: Router = Router();
 
 // Map URL sub-paths to controller methods
 router.get('/', layoutsController.getLayouts);
+router.post('/active/:index', layoutsController.setActiveLayout);
 
 export default router;

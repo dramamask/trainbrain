@@ -1,14 +1,13 @@
 import { param } from 'express-validator';
 import { layouts } from '../services/init.js';
 
-// Validation for routes that have an index in the URL
-export const layoutPieceIndexSchema = [
+export const layoutsIndexSchema = [
   param('index')
   .exists({checkFalsy: true}).withMessage('Index is required')
   .isString().withMessage('Index must be a string')
   .custom((id: string) => {
     if(isNaN(Number(id))) {
-      throw new Error("Index should be a string representation of a numeric value");
+      throw new Error("Please select a node to perform this action");
     }
     if(Number(id) < 0) {
       throw new Error("Index should be a string representation of a numeric value greater than or equal to zero")
@@ -16,9 +15,9 @@ export const layoutPieceIndexSchema = [
     return true;
   })
   .custom((id: string) => {
-    const highestIdAllowed = layouts.getActiveLayout().getHighestPieceId();
-    if (Number(id) > highestIdAllowed) {
-      throw new Error("Index does not match a Piece ID in the layout")
+    const layout = layouts.getLayoutData(id);
+    if (!layout) {
+      throw new Error("Index does not match an existing Layout ID")
     }
     return true;
   }),
